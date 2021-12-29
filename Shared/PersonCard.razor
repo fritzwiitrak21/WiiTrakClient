@@ -1,0 +1,16 @@
+﻿<MudCard Elevation="0" Square="true" Class="@Class" Style="@Style">
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <MudAvatar Image="https://avatars.dicebear.com/api/avataaars/Dan.svg" />
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudText Typo="Typo.body2">Bob Jones</MudText>
+            <MudText Typo="Typo.caption">Driver</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+</MudCard>
+
+@code { 
+    [Parameter] public string Class { get; set; }
+    [Parameter] public string Style { get; set; }
+}

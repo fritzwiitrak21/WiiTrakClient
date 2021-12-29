@@ -1,0 +1,100 @@
+﻿@*<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">WiiTrakClient</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="counter">
+                <span class="oi oi-plus" aria-hidden="true"></span> Counter
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="fetchdata">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+            </NavLink>
+        </div>
+    </nav>
+</div>*@
+
+
+
+
+<PersonCard Style="background-color: var(--mud-palette-drawer-background);color: var(--mud-palette-drawer-text);" />
+<MudDivider Class="mb-4" />
+<MudNavMenu>
+    <MudNavLink Href="#" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Dashboard">Dashboard</MudNavLink>
+    <MudNavLink Href="#" Icon="@Icons.Material.Outlined.Person">Account</MudNavLink>
+    <MudNavLink Href="#" Icon="@Icons.Material.Outlined.Settings">Settings</MudNavLink>
+    
+    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">WiiTrak</MudText>
+    <MudNavLink Href="/companies" Icon="@Icons.Material.Outlined.Circle">Companies</MudNavLink>
+    <MudNavLink Href="/technicians" Icon="@Icons.Material.Outlined.Circle">Technicians</MudNavLink>
+    <MudNavLink Href="/tracking-devices" Icon="@Icons.Material.Outlined.Circle">Tracking Devices</MudNavLink>
+    
+    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Company</MudText>
+    <MudNavLink Href="/service-providers" Icon="@Icons.Material.Outlined.Circle">Service Providers</MudNavLink>
+    <MudNavLink Href="/drivers" Icon="@Icons.Material.Outlined.Circle">Drivers</MudNavLink>
+    @* <MudNavLink Href="#" Icon="@Icons.Material.Outlined.Store">Stores</MudNavLink> *@
+
+    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Drivers</MudText>
+    <MudNavLink Href="/driver-carts" Icon="@Icons.Material.Outlined.ShoppingCart">Carts</MudNavLink>
+    @* <MudNavLink Href="#" Icon="@Icons.Material.Outlined.Store">Stores</MudNavLink> *@
+
+     <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Service Providers</MudText>
+    <MudNavLink Href="/stores" Icon="@Icons.Material.Outlined.ShoppingCart">Stores</MudNavLink>
+
+    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Store</MudText>
+    <MudNavLink Href="#" Icon="@Icons.Material.Outlined.ShoppingCart">Carts</MudNavLink>
+
+    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Technicians</MudText>
+    <MudNavLink Href="#" Icon="@Icons.Material.Outlined.ShoppingCart">Carts</MudNavLink>
+    <MudNavLink Href="#" Icon="@Icons.Material.Outlined.Circle">Work Orders</MudNavLink>   
+
+    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Communication</MudText>
+    <MudNavLink Href="#" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Email">Email</MudNavLink>
+    <MudNavLink Href="#" Icon="@Icons.Material.Outlined.Textsms">Text Messages</MudNavLink>
+    <MudNavLink Href="#" Icon="@Icons.Material.Outlined.Forum">Chat</MudNavLink>
+
+    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Pages</MudText>
+    <MudNavGroup Title="Authentication" Icon="@Icons.Material.Outlined.AssignmentInd" HideExpandIcon="true">
+        <MudNavLink Href="#" Icon="@Icons.Material.Outlined.InsertDriveFile">Login</MudNavLink>
+        <MudNavLink Href="#" Icon="@Icons.Material.Outlined.InsertDriveFile">Register</MudNavLink>
+        <MudNavLink Href="#" Icon="@Icons.Material.Outlined.InsertDriveFile">Forgot Password</MudNavLink>
+        <MudNavLink Href="#" Icon="@Icons.Material.Outlined.InsertDriveFile">Reset Password</MudNavLink>
+    </MudNavGroup>
+    <MudNavGroup Title="Error" Icon="@AlertAssignmentIcon" HideExpandIcon="true">
+        <MudNavLink Href="pages/error/404" Icon="@Icons.Material.Outlined.InsertDriveFile">404</MudNavLink>
+    </MudNavGroup>
+    <MudNavGroup Title="Utility" Icon="@Icons.Material.Outlined.Assignment" HideExpandIcon="true">
+        <MudNavLink Href="pages/utility/faq" Icon="@Icons.Material.Outlined.InsertDriveFile">Faq</MudNavLink>
+    </MudNavGroup>
+    <MudNavLink Href="/claims" Icon="@Icons.Material.Outlined.InsertDriveFile">Claims</MudNavLink>    
+</MudNavMenu>
+
+@code {
+    string AlertAssignmentIcon { get; set; } = "<path d=\"M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3H9.18C9.6,1.84 10.7,1 12,1C13.3,1 14.4,1.84 14.82,3H19M12,3A1,1 0 0,0 11,4A1,1 0 0,0 12,5A1,1 0 0,0 13,4A1,1 0 0,0 12,3M7,7V5H5V19H19V5H17V7H7M11,9H13V13.5H11V9M11,15H13V17H11V15Z\" />";
+} 
+
+
+
+@*@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}*@

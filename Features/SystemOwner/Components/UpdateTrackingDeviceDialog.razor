@@ -1,0 +1,80 @@
+@* 
+
+ <MudDialog>
+    <DialogContent>              
+        <div style="width: 400px;"></div>
+            <div class="mb-6">
+                <img src="@Cart.PicUrl" class="center" width="100px" height="100px"/>
+            </div>
+        <MudForm Model="@Cart">       
+                <MudSelect class="my-6" 
+                    T="int" 
+                    Label="Status" 
+                    AnchorOrigin="Origin.BottomCenter" 
+                    @bind-Value="@_selectedStatusInt">
+                    <MudSelectItem Value="0">Delivered</MudSelectItem>
+                    <MudSelectItem Value="1">Needs Pick Up</MudSelectItem>
+                    <MudSelectItem Value="2">Picked Up</MudSelectItem>
+                    <MudSelectItem Value="3">Lost</MudSelectItem>
+                </MudSelect>      
+
+                  <MudSelect class="my-6" 
+                        T="int" 
+                        Label="Condition" 
+                        AnchorOrigin="Origin.BottomCenter" 
+                        @bind-Value="@_seletedConditionInt">
+                    <MudSelectItem Value="0">Good</MudSelectItem>
+                    <MudSelectItem Value="1">Damaged</MudSelectItem>
+                    <MudSelectItem Value="2">Damaged Beyond Repair</MudSelectItem>
+                </MudSelect>     
+        </MudForm>
+        
+     
+      
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [Parameter]
+    public CartDto? Cart {get; set;}
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    int _selectedStatusInt = -1;
+    int _seletedConditionInt = -1;
+
+    protected override void OnParametersSet() {
+        if (Cart is not null) {
+            _selectedStatusInt = (int)Cart.Status;
+            _seletedConditionInt = (int)Cart.Condition;
+        }        
+    }
+
+    void Submit() 
+    { 
+        if (_selectedStatusInt > -1) {
+            Cart.Status = (AssetStatus)_selectedStatusInt;
+        }
+        if (_seletedConditionInt > -1) {
+            Cart.Condition = (AssetCondition)_seletedConditionInt;
+        }
+
+        MudDialog.Close(DialogResult.Ok(true)); 
+    }
+    void Cancel() => MudDialog.Cancel();
+
+    void StatusChangedHandler(int statusInt) 
+    {
+        _selectedStatusInt = statusInt;
+    }
+
+    void ConditionChangedHandler(int conditionInt) 
+    {
+        _seletedConditionInt = conditionInt;
+    }
+
+} *@

@@ -1,0 +1,93 @@
+﻿
+@inject IJSRuntime JsRuntime
+
+@if (Carts is null || Carts.Count() == 0) {
+    @* <h2 class="my-6">No carts need picking up!</h2> *@
+}
+
+<div id="myMap" style="position:relative;width:100%;min-width:290px;height:600px;"></div>
+
+
+
+
+@code {
+    [Parameter]
+    public List<CartDto>? Carts {get; set;} = null;
+    private static Random _randomizer = new Random();
+    private string[] _markerColors = new string[] {
+        "Brown","Blue","Burgundy","DarkBlue","Orange","#31906E","#254117","#CD7F32","#7E3517","#3D0C02","#7D0552","#36013F","Purple","MidnightBlue","DarkGreen","DarkRed","DodgerBlue",
+    };
+
+    private Stack<string> _colorsStack = new Stack<string>();
+
+    private bool _showNoCartsMessage = false;
+
+    protected override async Task OnInitializedAsync() 
+    {
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        Console.WriteLine("Carts: " + Carts.Count());
+
+        if (Carts is not null && Carts.Count() > 0) {
+            List<StoreCartMapMarker> storeCartMarkers = new List<StoreCartMapMarker>();  
+        
+            // get list of unique stores
+            var stores = Carts.GroupBy(x => x.Store.Id).Select(o => o.FirstOrDefault()).Select(x => x.Store).ToList();           
+
+            foreach (var store in stores)
+            {
+                string color = GetMarkerColor();
+                var storeCartMapMarker = new StoreCartMapMarker {
+                    StoreId = store.Id,
+                    StoreName = store.StoreName,
+                    PopupContent = store.StoreName,
+                    StoreLat = store.Latitude,
+                    StoreLong = store.Longitude,
+                    Color = color,
+                    Text = $"{stores.IndexOf(store) + 1}",
+                    CartMarkers = new List<CartMarkerInfo>()
+                };
+
+                var storeCarts = Carts.Where(x => x.StoreId == store.Id).ToList();
+                foreach (var storeCart in storeCarts)
+                {
+                    storeCartMapMarker.CartMarkers.Add(new CartMarkerInfo {
+                        CartId = storeCart.Id,
+                        Lat = storeCart.TrackingDevice.Latitude,
+                        Long = storeCart.TrackingDevice.Longitude,
+                        PopupContent = "Cart",
+                        Color = color
+                    });
+                }
+
+                storeCartMarkers.Add(storeCartMapMarker);
+            }
+
+            await JsRuntime.GetMap(storeCartMarkers);
+        } else {
+           Console.WriteLine("No carts to map");           
+        }
+    }
+
+       protected override void OnAfterRender(bool firstRender)
+        {
+            if (firstRender)
+            {
+                _showNoCartsMessage = true;
+                StateHasChanged();
+            }
+        }
+
+        private string GetMarkerColor() 
+        {
+            string color = "";
+            if (_colorsStack.Count() == 0) {
+                _colorsStack = new Stack<string>(_markerColors);
+                color = _colorsStack.Pop();
+            }else {
+                color = _colorsStack.Pop();
+            }
+            return color;
+        }
+}

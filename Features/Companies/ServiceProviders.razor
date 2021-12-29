@@ -1,0 +1,70 @@
+@page "/service-providers"
+
+@using WiiTrakClient.Features.Companies.Components
+
+@inject IJSRuntime JsRuntime
+@inject ICompanyHttpRepository CompanyRepository
+@inject IDialogService DialogService
+
+@inject IServiceProviderHttpRepository ServiceProviderRepository
+
+
+<h1>Service Providers</h1>
+
+<div class="d-flex justify-end">
+    <MudButton Variant="Variant.Filled" 
+        StartIcon="@Icons.Material.Filled.Add" 
+        IconColor="Color.Secondary" 
+        Size="Size.Large"
+        OnClick="OpenDialog">Add</MudButton>
+</div>
+
+<div class="my-8">
+    <ServiceProviderList ServiceProviders="@_serviceProviders" />
+</div>
+
+
+
+@code {
+    List<ServiceProviderDto> _serviceProviders = new ();
+    
+    CompanyCreationDto _newCompany = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _serviceProviders = await ServiceProviderRepository.GetAllServiceProvidersAsync();     
+    }  
+
+    private async Task OpenDialog() 
+    {
+
+
+        @* var parameters = new DialogParameters(); 
+        parameters.Add("NewCompany", _newCompany);
+
+         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+
+         var dialog  = DialogService.Show<AddCompanyDialog>("Add Company", parameters);
+        var result = await dialog.Result; 
+
+        if (!result.Cancelled) 
+        {
+            // add new company to backend
+            var companyCreation = new CompanyCreationDto {
+                Name = _newCompany.Name,
+                StreetAddress1 = _newCompany.StreetAddress1,
+                StreetAddress2 = _newCompany.StreetAddress2,
+                City = _newCompany.City,
+                State = _newCompany.State,
+                PostalCode = _newCompany.PostalCode,
+                ProfilePicUrl = _newCompany.ProfilePicUrl,
+                Email = _newCompany.Email,
+                PhonePrimary = _newCompany.PhonePrimary,
+                PhoneSecondary = _newCompany.PhoneSecondary,
+                // CannotHaveChildren
+                // IsInactive
+            };
+           await CompanyHttpRepository.CreateCompanyAsync(_newCompany);
+        }  *@
+    } 
+}

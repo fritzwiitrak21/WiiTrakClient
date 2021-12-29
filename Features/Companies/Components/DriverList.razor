@@ -1,0 +1,81 @@
+@using WiiTrakClient.Features.SystemOwner.Components
+
+@namespace WiiTrakClient.Features.Companies.Components
+
+@inject IDialogService DialogService
+
+@inject ICompanyHttpRepository CompanyHttpRepository
+
+   <MudTable Items="@Drivers" Hover="true" SortLabel="Sort By">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<DriverDto, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel  SortBy="new Func<DriverDto, object>(x=>x.LastName)">LastName</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.Email)">Email</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.Phone)">Phone</MudTableSortLabel></MudTh>        
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="FirstName">
+            @context.FirstName
+        </MudTd>
+        <MudTd DataLabel="LastName">
+            @context.LastName
+        </MudTd>
+        <MudTd DataLabel="Email">
+            @context.Email
+        </MudTd>
+         <MudTd DataLabel="Phone">
+            @context.Phone
+        </MudTd>
+     
+        <MudTd DataLabel="Action">           
+            <MudButton 
+                Variant="Variant.Filled" 
+                Color="Color.Primary" 
+                OnClick="((e) => OpenDialog(context))">Update
+            </MudButton>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+    </PagerContent>
+</MudTable> 
+
+
+@code {
+    [Parameter]
+    public List<DriverDto>? Drivers {get; set;} = null;
+    private bool _enabled = true;
+    public async Task OpenDialog(DriverDto driver) {
+
+         // TODO Update for technicians 
+ 
+        @* Console.WriteLine("company id: " + company.Id);
+
+        var parameters = new DialogParameters();
+                parameters.Add("Company", company);   
+
+         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+
+         var dialog  = DialogService.Show<UpdateCompanyDialog>("Update Company", parameters);
+        var result = await dialog.Result; 
+
+        if (!result.Cancelled) 
+        {
+            // save updated company to backend
+            var companyUpdate = new CompanyAccountUpdateDto {
+                Name = company.Name,
+                StreetAddress1 = company.StreetAddress1,
+                StreetAddress2 = company.StreetAddress2,
+                City = company.City,
+                State = company.State,
+                PostalCode = company.PostalCode,
+                ProfilePicUrl = company.ProfilePicUrl,
+                Email = company.Email,
+                PhonePrimary = company.PhonePrimary,
+                PhoneSecondary = company.PhoneSecondary,
+            };
+           await CompanyHttpRepository.UpdateCompanyAsync(company.Id, companyUpdate);
+        }  *@
+    }
+}

@@ -1,0 +1,104 @@
+@using WiiTrakClient.Features.SystemOwner.Components
+@inject IDialogService DialogService
+
+@inject ICompanyHttpRepository CustomerHttpRepository
+
+
+   <MudTable Items="@Stores" Hover="true" SortLabel="Sort By">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<StoreDto, object>(x=>x.StoreName)">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.StoreNumber)">Store Number</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.StreetAddress1)">Street Address</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.City)">City</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.State)">State</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.PostalCode)">PostalCode</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.Longitude)">Longitude</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.Latitude)">Longitude</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.Email)">Email</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.PhonePrimary)">Phone</MudTableSortLabel></MudTh>        
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">
+            @context.StoreName
+        </MudTd>
+        <MudTd DataLabel="StoreNumber">
+            @context.StoreNumber
+        </MudTd>
+        <MudTd DataLabel="StreetAddress1">
+            @context.StreetAddress1
+        </MudTd>
+        <MudTd DataLabel="City">
+            @context.City
+        </MudTd>
+        <MudTd DataLabel="State">
+            @context.State
+        </MudTd>
+
+        <MudTd DataLabel="PostalCode">
+            @context.PostalCode
+        </MudTd>
+        <MudTd DataLabel="Longitude">
+            @context.Longitude
+        </MudTd>
+         <MudTd DataLabel="Latitude">
+            @context.Latitude
+        </MudTd>
+        <MudTd DataLabel="Email">
+            @context.Email
+        </MudTd>
+         <MudTd DataLabel="Phone">
+            @context.PhonePrimary
+        </MudTd>
+     
+        <MudTd DataLabel="Action">           
+            <MudButton 
+                Variant="Variant.Filled" 
+                Color="Color.Primary" 
+                OnClick="((e) => OpenDialog(context))">Update
+            </MudButton>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+    </PagerContent>
+</MudTable> 
+
+
+@code {
+    [Parameter]
+    public List<StoreDto>? Stores {get; set;} = null;
+    private bool _enabled = true;
+    public async Task OpenDialog(StoreDto store) {
+
+         // TODO Update for technicians 
+ 
+        @* Console.WriteLine("customer id: " + customer.Id);
+
+        var parameters = new DialogParameters();
+                parameters.Add("Company", customer);   
+
+         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+
+         var dialog  = DialogService.Show<UpdateCompanyDialog>("Update Company", parameters);
+        var result = await dialog.Result; 
+
+        if (!result.Cancelled) 
+        {
+            // save updated customer to backend
+            var customerUpdate = new CompanyAccountUpdateDto {
+                Name = customer.Name,
+                StreetAddress1 = customer.StreetAddress1,
+                StreetAddress2 = customer.StreetAddress2,
+                City = customer.City,
+                State = customer.State,
+                PostalCode = customer.PostalCode,
+                ProfilePicUrl = customer.ProfilePicUrl,
+                Email = customer.Email,
+                PhonePrimary = customer.PhonePrimary,
+                PhoneSecondary = customer.PhoneSecondary,
+            };
+           await CompanyHttpRepository.UpdateCompanyAsync(customer.Id, customerUpdate);
+        }  *@
+    }
+}

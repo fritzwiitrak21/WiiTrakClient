@@ -1,0 +1,67 @@
+@page "/drivers"
+
+@using WiiTrakClient.Features.Companies.Components
+
+@inject IJSRuntime JsRuntime
+@inject ICompanyHttpRepository CustomerRepository
+@inject IDialogService DialogService
+
+@inject ITechnicianHttpRepository TechnicianRepository
+@inject IDriverHttpRepository DriverRepository
+
+
+<h1>Drivers</h1>
+
+<div class="d-flex justify-end">
+    <MudButton Variant="Variant.Filled" 
+        StartIcon="@Icons.Material.Filled.Add" 
+        IconColor="Color.Secondary" 
+        Size="Size.Large"
+        OnClick="OpenDialog">Add</MudButton>
+</div>
+
+<div class="my-8">
+    <DriverList Drivers="@_drivers" />
+</div>
+
+
+
+@code {
+    List<DriverDto> _drivers = new ();
+    
+    CompanyCreationDto _newCustomer = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _drivers = await DriverRepository.GetAllDriversAsync();  
+    }  
+
+    private async Task OpenDialog() 
+    {
+        @* var parameters = new DialogParameters(); 
+        parameters.Add("NewCompany", _newCompany);
+
+         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+
+         var dialog  = DialogService.Show<AddCompanyDialog>("Add Company", parameters);
+        var result = await dialog.Result; 
+
+        if (!result.Cancelled) 
+        {
+            // add new customer to backend
+            var customerCreation = new CompanyAccountCreationDto {
+                Name = _newCompany.Name,
+                StreetAddress1 = _newCompany.StreetAddress1,
+                StreetAddress2 = _newCompany.StreetAddress2,
+                City = _newCompany.City,
+                State = _newCompany.State,
+                PostalCode = _newCompany.PostalCode,
+                ProfilePicUrl = _newCompany.ProfilePicUrl,
+                Email = _newCompany.Email,
+                PhonePrimary = _newCompany.PhonePrimary,
+                PhoneSecondary = _newCompany.PhoneSecondary,
+            };
+           await CompanyHttpRepository.CreateCompanyAsync(_newCompany);
+        }  *@
+    } 
+}

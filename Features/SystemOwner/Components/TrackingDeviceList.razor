@@ -1,0 +1,83 @@
+@using WiiTrakClient.Features.SystemOwner.Components
+@inject IDialogService DialogService
+
+@inject ICompanyHttpRepository CustomerHttpRepository
+
+
+   <MudTable Items="@Devices" Hover="true" SortLabel="Sort By">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<TrackingDeviceDto, object>(x=>x.Name)">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel  SortBy="new Func<TrackingDeviceDto, object>(x=>x.Manufactor)">Manufactor</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<TrackingDeviceDto, object>(x=>x.TelecomCompanyName)">Telecom Company Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<TrackingDeviceDto, object>(x=>x.Longitude)">Longitude</MudTableSortLabel></MudTh>   
+        <MudTh><MudTableSortLabel SortBy="new Func<TrackingDeviceDto, object>(x=>x.Latitude)">Latitude</MudTableSortLabel></MudTh>        
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">
+            @context.Name
+        </MudTd>
+        <MudTd DataLabel="Manufactor">
+             @context.Manufactor
+        </MudTd>
+        <MudTd DataLabel="TelecomCompanyName">
+            @context.TelecomCompanyName
+        </MudTd>
+         <MudTd DataLabel="Longitude">
+            @context.Longitude
+        </MudTd>
+         <MudTd DataLabel="Latitude">
+            @context.Latitude
+        </MudTd>
+     
+        <MudTd DataLabel="Action">           
+            <MudButton 
+                Variant="Variant.Filled" 
+                Color="Color.Primary" 
+                OnClick="((e) => OpenDialog(context))">Update
+            </MudButton>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+    </PagerContent>
+</MudTable> 
+
+
+@code {
+    [Parameter]
+    public List<TrackingDeviceDto>? Devices {get; set;} = null;
+    private bool _enabled = true;
+    public async Task OpenDialog(TrackingDeviceDto device) {
+
+        // TODO Update for tracking device
+ 
+        @* Console.WriteLine("customer id: " + customer.Id);
+
+        var parameters = new DialogParameters();
+                parameters.Add("Company", customer);   
+
+         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+
+         var dialog  = DialogService.Show<UpdateCompanyDialog>("Update Tracking Device", parameters);
+        var result = await dialog.Result; 
+
+        if (!result.Cancelled) 
+        {
+            // save updated customer to backend
+            var customerUpdate = new CompanyAccountUpdateDto {
+                Name = customer.Name,
+                StreetAddress1 = customer.StreetAddress1,
+                StreetAddress2 = customer.StreetAddress2,
+                City = customer.City,
+                State = customer.State,
+                PostalCode = customer.PostalCode,
+                ProfilePicUrl = customer.ProfilePicUrl,
+                Email = customer.Email,
+                PhonePrimary = customer.PhonePrimary,
+                PhoneSecondary = customer.PhoneSecondary,
+            };
+           await CompanyHttpRepository.UpdateCompanyAsync(customer.Id, customerUpdate);
+        }  *@
+    }
+}

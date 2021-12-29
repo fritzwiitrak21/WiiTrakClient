@@ -1,0 +1,15 @@
+﻿<h3>Carts Grid</h3>
+
+@if(Carts is not null) {
+    foreach (var cart in Carts)
+    {
+        <p>@cart.Id</p>
+    }
+}
+
+@code {
+    [Parameter]
+    public List<CartDto>? Carts {get; set;} = null;
+
+    
+}
