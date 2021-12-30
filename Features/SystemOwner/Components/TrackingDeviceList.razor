@@ -1,7 +1,7 @@
 @using WiiTrakClient.Features.SystemOwner.Components
 @inject IDialogService DialogService
 
-@inject ICompanyHttpRepository CustomerHttpRepository
+@inject ITrackingDeviceHttpRepository TrackingDeviceRepository
 
 
    <MudTable Items="@Devices" Hover="true" SortLabel="Sort By">
@@ -52,32 +52,31 @@
 
         // TODO Update for tracking device
  
-        @* Console.WriteLine("customer id: " + customer.Id);
+        Console.WriteLine("device id: " + device.Id);
 
         var parameters = new DialogParameters();
-                parameters.Add("Company", customer);   
+                parameters.Add("TrackingDevice", device);   
 
          DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
 
-         var dialog  = DialogService.Show<UpdateCompanyDialog>("Update Tracking Device", parameters);
+         var dialog  = DialogService.Show<UpdateTrackingDeviceDialog>("Update Tracking Device", parameters);
         var result = await dialog.Result; 
 
         if (!result.Cancelled) 
         {
-            // save updated customer to backend
-            var customerUpdate = new CompanyAccountUpdateDto {
-                Name = customer.Name,
-                StreetAddress1 = customer.StreetAddress1,
-                StreetAddress2 = customer.StreetAddress2,
-                City = customer.City,
-                State = customer.State,
-                PostalCode = customer.PostalCode,
-                ProfilePicUrl = customer.ProfilePicUrl,
-                Email = customer.Email,
-                PhonePrimary = customer.PhonePrimary,
-                PhoneSecondary = customer.PhoneSecondary,
+            // save updated tracking device to backend
+            var trackingDeviceUpdate = new TrackingDeviceUpdateDto {
+                Name = device.Name,
+                Manufactor = device.Manufactor,
+                TelecomCompanyName = device.TelecomCompanyName,
+                SIMCardId = device.SIMCardId,
+                SIMCardPhoneNumber = device.SIMCardPhoneNumber,
+                IMEINumber = device.IMEINumber,
+                ModelNumber = device.ModelNumber,
+                ManufacturedDate = device.ManufacturedDate,
+                InstalledDate = device.InstalledDate
             };
-           await CompanyHttpRepository.UpdateCompanyAsync(customer.Id, customerUpdate);
-        }  *@
+           await TrackingDeviceRepository.UpdateTrackingDeviceAsync(device.Id, trackingDeviceUpdate);
+        }  
     }
 }

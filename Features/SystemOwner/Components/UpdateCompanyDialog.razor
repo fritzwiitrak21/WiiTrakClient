@@ -1,21 +1,21 @@
-
+@namespace WiiTrakClient.Features.SystemOwner.Components
 
  <MudDialog>
     <DialogContent>              
-        <div style="width: 400px;"></div>
-          
-        <MudForm Model="@Company">   
-            <MudTextField class="my-6" @bind-Value="Company.Name" Label="Name" Variant="Variant.Text"></MudTextField>  
-            <MudTextField class="my-6" @bind-Value="Company.StreetAddress1" Label="Street Address 1" Variant="Variant.Text"></MudTextField>  
-            <MudTextField class="my-6" @bind-Value="Company.Name" Label="Street Address 2" Variant="Variant.Text"></MudTextField>  
-            <MudTextField class="my-6" @bind-Value="Company.City" Label="City" Variant="Variant.Text"></MudTextField>  
-            <MudTextField class="my-6" @bind-Value="Company.State" Label="State" Variant="Variant.Text"></MudTextField>  
-            <MudTextField class="my-6" @bind-Value="Company.PostalCode" Label="ZipCode" Variant="Variant.Text"></MudTextField>  
-            <MudTextField class="my-6" @bind-Value="Company.Email" Label="Email" Variant="Variant.Text"></MudTextField>  
-            <MudTextField class="my-6" @bind-Value="Company.PhonePrimary" Label="Phone" Variant="Variant.Text"></MudTextField>                
-        </MudForm>
-        
-      
+        <div style="width: 400px;height:450px;overflow: auto;">
+            <MudForm Model="@Company">   
+                <MudTextField class="my-6" @bind-Value="Company.Name" Label="Name" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Company.StreetAddress1" Label="Street Address 1" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Company.Name" Label="Street Address 2" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Company.City" Label="City" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Company.State" Label="State" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Company.PostalCode" Label="ZipCode" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Company.Email" Label="Email" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Company.PhonePrimary" Label="Phone" Variant="Variant.Text"></MudTextField>
+                <MudCheckBox @bind-Checked="Company.CannotHaveChildren" Label="Do Not Allow Sub Companies" Color="Color.Primary"></MudCheckBox>
+
+            </MudForm>
+        </div>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>

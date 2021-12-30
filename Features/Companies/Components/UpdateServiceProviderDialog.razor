@@ -1,1 +1,36 @@
 @namespace WiiTrakClient.Features.Companies.Components
+
+<MudDialog>
+    <DialogContent>              
+        <div style="width: 400px;height:450px;overflow: auto;">
+            <MudForm Model="@ServiceProvider">   
+                <MudTextField class="my-6" @bind-Value="ServiceProvider.ServiceProviderName" Label="Service Provider Name" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="ServiceProvider.Email" Label="Email" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="ServiceProvider.PhonePrimary" Label="Phone" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="ServiceProvider.PhoneSecondary" Label="Alt. Phone" Variant="Variant.Text"></MudTextField>  
+            </MudForm>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [Parameter]
+    public ServiceProviderDto? ServiceProvider {get; set;}
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    protected override void OnParametersSet() {
+            
+    }
+
+    void Submit() 
+    { 
+        MudDialog.Close(DialogResult.Ok(true)); 
+    }
+    void Cancel() => MudDialog.Cancel();
+}

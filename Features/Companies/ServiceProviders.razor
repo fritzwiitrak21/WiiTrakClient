@@ -4,9 +4,8 @@
 
 @inject IJSRuntime JsRuntime
 @inject ICompanyHttpRepository CompanyRepository
-@inject IDialogService DialogService
-
 @inject IServiceProviderHttpRepository ServiceProviderRepository
+@inject IDialogService DialogService
 
 
 <h1>Service Providers</h1>
@@ -28,7 +27,7 @@
 @code {
     List<ServiceProviderDto> _serviceProviders = new ();
     
-    CompanyCreationDto _newCompany = new();
+    ServiceProviderCreationDto _newServiceProvider = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -37,34 +36,25 @@
 
     private async Task OpenDialog() 
     {
-
-
-        @* var parameters = new DialogParameters(); 
-        parameters.Add("NewCompany", _newCompany);
+        var parameters = new DialogParameters(); 
+        parameters.Add("NewServiceProvider", _newServiceProvider);
 
          DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
 
-         var dialog  = DialogService.Show<AddCompanyDialog>("Add Company", parameters);
+         var dialog  = DialogService.Show<AddServiceProviderDialog>("Add Service Provider", parameters);
         var result = await dialog.Result; 
 
         if (!result.Cancelled) 
         {
-            // add new company to backend
-            var companyCreation = new CompanyCreationDto {
-                Name = _newCompany.Name,
-                StreetAddress1 = _newCompany.StreetAddress1,
-                StreetAddress2 = _newCompany.StreetAddress2,
-                City = _newCompany.City,
-                State = _newCompany.State,
-                PostalCode = _newCompany.PostalCode,
-                ProfilePicUrl = _newCompany.ProfilePicUrl,
-                Email = _newCompany.Email,
-                PhonePrimary = _newCompany.PhonePrimary,
-                PhoneSecondary = _newCompany.PhoneSecondary,
-                // CannotHaveChildren
-                // IsInactive
+            // add new service provider to backend
+            var serviceProviderCreation = new ServiceProviderCreationDto() {
+                ServiceProviderName = _newServiceProvider.ServiceProviderName,
+                Email = _newServiceProvider.Email,
+                PhonePrimary = _newServiceProvider.PhonePrimary,
+                PhoneSecondary = _newServiceProvider.PhoneSecondary,
+                CompanyId = _newServiceProvider.CompanyId
             };
-           await CompanyHttpRepository.CreateCompanyAsync(_newCompany);
-        }  *@
+            await ServiceProviderRepository.CreateServiceProviderAsync(serviceProviderCreation);
+        }  
     } 
 }

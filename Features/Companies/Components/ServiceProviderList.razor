@@ -3,8 +3,7 @@
 @namespace WiiTrakClient.Features.Companies.Components
 
 @inject IDialogService DialogService
-
-@inject ICompanyHttpRepository CompanyHttpRepository
+@inject IServiceProviderHttpRepository ServiceProviderHttpRepository
 
    <MudTable Items="@ServiceProviders" Hover="true" SortLabel="Sort By">
     <HeaderContent>
@@ -44,34 +43,29 @@
     private bool _enabled = true;
     public async Task OpenDialog(ServiceProviderDto serviceProvider) {
 
-         // TODO Update for technicians 
+         // TODO Update for service provider 
  
-        @* Console.WriteLine("company id: " + company.Id);
+       Console.WriteLine("service provider id: " + serviceProvider.Id);
 
         var parameters = new DialogParameters();
-                parameters.Add("Company", company);   
+                parameters.Add("ServiceProvider", serviceProvider);   
 
          DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
 
-         var dialog  = DialogService.Show<UpdateCompanyDialog>("Update Company", parameters);
+         var dialog  = DialogService.Show<UpdateServiceProviderDialog>("Update Service Provider", parameters);
         var result = await dialog.Result; 
 
         if (!result.Cancelled) 
         {
-            // save updated company to backend
-            var companyUpdate = new CompanyUpdateDto {
-                Name = company.Name,
-                StreetAddress1 = company.StreetAddress1,
-                StreetAddress2 = company.StreetAddress2,
-                City = company.City,
-                State = company.State,
-                PostalCode = company.PostalCode,
-                ProfilePicUrl = company.ProfilePicUrl,
-                Email = company.Email,
-                PhonePrimary = company.PhonePrimary,
-                PhoneSecondary = company.PhoneSecondary,
+            // save updated service provider to backend
+            var serviceProviderUpdate = new ServiceProviderUpdateDto {
+                ServiceProviderName = serviceProvider.ServiceProviderName,
+                Email = serviceProvider.Email,
+                PhonePrimary = serviceProvider.PhonePrimary,
+                PhoneSecondary = serviceProvider.PhoneSecondary,
+                CompanyId = serviceProvider.CompanyId
             };
-           await CompanyHttpRepository.UpdateCompanyAsync(company.Id, companyUpdate);
-        }  *@
+           await ServiceProviderHttpRepository.UpdateServiceProviderAsync(serviceProvider.Id, serviceProviderUpdate);
+        }  
     }
 }

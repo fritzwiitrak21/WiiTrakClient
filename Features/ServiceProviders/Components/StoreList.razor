@@ -1,7 +1,7 @@
 @using WiiTrakClient.Features.SystemOwner.Components
 @inject IDialogService DialogService
 
-@inject ICompanyHttpRepository CustomerHttpRepository
+@inject IStoreHttpRepository StoreHttpRepository
 
 
    <MudTable Items="@Stores" Hover="true" SortLabel="Sort By">
@@ -71,34 +71,35 @@
     private bool _enabled = true;
     public async Task OpenDialog(StoreDto store) {
 
-         // TODO Update for technicians 
+         // TODO Update for store 
  
-        @* Console.WriteLine("customer id: " + customer.Id);
+        Console.WriteLine("store id: " + store.Id);
 
         var parameters = new DialogParameters();
-                parameters.Add("Company", customer);   
+                parameters.Add("Store", store);   
 
          DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
 
-         var dialog  = DialogService.Show<UpdateCompanyDialog>("Update Company", parameters);
+         var dialog  = DialogService.Show<UpdateStoreDialog>("Update Store", parameters);
         var result = await dialog.Result; 
 
         if (!result.Cancelled) 
         {
-            // save updated customer to backend
-            var customerUpdate = new CompanyAccountUpdateDto {
-                Name = customer.Name,
-                StreetAddress1 = customer.StreetAddress1,
-                StreetAddress2 = customer.StreetAddress2,
-                City = customer.City,
-                State = customer.State,
-                PostalCode = customer.PostalCode,
-                ProfilePicUrl = customer.ProfilePicUrl,
-                Email = customer.Email,
-                PhonePrimary = customer.PhonePrimary,
-                PhoneSecondary = customer.PhoneSecondary,
+            // save updated store to backend
+            var storeUpdate = new StoreUpdateDto {
+                StoreName = store.StoreName,
+                StreetAddress1 = store.StreetAddress1,
+                StreetAddress2 = store.StreetAddress2,
+                City = store.City,
+                State = store.State,
+                PostalCode = store.PostalCode,
+                ProfilePicUrl = store.ProfilePicUrl,
+                Email = store.Email,
+                PhonePrimary = store.PhonePrimary,
+                PhoneSecondary = store.PhoneSecondary,
+                ServiceProviderId = store.ServiceProviderId
             };
-           await CompanyHttpRepository.UpdateCompanyAsync(customer.Id, customerUpdate);
-        }  *@
+           await StoreHttpRepository.UpdateStoreAsync(store.Id, storeUpdate);
+        }  
     }
 }

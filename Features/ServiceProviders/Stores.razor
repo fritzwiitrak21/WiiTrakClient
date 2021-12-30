@@ -4,11 +4,8 @@
 @using WiiTrakClient.Features.ServiceProviders.Components
 
 @inject IJSRuntime JsRuntime
-@inject ICompanyHttpRepository CustomerRepository
 @inject IDialogService DialogService
-
-@inject ITechnicianHttpRepository TechnicianRepository
-@inject IStoreHttpRepository StoreRepository
+@inject IStoreHttpRepository StoreHttpRepository
 
 
 <h1>Stores</h1>
@@ -30,39 +27,40 @@
 @code {
     List<StoreDto> _stores = new ();
     
-    CompanyCreationDto _newCustomer = new();
+    StoreCreationDto _newStore = new();
 
     protected override async Task OnInitializedAsync()
     {
-        _stores = await StoreRepository.GetAllStoresAsync();
+        _stores = await StoreHttpRepository.GetAllStoresAsync();
     }  
 
     private async Task OpenDialog() 
     {
-        @* var parameters = new DialogParameters(); 
-        parameters.Add("NewCompany", _newCompany);
+        var parameters = new DialogParameters(); 
+        parameters.Add("NewStore", _newStore);
 
          DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
 
-         var dialog  = DialogService.Show<AddCompanyDialog>("Add Company", parameters);
+         var dialog  = DialogService.Show<AddStoreDialog>("Add Store", parameters);
         var result = await dialog.Result; 
 
         if (!result.Cancelled) 
         {
-            // add new customer to backend
-            var customerCreation = new CompanyAccountCreationDto {
-                Name = _newCompany.Name,
-                StreetAddress1 = _newCompany.StreetAddress1,
-                StreetAddress2 = _newCompany.StreetAddress2,
-                City = _newCompany.City,
-                State = _newCompany.State,
-                PostalCode = _newCompany.PostalCode,
-                ProfilePicUrl = _newCompany.ProfilePicUrl,
-                Email = _newCompany.Email,
-                PhonePrimary = _newCompany.PhonePrimary,
-                PhoneSecondary = _newCompany.PhoneSecondary,
+            // add new store to backend
+            var storeCreation = new StoreCreationDto {
+                StoreName = _newStore.StoreName,
+                StreetAddress1 = _newStore.StreetAddress1,
+                StreetAddress2 = _newStore.StreetAddress2,
+                City = _newStore.City,
+                State = _newStore.State,
+                PostalCode = _newStore.PostalCode,
+                ProfilePicUrl = _newStore.ProfilePicUrl,
+                Email = _newStore.Email,
+                PhonePrimary = _newStore.PhonePrimary,
+                PhoneSecondary = _newStore.PhoneSecondary,
+                ServiceProviderId = _newStore.ServiceProviderId
             };
-           await CompanyHttpRepository.CreateCompanyAsync(_newCompany);
-        }  *@
+           await StoreHttpRepository.CreateStoreAsync(_newStore);
+        }  
     } 
 }

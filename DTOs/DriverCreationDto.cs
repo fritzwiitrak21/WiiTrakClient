@@ -12,6 +12,6 @@
 
         public string ProfilePic { get; set; } = string.Empty;
 
-        public Guid CustomerAccountId { get; set; }
+        public Guid CompanyId { get; set; }
     }
 }

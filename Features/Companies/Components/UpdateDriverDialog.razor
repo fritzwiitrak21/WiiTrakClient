@@ -1,1 +1,35 @@
 @namespace WiiTrakClient.Features.Companies.Components
+
+<MudDialog>
+    <DialogContent>              
+        <div style="width: 400px;height:450px;overflow: auto;">
+            <MudForm Model="@Driver">   
+                <MudTextField class="my-6" @bind-Value="Driver.FirstName" Label="First Name" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Driver.LastName" Label="Last Name" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Driver.Email" Label="Email" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Driver.Phone" Label="Phone" Variant="Variant.Text"></MudTextField>  
+            </MudForm>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [Parameter]
+    public DriverDto? Driver {get; set;}
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    protected override void OnParametersSet() {
+            
+    }
+
+    void Submit() 
+    { 
+        MudDialog.Close(DialogResult.Ok(true)); 
+    }
+    void Cancel() => MudDialog.Cancel();
+}

@@ -1,35 +1,4 @@
-﻿@*<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">WiiTrakClient</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
-
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </div>
-    </nav>
-</div>*@
-
-
-
-
+﻿
 <PersonCard Style="background-color: var(--mud-palette-drawer-background);color: var(--mud-palette-drawer-text);" />
 <MudDivider Class="mb-4" />
 <MudNavMenu>
@@ -43,21 +12,23 @@
     <MudNavLink Href="/tracking-devices" Icon="@Icons.Material.Outlined.Circle">Tracking Devices</MudNavLink>
     
     <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Company</MudText>
+    <MudNavLink Href="/sub-companies" Icon="@Icons.Material.Outlined.Circle">Sub Companies</MudNavLink>
     <MudNavLink Href="/service-providers" Icon="@Icons.Material.Outlined.Circle">Service Providers</MudNavLink>
     <MudNavLink Href="/drivers" Icon="@Icons.Material.Outlined.Circle">Drivers</MudNavLink>
-    @* <MudNavLink Href="#" Icon="@Icons.Material.Outlined.Store">Stores</MudNavLink> *@
+    <MudNavLink Href="/company-technicians" Icon="@Icons.Material.Outlined.Circle">Technicians</MudNavLink>
 
-    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Drivers</MudText>
+
+    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Driver</MudText>
     <MudNavLink Href="/driver-carts" Icon="@Icons.Material.Outlined.ShoppingCart">Carts</MudNavLink>
     @* <MudNavLink Href="#" Icon="@Icons.Material.Outlined.Store">Stores</MudNavLink> *@
 
-     <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Service Providers</MudText>
+     <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Service Provider</MudText>
     <MudNavLink Href="/stores" Icon="@Icons.Material.Outlined.ShoppingCart">Stores</MudNavLink>
 
     <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Store</MudText>
     <MudNavLink Href="#" Icon="@Icons.Material.Outlined.ShoppingCart">Carts</MudNavLink>
 
-    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Technicians</MudText>
+    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Technician</MudText>
     <MudNavLink Href="#" Icon="@Icons.Material.Outlined.ShoppingCart">Carts</MudNavLink>
     <MudNavLink Href="#" Icon="@Icons.Material.Outlined.Circle">Work Orders</MudNavLink>   
 

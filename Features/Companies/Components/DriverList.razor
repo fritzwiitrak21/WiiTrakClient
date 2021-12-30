@@ -5,6 +5,7 @@
 @inject IDialogService DialogService
 
 @inject ICompanyHttpRepository CompanyHttpRepository
+@inject IDriverHttpRepository DriverHttpRepository
 
    <MudTable Items="@Drivers" Hover="true" SortLabel="Sort By">
     <HeaderContent>
@@ -50,32 +51,27 @@
 
          // TODO Update for technicians 
  
-        @* Console.WriteLine("company id: " + company.Id);
+        Console.WriteLine("driver id: " + driver.Id);
 
         var parameters = new DialogParameters();
-                parameters.Add("Company", company);   
+                parameters.Add("Driver", driver);   
 
          DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
 
-         var dialog  = DialogService.Show<UpdateCompanyDialog>("Update Company", parameters);
+         var dialog  = DialogService.Show<UpdateDriverDialog>("Update Driver", parameters);
         var result = await dialog.Result; 
 
         if (!result.Cancelled) 
         {
-            // save updated company to backend
-            var companyUpdate = new CompanyAccountUpdateDto {
-                Name = company.Name,
-                StreetAddress1 = company.StreetAddress1,
-                StreetAddress2 = company.StreetAddress2,
-                City = company.City,
-                State = company.State,
-                PostalCode = company.PostalCode,
-                ProfilePicUrl = company.ProfilePicUrl,
-                Email = company.Email,
-                PhonePrimary = company.PhonePrimary,
-                PhoneSecondary = company.PhoneSecondary,
+            // save updated driver to backend
+            var driverUpdate = new DriverUpdateDto {
+                FirstName = driver.FirstName,
+                LastName = driver.LastName,
+                Email = driver.Email,
+                Phone = driver.Phone,
+                CompanyId = driver.CompanyId
             };
-           await CompanyHttpRepository.UpdateCompanyAsync(company.Id, companyUpdate);
-        }  *@
+           await DriverHttpRepository.UpdateDriverAsync(driver.Id, driverUpdate);
+        }  
     }
 }

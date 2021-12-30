@@ -1,0 +1,42 @@
+@namespace WiiTrakClient.Features.ServiceProviders.Components
+
+ 
+<MudDialog>
+    <DialogContent>              
+        <div style="width: 400px;height:450px;overflow: auto;">
+            <MudForm Model="@NewStore">   
+                <MudTextField class="my-6" @bind-Value="NewStore.StoreName" Label="Store Name" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewStore.StoreNumber" Label="Store Number" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewStore.Email" Label="Email" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewStore.PhonePrimary" Label="Phone Primary" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewStore.PhoneSecondary" Label="Phone Secondary" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewStore.StreetAddress1" Label="Street Address 1" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewStore.StreetAddress2" Label="Street Address 2" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewStore.City" Label="City" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewStore.State" Label="State" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewStore.PostalCode" Label="Zip Code" Variant="Variant.Text"></MudTextField>  
+            </MudForm>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [Parameter]
+    public StoreCreationDto? NewStore {get; set;}
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    protected override void OnParametersSet() {
+            
+    }
+
+    void Submit() 
+    { 
+        MudDialog.Close(DialogResult.Ok(true)); 
+    }
+    void Cancel() => MudDialog.Cancel();
+}

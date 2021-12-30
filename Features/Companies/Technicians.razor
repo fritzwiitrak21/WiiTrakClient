@@ -1,6 +1,9 @@
-@page "/technicians"
+﻿@page "/company-technicians"
+@using WiiTrakClient.Features.Companies.Components
 
-@using WiiTrakClient.Features.SystemOwner.Components
+@namespace WiiTrakClient.Features.Companies
+
+<h3>Company Technicians</h3>
 
 @inject IJSRuntime JsRuntime
 @inject ITechnicianHttpRepository TechnicianRepository
@@ -10,10 +13,10 @@
 
 <div class="d-flex justify-end">
     <MudButton Variant="Variant.Filled" 
-        StartIcon="@Icons.Material.Filled.Add" 
-        IconColor="Color.Secondary" 
-        Size="Size.Large"
-        OnClick="OpenDialog">Add</MudButton>
+               StartIcon="@Icons.Material.Filled.Add" 
+               IconColor="Color.Secondary" 
+               Size="Size.Large"
+               OnClick="OpenDialog">Add</MudButton>
 </div>
 
 <div class="my-8">
@@ -37,14 +40,14 @@
         var parameters = new DialogParameters(); 
         parameters.Add("NewTechnician", _newTechnician);
 
-         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
 
-         var dialog  = DialogService.Show<AddTechnicianDialog>("Add Technician", parameters);
+        var dialog  = DialogService.Show<AddTechnicianDialog>("Add Technician", parameters);
         var result = await dialog.Result; 
 
         if (!result.Cancelled) 
         {
-            // add new technician to backend
+    // add new technician to backend
             var technicianCreation = new TechnicianCreationDto {
                 FirstName = _newTechnician.FirstName,
                 LastName = _newTechnician.LastName,
@@ -52,7 +55,7 @@
                 Phone = _newTechnician.Phone,
               
             };
-           await TechnicianRepository.CreateTechnicianAsync(_newTechnician);
+            await TechnicianRepository.CreateTechnicianAsync(_newTechnician);
         }  
     } 
 }

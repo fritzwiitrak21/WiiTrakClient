@@ -3,11 +3,10 @@
 @using WiiTrakClient.Features.Companies.Components
 
 @inject IJSRuntime JsRuntime
-@inject ICompanyHttpRepository CustomerRepository
+@inject ICompanyHttpRepository CompanyHttpRepository
 @inject IDialogService DialogService
 
-@inject ITechnicianHttpRepository TechnicianRepository
-@inject IDriverHttpRepository DriverRepository
+@inject IDriverHttpRepository DriverHttpRepository
 
 
 <h1>Drivers</h1>
@@ -29,39 +28,34 @@
 @code {
     List<DriverDto> _drivers = new ();
     
-    CompanyCreationDto _newCustomer = new();
+    DriverCreationDto _newDriver = new();
 
     protected override async Task OnInitializedAsync()
     {
-        _drivers = await DriverRepository.GetAllDriversAsync();  
+        _drivers = await DriverHttpRepository.GetAllDriversAsync();  
     }  
 
     private async Task OpenDialog() 
     {
-        @* var parameters = new DialogParameters(); 
-        parameters.Add("NewCompany", _newCompany);
+        var parameters = new DialogParameters(); 
+        parameters.Add("NewDriver", _newDriver);
 
          DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
 
-         var dialog  = DialogService.Show<AddCompanyDialog>("Add Company", parameters);
+         var dialog  = DialogService.Show<AddDriverDialog>("Add Driver", parameters);
         var result = await dialog.Result; 
 
         if (!result.Cancelled) 
         {
-            // add new customer to backend
-            var customerCreation = new CompanyAccountCreationDto {
-                Name = _newCompany.Name,
-                StreetAddress1 = _newCompany.StreetAddress1,
-                StreetAddress2 = _newCompany.StreetAddress2,
-                City = _newCompany.City,
-                State = _newCompany.State,
-                PostalCode = _newCompany.PostalCode,
-                ProfilePicUrl = _newCompany.ProfilePicUrl,
-                Email = _newCompany.Email,
-                PhonePrimary = _newCompany.PhonePrimary,
-                PhoneSecondary = _newCompany.PhoneSecondary,
+            // add new driver to backend
+            var driverCreation = new DriverCreationDto {
+                FirstName = _newDriver.FirstName,
+                LastName = _newDriver.LastName,
+                Email = _newDriver.Email,
+                Phone = _newDriver.Phone,
+                CompanyId = _newDriver.CompanyId
             };
-           await CompanyHttpRepository.CreateCompanyAsync(_newCompany);
-        }  *@
+           await DriverHttpRepository.CreateDriverAsync(_newDriver);
+        }  
     } 
 }
