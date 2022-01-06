@@ -21,4 +21,12 @@
         Seller,
         Lessor
     }
+
+    public enum AssetFilterOption {
+        All,
+        AtStore,
+        NeedsPickUp,
+        OnTruck,
+        Lost
+    }
 }

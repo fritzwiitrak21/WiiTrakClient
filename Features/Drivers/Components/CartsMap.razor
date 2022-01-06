@@ -1,7 +1,9 @@
-﻿
-@inject IJSRuntime JsRuntime
+﻿@using Models
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
 
-@if (Carts is null || Carts.Count() == 0) {
+@if (Carts is null || Carts.Count() == 0)
+{
     @* <h2 class="my-6">No carts need picking up!</h2> *@
 }
 
@@ -12,33 +14,55 @@
 
 @code {
     [Parameter]
-    public List<CartDto>? Carts {get; set;} = null;
+    public List<CartDto>? Carts { get; set; } = null;
+
+    [Parameter]
+    public EventCallback<CartChange> CartUpdatedEventCallback { get; set; }
+
+    [Inject]
+    IDialogService? DialogService { get; set; }
+
+    [Inject]
+    ICartHttpRepository? CartHttpRepository { get; set; }
+
+    [Parameter]
+    public List<RepairIssueDto>? RepairIssues { get; set; } = null;
+
+    private IJSObjectReference? _jsModule = null;
     private static Random _randomizer = new Random();
     private string[] _markerColors = new string[] {
-        "Brown","Blue","Burgundy","DarkBlue","Orange","#31906E","#254117","#CD7F32","#7E3517","#3D0C02","#7D0552","#36013F","Purple","MidnightBlue","DarkGreen","DarkRed","DodgerBlue",
-    };
+"Brown","Blue","Burgundy","DarkBlue","Orange","#31906E","#254117","#CD7F32","#7E3517","#3D0C02","#7D0552","#36013F","Purple","MidnightBlue","DarkGreen","DarkRed","DodgerBlue",
+};
 
     private Stack<string> _colorsStack = new Stack<string>();
 
     private bool _showNoCartsMessage = false;
 
-    protected override async Task OnInitializedAsync() 
+    protected override async Task OnInitializedAsync()
     {
     }
     protected override async Task OnParametersSetAsync()
     {
+        if (_jsModule is null)
+        {
+            _jsModule = await JSRuntime
+            .InvokeAsync<IJSObjectReference>("import", "./js/AzureMaps.js");
+        }
+
         Console.WriteLine("Carts: " + Carts.Count());
 
-        if (Carts is not null && Carts.Count() > 0) {
-            List<StoreCartMapMarker> storeCartMarkers = new List<StoreCartMapMarker>();  
-        
+        if (Carts is not null && Carts.Count() > 0)
+        {
+            List<StoreCartMapMarker> storeCartMarkers = new List<StoreCartMapMarker>();
+
             // get list of unique stores
-            var stores = Carts.GroupBy(x => x.Store.Id).Select(o => o.FirstOrDefault()).Select(x => x.Store).ToList();           
+            var stores = Carts.GroupBy(x => x.Store.Id).Select(o => o.FirstOrDefault()).Select(x => x.Store).ToList();
 
             foreach (var store in stores)
             {
                 string color = GetMarkerColor();
-                var storeCartMapMarker = new StoreCartMapMarker {
+                var storeCartMapMarker = new StoreCartMapMarker
+                {
                     StoreId = store.Id,
                     StoreName = store.StoreName,
                     PopupContent = store.StoreName,
@@ -52,7 +76,8 @@
                 var storeCarts = Carts.Where(x => x.StoreId == store.Id).ToList();
                 foreach (var storeCart in storeCarts)
                 {
-                    storeCartMapMarker.CartMarkers.Add(new CartMarkerInfo {
+                    storeCartMapMarker.CartMarkers.Add(new CartMarkerInfo
+                    {
                         CartId = storeCart.Id,
                         Lat = storeCart.TrackingDevice.Latitude,
                         Long = storeCart.TrackingDevice.Longitude,
@@ -64,30 +89,115 @@
                 storeCartMarkers.Add(storeCartMapMarker);
             }
 
-            await JsRuntime.GetMap(storeCartMarkers);
-        } else {
-           Console.WriteLine("No carts to map");           
+            var dotNetObjectRef = DotNetObjectReference.Create(this);
+            await _jsModule.InvokeVoidAsync("getMap", storeCartMarkers, dotNetObjectRef);
+            //await _jsModule.InvokeVoidAsync("callShowUpdateCartDialog", dotNetObjectRef);
+        }
+        else
+        {
+            Console.WriteLine("No carts to map");
         }
     }
 
-       protected override void OnAfterRender(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
         {
-            if (firstRender)
-            {
-                _showNoCartsMessage = true;
-                StateHasChanged();
-            }
+            _showNoCartsMessage = true;
+            StateHasChanged();
+        }
+    }
+
+    private string GetMarkerColor()
+    {
+        string color = "";
+        if (_colorsStack.Count() == 0)
+        {
+            _colorsStack = new Stack<string>(_markerColors);
+            color = _colorsStack.Pop();
+        }
+        else
+        {
+            color = _colorsStack.Pop();
+        }
+        return color;
+    }
+
+    public async Task TestCall()
+    {
+
+        if (_jsModule is null)
+        {
+            _jsModule = await JSRuntime
+            .InvokeAsync<IJSObjectReference>("import", "./js/AzureMaps.js");
         }
 
-        private string GetMarkerColor() 
+        var dotNetObjectRef = DotNetObjectReference.Create(this);
+        await _jsModule.InvokeVoidAsync("callShowUpdateCartDialog", dotNetObjectRef);
+    }
+
+    [JSInvokable]
+    public async Task ShowUpdateCartDialog(Guid cartId)
+    {
+        System.Console.WriteLine($"show update cart dialog: {cartId}");
+
+        await OpenUpdateCartDialog(cartId);
+    }
+
+    public async Task OpenUpdateCartDialog(Guid cartId)
+    {
+        var cart = Carts.FirstOrDefault(x => x.Id == cartId);
+
+        var cartPreUpdate = cart;
+
+        Console.WriteLine("cart id: " + cart.Id);
+
+        var parameters = new DialogParameters();
+        parameters.Add("Cart", cart);
+        parameters.Add("RepairIssues", RepairIssues);
+
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+
+        if (DialogService is null) return;
+
+        var dialog = DialogService.Show<UpdateCartDialog>("Update Cart", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
         {
-            string color = "";
-            if (_colorsStack.Count() == 0) {
-                _colorsStack = new Stack<string>(_markerColors);
-                color = _colorsStack.Pop();
-            }else {
-                color = _colorsStack.Pop();
-            }
-            return color;
+            // save updated cart to backend
+            var cartUpdate = new CartUpdateDto
+            {
+                ManufacturerName = cart.ManufacturerName,
+                DateManufactured = cart.DateManufactured,
+                OrderedFrom = cart.OrderedFrom,
+                Condition = cart.Condition,
+                Status = cart.Status,
+                PicUrl = cart.PicUrl,
+                IsProvisioned = cart.IsProvisioned,
+                BarCode = cart.BarCode,
+                StoreId = cart.StoreId
+            };
+            if (CartHttpRepository is null) return;
+            await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
+
+            // pass update changes back to parent for driver summary
+            var cartChange = new CartChange
+            {
+                Id = cart.Id,
+                Status = cart.Status,
+                Condition = cart.Condition,
+                CreatedAt = DateTime.Now
+            };
+            await CartUpdatedEventCallback.InvokeAsync(cartChange);
         }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_jsModule is not null)
+        {
+            await _jsModule.DisposeAsync();
+        }
+    }
 }

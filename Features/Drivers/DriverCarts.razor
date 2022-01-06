@@ -1,106 +1,103 @@
 @page "/driver-carts"
-
 @using WiiTrakClient.Features.Drivers.Components
 
-@inject IJSRuntime JsRuntime
-@inject ICartHttpRepository CartRepository
-@inject IDriverHttpRepository DriverRepository
+
 
 <MudGrid class="my-8">
     <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="DriverDto" 
-            Label="Select Driver" 
-            ValueChanged="(value) => HandleDriverSelected(value)" 
+        <MudSelect T="DriverDto" Label="Select Driver" ValueChanged="(value) => HandleDriverSelected(value)"
             AnchorOrigin="Origin.BottomCenter">
-                @foreach (var driver in _drivers)
-                {
-                    <MudSelectItem T="DriverDto" Value="@driver">@driver.FirstName @driver.LastName</MudSelectItem>
-                }                
+            @foreach (var driver in _drivers)
+            {
+                <MudSelectItem T="DriverDto" Value="@driver">@driver.FirstName @driver.LastName</MudSelectItem>
+            }
         </MudSelect>
     </MudItem>
 </MudGrid>
 
 
+<div class="my-8">
+    <!-- driver summary -->
+    <!-- Show/Hide summary button (show by default) -->
+    @* <MudButton OnClick="SaveSummary">Save Summary</MudButton>
+        <MudButton OnClick="ReadSummary">Read Summary</MudButton> *@
+
+    @if (_driverSummary is not null)
+    {
+        <div class="d-flex justify-start">
+            <MudCard Class="pa-6">
+                <MudCardHeader>
+                    <MudText Typo="Typo.h5">Driver Summary</MudText>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudGrid Spacing="4" Justify="Justify.FlexStart">
+                        <MudItem><MudText Typo="Typo.h6">Carts Out: @_driverSummary.CartsOut</MudText></MudItem>
+                        <MudItem><MudText Typo="Typo.h6">On Truck: @_driverSummary.CartsOnTruck</MudText></MudItem>
+                        <MudItem><MudText Typo="Typo.h6">Delivered: @_driverSummary.CartsDelivered</MudText></MudItem>
+                        <MudItem><MudText Typo="Typo.h6">Lost: @_driverSummary.CartsLost</MudText></MudItem>
+                        <MudItem><MudText Typo="Typo.h6">Good Condition: @_driverSummary.CartsGood</MudText></MudItem>
+                        <MudItem><MudText Typo="Typo.h6">Needs Repair: @_driverSummary.CartsNeedRepair</MudText></MudItem>
+                        <MudItem><MudText Typo="Typo.h6">Trash: @_driverSummary.CartsTrash</MudText></MudItem>
+                    </MudGrid>
+                </MudCardContent>
+            </MudCard>
+        </div>     
+    }
+</div>
+
+
 <h1>Carts</h1>
-
-<MudText class="my-8" Typo="Typo.h5">Carts out: @cartsOutNumber</MudText>
-
 
 <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
     <MudIconButton Icon="@Icons.Material.Filled.Map" OnClick="ShowMapView"></MudIconButton>
     <MudIconButton Icon="@Icons.Material.Filled.List" OnClick="ShowListView"></MudIconButton>
-    @* <MudIconButton Icon="@Icons.Material.Filled.GridView" OnClick="ShowGridView"></MudIconButton> *@
 </MudButtonGroup>
+
+
+@if (_view == ViewOption.List && _carts.Any(x => x.Status == AssetStatus.PickedUp))
+{
+    <div class="d-flex justify-center mt-6 mb-4">
+        <MudChipSet @bind-SelectedChip="listFilterChip" Filter="true" Mandatory="@true">
+            <MudChip Text="@listFilterOption1" Default="true" Color="Color.Primary" Variant="Variant.Filled">
+                @listFilterOption1</MudChip>
+            <MudChip Text="@listFilterOption2" Color="Color.Secondary" Variant="Variant.Filled">@listFilterOption2</MudChip>
+        </MudChipSet>
+    </div>
+}
+
+
 
 <div class="mt-8">
     @switch (_view)
     {
-        case ViewOption.Map: 
-                <CartsMap Carts=@_carts></CartsMap>               
+        case ViewOption.Map:
+           <CartsMap Carts=@_filteredCarts RepairIssues="@_repairIssues" CartUpdatedEventCallback="CartUpdatedHandler"></CartsMap>
             break;
-        case ViewOption.List:             
-                <CartsList Carts=@_carts></CartsList>                      
+        case ViewOption.List:
+
+            if (listFilterChip is not null)
+            {
+                if (listFilterChip.Text.Equals(listFilterOption1))
+                {
+                    _filteredCarts = _carts.Where(x => x.Status == AssetStatus.OutsideGeofence).ToList();
+                }
+                else if (listFilterChip.Text.Equals(listFilterOption2))
+                {
+                    _filteredCarts = _carts.Where(x => x.Status == AssetStatus.PickedUp).ToList();
+                }
+            }
+
+            // if nothing in filtered carts list, then do default filtering
+            if (_filteredCarts.Count() == 0)
+            {
+                _filteredCarts = _carts.Where(x => x.Status == AssetStatus.OutsideGeofence).ToList();
+            }
+
+            <CartsList Carts="@_filteredCarts" RepairIssues="@_repairIssues" CartUpdatedEventCallback="CartUpdatedHandler"></CartsList>
+
             break;
-        case ViewOption.Grid:           
-                <CartsGrid Carts=@_carts></CartsGrid>                   
+        default:
+            <CartsMap Carts=@_filteredCarts RepairIssues="@_repairIssues" CartUpdatedEventCallback="CartUpdatedHandler"></CartsMap>
             break;
-        default:           
-                <CartsMap Carts=@_carts></CartsMap>         
-            break;
-    } 
+    }
 </div>
-
-
-@code {
-    DriverDto _selectedDriver = new ();
-    List<DriverDto> _drivers = new ();
-    List<CartDto> _carts = new ();
-    private enum ViewOption {
-        Map,
-        List,
-        Grid
-    }
-
-    ViewOption _view = ViewOption.Map;
-
-    string cartsOutNumber = "0";
-
-    protected override async Task OnInitializedAsync()
-    {
-        _drivers = await DriverRepository.GetAllDriversAsync();
-        await GetCartsByDriverId(_drivers[0].Id);
-        _selectedDriver = _drivers[0];
-    }
-
-    private async Task HandleDriverSelected(DriverDto driver) 
-    {
-        System.Console.WriteLine(driver.Id);
-        await GetCartsByDriverId(driver.Id);
-        _selectedDriver = driver;
-    }
-
-    private async Task GetCartsByDriverId(Guid id) 
-    {
-        _carts = await CartRepository.GetCartsByDriverIdAsync(id);
-        Console.WriteLine(_carts.Count());        
-        cartsOutNumber = _carts is null ? "0" : _carts.Count().ToString();
-    }
-
-    private void ShowMapView()
-    {
-        Console.WriteLine("map view");
-        _view = ViewOption.Map;
-    }
-
-    private void ShowListView()
-    {
-        Console.WriteLine("list view");
-        _view = ViewOption.List;
-    }
-
-    private void ShowGridView()
-    {
-        Console.WriteLine("grid view");
-        _view = ViewOption.Grid;
-    }
-}

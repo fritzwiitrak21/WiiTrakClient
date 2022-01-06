@@ -1,6 +1,7 @@
-var map;
+export function getMap(storeCartMarkers, dotNetObjectRef) { 
+    
+    let dotNetObjectReference = dotNetObjectRef;
 
-function GetMap(storeCartMarkers) { 
     const stringifiedObj = JSON.stringify(storeCartMarkers);
     const storeCartMarkersObj = JSON.parse(stringifiedObj);
 
@@ -9,7 +10,7 @@ function GetMap(storeCartMarkers) {
     const centerLat = storeCartMarkersObj[0].storeLat;
 
     //Initialize a map instance.
-    map = new atlas.Map('myMap', {
+    let map = new atlas.Map('myMap', {
         view: 'Auto',
         zoom: 10,
         center: [centerLong, centerLat],
@@ -51,7 +52,7 @@ function GetMap(storeCartMarkers) {
 
             //Add a click event to toggle the popup.
             map.events.add('click',newStoreMarker, () => {
-                newStoreMarker.togglePopup();
+                newStoreMarker.togglePopup();                
             });
 
             map.markers.add(newStoreMarker);
@@ -74,11 +75,17 @@ function GetMap(storeCartMarkers) {
 
                  //Add a click event to toggle the popup.
                 map.events.add('click',newCartMarker, () => {
-                    newCartMarker.togglePopup();
+                    //newCartMarker.togglePopup();
+                    dotNetObjectReference.invokeMethodAsync("ShowUpdateCartDialog", storeMarkerInfo.cartMarkers[j].cartId);
                 });
 
                 map.markers.add(newCartMarker);
             }
         }
     });   
+}
+
+
+export function callShowUpdateCartDialog(dotNetObjRef) {
+    dotNetObjRef.invokeMethodAsync("ShowUpdateCartDialog", "called from js");
 }
