@@ -11,7 +11,7 @@ using WiiTrakClient.HttpRepository.Contracts;
 
 namespace WiiTrakClient.Features.Drivers.Components
 {
-    public partial class CartsList
+    public partial class CartsList: ComponentBase
     {
         [Parameter]
         public List<CartDto>? Carts { get; set; } = null;

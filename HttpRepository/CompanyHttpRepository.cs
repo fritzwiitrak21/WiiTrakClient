@@ -4,7 +4,7 @@ using WiiTrakClient.Services;
 
 namespace WiiTrakClient.HttpRepository
 {
-    public class CompanyHttpRepository: ICompanyHttpRepository
+    public class CompanyHttpRepository : ICompanyHttpRepository
     {
         private readonly IHttpService _httpService;
         private const string ControllerName = "companies";
@@ -28,7 +28,7 @@ namespace WiiTrakClient.HttpRepository
 
         public async Task<List<CompanyDto>> GetChildCompaniesAsync(Guid id)
         {
-            string url = $"{_apiUrl}/Company/{id}";
+            string url = $"{_apiUrl}/company/{id}";
 
             var response = await _httpService.Get<List<CompanyDto>>(url);
             if (!response.Success)
@@ -43,6 +43,20 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/{id}";
 
             var response = await _httpService.Get<CompanyDto>(url);
+            if (!response.Success)
+            {
+                throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
+
+        public async Task<CompanyReportDto> GetCompanyReportAsync(Guid id)
+        {
+            string url = $"{_apiUrl}/report/{id}";
+
+            Console.WriteLine("company report url: " + url);
+
+            var response = await _httpService.Get<CompanyReportDto>(url);
             if (!response.Success)
             {
                 throw new ApplicationException(await response.GetBody());

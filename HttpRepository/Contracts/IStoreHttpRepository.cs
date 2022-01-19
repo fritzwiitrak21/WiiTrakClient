@@ -8,6 +8,12 @@ namespace WiiTrakClient.HttpRepository.Contracts
 
         Task<StoreDto> GetStoreByIdAsync(Guid id);
 
+        Task<List<StoreDto>> GetStoresByServiceProviderId(Guid serviceProviderId);
+
+        Task<List<StoreDto>> GetStoresByCorporateId(Guid corporateId);
+
+        Task<List<StoreDto>> GetStoresByCompanyId(Guid companyId);
+
         Task CreateStoreAsync(StoreCreationDto store);
 
         Task UpdateStoreAsync(Guid id, StoreUpdateDto store);

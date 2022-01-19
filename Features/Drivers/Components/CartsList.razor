@@ -31,16 +31,16 @@
         <MudTd DataLabel="Status">
             @switch (context.Status)
             {
-                case AssetStatus.InsideGeofence:
+                case CartStatus.InsideGeofence:
                     <span style="background:#90ee90;padding:2px;">Delivered</span>
                     break;
-                case AssetStatus.OutsideGeofence:
+                case CartStatus.OutsideGeofence:
                     <span style="background:#ffffe0;padding:2px;">Needs Pick Up</span>
                     break;
-                case AssetStatus.PickedUp:
+                case CartStatus.PickedUp:
                     <span style="background:#90ee90;padding:2px;">On Truck</span>
                     break;
-                case AssetStatus.Lost:
+                case CartStatus.Lost:
                     <span style="background:#ff474c;padding:2px;">Lost</span>
                     break;
             }
@@ -49,13 +49,13 @@
         <MudTd DataLabel="Condition">
             @switch (context.Condition)
             {
-                case AssetCondition.Good:
+                case CartCondition.Good:
                     <span style="background:#90ee90;padding:2px;">Good</span>
                     break;
-                case AssetCondition.Damage:
+                case CartCondition.Damage:
                     <span style="background:#ff474c;padding:2px;">Damage</span>
                     break;
-                case AssetCondition.DamageBeyondRepair:
+                case CartCondition.DamageBeyondRepair:
                     <span style="background:#ff474c;padding:2px;">Trash</span>
                     break;
             }

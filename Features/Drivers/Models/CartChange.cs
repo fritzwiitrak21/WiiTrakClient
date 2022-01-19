@@ -10,9 +10,9 @@ namespace WiiTrakClient.Features.Drivers.Models
     {   
         public Guid Id { get; set; }
 
-        public AssetCondition Condition { get; set; }
+        public CartCondition Condition { get; set; }
 
-        public AssetStatus Status { get; set; }
+        public CartStatus Status { get; set; }
 
         public DateTime CreatedAt { get; set; }
         

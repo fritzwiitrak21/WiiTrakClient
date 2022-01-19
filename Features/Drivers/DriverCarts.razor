@@ -54,7 +54,7 @@
 </MudButtonGroup>
 
 
-@if (_view == ViewOption.List && _carts.Any(x => x.Status == AssetStatus.PickedUp))
+@if (_view == ViewOption.List && _carts.Any(x => x.Status == CartStatus.PickedUp))
 {
     <div class="d-flex justify-center mt-6 mb-4">
         <MudChipSet @bind-SelectedChip="listFilterChip" Filter="true" Mandatory="@true">
@@ -79,18 +79,18 @@
             {
                 if (listFilterChip.Text.Equals(listFilterOption1))
                 {
-                    _filteredCarts = _carts.Where(x => x.Status == AssetStatus.OutsideGeofence).ToList();
+                    _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
                 }
                 else if (listFilterChip.Text.Equals(listFilterOption2))
                 {
-                    _filteredCarts = _carts.Where(x => x.Status == AssetStatus.PickedUp).ToList();
+                    _filteredCarts = _carts.Where(x => x.Status == CartStatus.PickedUp).ToList();
                 }
             }
 
             // if nothing in filtered carts list, then do default filtering
             if (_filteredCarts.Count() == 0)
             {
-                _filteredCarts = _carts.Where(x => x.Status == AssetStatus.OutsideGeofence).ToList();
+                _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
             }
 
             <CartsList Carts="@_filteredCarts" RepairIssues="@_repairIssues" CartUpdatedEventCallback="CartUpdatedHandler"></CartsList>

@@ -1,0 +1,75 @@
+﻿@using WiiTrakClient.Features.Companies.Components
+
+
+@namespace WiiTrakClient.Features.Companies.Components
+
+<MudTable Items="@Carts" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@_listIsLoading"
+    LoadingProgressColor="Color.Primary">
+    <HeaderContent>
+        <MudTh>
+            Photo
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel InitialDirection="@SortDirection.Ascending"
+                SortBy="new Func<CartDto, object>(x => x.Store.StoreName)">Store
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CartDto, object>(x=>x.Status)">Status</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CartDto, object>(x=>x.Condition)">Condition</MudTableSortLabel>
+        </MudTh>
+        <MudTh></MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="Photo">
+            <img src="@context.PicUrl" width="48" height="48" />
+        </MudTd>
+        <MudTd DataLabel="Store">@context.Store.StoreName #@context.Store.StoreNumber</MudTd>
+        <MudTd DataLabel="Status">
+            @switch (context.Status)
+            {
+                case CartStatus.InsideGeofence:
+                    <span style="background:#90ee90;padding:2px;">Delivered</span>
+                    break;
+                case CartStatus.OutsideGeofence:
+                    <span style="background:#ffffe0;padding:2px;">Needs Pick Up</span>
+                    break;
+                case CartStatus.PickedUp:
+                    <span style="background:#90ee90;padding:2px;">On Truck</span>
+                    break;
+                case CartStatus.Lost:
+                    <span style="background:#ff474c;padding:2px;">Lost</span>
+                    break;
+            }
+
+        </MudTd>
+        <MudTd DataLabel="Condition">
+            @switch (context.Condition)
+            {
+                case CartCondition.Good:
+                    <span style="background:#90ee90;padding:2px;">Good</span>
+                    break;
+                case CartCondition.Damage:
+                    <span style="background:#ff474c;padding:2px;">Damage</span>
+                    break;
+                case CartCondition.DamageBeyondRepair:
+                    <span style="background:#ff474c;padding:2px;">Trash</span>
+                    break;
+            }
+        </MudTd>
+        <MudTd DataLabel="">
+            <MudButton StartIcon="@Icons.Material.Filled.LocationOn" Variant="Variant.Filled" Color="Color.Secondary"
+                OnClick="((e) => OpenCartDetailsDialog(context))">View
+            </MudButton>
+
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+    </PagerContent>
+</MudTable>
+

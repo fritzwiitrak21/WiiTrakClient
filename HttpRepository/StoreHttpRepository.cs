@@ -25,11 +25,21 @@ namespace WiiTrakClient.HttpRepository
             }
             return response.Response;
         }
-
-        public async Task<List<StoreDto>> GetStoresByDesignerIdAsync(Guid id)
+        public async Task<StoreDto> GetStoreByIdAsync(Guid id)
         {
-            string url = $"{_apiUrl}/StoresByDesignerId/{id}";
+            string url = $"{_apiUrl}/{id}";
 
+            var response = await _httpService.Get<StoreDto>(url);
+            if (!response.Success)
+            {
+                throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
+
+        public async Task<List<StoreDto>> GetStoresByServiceProviderId(Guid serviceProviderId)
+        {
+            string url = $"{_apiUrl}/ServiceProvider/{serviceProviderId}";
             var response = await _httpService.Get<List<StoreDto>>(url);
             if (!response.Success)
             {
@@ -38,11 +48,21 @@ namespace WiiTrakClient.HttpRepository
             return response.Response;
         }
 
-        public async Task<StoreDto> GetStoreByIdAsync(Guid id)
+        public async Task<List<StoreDto>> GetStoresByCorporateId(Guid corporateId)
         {
-            string url = $"{_apiUrl}/{id}";
+              string url = $"{_apiUrl}/Corporate/{corporateId}";
+            var response = await _httpService.Get<List<StoreDto>>(url);
+            if (!response.Success)
+            {
+                throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
 
-            var response = await _httpService.Get<StoreDto>(url);
+        public async Task<List<StoreDto>> GetStoresByCompanyId(Guid companyId)
+        {
+            string url = $"{_apiUrl}/Company/{companyId}";
+            var response = await _httpService.Get<List<StoreDto>>(url);
             if (!response.Success)
             {
                 throw new ApplicationException(await response.GetBody());

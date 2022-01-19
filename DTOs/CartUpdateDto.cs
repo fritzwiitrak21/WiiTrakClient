@@ -8,11 +8,11 @@ namespace WiiTrakClient.DTOs
 
         public DateTime DateManufactured { get; set; }
 
-        public AssetOrderedFrom OrderedFrom { get; set; }
+        public CartOrderedFrom OrderedFrom { get; set; }
 
-        public AssetCondition Condition { get; set; }
+        public CartCondition Condition { get; set; }
 
-        public AssetStatus Status { get; set; }
+        public CartStatus Status { get; set; }
 
         public string PicUrl { get; set; } = string.Empty;
 

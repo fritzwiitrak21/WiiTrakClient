@@ -8,7 +8,7 @@ namespace WiiTrakClient.HttpRepository
     public class CartHttpRepository: ICartHttpRepository
     {
         private readonly IHttpService _httpService;
-        private const string ControllerName = "assets";
+        private const string ControllerName = "carts";
         private readonly string _apiUrl = "";
 
         public CartHttpRepository(IHttpService httpService)
@@ -27,9 +27,51 @@ namespace WiiTrakClient.HttpRepository
             return response.Response;
         }
 
+         public async Task<List<CartDto>> GetCartsByStoreIdAsync(Guid storeId)
+        {
+            string url = $"{_apiUrl}/store/{storeId}";
+
+            System.Console.WriteLine("url:" + url);
+
+            var response = await _httpService.Get<List<CartDto>>(url);
+            if (!response.Success)
+            {
+                throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
+
         public async Task<List<CartDto>> GetCartsByDriverIdAsync(Guid driverId)
         {
-            string url = $"{_apiUrl}/Driver/{driverId}";
+            string url = $"{_apiUrl}/driver/{driverId}";
+
+            System.Console.WriteLine("url:" + url);
+
+            var response = await _httpService.Get<List<CartDto>>(url);
+            if (!response.Success)
+            {
+                throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
+
+          public async Task<List<CartDto>> GetCartsByCorporateIdAsync(Guid corporateId)
+        {
+            string url = $"{_apiUrl}/corporate/{corporateId}";
+
+            System.Console.WriteLine("url:" + url);
+
+            var response = await _httpService.Get<List<CartDto>>(url);
+            if (!response.Success)
+            {
+                throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
+
+          public async Task<List<CartDto>> GetCartsByCompanyIdAsync(Guid companyId)
+        {
+            string url = $"{_apiUrl}/company/{companyId}";
 
             System.Console.WriteLine("url:" + url);
 

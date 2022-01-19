@@ -30,7 +30,7 @@ builder.Services.AddScoped<ISystemOwnerHttpRepository, SystemOwnerHttpRepository
 builder.Services.AddScoped<ITrackingDeviceHttpRepository, TrackingDeviceHttpRepository>();
 builder.Services.AddScoped<IStoreHttpRepository, StoreHttpRepository>();
 builder.Services.AddScoped<IRepairIssueHttpRepository, RepairIssueHttpRepository>();
-
+builder.Services.AddScoped<ICorporateHttpRepository, CorporateHttpRepository>();
 
 builder.Services.AddMudServices();
 builder.Services.AddSweetAlert2(options =>

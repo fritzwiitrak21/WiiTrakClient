@@ -46,7 +46,7 @@
         if (_jsModule is null)
         {
             _jsModule = await JSRuntime
-            .InvokeAsync<IJSObjectReference>("import", "./js/AzureMaps.js");
+            .InvokeAsync<IJSObjectReference>("import", "./js/StoresCartsMap.js");
         }
 
         Console.WriteLine("Carts: " + Carts.Count());

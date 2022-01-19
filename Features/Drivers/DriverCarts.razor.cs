@@ -81,7 +81,7 @@ namespace WiiTrakClient.Features.Drivers
         private async Task GetCartsByDriverId(Guid id)
         {
             _carts = await CartRepository.GetCartsByDriverIdAsync(id);
-            _filteredCarts = _carts.Where(x => x.Status == AssetStatus.OutsideGeofence).ToList();
+            _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
             Console.WriteLine(_carts.Count());
             await UpdateDriverSummary();
         }
@@ -107,16 +107,16 @@ namespace WiiTrakClient.Features.Drivers
             {
                 if (listFilterChip.Text.Equals(listFilterOption1))
                 {
-                    _filteredCarts = _carts.Where(x => x.Status == AssetStatus.OutsideGeofence).ToList();
+                    _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
                 }
                 else if (listFilterChip.Text.Equals(listFilterOption2))
                 {
-                    _filteredCarts = _carts.Where(x => x.Status == AssetStatus.PickedUp).ToList();
+                    _filteredCarts = _carts.Where(x => x.Status == CartStatus.PickedUp).ToList();
                 }
             }
             else
             {
-                _filteredCarts = _carts.Where(x => x.Status == AssetStatus.OutsideGeofence).ToList();
+                _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
             }
 
             await UpdateDriverSummary(cartChange);
@@ -141,8 +141,8 @@ namespace WiiTrakClient.Features.Drivers
 
             if (_cartChanges is null) return;
 
-             _driverSummary.CartsOut = _carts.Count(x => x.Status == AssetStatus.OutsideGeofence);
-            _driverSummary.CartsOnTruck = _carts.Count(x => x.Status == AssetStatus.PickedUp);
+             _driverSummary.CartsOut = _carts.Count(x => x.Status == CartStatus.OutsideGeofence);
+            _driverSummary.CartsOnTruck = _carts.Count(x => x.Status == CartStatus.PickedUp);
 
             if (cartChange is null)
             {
@@ -165,58 +165,58 @@ namespace WiiTrakClient.Features.Drivers
             // if only one cart then update using switch
             switch (cartChange.Status)
             {
-                case AssetStatus.InsideGeofence:
+                case CartStatus.InsideGeofence:
                     _driverSummary.CartsDelivered++;
                     break;
-                case AssetStatus.OutsideGeofence:
+                case CartStatus.OutsideGeofence:
                     //_driverSummary.CartsOut++;
                     break;
-                case AssetStatus.PickedUp:
+                case CartStatus.PickedUp:
                     //_driverSummary.CartsOnTruck++;
                     break;
-                case AssetStatus.Lost:
+                case CartStatus.Lost:
                     _driverSummary.CartsLost++;
                     break;
             }
 
             switch (lastCartChange?.Status)
             {
-                case AssetStatus.InsideGeofence:
+                case CartStatus.InsideGeofence:
                     _driverSummary.CartsDelivered--;
                     break;
-                case AssetStatus.OutsideGeofence:
+                case CartStatus.OutsideGeofence:
                     //_driverSummary.CartsOut--;
                     break;
-                case AssetStatus.PickedUp:
+                case CartStatus.PickedUp:
                     //_driverSummary.CartsOnTruck--;
                     break;
-                case AssetStatus.Lost:
+                case CartStatus.Lost:
                     _driverSummary.CartsLost--;
                     break;
             }
 
             switch (cartChange.Condition)
             {
-                case AssetCondition.Good:
+                case CartCondition.Good:
                     _driverSummary.CartsGood++;
                     break;
-                case AssetCondition.Damage:
+                case CartCondition.Damage:
                     _driverSummary.CartsNeedRepair++;
                     break;
-                case AssetCondition.DamageBeyondRepair:
+                case CartCondition.DamageBeyondRepair:
                     _driverSummary.CartsTrash++;
                     break;
             }
 
             switch (lastCartChange?.Condition)
             {
-                case AssetCondition.Good:
+                case CartCondition.Good:
                     _driverSummary.CartsGood--;
                     break;
-                case AssetCondition.Damage:
+                case CartCondition.Damage:
                     _driverSummary.CartsNeedRepair--;
                     break;
-                case AssetCondition.DamageBeyondRepair:
+                case CartCondition.DamageBeyondRepair:
                     _driverSummary.CartsTrash--;
                     break;
             }

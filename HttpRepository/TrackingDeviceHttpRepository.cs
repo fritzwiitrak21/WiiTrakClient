@@ -26,18 +26,6 @@ namespace WiiTrakClient.HttpRepository
             return response.Response;
         }
 
-        public async Task<List<TrackingDeviceDto>> GetTrackingDevicesByDesignerIdAsync(Guid id)
-        {
-            string url = $"{_apiUrl}/TrackingDevicesByDesignerId/{id}";
-
-            var response = await _httpService.Get<List<TrackingDeviceDto>>(url);
-            if (!response.Success)
-            {
-                throw new ApplicationException(await response.GetBody());
-            }
-            return response.Response;
-        }
-
         public async Task<TrackingDeviceDto> GetTrackingDeviceByIdAsync(Guid id)
         {
             string url = $"{_apiUrl}/{id}";

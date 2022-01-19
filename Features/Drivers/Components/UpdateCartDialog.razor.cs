@@ -50,11 +50,11 @@ namespace WiiTrakClient.Features.Drivers.Components
         {
             if (_selectedStatusInt > -1)
             {
-                Cart.Status = (AssetStatus)_selectedStatusInt;
+                Cart.Status = (CartStatus)_selectedStatusInt;
             }
             if (_seletedConditionInt > -1)
             {
-                Cart.Condition = (AssetCondition)_seletedConditionInt;
+                Cart.Condition = (CartCondition)_seletedConditionInt;
             }
 
             MudDialog.Close(DialogResult.Ok(true));

@@ -26,18 +26,6 @@ namespace WiiTrakClient.HttpRepository
             return response.Response;
         }
 
-        public async Task<List<SystemOwnerDto>> GetSystemOwnersByDesignerIdAsync(Guid id)
-        {
-            string url = $"{_apiUrl}/SystemOwnersByDesignerId/{id}";
-
-            var response = await _httpService.Get<List<SystemOwnerDto>>(url);
-            if (!response.Success)
-            {
-                throw new ApplicationException(await response.GetBody());
-            }
-            return response.Response;
-        }
-
         public async Task<SystemOwnerDto> GetSystemOwnerByIdAsync(Guid id)
         {
             string url = $"{_apiUrl}/{id}";

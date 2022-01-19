@@ -26,18 +26,6 @@ namespace WiiTrakClient.HttpRepository
             return response.Response;
         }
 
-        public async Task<List<TechnicianDto>> GetTechniciansByDesignerIdAsync(Guid id)
-        {
-            string url = $"{_apiUrl}/TechniciansByDesignerId/{id}";
-
-            var response = await _httpService.Get<List<TechnicianDto>>(url);
-            if (!response.Success)
-            {
-                throw new ApplicationException(await response.GetBody());
-            }
-            return response.Response;
-        }
-
         public async Task<TechnicianDto> GetTechnicianByIdAsync(Guid id)
         {
             string url = $"{_apiUrl}/{id}";
