@@ -1,0 +1,32 @@
+@page "/driver-delivery-tickets"
+
+@using WiiTrakClient.Features.Drivers.Components
+
+
+<MudGrid class="my-8">
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect T="DriverDto" Label="Select Driver" ValueChanged="(value) => HandleDriverSelected(value)"
+            AnchorOrigin="Origin.BottomCenter">
+            @foreach (var driver in _drivers)
+            {
+                <MudSelectItem T="DriverDto" Value="@driver">@driver.FirstName @driver.LastName</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+<h3>Delivery Tickets</h3>
+
+<div class="d-flex justify-end my-8 mr-8">
+   <MudIconButton Icon="@Icons.Material.Filled.Add" 
+                  Variant="Variant.Filled" 
+                  Color="Color.Primary" 
+                  Size="Size.Large"
+                  OnClick="OpenDialog" />  
+</div>
+
+<DeliveryTicketsList DeliveryTickets="_deliveryTickets" />
+
+@code {
+
+}

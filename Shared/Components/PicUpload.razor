@@ -1,0 +1,48 @@
+@page "/pic-upload"
+
+@namespace WiiTrakClient.Shared.Components
+@using System.Net.Http.Headers
+
+<InputFile id="fileInput" OnChange="UploadFile" capture hidden accept=".jpg, .jpeg, .png" />
+
+<MudFab HtmlTag="label"
+        Color="Color.Secondary"
+        Icon="@Icons.Filled.PhotoCamera"
+        Label="Take Picture"
+        for="fileInput" />
+
+@code {
+    [Parameter]
+    public EventCallback<string> OnPicUploadComplete {get; set;}
+
+    [Parameter]
+    public EventCallback OnPicUploadStart {get; set;}
+
+    [Inject]
+    public IPicUploadHttpRepository PicUploadHttpRepository {get; set;}
+
+    IBrowserFile? _imageFile = null;
+    private async Task UploadFile(InputFileChangeEventArgs e)
+    {
+        await OnPicUploadStart.InvokeAsync();
+        
+        _imageFile = e.File;
+
+        if (_imageFile != null)
+        {
+            var resizedFile = await _imageFile.RequestImageFileAsync("image/png", 300, 300);
+            using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
+            {
+                var content = new MultipartFormDataContent();
+                content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+                content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", _imageFile.Name);
+                string imageUrl = await PicUploadHttpRepository.UploadImage(content);
+                await OnPicUploadComplete.InvokeAsync(imageUrl);                
+            }
+        }
+        else 
+        {
+            await OnPicUploadComplete.InvokeAsync("");
+        }
+    }
+}

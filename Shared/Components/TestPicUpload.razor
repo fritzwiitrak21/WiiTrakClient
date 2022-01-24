@@ -1,0 +1,22 @@
+@page "/test-pic-upload"
+
+<h3>Test PicUpload</h3>
+
+<PicUpload OnPicUploadComplete="@PicUploadComplete"></PicUpload>
+
+<MudListItem Icon="@Icons.Filled.AttachFile">
+    @_fileUrl
+</MudListItem>
+
+<div class="d-flex justify-center mt-6">
+    <img src="@_fileUrl" width="300" height="300" />
+</div>
+
+
+@code {
+    private string _fileUrl = "";
+    private void PicUploadComplete(string url)
+    {
+        _fileUrl = url;
+    }
+}
