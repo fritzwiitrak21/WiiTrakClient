@@ -25,7 +25,7 @@ namespace WiiTrakClient.HttpRepository
             var response = await _httpService.Get<List<RepairIssueDto>>(_apiUrl);
             if (!response.Success)
             {
-                throw new ApplicationException(await response.GetBody());
+                // throw new ApplicationException(await response.GetBody());
             }
             return response.Response;
         }
@@ -35,7 +35,7 @@ namespace WiiTrakClient.HttpRepository
             var response = await _httpService.Post(_apiUrl, repairIssue);
             if (!response.Success)
             {
-                throw new ApplicationException(await response.GetBody());
+                // throw new ApplicationException(await response.GetBody());
             }
         }
 
@@ -44,7 +44,7 @@ namespace WiiTrakClient.HttpRepository
             var response = await _httpService.Put($"{ _apiUrl }/{ id }", repairIssue);
             if (!response.Success)
             {
-                throw new ApplicationException(await response.GetBody());
+                // throw new ApplicationException(await response.GetBody());
             }
         }
 
@@ -53,7 +53,7 @@ namespace WiiTrakClient.HttpRepository
             var response = await _httpService.Delete($"{ _apiUrl }/{ id }");
             if (!response.Success)
             {
-                throw new ApplicationException(await response.GetBody());
+                // throw new ApplicationException(await response.GetBody());
             }
         }            
     }
