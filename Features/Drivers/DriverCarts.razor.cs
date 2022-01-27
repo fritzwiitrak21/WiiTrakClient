@@ -20,11 +20,13 @@ namespace WiiTrakClient.Features.Drivers
     {
         [Inject] IJSRuntime JsRuntime { get; set; }
 
-        [Inject] ICartHttpRepository CartRepository { get; set; }
+        [Inject] ICartHttpRepository CartHttpRepository { get; set; }
 
         [Inject] IDriverHttpRepository DriverRepository { get; set; }
 
-         [Inject] public IRepairIssueHttpRepository RepairIssueHttpRepository { get; set; }
+        [Inject] public IRepairIssueHttpRepository RepairIssueHttpRepository { get; set; }
+
+        [Inject] IWorkOrderHttpRepository WorkOrderHttpRepository {get; set;}
 
         DriverDto _selectedDriver = new();
         List<DriverDto> _drivers = new();
@@ -80,7 +82,7 @@ namespace WiiTrakClient.Features.Drivers
 
         private async Task GetCartsByDriverId(Guid id)
         {
-            _carts = await CartRepository.GetCartsByDriverIdAsync(id);
+            _carts = await CartHttpRepository.GetCartsByDriverIdAsync(id);
             _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
             Console.WriteLine(_carts.Count());
             await UpdateDriverSummary();
@@ -120,6 +122,53 @@ namespace WiiTrakClient.Features.Drivers
             }
 
             await UpdateDriverSummary(cartChange);
+
+
+
+            //
+            // TODO driver summary should come from backend  using cart history
+            //
+
+            var cart = _carts.First(x => x.Id == cartChange.Id);
+
+             var cartHistory = new CartHistoryUpdateDto {
+                        ServiceProviderId = cart.Store != null ? cart.Store.ServiceProviderId : null,
+                        StoreId = cart.StoreId,
+                        DriverId = _selectedDriver.Id,
+                        Condition = cart.Condition,
+                        Status = CartStatus.PickedUp,
+                        CartId = cart.Id
+                    };
+
+            var cartUpdate = new CartUpdateDto {
+                ManufacturerName = cart.ManufacturerName,
+                DateManufactured = cart.DateManufactured,
+                OrderedFrom = cart.OrderedFrom,
+                Condition = cart.Condition,
+                Status = CartStatus.PickedUp,
+                PicUrl = cart.PicUrl,
+                IsProvisioned = cart.IsProvisioned,
+                BarCode = cart.BarCode,
+                StoreId = cart.StoreId,
+                CartHistory = cartHistory                  
+            };
+
+            await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
+
+
+            if (cartUpdate.Condition == CartCondition.Damage) 
+            {
+                var newWorkOrder = new WorkOrderCreationDto {
+                    Issue = cartChange.DamageIssue,
+                    Notes = "",
+                    CartId = cart.Id,
+                    StoreId = cart.Store != null ? cart.Store.Id : null
+                };
+
+                await WorkOrderHttpRepository.CreateWorkOrderAsync(newWorkOrder);
+            }
+
+
             StateHasChanged();
         }
 

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using WiiTrakClient.DTOs;
 using WiiTrakClient.Enums;
+using WiiTrakClient.Features.Drivers.Models;
 
 namespace WiiTrakClient.Features.Drivers.Components
 {
@@ -57,6 +58,7 @@ namespace WiiTrakClient.Features.Drivers.Components
                 Cart.Condition = (CartCondition)_seletedConditionInt;
             }
 
+            Cart.DamageIssue = _seletedIssue;
             MudDialog.Close(DialogResult.Ok(true));
         }
         void Cancel() => MudDialog.Cancel();

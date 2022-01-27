@@ -21,7 +21,7 @@ namespace WiiTrakClient.HttpRepository
             var response = await _httpService.Get<List<CompanyDto>>(_apiUrl);
             if (!response.Success)
             {
-                throw new ApplicationException(await response.GetBody());
+                // throw new ApplicationException(await response.GetBody());
             }
             return response.Response;
         }
@@ -33,7 +33,7 @@ namespace WiiTrakClient.HttpRepository
             var response = await _httpService.Get<List<CompanyDto>>(url);
             if (!response.Success)
             {
-                throw new ApplicationException(await response.GetBody());
+                // throw new ApplicationException(await response.GetBody());
             }
             return response.Response;
         }
@@ -45,7 +45,7 @@ namespace WiiTrakClient.HttpRepository
             var response = await _httpService.Get<CompanyDto>(url);
             if (!response.Success)
             {
-                throw new ApplicationException(await response.GetBody());
+                // throw new ApplicationException(await response.GetBody());
             }
             return response.Response;
         }
@@ -59,7 +59,7 @@ namespace WiiTrakClient.HttpRepository
             var response = await _httpService.Get<CompanyReportDto>(url);
             if (!response.Success)
             {
-                throw new ApplicationException(await response.GetBody());
+                // throw new ApplicationException(await response.GetBody());
             }
             return response.Response;
         }
@@ -69,7 +69,7 @@ namespace WiiTrakClient.HttpRepository
             var response = await _httpService.Post(_apiUrl, company);
             if (!response.Success)
             {
-                throw new ApplicationException(await response.GetBody());
+                // throw new ApplicationException(await response.GetBody());
             }
         }
 
@@ -79,7 +79,7 @@ namespace WiiTrakClient.HttpRepository
             var response = await _httpService.Put($"{ _apiUrl }/{ id }", company);
             if (!response.Success)
             {
-                throw new ApplicationException(await response.GetBody());
+                // throw new ApplicationException(await response.GetBody());
             }
         }
 
@@ -88,7 +88,7 @@ namespace WiiTrakClient.HttpRepository
             var response = await _httpService.Delete($"{ _apiUrl }/{ id }");
             if (!response.Success)
             {
-                throw new ApplicationException(await response.GetBody());
+                // throw new ApplicationException(await response.GetBody());
             }
         }
     }

@@ -6,6 +6,10 @@ namespace WiiTrakClient.DTOs
     {
         public Guid Id { get; set; }
 
+        public DateTime? UpdatedAt { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
         public string ManufacturerName { get; set; } = string.Empty;
 
         public DateTime DateManufactured { get; set; }
@@ -27,5 +31,8 @@ namespace WiiTrakClient.DTOs
         public StoreDto? Store {get; set;}
 
         public TrackingDeviceDto? TrackingDevice { get; set; }
+
+        public string DamageIssue { get; set; } = string.Empty;       
+        
     }
 }

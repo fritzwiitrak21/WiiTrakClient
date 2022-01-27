@@ -31,6 +31,11 @@ builder.Services.AddScoped<ITrackingDeviceHttpRepository, TrackingDeviceHttpRepo
 builder.Services.AddScoped<IStoreHttpRepository, StoreHttpRepository>();
 builder.Services.AddScoped<IRepairIssueHttpRepository, RepairIssueHttpRepository>();
 builder.Services.AddScoped<ICorporateHttpRepository, CorporateHttpRepository>();
+builder.Services.AddScoped<IPicUploadHttpRepository, PicUploadHttpRepository>();
+builder.Services.AddScoped<IDeliveryTicketHttpRepository, DeliveryTicketHttpRepository>();
+builder.Services.AddScoped<IDeliveryTicketHttpRepository, DeliveryTicketHttpRepository>();
+builder.Services.AddScoped<ICartHistoryHttpRepository, CartHistoryHttpRepository>();
+builder.Services.AddScoped<IWorkOrderHttpRepository, WorkOrderHttpRepository>();
 
 builder.Services.AddMudServices();
 builder.Services.AddSweetAlert2(options =>
