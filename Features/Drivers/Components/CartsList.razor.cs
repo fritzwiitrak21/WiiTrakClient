@@ -76,7 +76,8 @@ namespace WiiTrakClient.Features.Drivers.Components
                     Id = cart.Id,
                     Status = cart.Status,
                     Condition = cart.Condition,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.Now,
+                    DamageIssue = cart.DamageIssue
                 };
                 await CartUpdatedEventCallback.InvokeAsync(cartChange);
             }
