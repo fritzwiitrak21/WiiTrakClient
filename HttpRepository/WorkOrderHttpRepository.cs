@@ -20,24 +20,36 @@ namespace WiiTrakClient.HttpRepository
             _apiUrl = $"{ httpService.BaseUrl }{ ControllerName }";
         }
 
-        public Task CreateWorkOrderAsync(WorkOrderCreationDto workOrder)
+        public async Task CreateWorkOrderAsync(WorkOrderCreationDto workOrder)
         {
-            throw new NotImplementedException();
+             var response = await _httpService.Post(_apiUrl, workOrder);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
         }
 
-        public Task DeleteWorkOrderAsync(Guid id)
+        public async Task<List<WorkOrderDto>> GetAllWorkOrdersAsync()
         {
-            throw new NotImplementedException();
+            System.Console.WriteLine(_apiUrl);
+            var response = await _httpService.Get<List<WorkOrderDto>>(_apiUrl);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
         }
 
-        public Task<List<WorkOrderDto>> GetAllWorkOrdersAsync()
+        public async Task<WorkOrderDto> GetWorkOrderByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
-        }
+             string url = $"{_apiUrl}/{id}";
 
-        public Task<WorkOrderDto> GetWorkOrderByIdAsync(Guid id)
-        {
-            throw new NotImplementedException();
+            var response = await _httpService.Get<WorkOrderDto>(url);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
         }
 
         public Task<List<WorkOrderDto>> GetWorkOrdersByCompanyIdAsync(Guid companyId)
@@ -60,9 +72,22 @@ namespace WiiTrakClient.HttpRepository
             throw new NotImplementedException();
         }
 
-        public Task UpdateWorkOrderAsync(Guid id, WorkOrderUpdateDto workOrder)
+        public async Task UpdateWorkOrderAsync(Guid id, WorkOrderUpdateDto workOrder)
         {
-            throw new NotImplementedException();
+             var response = await _httpService.Put($"{ _apiUrl }/{ id }", workOrder);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+        }
+
+        public async Task DeleteWorkOrderAsync(Guid id)
+        {
+             var response = await _httpService.Delete($"{ _apiUrl }/{ id }");
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
         }
     }
 }

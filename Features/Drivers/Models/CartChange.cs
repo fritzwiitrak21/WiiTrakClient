@@ -16,6 +16,9 @@ namespace WiiTrakClient.Features.Drivers.Models
 
         public DateTime CreatedAt { get; set; }
         
+        public string DamageIssue { get; set; } = string.Empty;
+        
+        
         
     }
 }

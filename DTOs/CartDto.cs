@@ -31,5 +31,8 @@ namespace WiiTrakClient.DTOs
         public StoreDto? Store {get; set;}
 
         public TrackingDeviceDto? TrackingDevice { get; set; }
+
+        public string DamageIssue { get; set; } = string.Empty;       
+        
     }
 }

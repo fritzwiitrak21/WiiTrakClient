@@ -24,7 +24,9 @@ namespace WiiTrakClient.Features.Drivers
 
         [Inject] IDriverHttpRepository DriverRepository { get; set; }
 
-         [Inject] public IRepairIssueHttpRepository RepairIssueHttpRepository { get; set; }
+        [Inject] public IRepairIssueHttpRepository RepairIssueHttpRepository { get; set; }
+
+        [Inject] IWorkOrderHttpRepository WorkOrderHttpRepository {get; set;}
 
         DriverDto _selectedDriver = new();
         List<DriverDto> _drivers = new();
@@ -152,6 +154,20 @@ namespace WiiTrakClient.Features.Drivers
             };
 
             await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
+
+
+            if (cartUpdate.Condition == CartCondition.Damage) 
+            {
+                var newWorkOrder = new WorkOrderCreationDto {
+                    Issue = cartChange.DamageIssue,
+                    Notes = "",
+                    CartId = cart.Id,
+                    StoreId = cart.Store != null ? cart.Store.Id : null
+                };
+
+                await WorkOrderHttpRepository.CreateWorkOrderAsync(newWorkOrder);
+            }
+
 
             StateHasChanged();
         }
