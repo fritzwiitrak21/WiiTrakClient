@@ -18,6 +18,10 @@ namespace WiiTrakClient.DTOs
 
         public string PicUrl { get; set; } = string.Empty;
 
+        public bool SignOffRequired { get; set; }
+
+        public bool ApprovedByStore { get; set; }
+
         public string StoreName { get; set; } = string.Empty;
 
         public string StoreNumber { get; set; } = string.Empty;
