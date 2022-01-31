@@ -12,6 +12,8 @@ namespace WiiTrakClient.DTOs
 
         public string PicUrl { get; set; } = string.Empty;
 
+        public string SignaturePicUrl { get; set; } = string.Empty;
+
         public bool SignOffRequired { get; set; }
 
         public bool ApprovedByStore { get; set; }
