@@ -3,29 +3,30 @@
 @namespace WiiTrakClient.Features.Stores.Components
 
 <MudTable Items="@DeliveryTickets" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@_listIsLoading"
-    LoadingProgressColor="Color.Primary">
+          LoadingProgressColor="Color.Primary">
     <HeaderContent>
         <MudTh>
             Photo
         </MudTh>
         <MudTh>
             <MudTableSortLabel InitialDirection="@SortDirection.Ascending"
-                SortBy="new Func<DeliveryTicketDto, object>(x => x.DeliveryTicketNumber)">Ticket Number
+                               SortBy="new Func<DeliveryTicketDto, object>(x => x.DeliveryTicketNumber)">
+                Ticket Number
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel 
-                SortBy="new Func<DeliveryTicketDto, object>(x=>x.DeliveredAt)">Delivery Date                    
+            <MudTableSortLabel SortBy="new Func<DeliveryTicketDto, object>(x=>x.DeliveredAt)">
+                Delivery Date
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel 
-                SortBy="new Func<DeliveryTicketDto, object>(x=>x.NumberOfCarts)">Number of Carts
+            <MudTableSortLabel SortBy="new Func<DeliveryTicketDto, object>(x=>x.NumberOfCarts)">
+                Number of Carts
             </MudTableSortLabel>
         </MudTh>
-          <MudTh>
-            <MudTableSortLabel 
-                SortBy="new Func<DeliveryTicketDto, object>(x=>x.StoreName)">Store
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<DeliveryTicketDto, object>(x=>x.StoreName)">
+                Store
             </MudTableSortLabel>
         </MudTh>
         <MudTh></MudTh>
@@ -40,11 +41,20 @@
         <MudTd DataLabel="DeliveryDate">@($"{context.DeliveredAt.ToShortDateString()}")</MudTd>
         <MudTd DataLabel="NumberOfCarts">@context.NumberOfCarts</MudTd>
         <MudTd DataLabel="Store">@($"{context.StoreNumber} - {context.StoreName}")</MudTd>
-        @* <MudTd DataLabel="">
-            <MudButton StartIcon="@Icons.Material.Filled.Update" Variant="Variant.Filled" Color="Color.Primary"
-                OnClick="((e) => OpenUpdateDeliveryTicketDialog(context))">Update
-            </MudButton>
-        </MudTd> *@
+         <MudTd DataLabel="">
+             @if(context.SignOffRequired)
+             {
+            <MudButton StartIcon="@Icons.Material.Filled.RateReview" Variant="Variant.Filled" Color="Color.Primary"
+            OnClick="((e) => OpenSignatureDeliveryTicketDialog(context))">Need Signature
+                </MudButton>
+            }
+            else
+            {
+                <MudButton StartIcon="@Icons.Material.Filled.Details" Variant="Variant.Filled" Color="Color.Primary"
+            OnClick="((e) => OpenDeliveryTicketDialog(context))">Details
+                </MudButton>
+            }
+        </MudTd> 
     </RowTemplate>
     <PagerContent>
         <MudTablePager PageSizeOptions="new int[]{50, 100}" />

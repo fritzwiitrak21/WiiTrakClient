@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using WiiTrakClient.DTOs;
+using WiiTrakClient.HttpRepository.Contracts;
 
 namespace WiiTrakClient.Features.Stores.Components
 {
@@ -11,6 +12,7 @@ namespace WiiTrakClient.Features.Stores.Components
 
         [Parameter]
         public EventCallback DeliveryTicketUpdatedEventCallback { get; set; }
+        [Inject] public IStoreHttpRepository StoreHttpRepository { get; set; }
 
         [Inject]
         IDialogService? DialogService { get; set; }
@@ -20,6 +22,23 @@ namespace WiiTrakClient.Features.Stores.Components
         protected override void OnParametersSet()
         {
             _listIsLoading = false;
+        }
+
+        public async Task OpenDeliveryTicketDialog(DeliveryTicketDto deliveryTicket)
+        {
+            var parameters = new DialogParameters();
+            var store = await StoreHttpRepository.GetStoreByIdAsync(deliveryTicket.StoreId);
+            parameters.Add("deliveryTicketDto", deliveryTicket);
+            parameters.Add("StoreName", store.StoreNumber + "-" + store.StoreName);
+
+            DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+
+            var dialog = DialogService.Show<DeliveryTicketDetailsDialog>("Delivery Ticket Details", parameters);
+        }
+
+        public async Task OpenSignatureDeliveryTicketDialog(DeliveryTicketDto deliveryTicket)
+        {
+
         }
 
         public async Task OpenUpdateDeliveryTicketDialog(DeliveryTicketDto deliveryTicket)

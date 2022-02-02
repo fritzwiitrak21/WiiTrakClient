@@ -1,0 +1,25 @@
+﻿@namespace WiiTrakClient.Features.Stores.Components
+@using WiiTrakClient.Shared.Components
+
+<MudDialog>
+    <DialogContent>
+        <div style="width: 400px;height:450px;overflow: auto;">
+            <MudText Class="my-4" Typo="Typo.h5">Store: @StoreName</MudText>
+            <MudText Class="my-4" Typo="Typo.h5">Number of Carts: @deliveryTicketDto.NumberOfCarts</MudText>
+            @if (!string.IsNullOrWhiteSpace(deliveryTicketDto.PicUrl)) {
+                <div class="d-flex justify-center mt-6">
+                    <img src="@deliveryTicketDto.PicUrl" width="300" height="300" />
+                </div>
+            }
+            
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [Parameter]
+    public DeliveryTicketDto? deliveryTicketDto{ get; set; }
+
+    [Parameter]
+    public string StoreName { get; set; }
+}
