@@ -23,7 +23,6 @@
   <ItemGroup>
     <Folder Include="Features\ServiceProviders\Components\" />
     <Folder Include="Features\ShoppingCarts\Components\" />
-    <Folder Include="Features\Stores\Components\" />
     <Folder Include="Features\Technicians\Components\" />
     <Folder Include="Features\TrackingDevices\Components\" />
   </ItemGroup>

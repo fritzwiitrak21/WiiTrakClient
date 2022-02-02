@@ -156,17 +156,27 @@ namespace WiiTrakClient.Features.Drivers
             await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
 
 
-            if (cartUpdate.Condition == CartCondition.Damage) 
-            {
-                var newWorkOrder = new WorkOrderCreationDto {
-                    Issue = cartChange.DamageIssue,
-                    Notes = "",
-                    CartId = cart.Id,
-                    StoreId = cart.Store != null ? cart.Store.Id : null
-                };
+            //
+            // TODO
+            //
 
-                await WorkOrderHttpRepository.CreateWorkOrderAsync(newWorkOrder);
-            }
+            // This shouldn't be here. It should be in the delivery ticket submit handler.
+            // So we don't create work order until a delivery ticket is submitted and approved.
+            // If ticket doesn't require sign off from store, then we iterate through carts and
+            // check each one like below. If the store requires tickets be signed off, then
+            // we don't create work orders until the delivery ticket is approved by store.
+
+            // if (cartUpdate.Condition == CartCondition.Damage) 
+            // {
+            //     var newWorkOrder = new WorkOrderCreationDto {
+            //         Issue = cartChange.DamageIssue,
+            //         Notes = "",
+            //         CartId = cart.Id,
+            //         StoreId = cart.Store != null ? cart.Store.Id : null
+            //     };
+
+            //     await WorkOrderHttpRepository.CreateWorkOrderAsync(newWorkOrder);
+            // }
 
 
             StateHasChanged();

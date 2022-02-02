@@ -1,0 +1,106 @@
+﻿@namespace WiiTrakClient.Features.Drivers.Components
+@using WiiTrakClient.Shared.Components
+
+<MudDialog>
+    <DialogContent>
+        <div style="width: 400px;height:450px;overflow: auto;">
+            <MudForm Model="@editDeliveryTicket">
+                <MudSelect Class="my-6" T="StoreDto" Label="Store" AnchorOrigin="Origin.BottomCenter"
+                    HelperText="Select a Store" @bind-Value="@_selectedStore" Required="true"
+                    AdornmentColor="Color.Primary">
+                    @foreach (var store in Stores)
+                    {
+                        <MudSelectItem T="StoreDto" Value="@store">@store.StoreNumber - @store.StoreName</MudSelectItem>
+                    }
+                </MudSelect>
+
+                @{
+                    UpdateNumberOfCarts();                  
+                    UpdateStoreAndServiceProviderIds();
+                }
+
+                <MudText Class="my-4" Typo="Typo.h5">Number of Carts: @editDeliveryTicket.NumberOfCarts</MudText>
+
+                <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
+
+                @if (!string.IsNullOrWhiteSpace(_fileUrl)) {
+                    <div class="d-flex justify-center mt-6">
+                        <img src="@_fileUrl" width="300" height="300" />
+                    </div>
+                }
+                
+            </MudForm>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" 
+                OnClick="Submit" 
+                Disabled="_disableSaveButton">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [Parameter]
+    public DeliveryTicketUpdateDto? editDeliveryTicket { get; set; }
+
+    [Parameter]
+    public DriverDto? Driver { get; set; }
+
+    [Parameter]
+    public List<CartDto>? Carts { get; set; } = new();
+
+    [Parameter]
+    public List<StoreDto>? Stores { get; set; } = new();
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    StoreDto _selectedStore = new();
+    private string _fileUrl = "";
+
+    bool _disableSaveButton = false;
+    protected override void OnParametersSet()
+    { 
+        if(editDeliveryTicket != null)
+        {
+            _fileUrl = editDeliveryTicket.PicUrl;
+        }
+        
+        if (Stores != null && Stores.Count() >= 1) 
+        {
+            _selectedStore = Stores.Where(x => x.Id == editDeliveryTicket.StoreId).FirstOrDefault();
+        }
+    }
+
+    private void UpdateNumberOfCarts() 
+    {
+        editDeliveryTicket.NumberOfCarts = Carts.Count(x => x.StoreId == _selectedStore.Id && x.Status == CartStatus.PickedUp);
+    }
+
+    private void UpdateStoreAndServiceProviderIds()
+    {
+        editDeliveryTicket.StoreId = _selectedStore.Id;
+        var store = Stores.First(x => x.Id == _selectedStore.Id);
+        editDeliveryTicket.ServiceProviderId = store.ServiceProviderId;
+    }
+
+    private void PicUploadStart() 
+    {
+        _disableSaveButton = true;
+    }
+   
+    private void PicUploadComplete(string url)
+    {
+        _fileUrl = url;
+        _disableSaveButton = false;
+        editDeliveryTicket.PicUrl = _fileUrl;
+    }
+
+    void Submit()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

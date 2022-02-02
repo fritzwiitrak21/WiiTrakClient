@@ -30,7 +30,6 @@
             </MudTableSortLabel>
         </MudTh>
         <MudTh></MudTh>
-        <MudTh></MudTh>
     </HeaderContent>
 
     <RowTemplate>
@@ -41,11 +40,11 @@
         <MudTd DataLabel="DeliveryDate">@($"{context.DeliveredAt.ToShortDateString()}")</MudTd>
         <MudTd DataLabel="NumberOfCarts">@context.NumberOfCarts</MudTd>
         <MudTd DataLabel="Store">@($"{context.StoreNumber} - {context.StoreName}")</MudTd>
-        @* <MudTd DataLabel="">
-            <MudButton StartIcon="@Icons.Material.Filled.Update" Variant="Variant.Filled" Color="Color.Primary"
-                OnClick="((e) => OpenUpdateDeliveryTicketDialog(context))">Update
+        <MudTd DataLabel="">
+            <MudButton StartIcon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary"
+                OnClick="((e) => OpenUpdateDeliveryTicketDialog(context))">Edit
             </MudButton>
-        </MudTd> *@
+        </MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager PageSizeOptions="new int[]{50, 100}" />

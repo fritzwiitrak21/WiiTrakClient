@@ -1,0 +1,24 @@
+﻿@page "/store-delivery-tickets"
+
+@using WiiTrakClient.Features.Stores.Components
+
+<MudGrid class="my-8">
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect T="StoreDto" Label="Select Store" ValueChanged="(value) => HandleStoreSelected(value)"
+            AnchorOrigin="Origin.BottomCenter">
+            @foreach (var store in _stores)
+            {
+                <MudSelectItem T="StoreDto" Value="@store">@store.StoreNumber - @store.StoreName</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+<h3>Delivery Tickets</h3>
+
+
+<DeliveryTicketsList DeliveryTickets="_deliveryTickets" />
+
+@code {
+
+}
