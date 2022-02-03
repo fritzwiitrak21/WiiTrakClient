@@ -32,6 +32,18 @@ namespace WiiTrakClient.HttpRepository
             return response.Response;
         }
 
+          public async Task<DeliveryTicketSummaryDto> GetDeliveryTicketSummaryByIdAsync(Guid id)
+        {
+            string url = $"{_apiUrl}/summary/{id}";
+
+            var response = await _httpService.Get<DeliveryTicketSummaryDto>(url);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
+
         public async Task<List<DeliveryTicketDto>> GetAllDeliveryTicketsAsync()
         {
             var response = await _httpService.Get<List<DeliveryTicketDto>>(_apiUrl);

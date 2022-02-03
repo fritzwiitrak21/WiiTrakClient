@@ -64,7 +64,7 @@ namespace WiiTrakClient.Features.Drivers.Components
             if (!result.Cancelled)
             {
                 // add new delivery ticket to backend
-                var deliveryTicketCreation = new DeliveryTicketUpdateDto
+                var deliveryTicketUpdate = new DeliveryTicketUpdateDto
                 {
                     NumberOfCarts = _editDeliveryTicket.NumberOfCarts,
                     PicUrl = _editDeliveryTicket.PicUrl,
@@ -75,7 +75,7 @@ namespace WiiTrakClient.Features.Drivers.Components
                     DeliveryTicketNumber = _editDeliveryTicket.DeliveryTicketNumber
                 };
 
-                await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId,deliveryTicketCreation);
+                await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId,deliveryTicketUpdate);
 
                 // update status of carts to delivered and update cart hitory
                 var carts = _carts.Where(x => x.StoreId == _editDeliveryTicket.StoreId).ToList();
