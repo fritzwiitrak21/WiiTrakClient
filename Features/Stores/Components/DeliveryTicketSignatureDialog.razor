@@ -19,7 +19,7 @@
                 <MudText Class="" Typo="Typo.h6">Trashed: @deliveryTicketSummary.Trashed</MudText>
                        
             }
-            <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
+           
             @if (!string.IsNullOrWhiteSpace(_fileUrl)) {
                     <div class="d-flex justify-center mt-6">
                         <img src="@_fileUrl" width="300" height="300" />
@@ -35,6 +35,16 @@
                         RequiredPoints="50">
                     </SSignature>
                 </div>*@
+
+
+            @if (!_isSigned) {
+                  <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                    OnClick="OnSignatureComplete">Sign
+                </MudButton>
+            } else {
+                <MudText Typo="Typo.h4">Signature Complete</MudText>
+            }
+              
             </MudForm>
         </div>
     </DialogContent>
@@ -63,6 +73,8 @@
 
     private string _fileUrl = "";
     bool _disableSaveButton = false;
+    bool _isSigned = false;
+
     private void PicUploadStart() 
     {
         _disableSaveButton = true;
@@ -74,6 +86,12 @@
         _disableSaveButton = false;
         editDeliveryTicket.SignaturePicUrl = _fileUrl;
         editDeliveryTicket.ApprovedByStore = true;
+    }
+
+    private void OnSignatureComplete() 
+    {
+        editDeliveryTicket.ApprovedByStore = true;
+        _isSigned = true;
     }
 
     void Submit()
