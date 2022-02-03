@@ -1,0 +1,170 @@
+﻿@using System.IO;
+@using WiiTrakClient.DTOs;
+@using Newtonsoft.Json
+@using SkiaSharp;
+
+@inject IJSRuntime js
+
+<style>
+
+     #@(SignObject)_Container
+     {
+         margin: 10px;
+         position: relative;
+         cursor: pointer;
+         width: @(SignWidth)px;
+         height: @(SignHeight)px;
+     }
+
+    #@(SignObject) {
+        left: 0;
+        top: 0;
+        position: absolute;
+    }
+
+    #@(SignObject)_toolbar {
+        display: block;
+        left: 10px;
+        height: 20px;
+        width: @(SignWidth)px;
+        position: relative;
+        background-color: transparent;
+    }
+
+    #@(SignObject)_resetbutton {
+        float: right;
+        cursor: pointer;
+    }
+
+    #@(SignObject)_status {
+        color: black;
+        font-family: verdana;
+        font-size: 12px;
+        float: right;
+        margin-right: 5px;
+    }
+
+</style>
+
+<h3>SSignature</h3>
+
+@code {
+    [Parameter]
+    public string SignObject { get; set; }
+    [Parameter]
+    public int? SignZIndex { get; set; }
+    [Parameter]
+    public int? PenSize { get; set; }
+    [Parameter]
+    public string PenColor { get; set; }
+    [Parameter]
+    public string StartMessage { get; set; }
+    [Parameter]
+    public string ErrorMessage { get; set; }
+    [Parameter]
+    public string SuccessMessage { get; set; }
+    [Parameter]
+    public string BackGroundImage { get; set; }
+    [Parameter]
+    public string RefreshImage { get; set; }
+    [Parameter]
+    public string PenCursor { get; set; }
+    [Parameter]
+    public int? SignWidth { get; set; }
+    [Parameter]
+    public int? SignHeight { get; set; }
+    [Parameter]
+    public int? RequiredPoints { get; set; }
+    [Parameter]
+    public string BackColor { get; set; }
+    [Parameter]
+    public string BorderColor { get; set; }
+    [Parameter]
+    public string BorderStyle { get; set; }
+    [Parameter]
+    public int? BorderWidth { get; set; }
+    [Parameter]
+    public bool? SmoothSign { get; set; }
+    [Parameter]
+    public bool? TransparentSign { get; set; }
+    [Parameter]
+    public float? ImageScaleFactor { get; set; }
+    [Parameter]
+    public string Visible { get; set; }
+    [Parameter]
+    public string Enabled { get; set; }
+
+    [Parameter]
+    public string SignatureImageData { get; set; }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (string.IsNullOrEmpty(SignObject))
+        {
+            throw new Exception("SuperSignature: SignObject property is not defined");
+        }
+
+        var signModel = new SignatureDto
+        {
+            SignObject = SignObject,
+            SignzIndex = SignZIndex ?? 99,
+
+            PenSize = PenSize ?? 2,
+            PenColor = PenColor ?? "red",
+            PenCursor = PenCursor ?? "",
+
+            StartMessage = StartMessage ?? "Please sign",
+            ErrorMessage = ErrorMessage ?? "Please continue signing",
+            SuccessMessage = SuccessMessage ?? "Done!",
+
+            BackGroundImage = BackGroundImage ?? "",
+            BackColor = BackColor ?? "transparent",
+            RefreshImage = RefreshImage ?? "~/images/clear.png",
+
+            SignWidth = SignWidth ?? 450,
+            SignHeight = SignHeight ?? 300,
+
+            RequiredPoints = RequiredPoints ?? 50,
+
+            BorderColor = BorderColor ?? "#DCDCDC",
+            BorderStyle = BorderStyle ?? "dashed",
+            BorderWidth = BorderWidth ?? 1,
+
+            SmoothSign = SmoothSign ?? true,
+            TransparentSign = TransparentSign ?? true,
+
+            ImageScaleFactor = ImageScaleFactor ?? 1.0f,
+
+            Enabled = Enabled ?? "true",
+            Visible = Visible ?? "true"
+        };
+
+        await js.InvokeAsync<object>(SignObject + "Init", JsonConvert.SerializeObject(signModel));
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+
+    [JSInvokable]
+    public static bool SaveSignatureAsync(string imageData)
+    {
+        var imageDataStripped = imageData.Replace("data:image/png;base64,", "");
+        var imageByteArray = Convert.FromBase64String(imageDataStripped);
+
+        var signBitmap = SKBitmap.Decode(imageByteArray);
+
+        if (null != signBitmap)
+        {
+            var skData = SKImage.FromBitmap(signBitmap).Encode(SKEncodedImageFormat.Png, 100);
+            var signFileName = Guid.NewGuid().ToString() + ".png";
+            using (var signFile = new FileStream(@"wwwroot\signatures\" + signFileName, FileMode.Create))
+            {
+                skData.SaveTo(signFile);
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
