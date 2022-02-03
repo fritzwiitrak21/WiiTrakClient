@@ -68,7 +68,7 @@ namespace WiiTrakClient.Features.Drivers.Components
                 {
                     NumberOfCarts = _editDeliveryTicket.NumberOfCarts,
                     PicUrl = _editDeliveryTicket.PicUrl,
-                    DeliveredAt = DateTime.Now,
+                    DeliveredAt = _editDeliveryTicket.DeliveredAt,
                     StoreId = _editDeliveryTicket.StoreId,
                     ServiceProviderId = _editDeliveryTicket.ServiceProviderId,
                     DriverId = _editDeliveryTicket.DriverId,
@@ -158,6 +158,20 @@ namespace WiiTrakClient.Features.Drivers.Components
             //    };
             //    await CartUpdatedEventCallback.InvokeAsync(cartChange);
             //}
+        }
+
+        public async Task OpenDeliveryTicketDialog(DeliveryTicketDto deliveryTicket)
+        {
+            var parameters = new DialogParameters();
+            var store = await StoreHttpRepository.GetStoreByIdAsync(deliveryTicket.StoreId);
+            var deliveryTicketSummary = await DeliveryTicketHttpRepository.GetDeliveryTicketSummaryAsync(deliveryTicket.Id);
+            parameters.Add("deliveryTicketDto", deliveryTicket);
+            parameters.Add("StoreName", store.StoreNumber + "-" + store.StoreName);
+            parameters.Add("deliveryTicketSummary", deliveryTicketSummary);
+
+            DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+
+            var dialog = DialogService.Show<DeliveryTicketDetailsDialog>("Delivery Ticket Summary", parameters);
         }
     }    
 }

@@ -54,6 +54,10 @@ namespace WiiTrakClient.Features.Stores
             {
                 _deliveryTickets = deliveryTickets;
             }
+            else
+            {
+                _deliveryTickets = new();
+            }
         }
     }
 }

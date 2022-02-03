@@ -41,9 +41,18 @@
         <MudTd DataLabel="NumberOfCarts">@context.NumberOfCarts</MudTd>
         <MudTd DataLabel="Store">@($"{context.StoreNumber} - {context.StoreName}")</MudTd>
         <MudTd DataLabel="">
-            <MudButton StartIcon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary"
+            @if (context.ApprovedByStore != true)
+            {
+                <MudButton StartIcon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary"
                 OnClick="((e) => OpenUpdateDeliveryTicketDialog(context))">Edit
-            </MudButton>
+                </MudButton>
+            }
+            else
+            {
+                <MudButton StartIcon="@Icons.Material.Filled.Details" Variant="Variant.Filled" Color="Color.Primary"
+            OnClick="((e) => OpenDeliveryTicketDialog(context))">Details
+                </MudButton>
+            }
         </MudTd>
     </RowTemplate>
     <PagerContent>
