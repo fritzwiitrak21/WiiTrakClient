@@ -10,6 +10,8 @@ namespace WiiTrakClient.DTOs
 
         public DateTime CreatedAt { get; set; }
 
+        public string CartNumber { get; set; } = string.Empty;
+
         public string ManufacturerName { get; set; } = string.Empty;
 
         public DateTime DateManufactured { get; set; }
