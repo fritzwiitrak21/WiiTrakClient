@@ -29,7 +29,7 @@ namespace WiiTrakClient.Features.Corporates
         List<CartDto> _filteredCarts = new();
         List<RepairIssueDto> _repairIssues = new();
         CorporateReportDto _report;
-
+        StoreReportDto _storeReport;
         private enum ViewOption
         {
             Map,
@@ -63,6 +63,7 @@ namespace WiiTrakClient.Features.Corporates
             await GetCartsByCorporateId(corporate.Id);
             _selectedCorporate = corporate;
             await UpdateReport(_selectedCorporate.Id);
+            _stores = await StoreRepository.GetStoresByCorporateId(_selectedCorporate.Id);
             StateHasChanged();
         }
 
@@ -73,7 +74,8 @@ namespace WiiTrakClient.Features.Corporates
             System.Console.WriteLine(store.Id);
             await GetCartsByStoreId(store.Id);
             _selectedStore = store;
-            await UpdateReport(_selectedCorporate.Id);
+            //await UpdateReport(_selectedCorporate.Id);
+            await UpdateStoreReport(store.Id);
             StateHasChanged();
         }
 
@@ -88,12 +90,17 @@ namespace WiiTrakClient.Features.Corporates
         {
             _carts = await CartRepository.GetCartsByStoreIdAsync(id);  
             _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();   
-            await UpdateReport(id);
+            await UpdateStoreReport(id);
         }
 
         private async Task UpdateReport(Guid id)
         {
             _report = await CorporateRepository.GetCorporateReportAsync(id);
+        }
+
+        private async Task UpdateStoreReport(Guid id)
+        {
+            _storeReport = await StoreRepository.GetStoreReportAsync(id);
         }
 
         private void ShowMapView()

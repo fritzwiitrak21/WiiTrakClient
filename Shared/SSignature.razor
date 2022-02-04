@@ -93,6 +93,8 @@
     public string Visible { get; set; }
     [Parameter]
     public string Enabled { get; set; }
+    [Parameter]
+    public string Name { get; set; } 
 
     [Parameter]
     public string SignatureImageData { get; set; }
@@ -137,7 +139,9 @@
             ImageScaleFactor = ImageScaleFactor ?? 1.0f,
 
             Enabled = Enabled ?? "true",
-            Visible = Visible ?? "true"
+            Visible = Visible ?? "true",
+
+            Name = "testSignaturePad"
         };
 
         await js.InvokeAsync<object>(SignObject + "Init", JsonConvert.SerializeObject(signModel));
