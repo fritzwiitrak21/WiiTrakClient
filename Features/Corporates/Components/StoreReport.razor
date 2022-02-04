@@ -1,0 +1,88 @@
+﻿@namespace WiiTrakClient.Features.Corporates.Components
+
+<MudGrid Spacing="8" Justify="Justify.FlexStart">
+            <MudItem>
+                <MudPaper Elevation="4" class="d-flex flex-column py-6 px-6">
+                    @{
+
+                        double totalCartsAtStorePercent = Convert.ToDouble(Report.TotalCartsAtStore) /
+                            Convert.ToDouble(Report.TotalCarts) * 100;
+
+                        double totalCartsOutsideStorePercent = Convert.ToDouble(Report.TotalCartsOutsideStore) /
+                        Convert.ToDouble(Report.TotalCarts) * 100;
+
+                        double totalCartsNeedingRepairPercent = Convert.ToDouble(Report.TotalCartsNeedingRepair) /
+                        Convert.ToDouble(Report.TotalCarts) * 100;
+
+                        double totalCartsLost = Convert.ToDouble(Report.TotalCartsLost) / Convert.ToDouble(Report.TotalCarts)
+                        * 100;
+                    }
+
+                    
+                    <div class="d-flex flex-row align-center mb-2">
+                        <MudText class="mr-2" Typo="Typo.h5">Total Carts: </MudText>
+                        <MudText Typo="Typo.h5">@Report.TotalCarts</MudText>
+                    </div>
+
+
+                    <div class="d-flex flex-row align-center mb-2">
+                        <MudText class="mr-2" Typo="Typo.h5">Carts in Store: </MudText>
+                        <MudText Typo="Typo.h5">@Report.TotalCartsAtStore (@totalCartsAtStorePercent.ToString("0.##")%)
+                        </MudText>
+                    </div>
+
+                    <div class="d-flex flex-row align-center mb-2">
+                        <MudText class="mr-2" Typo="Typo.h5">Carts out of Store: </MudText>
+                        <MudText Typo="Typo.h5">@Report.TotalCartsOutsideStore
+                            (@totalCartsOutsideStorePercent.ToString("0.##")%)</MudText>
+                    </div>
+
+                    <div class="d-flex flex-row align-center mb-2">
+                        <MudText class="mr-2" Typo="Typo.h5">Carts Needing Repair: </MudText>
+                        <MudText Typo="Typo.h5">@Report.TotalCartsNeedingRepair
+                            (@totalCartsNeedingRepairPercent.ToString("0.##")%)</MudText>
+                    </div>
+
+                    <div class="d-flex flex-row align-center mb-2">
+                        <MudText class="mr-2" Typo="Typo.h5">Carts Lost: </MudText>
+                        <MudText Typo="Typo.h5">@Report.TotalCartsLost (@totalCartsLost.ToString("0.##")%)</MudText>
+                    </div>
+
+                </MudPaper>
+            </MudItem>
+            <MudItem>
+                <MudPaper Elevation="4" class="d-flex flex-column py-6 px-6">
+                    <MudText Typo="Typo.h5" class="mb-2">
+                        Today's Activity
+                    </MudText>
+
+                    <div class="d-flex flex-row align-center mb-2">
+                        <MudText class="mr-2" Typo="Typo.h5">Carts on Vehicle: </MudText>
+                        <MudText Typo="Typo.h5">@Report.CartsOnVehicleToday</MudText>
+                    </div>
+
+                    <div class="d-flex flex-row align-center mb-2">
+                        <MudText class="mr-2" Typo="Typo.h5">Carts Delivered: </MudText>
+                        <MudText Typo="Typo.h5">@Report.CartsDeliveredToday</MudText>
+                    </div>
+
+
+                    <div class="d-flex flex-row align-center mb-2">
+                        <MudText class="mr-2" Typo="Typo.h5">Carts Needing Repair: </MudText>
+                        <MudText Typo="Typo.h5">@Report.CartsNeedingRepairToday</MudText>
+                    </div>
+
+                    <div class="d-flex flex-row align-center mb-2">
+                        <MudText class="mr-2" Typo="Typo.h5">Carts Lost: </MudText>
+                        <MudText Typo="Typo.h5">@Report.CartsLostToday</MudText>
+                    </div>
+
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+
+@code {
+    [Parameter]
+    public StoreReportDto Report {get; set;}
+}
+

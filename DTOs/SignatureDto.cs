@@ -25,5 +25,6 @@
         public float ImageScaleFactor { get; set; }
         public string Enabled { get; set; }
         public string Visible { get; set; }
+        public string Name { get; set; }
     }
 }

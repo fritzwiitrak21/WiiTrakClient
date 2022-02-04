@@ -1,6 +1,7 @@
 ﻿@namespace WiiTrakClient.Features.Stores.Components
 @using WiiTrakClient.Shared.Components
 
+@inject IJSRuntime _js;
 <MudDialog>
     <DialogContent>
         <div style="width: 400px;height:450px;overflow: auto;">
@@ -45,6 +46,7 @@
                 <MudText Typo="Typo.h4">Signature Complete</MudText>
             }
               
+                
             </MudForm>
         </div>
     </DialogContent>
@@ -75,6 +77,20 @@
     bool _disableSaveButton = false;
     bool _isSigned = false;
 
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var targetUrl = "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js";
+        await _js.InvokeVoidAsync("loadJs", targetUrl);
+
+        targetUrl = "js/ss.js";
+        await _js.InvokeVoidAsync("loadJs", targetUrl);
+
+        targetUrl = "js/ss.ui.js";
+        await _js.InvokeVoidAsync("loadJs", targetUrl);
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
     private void PicUploadStart() 
     {
         _disableSaveButton = true;

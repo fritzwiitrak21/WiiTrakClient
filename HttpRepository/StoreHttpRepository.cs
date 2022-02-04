@@ -80,6 +80,17 @@ namespace WiiTrakClient.HttpRepository
             }
             return response.Response;
         }
+        public async Task<StoreReportDto> GetStoreReportAsync(Guid id)
+        {
+            string url = $"{_apiUrl}/report/{id}";
+
+            var response = await _httpService.Get<StoreReportDto>(url);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
 
         public async Task CreateStoreAsync(StoreCreationDto store)
         {
