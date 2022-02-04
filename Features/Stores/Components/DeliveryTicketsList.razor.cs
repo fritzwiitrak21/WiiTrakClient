@@ -14,6 +14,7 @@ namespace WiiTrakClient.Features.Stores.Components
         public EventCallback DeliveryTicketUpdatedEventCallback { get; set; }
         [Inject] public IStoreHttpRepository StoreHttpRepository { get; set; }
         [Inject] public IDeliveryTicketHttpRepository DeliveryTicketHttpRepository { get; set; }
+        [Inject] ICartHttpRepository CartRepository { get; set; }
 
         [Inject]
         IDialogService? DialogService { get; set; }
@@ -21,6 +22,7 @@ namespace WiiTrakClient.Features.Stores.Components
         private bool _listIsLoading = true;
         DeliveryTicketUpdateDto _editDeliveryTicket = new();
         Guid deliveryTicketId = Guid.Empty;
+        List<CartDto>? cartsTable { get; set; } = new List<CartDto>();
         protected override void OnParametersSet()
         {
             _listIsLoading = false;
@@ -31,10 +33,11 @@ namespace WiiTrakClient.Features.Stores.Components
             var parameters = new DialogParameters();
             var store = await StoreHttpRepository.GetStoreByIdAsync(deliveryTicket.StoreId);
             var deliveryTicketSummary = await DeliveryTicketHttpRepository.GetDeliveryTicketSummaryAsync(deliveryTicket.Id);
+            cartsTable = await CartRepository.GetCartsByStoreIdAsync(deliveryTicket.StoreId);
             parameters.Add("deliveryTicketDto", deliveryTicket);
             parameters.Add("StoreName", store.StoreNumber + "-" + store.StoreName);
             parameters.Add("deliveryTicketSummary", deliveryTicketSummary);
-
+            parameters.Add("cartsTable", cartsTable);
             DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
             var dialog = DialogService.Show<DeliveryTicketDetailsDialog>("Delivery Ticket Summary", parameters);
@@ -45,7 +48,7 @@ namespace WiiTrakClient.Features.Stores.Components
             var parameters = new DialogParameters();
             var store = await StoreHttpRepository.GetStoreByIdAsync(deliveryTicket.StoreId);
             var deliveryTicketSummary = await DeliveryTicketHttpRepository.GetDeliveryTicketSummaryAsync(deliveryTicket.Id);
-
+            cartsTable = await CartRepository.GetCartsByStoreIdAsync(deliveryTicket.StoreId);
             _editDeliveryTicket.StoreId = deliveryTicket.StoreId;
             _editDeliveryTicket.PicUrl = deliveryTicket.PicUrl;
             _editDeliveryTicket.DriverId = deliveryTicket.DriverId;
@@ -57,6 +60,7 @@ namespace WiiTrakClient.Features.Stores.Components
             parameters.Add("StoreName", store.StoreNumber + "-" + store.StoreName);
             parameters.Add("deliveryTicketSummary", deliveryTicketSummary);
             parameters.Add("editDeliveryTicket", _editDeliveryTicket);
+            parameters.Add("cartsTable", cartsTable);
             deliveryTicketId = deliveryTicket.Id;
             DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 

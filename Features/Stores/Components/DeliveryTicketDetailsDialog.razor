@@ -18,6 +18,10 @@
                 <MudText Class="" Typo="Typo.h6">Trashed: @deliveryTicketSummary.Trashed</MudText>
                        
             }
+            @if(cartsTable != null)
+            {
+                <CartsTable Carts="@cartsTable"></CartsTable>
+            }
             @if (!string.IsNullOrWhiteSpace(deliveryTicketDto.PicUrl)) {
                 <div class="d-flex justify-center mt-6">
                     <img src="@deliveryTicketDto.PicUrl" width="300" height="300" />
@@ -37,4 +41,7 @@
 
     [Parameter]
     public DeliveryTicketSummaryDto? deliveryTicketSummary{ get; set; }
+
+    [Parameter]
+    public List<CartDto>? cartsTable { get; set; }
 }
