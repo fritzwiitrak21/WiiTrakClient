@@ -20,7 +20,10 @@
                 <MudText Class="" Typo="Typo.h6">Trashed: @deliveryTicketSummary.Trashed</MudText>
                        
             }
-           
+            @if(cartsTable != null)
+            {
+           <CartsTable Carts="@cartsTable"></CartsTable>
+            }
             @if (!string.IsNullOrWhiteSpace(_fileUrl)) {
                     <div class="d-flex justify-center mt-6">
                         <img src="@_fileUrl" width="300" height="300" />
@@ -70,6 +73,9 @@
 
     [Parameter]
     public DeliveryTicketUpdateDto? editDeliveryTicket { get; set; }
+
+    [Parameter]
+    public List<CartDto>? cartsTable { get; set; }
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 

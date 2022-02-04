@@ -14,6 +14,7 @@ namespace WiiTrakClient.Features.Drivers.Components
         [Inject] public ICartHttpRepository CartHttpRepository { get; set; }
 
         [Inject] public IStoreHttpRepository StoreHttpRepository { get; set; }
+        [Inject] ICartHttpRepository CartRepository { get; set; }
         [Parameter]
         public List<DeliveryTicketDto>? DeliveryTickets { get; set; }       
 
@@ -32,6 +33,7 @@ namespace WiiTrakClient.Features.Drivers.Components
         List<StoreDto> _stores = new();
         DeliveryTicketUpdateDto _editDeliveryTicket = new();
         Guid deliveryTicketId = Guid.Empty;
+        List<CartDto>? cartsTable { get; set; } = new();
         protected override void OnParametersSet()
         {
             _listIsLoading = false;
@@ -165,10 +167,11 @@ namespace WiiTrakClient.Features.Drivers.Components
             var parameters = new DialogParameters();
             var store = await StoreHttpRepository.GetStoreByIdAsync(deliveryTicket.StoreId);
             var deliveryTicketSummary = await DeliveryTicketHttpRepository.GetDeliveryTicketSummaryAsync(deliveryTicket.Id);
+            cartsTable = await CartRepository.GetCartsByStoreIdAsync(deliveryTicket.StoreId);
             parameters.Add("deliveryTicketDto", deliveryTicket);
             parameters.Add("StoreName", store.StoreNumber + "-" + store.StoreName);
             parameters.Add("deliveryTicketSummary", deliveryTicketSummary);
-
+            parameters.Add("cartsTable", cartsTable);
             DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
             var dialog = DialogService.Show<DeliveryTicketDetailsDialog>("Delivery Ticket Summary", parameters);

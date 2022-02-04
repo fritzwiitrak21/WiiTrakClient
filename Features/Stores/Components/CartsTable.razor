@@ -1,0 +1,31 @@
+﻿@namespace WiiTrakClient.Features.Stores.Components
+
+<MudTable Items="@Carts">
+    <HeaderContent>
+        <MudTd>
+            Cart#
+        </MudTd>
+        <MudTd>
+            Status
+        </MudTd>
+        <MudTd>
+            Condition
+        </MudTd>
+    </HeaderContent>
+    <RowTemplate >
+        <MudTd DataLabel="Cart Number">
+            @context.CartNumber
+        </MudTd>
+        <MudTd DataLabel="Cart Number">
+            @context.Status
+        </MudTd>
+        <MudTd DataLabel="Cart Number">
+            @context.Condition
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    [Parameter]
+    public List<CartDto>? Carts {get; set;} = null;
+}
