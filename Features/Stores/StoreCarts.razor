@@ -1,0 +1,73 @@
+﻿@page "/store-carts"
+@using WiiTrakClient.Features.Stores
+@using WiiTrakClient.Features.Stores.Components
+
+@namespace WiiTrakClient.Features.Stores
+
+<MudGrid class="my-8">
+        <MudItem xs="12" sm="6" md="4">
+            <MudSelect T="StoreDto" Label="Select Store"
+                ValueChanged="(value) => HandleStoreSelected(value)" AnchorOrigin="Origin.BottomCenter">
+                @foreach (var store in _stores)
+                {
+                    <MudSelectItem T="StoreDto" Value="@store">@store.StoreName #@store.StoreNumber</MudSelectItem>
+
+                }
+            </MudSelect>
+        </MudItem>
+    </MudGrid>
+
+<div class="my-8">
+    <!-- corporate summary -->
+
+    @if (_storeReport is not null)
+    {
+        <StoreReport Report="_storeReport" />
+    }
+
+</div>
+
+<h1>Carts</h1>
+
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
+    <MudIconButton Icon="@Icons.Material.Filled.Map" OnClick="ShowMapView"></MudIconButton>
+    <MudIconButton Icon="@Icons.Material.Filled.List" OnClick="ShowListView"></MudIconButton>
+</MudButtonGroup>
+
+<div class="mt-8">
+    @switch (_view)
+
+    {
+
+        case ViewOption.Map:
+            <CartsMap Carts=@_filteredCarts></CartsMap>
+
+            break;
+
+        case ViewOption.List:
+
+
+
+            // if nothing in filtered carts list, then do default filtering
+
+            if (_filteredCarts.Count() == 0)
+
+            {
+
+                _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
+
+            }
+
+            <CartsList Carts="@_filteredCarts"></CartsList>
+
+
+
+            break;
+
+        default:
+            <CartsMap Carts=@_filteredCarts></CartsMap>
+
+            break;
+
+    }
+</div>
