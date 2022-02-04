@@ -4,7 +4,9 @@ namespace WiiTrakClient.DTOs
 {
     public class CartUpdateDto
     {
-         public string ManufacturerName { get; set; } = string.Empty;
+        public string ManufacturerName { get; set; } = string.Empty;
+
+        public string CartNumber { get; set; } = string.Empty;
 
         public DateTime DateManufactured { get; set; }
 
