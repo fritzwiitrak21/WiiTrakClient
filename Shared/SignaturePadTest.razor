@@ -1,4 +1,7 @@
 @page "/signature-pad-test"
+@using System.Net.Http.Headers
+@using System.Net.Mime
+@using System.Text
 
 @inject IJSRuntime js
 
@@ -23,11 +26,81 @@
     </div>
 </div>
 
- <input type="button" class="btn btn-primary" value="Save" onclick="SaveSignature()"/>
+<input type="button" class="btn btn-primary" value="Save" @onclick="SaveSignature"/>
 
- @code {
-     private void SaveSignature() {
-         // saveSignatureAsync()
-         js.InvokeAsync<string>("saveSignatureAsync");
+
+@if (!string.IsNullOrWhiteSpace(_imageUrl)) {
+    <MudText class="my-12" Typo="Typo.h3">
+        _imageUrl
+    </MudText>
+}
+
+@code {
+    [Inject]
+    public IPicUploadHttpRepository PicUploadHttpRepository {get; set;}
+    private string _imageUrl = "";
+
+     private async Task SaveSignature() 
+     {
+         var dotNetObjectRef = DotNetObjectReference.Create(this);
+         await js.InvokeAsync<string>("saveSignatureAsync", dotNetObjectRef);
      }
+
+     [JSInvokable]
+     public async Task SaveSignatureAsync(string imageData)
+     {
+         Console.Write(imageData);
+
+         var imageDataStripped = imageData.Replace("data:image/png;base64,", "");
+         var imageByteArray = Convert.FromBase64String(imageDataStripped);
+
+         //var signFileName = Guid.NewGuid().ToString() + ".png";
+         //var filePath = Path.Combine(folderPath, signFileName);
+         //using (var signFile = new FileStream(signFileName, FileMode.Create))
+         //{
+         //    signFile.Write(imageByteArray,0,imageByteArray.Length);
+         //    signFile.Flush();
+         //    return true;
+         //}
+       
+
+         await SaveToBlobStorageAsync(imageByteArray);
+     }
+
+    private async Task SaveToBlobStorageAsync(byte[] imageBytes)  
+    {
+        //using (var fs = new FileStream("signature.png", FileMode.Create))
+        //{
+           
+           
+        //}
+
+        
+        var fileStream = new MemoryStream();
+        fileStream.Write(imageBytes, 0, imageBytes.Length);
+
+        var content = new MultipartFormDataContent();
+        content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+
+        Console.WriteLine("len: " + fileStream.Length);
+        var streamContent = new StreamContent(fileStream, Convert.ToInt32(fileStream.Length));
+        streamContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+
+        await streamContent.CopyToAsync(fileStream);
+        content.Add(streamContent, "image", "signature.png");
+        _imageUrl = await PicUploadHttpRepository.UploadImage(content);
+       
+        
+
+        //using (var fs = fileStream)
+        //{
+        //    byte[] b = new byte[1024];
+        //    while (fs.Read(b,0,b.Length) > 0)
+        //    {
+        //        Console.WriteLine(temp.GetString(b));
+        //    }
+          
+       
+        //}
+    }
  }

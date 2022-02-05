@@ -63,11 +63,6 @@
 <!-- Required for Super Signature Data :END -->
 
 
-@if (!string.IsNullOrWhiteSpace(_imageUrl)) {
-    <MudText class="my-12" Typo="Typo.h3">
-        _imageUrl
-    </MudText>
-}
 
 
 @code {
@@ -120,11 +115,7 @@
     [Parameter]
     public string SignatureImageData { get; set; }
 
-
-    [Inject]
-    public static IPicUploadHttpRepository PicUploadHttpRepository {get; set;}
-    private string _imageUrl = "";
-
+    
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -171,44 +162,6 @@
         await js.InvokeAsync<object>(SignObject + "Init", JsonConvert.SerializeObject(signModel));
 
         await base.OnAfterRenderAsync(firstRender);
-    }
-
-
-    [JSInvokable]
-    public static bool SaveSignatureAsync(string imageData)
-    {
-        var imageDataStripped = imageData.Replace("data:image/png;base64,", "");
-        var imageByteArray = Convert.FromBase64String(imageDataStripped);
-
-        var signBitmap = SKBitmap.Decode(imageByteArray);
-
-        if (null != signBitmap)
-        {
-            var skData = SKImage.FromBitmap(signBitmap).Encode(SKEncodedImageFormat.Png, 100);
-            var signFileName = Guid.NewGuid().ToString() + ".png";
-            using (var signFile = new FileStream(@"wwwroot\signatures\" + signFileName, FileMode.Create))
-            {
-                skData.SaveTo(signFile);
-                //await SaveToBlobStorage(signFile);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static async Task SaveToBlobStorage(FileStream? sigFile)  
-    {
-        if (sigFile != null)
-        {
-            using (var fs = sigFile)
-            {
-                var content = new MultipartFormDataContent();
-                content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
-                content.Add(new StreamContent(fs, Convert.ToInt32(fs.Length)), "image", "signature.png");
-                string imageUrl = await PicUploadHttpRepository.UploadImage(content);             
-            }
-        }
     }
 
 }

@@ -26,14 +26,16 @@ function ctlSignatureInit(signModel) {
     // End
 
 
-    function saveSignatureAsync() {
+    function saveSignatureAsync(dotNetObjectReference) {
         var imageData = document.getElementById(instanceId).toDataURL("image/png");
 
         // client side image
         $("#pngImg").attr("src", imageData);
 
         //server side save
-        DotNet.invokeMethodAsync('SuperSignature.Blazor', 'SaveSignatureAsync', imageData);
+        //DotNet.invokeMethodAsync('WiiTrakClient', 'SaveSignatureAsync', imageData);
+
+        dotNetObjectReference.invokeMethodAsync('SaveSignatureAsync', imageData);
     }
 
 
