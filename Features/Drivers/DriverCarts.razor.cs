@@ -37,6 +37,7 @@ namespace WiiTrakClient.Features.Drivers
         // Driver summary
         #region
         DriverSummary? _driverSummary;
+        DriverReportDto? _driverSummaryReport;
         List<CartChange>? _cartChanges;
         const string _driverSummaryKey = "DriverSummary";
         const string _cartChangesKey = "CartChanges";
@@ -85,7 +86,24 @@ namespace WiiTrakClient.Features.Drivers
             _carts = await CartHttpRepository.GetCartsByDriverIdAsync(id);
             _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
             Console.WriteLine(_carts.Count());
-            await UpdateDriverSummary();
+            await UpdateDriverSummaryReport(id);
+        }
+
+        private async Task UpdateDriverSummaryReport(Guid id)
+        {
+            _driverSummaryReport = await DriverRepository.GetDriverReportAsync(id);
+            if(_driverSummaryReport != null)
+            {
+                _driverSummary = new DriverSummary();
+                _driverSummary.CartsGood = _driverSummaryReport.TotalCartsGood;
+                _driverSummary.CartsOnTruck = _driverSummaryReport.CartsOnVehicleToday;
+                _driverSummary.CartsOut = _driverSummaryReport.TotalCartsOutsideStore;
+                _driverSummary.CartsLost = _driverSummaryReport.TotalCartsLost;
+                _driverSummary.CartsNeedRepair = _driverSummaryReport.TotalCartsNeedingRepair;
+                _driverSummary.CartsTrash = _driverSummaryReport.TotalCartsTrashed;
+                _driverSummary.CartsDelivered = _driverSummaryReport.CartsDeliveredToday;
+            }
+
         }
 
         private void ShowMapView()
