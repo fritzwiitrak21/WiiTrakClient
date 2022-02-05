@@ -1,5 +1,7 @@
-﻿@using System.IO;
-@using WiiTrakClient.DTOs;
+﻿
+@using System.IO;
+@using System.Net.Http.Headers
+@using WiiTrakClient.Shared.Models;
 @using Newtonsoft.Json
 @using SkiaSharp;
 
@@ -46,9 +48,30 @@
 
 </style>
 
-<h3>SSignature</h3>
+<img src="/images/loader.gif" id="imgLoader" />
+
+<div id="@(SignObject)_Container">
+    <canvas id="@SignObject" width="@SignWidth" height="@SignHeight"></canvas>
+</div>
+<div id="@(SignObject)_toolbar" style="display:none">
+    <img src="@RefreshImage" id="@(SignObject)_resetbutton" title="Reset" />
+    <div id="@(SignObject)_status"></div>
+</div>
+<!-- START: Required for Super Signature Data  -->
+<input type="hidden" id="@(SignObject)_data" name="@(SignObject)_data" value="" />
+<input type="hidden" id="@(SignObject)_data_smooth" name="@(SignObject)_data_smooth" value="" />
+<!-- Required for Super Signature Data :END -->
+
+
+@if (!string.IsNullOrWhiteSpace(_imageUrl)) {
+    <MudText class="my-12" Typo="Typo.h3">
+        _imageUrl
+    </MudText>
+}
+
 
 @code {
+
     [Parameter]
     public string SignObject { get; set; }
     [Parameter]
@@ -93,11 +116,14 @@
     public string Visible { get; set; }
     [Parameter]
     public string Enabled { get; set; }
-    [Parameter]
-    public string Name { get; set; } 
 
     [Parameter]
     public string SignatureImageData { get; set; }
+
+
+    [Inject]
+    public static IPicUploadHttpRepository PicUploadHttpRepository {get; set;}
+    private string _imageUrl = "";
 
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -107,7 +133,7 @@
             throw new Exception("SuperSignature: SignObject property is not defined");
         }
 
-        var signModel = new SignatureDto
+        var signModel = new SignatureModel
         {
             SignObject = SignObject,
             SignzIndex = SignZIndex ?? 99,
@@ -139,9 +165,7 @@
             ImageScaleFactor = ImageScaleFactor ?? 1.0f,
 
             Enabled = Enabled ?? "true",
-            Visible = Visible ?? "true",
-
-            Name = "testSignaturePad"
+            Visible = Visible ?? "true"
         };
 
         await js.InvokeAsync<object>(SignObject + "Init", JsonConvert.SerializeObject(signModel));
@@ -165,10 +189,26 @@
             using (var signFile = new FileStream(@"wwwroot\signatures\" + signFileName, FileMode.Create))
             {
                 skData.SaveTo(signFile);
+                //await SaveToBlobStorage(signFile);
                 return true;
             }
         }
 
         return false;
     }
+
+    private static async Task SaveToBlobStorage(FileStream? sigFile)  
+    {
+        if (sigFile != null)
+        {
+            using (var fs = sigFile)
+            {
+                var content = new MultipartFormDataContent();
+                content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+                content.Add(new StreamContent(fs, Convert.ToInt32(fs.Length)), "image", "signature.png");
+                string imageUrl = await PicUploadHttpRepository.UploadImage(content);             
+            }
+        }
+    }
+
 }

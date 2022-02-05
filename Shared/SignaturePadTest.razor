@@ -1,0 +1,33 @@
+@page "/signature-pad-test"
+
+@inject IJSRuntime js
+
+<h3>Signature Pad Test</h3>
+
+
+<h1 id="bTitle">SuperSignature Blazor</h1>
+
+<div class="row">
+    <div id="divResize" class="col-lg-6 col-sm-12">
+        <SSignature SignObject="ctlSignature"
+                    RefreshImage="/images/clear.png"
+                    PenCursor="/images/pen.cur"
+                    SignWidth="450"
+                    SignHeight="300"
+                    PenColor="blue"
+                    RequiredPoints="50">
+        </SSignature>
+    </div>
+    <div class="col-lg-6 col-sm-12">
+        <img src="/images/spacer.png" id="pngImg"/>
+    </div>
+</div>
+
+ <input type="button" class="btn btn-primary" value="Save" onclick="SaveSignature()"/>
+
+ @code {
+     private void SaveSignature() {
+         // saveSignatureAsync()
+         js.InvokeAsync<string>("saveSignatureAsync");
+     }
+ }
