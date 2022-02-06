@@ -28,11 +28,10 @@
 
 <input type="button" class="btn btn-primary" value="Save" @onclick="SaveSignature"/>
 
-
 @if (!string.IsNullOrWhiteSpace(_imageUrl)) {
-    <MudText class="my-12" Typo="Typo.h3">
-        _imageUrl
-    </MudText>
+    <div class="my-12">
+        Url: <MudLink Href="@_imageUrl" Typo="Typo.body2">@_imageUrl</MudLink>
+    </div>
 }
 
 @code {
@@ -49,21 +48,17 @@
      [JSInvokable]
      public async Task SaveSignatureAsync(string imageData)
      {
-         Console.Write(imageData);
-
          var imageDataStripped = imageData.Replace("data:image/png;base64,", "");
          var imageByteArray = Convert.FromBase64String(imageDataStripped);
 
-         var memoryStream = new MemoryStream();
-         memoryStream.Write(imageByteArray, 0, imageByteArray.Length);
+         await using var memoryStream = new MemoryStream(imageByteArray);
 
          var content = new MultipartFormDataContent();
          content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
-
-         Console.WriteLine("len: " + memoryStream.Length);
          var streamContent = new StreamContent(memoryStream, Convert.ToInt32(memoryStream.Length));
          streamContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
          content.Add(streamContent, "file", "signature.png");
          _imageUrl = await PicUploadHttpRepository.UploadSignature(content);
+         StateHasChanged();
      }
  }
