@@ -54,53 +54,16 @@
          var imageDataStripped = imageData.Replace("data:image/png;base64,", "");
          var imageByteArray = Convert.FromBase64String(imageDataStripped);
 
-         //var signFileName = Guid.NewGuid().ToString() + ".png";
-         //var filePath = Path.Combine(folderPath, signFileName);
-         //using (var signFile = new FileStream(signFileName, FileMode.Create))
-         //{
-         //    signFile.Write(imageByteArray,0,imageByteArray.Length);
-         //    signFile.Flush();
-         //    return true;
-         //}
-       
+         var memoryStream = new MemoryStream();
+         memoryStream.Write(imageByteArray, 0, imageByteArray.Length);
 
-         await SaveToBlobStorageAsync(imageByteArray);
+         var content = new MultipartFormDataContent();
+         content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+
+         Console.WriteLine("len: " + memoryStream.Length);
+         var streamContent = new StreamContent(memoryStream, Convert.ToInt32(memoryStream.Length));
+         streamContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+         content.Add(streamContent, "file", "signature.png");
+         _imageUrl = await PicUploadHttpRepository.UploadSignature(content);
      }
-
-    private async Task SaveToBlobStorageAsync(byte[] imageBytes)  
-    {
-        //using (var fs = new FileStream("signature.png", FileMode.Create))
-        //{
-           
-           
-        //}
-
-        
-        var fileStream = new MemoryStream();
-        fileStream.Write(imageBytes, 0, imageBytes.Length);
-
-        var content = new MultipartFormDataContent();
-        content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
-
-        Console.WriteLine("len: " + fileStream.Length);
-        var streamContent = new StreamContent(fileStream, Convert.ToInt32(fileStream.Length));
-        streamContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
-
-        await streamContent.CopyToAsync(fileStream);
-        content.Add(streamContent, "image", "signature.png");
-        _imageUrl = await PicUploadHttpRepository.UploadImage(content);
-       
-        
-
-        //using (var fs = fileStream)
-        //{
-        //    byte[] b = new byte[1024];
-        //    while (fs.Read(b,0,b.Length) > 0)
-        //    {
-        //        Console.WriteLine(temp.GetString(b));
-        //    }
-          
-       
-        //}
-    }
  }

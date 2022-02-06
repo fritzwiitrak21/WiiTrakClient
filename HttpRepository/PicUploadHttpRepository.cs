@@ -7,6 +7,7 @@ using WiiTrakClient.Services;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using WiiTrakClient.HttpRepository.Models;
+using WiiTrakClient.Features.ServiceProviders;
 
 namespace WiiTrakClient.HttpRepository
 {
@@ -32,6 +33,21 @@ namespace WiiTrakClient.HttpRepository
             }
 
             PicUploadResponse picUploadResponse = JsonSerializer.Deserialize<PicUploadResponse>(jsonString);            
+            return picUploadResponse is not null ? picUploadResponse.FileURL : string.Empty;
+        }
+
+        public async Task<string> UploadSignature(MultipartFormDataContent content)
+{
+            string url = $"{_apiUrl}/signature";
+
+            var response = await _httpService.PostForm(url, content);
+            string jsonString = await response.GetBody();
+            if (!response.Success)
+            {
+                throw new ApplicationException(jsonString);
+            }
+
+            PicUploadResponse picUploadResponse = JsonSerializer.Deserialize<PicUploadResponse>(jsonString);
             return picUploadResponse is not null ? picUploadResponse.FileURL : string.Empty;
         }
     }
