@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor;
 using WiiTrakClient.DTOs;
+using WiiTrakClient.Enums;
 using WiiTrakClient.HttpRepository.Contracts;
 
 namespace WiiTrakClient.Features.Stores.Components
@@ -14,7 +16,10 @@ namespace WiiTrakClient.Features.Stores.Components
         public EventCallback DeliveryTicketUpdatedEventCallback { get; set; }
         [Inject] public IStoreHttpRepository StoreHttpRepository { get; set; }
         [Inject] public IDeliveryTicketHttpRepository DeliveryTicketHttpRepository { get; set; }
-        [Inject] ICartHttpRepository CartRepository { get; set; }
+        [Inject] public ICartHttpRepository CartRepository { get; set; }
+        [Inject] IWorkOrderHttpRepository WorkOrderHttpRepository { get; set; }
+        [Inject]
+        IJSRuntime _js { get; set; }
 
         [Inject]
         IDialogService? DialogService { get; set; }
@@ -23,6 +28,16 @@ namespace WiiTrakClient.Features.Stores.Components
         DeliveryTicketUpdateDto _editDeliveryTicket = new();
         Guid deliveryTicketId = Guid.Empty;
         List<CartDto>? cartsTable { get; set; } = new List<CartDto>();
+
+        protected override async Task OnInitializedAsync()
+        {
+            var targetUrl = "js/ss.js";
+            await _js.InvokeVoidAsync("loadJs", targetUrl);
+
+            targetUrl = "js/ss.ui.js";
+            await _js.InvokeVoidAsync("loadJs", targetUrl);
+
+        }
         protected override void OnParametersSet()
         {
             _listIsLoading = false;
@@ -69,6 +84,25 @@ namespace WiiTrakClient.Features.Stores.Components
             var result = await dialog.Result;
             if (!result.Cancelled)
             {
+                if(_editDeliveryTicket.ApprovedByStore)
+                {
+                    var _carts = await CartRepository.GetCartsByDriverIdAsync(_editDeliveryTicket.DriverId);
+                    foreach (var cart in _carts)
+                    {
+                        if (cart.Condition == CartCondition.Damage)
+                        {
+                            var newWorkOrder = new WorkOrderCreationDto
+                            {
+                                Issue = cart.DamageIssue,
+                                Notes = "",
+                                CartId = cart.Id,
+                                StoreId = cart.Store != null ? cart.Store.Id : null
+                            };
+
+                            await WorkOrderHttpRepository.CreateWorkOrderAsync(newWorkOrder);
+                        }
+                    }
+                }
                 // add new delivery ticket to backend
                 var deliveryTicketUpdate = new DeliveryTicketUpdateDto
                 {
