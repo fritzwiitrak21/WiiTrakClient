@@ -30,6 +30,8 @@ namespace WiiTrakClient.Features.Drivers
 
         [Inject] IDialogService DialogService { get; set; }
 
+        [Inject] IWorkOrderHttpRepository WorkOrderHttpRepository { get; set; }
+
         DriverDto _selectedDriver = new();
         List<DriverDto> _drivers = new();
         List<DeliveryTicketDto> _deliveryTickets = new();
@@ -94,6 +96,21 @@ namespace WiiTrakClient.Features.Drivers
                 var carts = _carts.Where(x => x.StoreId == _newDeliveryTicket.StoreId).ToList();
                 foreach(var cart in carts) 
                 {
+                    if(!deliveryTicketResponse.SignOffRequired)
+                    {
+                        if (cart.Condition == CartCondition.Damage)
+                        {
+                            var newWorkOrder = new WorkOrderCreationDto
+                            {
+                                Issue = cart.DamageIssue,
+                                Notes = "",
+                                CartId = cart.Id,
+                                StoreId = cart.Store != null ? cart.Store.Id : null
+                            };
+
+                            await WorkOrderHttpRepository.CreateWorkOrderAsync(newWorkOrder);
+                        }
+                    }
                     var cartHistory = new CartHistoryUpdateDto {
                         DeliveryTicketId = deliveryTicketResponse.Id,
                         PickupLatitude = cart.TrackingDevice != null ? cart.TrackingDevice.Latitude : 0,

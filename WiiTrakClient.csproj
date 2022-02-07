@@ -15,7 +15,6 @@
     <PackageReference Include="MudBlazor" Version="6.0.2" />
     <PackageReference Include="MudBlazor.ThemeManager" Version="1.0.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="SkiaSharp" Version="2.80.3" />
   </ItemGroup>
 
   <ItemGroup>
