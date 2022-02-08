@@ -43,7 +43,15 @@
         </MudItem>
     </MudGrid>
 </div>
+<div class="my-8">
+    <!-- corporate summary -->
 
+    @if (_storeReport is not null)
+    {
+        <StoreReport Report="_storeReport" />
+    }
+
+</div>
 
 
 <h1>Carts</h1>

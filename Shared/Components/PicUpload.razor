@@ -3,7 +3,7 @@
 @namespace WiiTrakClient.Shared.Components
 @using System.Net.Http.Headers
 
-<InputFile id="fileInput" OnChange="UploadFile" capture hidden accept=".jpg, .jpeg, .png" />
+<InputFile id="fileInput" OnChange="UploadFile" capture hidden accept=".jpg, .jpeg, .png" style="@styleCss" />
 
 <MudFab HtmlTag="label"
         Color="Color.Secondary"
@@ -17,6 +17,9 @@
 
     [Parameter]
     public EventCallback OnPicUploadStart {get; set;}
+
+    [Parameter]
+    public string styleCss { get; set; } = "";
 
     [Inject]
     public IPicUploadHttpRepository PicUploadHttpRepository {get; set;}
