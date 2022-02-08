@@ -26,18 +26,17 @@ function ctlSignatureInit(signModel) {
     // End
 
 
-    function saveSignatureAsync(dotNetObjectReference) {
+function saveSignatureAsync(dotNetObjectReference) {
+    
         var imageData = document.getElementById(instanceId).toDataURL("image/png");
 
         // client side image
-        //$("#pngImg").attr("src", imageData);
-
+        //$("#fileInput").attr("src", imageData);
         //server side save
         //DotNet.invokeMethodAsync('WiiTrakClient', 'SaveSignatureAsync', imageData);
 
         dotNetObjectReference.invokeMethodAsync('SaveSignatureAsync', imageData);
     }
-
 
     // ============================== Code for Resizing  ============================== 
 

@@ -54,9 +54,11 @@
                 console.error("Invalid source URL");
                 return;
             }
-
+            var urldata = sourceUrl.split("/");
+            var fileName = urldata[1].split(".");
             var tag = document.createElement('script');
             tag.src = sourceUrl;
+            tag.id = "file_" + fileName[0];
             tag.type = "text/javascript";
 
             tag.onload = function () {
@@ -68,6 +70,30 @@
             }
 
             document.body.appendChild(tag);
+        }
+        function unloadJs(sourceUrl) {
+            
+            if (sourceUrl.Length == 0) {
+                console.error("Invalid source URL");
+                return;
+            }
+            var urldata = sourceUrl.split("/");
+            var fileName = urldata[1].split(".");
+            var tagId = "file_" + fileName[0];
+            var tag = document.getElementById(tagId);
+            //tag.src = sourceUrl;
+            //tag.id = "file_" + fileName[0];
+            //tag.type = "text/javascript";
+
+            //tag.onload = function () {
+            //    console.log("Script loaded successfully");
+            //}
+
+            //tag.onerror = function () {
+            //    console.error("Failed to load script");
+            //}
+
+            document.body.removeChild(tag);
         }
     </script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>

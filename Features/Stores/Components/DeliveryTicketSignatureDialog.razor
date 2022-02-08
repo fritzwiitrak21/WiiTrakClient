@@ -1,6 +1,5 @@
 ﻿@namespace WiiTrakClient.Features.Stores.Components
 @using WiiTrakClient.Shared.Components
-@implements IAsyncDisposable
 @using System.Net.Http.Headers
 @using System.Net.Mime
 @using System.Text
@@ -36,24 +35,30 @@
                 }
                 else
                 {
-                <div id="divResize" class="">
-                    <SSignature SignObject="ctlSignature"
+                    @if (!_isSigned)
+                    {
+                        <div id="divResize" class="">
+                            <SSignature SignObject="ctlSignature"
                         RefreshImage="/images/clear.png"
                         PenCursor="/images/pen.cur"
                         SignWidth="450"
                         SignHeight="300"
                         PenColor="blue"
                         RequiredPoints="50">
-                    </SSignature>
-                </div>
+                            </SSignature>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <img src="/images/spacer.png" id="pngImg"/>
+                        </div>
+                    }
                 }
-
             @if (!_isSigned) {
                   <MudButton Variant="Variant.Filled" Color="Color.Primary"
                     OnClick="SaveSignature">Sign
                 </MudButton>
+                
             } else {
-                <MudText Typo="Typo.h4">Signature Complete</MudText>
+                <MudText Typo="Typo.h5" Class="text-success">Signature Complete</MudText>
             }
               
                 
@@ -86,60 +91,48 @@
     public List<CartDto>? cartsTable { get; set; }
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-
-    public IPicUploadHttpRepository PicUploadHttpRepository {get; set;}
+    [Inject]
+    protected IPicUploadHttpRepository PicUploadHttpRepository {get; set;}
     [Inject] IJSRuntime _js {
         get;
         set;
     }
-    IJSObjectReference module;
     private string _fileUrl = "";
+    private string _imageData = "";
     bool _disableSaveButton = false;
     bool _isSigned = false;
 
-    private void PicUploadStart() 
+    protected override Task OnParametersSetAsync()
     {
         _disableSaveButton = true;
-    }
-
-    private void PicUploadComplete(string url)
-    {
-        _fileUrl = url;
-        _disableSaveButton = false;
-        editDeliveryTicket.SignaturePicUrl = _fileUrl;
-        editDeliveryTicket.ApprovedByStore = true;
-    }
-
-    private void OnSignatureComplete() 
-    {
-        editDeliveryTicket.ApprovedByStore = true;
-        _isSigned = true;
+        return base.OnParametersSetAsync();
     }
 
     private async Task SaveSignature() 
-     {
-         _disableSaveButton = false;
-         editDeliveryTicket.ApprovedByStore = true;
+    {
+        var dotNetObjectRef = DotNetObjectReference.Create(this);
+        await _js.InvokeAsync<string>("saveSignatureAsync", dotNetObjectRef);
+    }
+
+    [JSInvokable]
+    public async Task SaveSignatureAsync(string imageData)
+    {
+        _imageData = imageData;
+        var imageDataStripped = imageData.Replace("data:image/png;base64,", "");
+        var imageByteArray = Convert.FromBase64String(imageDataStripped);
+
+        await using var memoryStream = new MemoryStream(imageByteArray);
+
+        var content = new MultipartFormDataContent();
+        content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+        var streamContent = new StreamContent(memoryStream, Convert.ToInt32(memoryStream.Length));
+        streamContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+        content.Add(streamContent, "file", "signature.png");
+        _fileUrl = await PicUploadHttpRepository.UploadSignature(content);
+        editDeliveryTicket.SignaturePicUrl = _fileUrl;
+        editDeliveryTicket.ApprovedByStore = true;
+        _disableSaveButton = false;
         _isSigned = true;
-         var dotNetObjectRef = DotNetObjectReference.Create(this);
-         await _js.InvokeAsync<string>("saveSignatureAsync", dotNetObjectRef);
-     }
-
-     [JSInvokable]
-     public async Task SaveSignatureAsync(string imageData)
-     {
-         var imageDataStripped = imageData.Replace("data:image/png;base64,", "");
-         var imageByteArray = Convert.FromBase64String(imageDataStripped);
-
-         await using var memoryStream = new MemoryStream(imageByteArray);
-
-         var content = new MultipartFormDataContent();
-         content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
-         var streamContent = new StreamContent(memoryStream, Convert.ToInt32(memoryStream.Length));
-         streamContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
-         content.Add(streamContent, "file", "signature.png");
-         _fileUrl = await PicUploadHttpRepository.UploadSignature(content);
-         _disableSaveButton = true;
          StateHasChanged();
      }
 
@@ -150,9 +143,4 @@
 
     void Cancel() => MudDialog.Cancel();
 
-    async ValueTask IAsyncDisposable.DisposeAsync() {
-        if (module is not null) {
-            await module.DisposeAsync();
-        }
-    }
 }

@@ -7,7 +7,7 @@ using WiiTrakClient.HttpRepository.Contracts;
 
 namespace WiiTrakClient.Features.Stores.Components
 {
-    public partial class DeliveryTicketsList: ComponentBase
+    public partial class DeliveryTicketsList: ComponentBase, IAsyncDisposable
     {
         [Parameter]
         public List<DeliveryTicketDto>? DeliveryTickets { get; set; }
@@ -20,7 +20,7 @@ namespace WiiTrakClient.Features.Stores.Components
         [Inject] IWorkOrderHttpRepository WorkOrderHttpRepository { get; set; }
         [Inject]
         IJSRuntime _js { get; set; }
-
+        IJSInProcessObjectReference module;
         [Inject]
         IDialogService? DialogService { get; set; }
 
@@ -31,10 +31,12 @@ namespace WiiTrakClient.Features.Stores.Components
 
         protected override async Task OnInitializedAsync()
         {
-            var targetUrl = "js/ss.js";
+            //module = await _js.InvokeAsync<IJSInProcessObjectReference>("import", "./js/ss.js?$$REVISION$$");
+            //module = await _js.InvokeAsync<IJSInProcessObjectReference>("import", "./js/ss.ui.js?$$REVISION$$");
+            var targetUrl = "js/ss.js?$$REVISION$$";
             await _js.InvokeVoidAsync("loadJs", targetUrl);
 
-            targetUrl = "js/ss.ui.js";
+            targetUrl = "js/ss.ui.js?$$REVISION$$";
             await _js.InvokeVoidAsync("loadJs", targetUrl);
 
         }
@@ -173,6 +175,19 @@ namespace WiiTrakClient.Features.Stores.Components
             //     };
             //     await CartUpdatedEventCallback.InvokeAsync(cartChange);
             //}
+        }
+
+        async ValueTask IAsyncDisposable.DisposeAsync()
+        {
+            var targetUrl = "js/ss.js?$$REVISION$$";
+            await _js.InvokeVoidAsync("unloadJs", targetUrl);
+
+            targetUrl = "js/ss.ui.js?$$REVISION$$";
+            await _js.InvokeVoidAsync("unloadJs", targetUrl);
+            if (module is not null)
+            {
+                await module.DisposeAsync();
+            }
         }
     }
 }
