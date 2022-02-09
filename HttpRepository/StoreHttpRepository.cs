@@ -92,6 +92,42 @@ namespace WiiTrakClient.HttpRepository
             return response.Response;
         }
 
+        public async Task<StoreReportDto> GetAllStoreReportByDriverAsync(Guid driverId)
+        {
+            string url = $"{_apiUrl}/report/driver/{driverId}";
+
+            var response = await _httpService.Get<StoreReportDto>(url);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
+
+        public async Task<StoreReportDto> GetAllStoreReportByCoprporateAsync(Guid corporateId)
+        {
+            string url = $"{_apiUrl}/report/corporate/{corporateId}";
+
+            var response = await _httpService.Get<StoreReportDto>(url);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
+
+        public async Task<StoreReportDto> GetAllStoreReportByCompanyAsync(Guid companyId)
+        {
+            string url = $"{_apiUrl}/report/company/{companyId}";
+
+            var response = await _httpService.Get<StoreReportDto>(url);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
+
         public async Task CreateStoreAsync(StoreCreationDto store)
         {
             var response = await _httpService.Post(_apiUrl, store);

@@ -7,7 +7,7 @@
 
 <MudGrid class="my-8">
     <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="CorporateDto" Label="Select Corporate" ValueChanged="(value) => HandleCorporateSelected(value)"
+        <MudSelect T="CorporateDto" Label="Select Corporate" Value="@_selectedCorporate" ValueChanged="(value) => HandleCorporateSelected(value)"
             AnchorOrigin="Origin.BottomCenter">
             @foreach (var corporate in _corporates)
             {
@@ -33,11 +33,18 @@
 <div class="my-8">
     <MudGrid>
         <MudItem xs="12" sm="6" md="4">
-            <MudSelect T="StoreDto" Label="Select Store"
-                ValueChanged="(value) => HandleStoreSelected(value)" AnchorOrigin="Origin.BottomCenter">
+            <MudSelect T="StoreDto" Label="Select Store" 
+                AnchorOrigin="Origin.BottomCenter"  Value="@_selectedStore" ValueChanged="(value) => HandleStoreSelected(value)" >
                 @foreach (var store in _stores)
                 {
-                    <MudSelectItem T="StoreDto" Value="@store">@store.StoreName #@store.StoreNumber</MudSelectItem>
+                    if (store.Id == Guid.Empty)
+                    {
+                        <MudSelectItem T="StoreDto" Value="@store">@store.StoreName</MudSelectItem>
+                    }
+                    else
+                    {
+                        <MudSelectItem T="StoreDto" Value="@store">@store.StoreName #@store.StoreNumber</MudSelectItem>
+                    }
 
                 }
             </MudSelect>
