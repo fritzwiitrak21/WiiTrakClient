@@ -49,7 +49,7 @@ namespace WiiTrakClient.Features.Corporates
             _corporates = await CorporateRepository.GetAllCorporatesAsync();
             _selectedCorporate = _corporates[0];
             await GetCartsByCorporateId(_selectedCorporate.Id);
-            _stores = await StoreRepository.GetStoresByCorporateId(_selectedCorporate.Id);
+            await GetStoreListByCoroporateId();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -62,8 +62,8 @@ namespace WiiTrakClient.Features.Corporates
             System.Console.WriteLine(corporate.Id);
             await GetCartsByCorporateId(corporate.Id);
             _selectedCorporate = corporate;
-            await UpdateReport(_selectedCorporate.Id);
-            _stores = await StoreRepository.GetStoresByCorporateId(_selectedCorporate.Id);
+            await UpdateReport(corporate.Id);
+            await GetStoreListByCoroporateId();
             StateHasChanged();
         }
 
@@ -72,11 +72,39 @@ namespace WiiTrakClient.Features.Corporates
             Console.WriteLine("HandleStoreSelected" + store.StoreName);
 
             System.Console.WriteLine(store.Id);
-            await GetCartsByStoreId(store.Id);
+            if (store.Id == Guid.Empty)
+            {
+                await GetAllStoreCartsByCorporateId(_selectedCorporate.Id);
+            }
+            else
+            {
+                await GetCartsByStoreId(store.Id);
+            }
             _selectedStore = store;
             //await UpdateReport(_selectedCorporate.Id);
             await UpdateStoreReport(store.Id);
             StateHasChanged();
+        }
+
+        private async Task GetStoreListByCoroporateId()
+        {
+            _stores = new List<StoreDto>();
+            var storelist = await StoreRepository.GetStoresByCorporateId(_selectedCorporate.Id);
+            var AllStore = new StoreDto()
+            {
+                Id = Guid.Empty,
+                StoreName = "All",
+            };
+            _stores.Add(AllStore);
+            foreach (var store in storelist)
+            {
+                _stores.Add(store);
+            }
+            if (_stores != null)
+            {
+                _selectedStore = _stores.Where(x => x.Id == Guid.Empty).FirstOrDefault();
+            }
+            await UpdateStoreReport(_selectedStore.Id);
         }
 
         private async Task GetCartsByCorporateId(Guid id)
@@ -86,21 +114,45 @@ namespace WiiTrakClient.Features.Corporates
             await UpdateReport(id);
         }
 
+        private async Task GetAllStoreCartsByCorporateId(Guid id)
+        {
+            _carts = await CartRepository.GetCartsByCorporateIdAsync(id);
+            _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
+            //await UpdateStoreReport(id);
+        }
+
         private async Task GetCartsByStoreId(Guid id)
         {
-            _carts = await CartRepository.GetCartsByStoreIdAsync(id);  
-            _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();   
+            _carts = await CartRepository.GetCartsByStoreIdAsync(id);
+            if (_carts != null)
+            {
+                _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
+            }
+            else
+            {
+                _filteredCarts = new List<CartDto>();
+            }
             await UpdateStoreReport(id);
         }
 
         private async Task UpdateReport(Guid id)
         {
+            _report = new CorporateReportDto();
             _report = await CorporateRepository.GetCorporateReportAsync(id);
         }
 
         private async Task UpdateStoreReport(Guid id)
         {
-            _storeReport = await StoreRepository.GetStoreReportAsync(id);
+            if (id != Guid.Empty)
+            {
+                _storeReport = new StoreReportDto();
+                _storeReport = await StoreRepository.GetStoreReportAsync(id);
+            }
+            else
+            {
+                _storeReport = new StoreReportDto();
+                _storeReport = await StoreRepository.GetAllStoreReportByCoprporateAsync(_selectedCorporate.Id);
+            }
         }
 
         private void ShowMapView()

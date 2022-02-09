@@ -50,8 +50,9 @@ namespace WiiTrakClient.Features.Corporates.Components
                     CartId = Cart.Id,
                     Lat = Cart.TrackingDevice.Latitude,
                     Long = Cart.TrackingDevice.Longitude,
-                    PopupContent = "Cart",
-                    Color = "MidnightBlue"
+                    PopupContent = "Cart #" + Cart.CartNumber,
+                    Color = "MidnightBlue",
+                    Number = Cart.CartNumber
                 };
                 await _jsModule.InvokeVoidAsync("GetMap", cartMarker);
             }

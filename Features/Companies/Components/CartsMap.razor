@@ -61,7 +61,8 @@
                 {
                     StoreId = store.Id,
                     StoreName = store.StoreName,
-                    PopupContent = store.StoreName,
+                    PopupContent = store.StoreName + " #" + store.StoreNumber,
+                    StoreNumber = store.StoreNumber,
                     StoreLat = store.Latitude,
                     StoreLong = store.Longitude,
                     Color = color,
@@ -77,8 +78,9 @@
                         CartId = storeCart.Id,
                         Lat = storeCart.TrackingDevice.Latitude,
                         Long = storeCart.TrackingDevice.Longitude,
-                        PopupContent = "Cart",
-                        Color = color
+                        PopupContent = "Cart #" + storeCart.CartNumber,
+                        Color = color,
+                        Number = storeCart.CartNumber
                     });
                 }
 
