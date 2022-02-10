@@ -70,6 +70,7 @@ namespace WiiTrakClient.Features.Drivers
             _selectedDriver = _drivers[0];
 
             _repairIssues = await RepairIssueHttpRepository.GetAllRepairIssuesAsync();
+            StateHasChanged();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
