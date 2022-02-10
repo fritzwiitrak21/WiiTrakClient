@@ -18,6 +18,9 @@
     [Parameter]
     public List<CartDto>? Carts { get; set; } = null;   
 
+    [Parameter]
+    public List<StoreDto>? Stores { get; set; } = null;
+
     [Inject]
     IDialogService? DialogService { get; set; }
 
@@ -47,14 +50,14 @@
 
         Console.WriteLine("Carts: " + Carts.Count());
 
-        if (Carts is not null && Carts.Count() > 0)
+        if (Stores is not null && Stores.Count() > 0)
         {
             List<StoreCartMapMarker> storeCartMarkers = new List<StoreCartMapMarker>();
 
             // get list of unique stores
-            var stores = Carts.GroupBy(x => x.Store.Id).Select(o => o.FirstOrDefault()).Select(x => x.Store).ToList();
+            //var stores = Carts.GroupBy(x => x.Store.Id).Select(o => o.FirstOrDefault()).Select(x => x.Store).ToList();
 
-            foreach (var store in stores)
+            foreach (var store in Stores)
             {
                 string color = GetMarkerColor();
                 var storeCartMapMarker = new StoreCartMapMarker
@@ -66,24 +69,30 @@
                     StoreLat = store.Latitude,
                     StoreLong = store.Longitude,
                     Color = color,
-                    Text = $"{stores.IndexOf(store) + 1}",
+                    Text = $"{Stores.IndexOf(store) + 1}",
                     CartMarkers = new List<CartMarkerInfo>()
                 };
 
                 var storeCarts = Carts.Where(x => x.StoreId == store.Id).ToList();
-                foreach (var storeCart in storeCarts)
+                if (storeCarts != null && storeCarts.Count > 0)
                 {
-                    storeCartMapMarker.CartMarkers.Add(new CartMarkerInfo
+                    foreach (var storeCart in storeCarts)
                     {
-                        CartId = storeCart.Id,
-                        Lat = storeCart.TrackingDevice.Latitude,
-                        Long = storeCart.TrackingDevice.Longitude,
-                        PopupContent = "Cart #" + storeCart.CartNumber,
-                        Color = color,
-                        Number = storeCart.CartNumber
-                    });
+                        storeCartMapMarker.CartMarkers.Add(new CartMarkerInfo
+                            {
+                                CartId = storeCart.Id,
+                                Lat = storeCart.TrackingDevice.Latitude,
+                                Long = storeCart.TrackingDevice.Longitude,
+                                PopupContent = "Cart #" + storeCart.CartNumber,
+                                Color = color,
+                                Number = storeCart.CartNumber
+                            });
+                    }
                 }
-
+                else
+                {
+                    storeCarts = new List<CartDto>();
+                }
                 storeCartMarkers.Add(storeCartMapMarker);
             }
 

@@ -5,7 +5,7 @@
 
 <MudGrid class="my-8">
     <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="DriverDto" Label="Select Driver" ValueChanged="(value) => HandleDriverSelected(value)"
+        <MudSelect T="DriverDto" Label="Select Driver" Value=@_selectedDriver ValueChanged="(value) => HandleDriverSelected(value)"
             AnchorOrigin="Origin.BottomCenter">
             @foreach (var driver in _drivers)
             {
@@ -71,7 +71,7 @@
     @switch (_view)
     {
         case ViewOption.Map:
-           <CartsMap Carts=@_filteredCarts RepairIssues="@_repairIssues" CartUpdatedEventCallback="CartUpdatedHandler"></CartsMap>
+            <CartsMap Stores=@_mapStores Carts=@_filteredCarts RepairIssues="@_repairIssues" CartUpdatedEventCallback="CartUpdatedHandler"></CartsMap>
             break;
         case ViewOption.List:
 
@@ -79,25 +79,46 @@
             {
                 if (listFilterChip.Text.Equals(listFilterOption1))
                 {
-                    _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
+                    if (_carts is not null)
+                    {
+                        _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
+                    }
+                    else
+                    {
+                        _filteredCarts = new List<CartDto>();
+                    }
                 }
                 else if (listFilterChip.Text.Equals(listFilterOption2))
                 {
-                    _filteredCarts = _carts.Where(x => x.Status == CartStatus.PickedUp).ToList();
+                    if (_carts is not null)
+                    {
+                        _filteredCarts = _carts.Where(x => x.Status == CartStatus.PickedUp).ToList();
+                    }
+                    else
+                    {
+                        _filteredCarts = new List<CartDto>();
+                    }
                 }
             }
 
             // if nothing in filtered carts list, then do default filtering
             if (_filteredCarts.Count() == 0)
             {
-                _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
+                if (_carts is not null)
+                {
+                    _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
+                }
+                else
+                {
+                    _filteredCarts = new List<CartDto>();
+                }
             }
 
             <CartsList Carts="@_filteredCarts" RepairIssues="@_repairIssues" CartUpdatedEventCallback="CartUpdatedHandler"></CartsList>
 
             break;
         default:
-            <CartsMap Carts=@_filteredCarts RepairIssues="@_repairIssues" CartUpdatedEventCallback="CartUpdatedHandler"></CartsMap>
+            <CartsMap Stores=@_mapStores Carts=@_filteredCarts RepairIssues="@_repairIssues" CartUpdatedEventCallback="CartUpdatedHandler"></CartsMap>
             break;
     }
 </div>
