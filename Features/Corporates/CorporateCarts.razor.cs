@@ -50,6 +50,7 @@ namespace WiiTrakClient.Features.Corporates
             _selectedCorporate = _corporates[0];
             await GetCartsByCorporateId(_selectedCorporate.Id);
             await GetStoreListByCoroporateId();
+            StateHasChanged();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
