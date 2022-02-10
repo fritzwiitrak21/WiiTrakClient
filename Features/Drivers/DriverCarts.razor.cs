@@ -28,6 +28,8 @@ namespace WiiTrakClient.Features.Drivers
 
         [Inject] IWorkOrderHttpRepository WorkOrderHttpRepository {get; set;}
 
+        [Inject] IStoreHttpRepository StoreRepository { get; set; }
+
         DriverDto _selectedDriver = new();
         List<DriverDto> _drivers = new();
         List<CartDto> _carts = new();
@@ -36,6 +38,7 @@ namespace WiiTrakClient.Features.Drivers
 
         // Driver summary
         #region
+        List<StoreDto> _mapStores = new();
         DriverSummary? _driverSummary;
         DriverReportDto? _driverSummaryReport;
         List<CartChange>? _cartChanges;
@@ -84,6 +87,8 @@ namespace WiiTrakClient.Features.Drivers
         private async Task GetCartsByDriverId(Guid id)
         {
             _carts = await CartHttpRepository.GetCartsByDriverIdAsync(id);
+            _mapStores = new List<StoreDto>();
+            _mapStores = await StoreRepository.GetStoresByDriverId(id);
             _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
             Console.WriteLine(_carts.Count());
             await UpdateDriverSummaryReport(id);

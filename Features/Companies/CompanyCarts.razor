@@ -7,7 +7,7 @@
 
 <MudGrid class="my-8">
     <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="CompanyDto" Label="Select Company" ValueChanged="(value) => HandleCompanySelected(value)"
+        <MudSelect T="CompanyDto" Label="Select Company" Value=@_selectedCompany ValueChanged="(value) => HandleCompanySelected(value)"
             AnchorOrigin="Origin.BottomCenter">
             @foreach (var company in _companies)
             {
@@ -33,10 +33,17 @@
     <MudGrid>
         <MudItem xs="12" sm="6" md="4">
             <MudSelect T="StoreDto" Label="Select Store"
-                ValueChanged="(value) => HandleStoreSelected(value)" AnchorOrigin="Origin.BottomCenter">
+                ValueChanged="(value) => HandleStoreSelected(value)" Value=@_selectedStore AnchorOrigin="Origin.BottomCenter">
                 @foreach (var store in _stores)
                 {
-                    <MudSelectItem T="StoreDto" Value="@store">@store.StoreName #@store.StoreNumber</MudSelectItem>
+                    if (store.Id == Guid.Empty)
+                    {
+                        <MudSelectItem T="StoreDto" Value="@store">@store.StoreName</MudSelectItem>
+                    }
+                    else
+                    {
+                        <MudSelectItem T="StoreDto" Value="@store">@store.StoreName #@store.StoreNumber</MudSelectItem>
+                    }
 
                 }
             </MudSelect>
@@ -69,7 +76,7 @@
     {
 
         case ViewOption.Map:
-            <CartsMap Carts=@_filteredCarts></CartsMap>
+            <CartsMap Stores=@_mapStores Carts=@_filteredCarts></CartsMap>
 
             break;
 
@@ -80,11 +87,15 @@
             // if nothing in filtered carts list, then do default filtering
 
             if (_filteredCarts.Count() == 0)
-
             {
-
-                _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
-
+                if (_carts is not null)
+                {
+                    _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
+                }
+                else
+                {
+                    _filteredCarts = new List<CartDto>();
+                }
             }
 
             <CartsList Carts="@_filteredCarts"></CartsList>
@@ -94,7 +105,7 @@
             break;
 
         default:
-            <CartsMap Carts=@_filteredCarts></CartsMap>
+            <CartsMap Stores=@_mapStores Carts=@_filteredCarts></CartsMap>
 
             break;
 

@@ -14,7 +14,7 @@ namespace WiiTrakClient.Features.Stores
         [Inject] IStoreHttpRepository StoreRepository { get; set; }
         List<CartDto> _carts = new();
         List<StoreDto> _stores = new();
-
+        List<StoreDto> _mapStores = new();
         StoreDto _selectedStore;
         List<CartDto> _filteredCarts = new();
         StoreReportDto _storeReport;
@@ -35,6 +35,10 @@ namespace WiiTrakClient.Features.Stores
         protected override async Task OnInitializedAsync()
         {
             _stores = await StoreRepository.GetAllStoresAsync();
+            _selectedStore = _stores[0];
+            await GetCartsByStoreId(_selectedStore);
+            await UpdateStoreReport(_selectedStore.Id);
+            StateHasChanged();
         }
 
         private async Task HandleStoreSelected(StoreDto store)
@@ -42,18 +46,27 @@ namespace WiiTrakClient.Features.Stores
             Console.WriteLine("HandleStoreSelected" + store.StoreName);
 
             System.Console.WriteLine(store.Id);
-            await GetCartsByStoreId(store.Id);
+            await GetCartsByStoreId(store);
             _selectedStore = store;
             //await UpdateReport(_selectedCorporate.Id);
             await UpdateStoreReport(store.Id);
             StateHasChanged();
         }
 
-        private async Task GetCartsByStoreId(Guid id)
+        private async Task GetCartsByStoreId(StoreDto store)
         {
-            _carts = await CartRepository.GetCartsByStoreIdAsync(id);
-            _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
-            await UpdateStoreReport(id);
+            _carts = await CartRepository.GetCartsByStoreIdAsync(store.Id);
+            _mapStores = new List<StoreDto>();
+            _mapStores.Add(store);
+            if (_carts != null)
+            {
+                _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
+            }
+            else
+            {
+                _filteredCarts = new List<CartDto>();
+            }
+            //await UpdateStoreReport(id);
         }
 
         private async Task UpdateStoreReport(Guid id)

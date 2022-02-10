@@ -9,6 +9,9 @@
     [Parameter]
     public List<CartDto>? Carts { get; set; } = null;   
 
+    [Parameter]
+    public List<StoreDto>? Stores { get; set; } = null;
+
     [Inject]
     IDialogService? DialogService { get; set; }
 
@@ -38,14 +41,14 @@
 
         Console.WriteLine("Carts: " + Carts.Count());
 
-        if (Carts is not null && Carts.Count() > 0)
+        if (Stores is not null && Stores.Count() > 0)
         {
             List<StoreCartMapMarker> storeCartMarkers = new List<StoreCartMapMarker>();
 
             // get list of unique stores
-            var stores = Carts.GroupBy(x => x.Store.Id).Select(o => o.FirstOrDefault()).Select(x => x.Store).ToList();
+            //var stores = Carts.GroupBy(x => x.Store.Id).Select(o => o.FirstOrDefault()).Select(x => x.Store).ToList();
 
-            foreach (var store in stores)
+            foreach (var store in Stores)
             {
                 string color = GetMarkerColor();
                 var storeCartMapMarker = new StoreCartMapMarker
@@ -57,7 +60,7 @@
                     StoreLat = store.Latitude,
                     StoreLong = store.Longitude,
                     Color = color,
-                    Text = $"{stores.IndexOf(store) + 1}",
+                    Text = $"{Stores.IndexOf(store) + 1}",
                     CartMarkers = new List<CartMarkerInfo>()
                 };
 

@@ -79,7 +79,7 @@
     {
 
         case ViewOption.Map:
-            <CartsMap Carts=@_filteredCarts></CartsMap>
+            <CartsMap Stores=@_mapStores Carts=@_filteredCarts></CartsMap>
 
             break;
 
@@ -90,10 +90,15 @@
             // if nothing in filtered carts list, then do default filtering
 
             if (_filteredCarts.Count() == 0)
-
             {
-
-                _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
+                if (_carts is not null)
+                {
+                    _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
+                }
+                else
+                {
+                    _filteredCarts = new List<CartDto>();
+                }
 
             }
 
@@ -104,7 +109,7 @@
             break;
 
         default:
-            <CartsMap Carts=@_filteredCarts></CartsMap>
+            <CartsMap Stores=@_mapStores Carts=@_filteredCarts></CartsMap>
 
             break;
 

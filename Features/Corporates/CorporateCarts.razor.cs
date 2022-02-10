@@ -24,12 +24,13 @@ namespace WiiTrakClient.Features.Corporates
         CorporateDto _selectedCorporate;
         List<CartDto> _carts = new();
         List<StoreDto> _stores = new();
-
+        List<StoreDto> _mapStores = new();
         StoreDto _selectedStore;
         List<CartDto> _filteredCarts = new();
         List<RepairIssueDto> _repairIssues = new();
         CorporateReportDto _report;
         StoreReportDto _storeReport;
+        bool mapCoporateBind = true;
         private enum ViewOption
         {
             Map,
@@ -49,6 +50,7 @@ namespace WiiTrakClient.Features.Corporates
             _corporates = await CorporateRepository.GetAllCorporatesAsync();
             _selectedCorporate = _corporates[0];
             await GetCartsByCorporateId(_selectedCorporate.Id);
+            await UpdateReport(_selectedCorporate.Id);
             await GetStoreListByCoroporateId();
             StateHasChanged();
         }
@@ -61,6 +63,7 @@ namespace WiiTrakClient.Features.Corporates
         private async Task HandleCorporateSelected(CorporateDto corporate)
         {
             System.Console.WriteLine(corporate.Id);
+            mapCoporateBind = true;
             await GetCartsByCorporateId(corporate.Id);
             _selectedCorporate = corporate;
             await UpdateReport(corporate.Id);
@@ -71,7 +74,7 @@ namespace WiiTrakClient.Features.Corporates
         private async Task HandleStoreSelected(StoreDto store)
         {
             Console.WriteLine("HandleStoreSelected" + store.StoreName);
-
+            mapCoporateBind = false;
             System.Console.WriteLine(store.Id);
             if (store.Id == Guid.Empty)
             {
@@ -79,7 +82,7 @@ namespace WiiTrakClient.Features.Corporates
             }
             else
             {
-                await GetCartsByStoreId(store.Id);
+                await GetCartsByStoreId(store);
             }
             _selectedStore = store;
             //await UpdateReport(_selectedCorporate.Id);
@@ -111,20 +114,24 @@ namespace WiiTrakClient.Features.Corporates
         private async Task GetCartsByCorporateId(Guid id)
         {
             _carts = await CartRepository.GetCartsByCorporateIdAsync(id);
-            _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
-            await UpdateReport(id);
+            _mapStores = new List<StoreDto>();
+            _mapStores = await StoreRepository.GetStoresByCorporateId(id);
+            _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();            
         }
 
         private async Task GetAllStoreCartsByCorporateId(Guid id)
         {
             _carts = await CartRepository.GetCartsByCorporateIdAsync(id);
+            _mapStores = new List<StoreDto>();
+            _mapStores = await StoreRepository.GetStoresByCorporateId(id);
             _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
-            //await UpdateStoreReport(id);
         }
 
-        private async Task GetCartsByStoreId(Guid id)
+        private async Task GetCartsByStoreId(StoreDto store)
         {
-            _carts = await CartRepository.GetCartsByStoreIdAsync(id);
+            _carts = await CartRepository.GetCartsByStoreIdAsync(store.Id);
+            _mapStores = new List<StoreDto>();
+            _mapStores.Add(store);
             if (_carts != null)
             {
                 _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
@@ -133,7 +140,6 @@ namespace WiiTrakClient.Features.Corporates
             {
                 _filteredCarts = new List<CartDto>();
             }
-            await UpdateStoreReport(id);
         }
 
         private async Task UpdateReport(Guid id)
