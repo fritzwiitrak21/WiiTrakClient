@@ -41,7 +41,7 @@
         <MudTd DataLabel="NumberOfCarts">@context.NumberOfCarts</MudTd>
         <MudTd DataLabel="Store">@($"{context.StoreNumber} - {context.StoreName}")</MudTd>
         <MudTd DataLabel="">
-            @if (context.ApprovedByStore != true)
+            @if (context.ApprovedByStore != true && context.SignOffRequired == true)
             {
                 <MudButton StartIcon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary"
                 OnClick="((e) => OpenUpdateDeliveryTicketDialog(context))">Edit

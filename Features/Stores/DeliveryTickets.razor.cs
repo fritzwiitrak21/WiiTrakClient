@@ -37,6 +37,7 @@ namespace WiiTrakClient.Features.Stores
             _selectedStore = _stores[0];
 
             await HandleStoreSelected(_selectedStore);
+            StateHasChanged();
         }
 
         private async Task HandleStoreSelected(StoreDto store)

@@ -4,7 +4,7 @@
 
 <MudGrid class="my-8">
     <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="StoreDto" Label="Select Store" ValueChanged="(value) => HandleStoreSelected(value)"
+        <MudSelect T="StoreDto" Label="Select Store" Value=@_selectedStore ValueChanged="(value) => HandleStoreSelected(value)"
             AnchorOrigin="Origin.BottomCenter">
             @foreach (var store in _stores)
             {

@@ -41,16 +41,16 @@
         <MudTd DataLabel="NumberOfCarts">@context.NumberOfCarts</MudTd>
         <MudTd DataLabel="Store">@($"{context.StoreNumber} - {context.StoreName}")</MudTd>
          <MudTd DataLabel="">
-             @if(context.SignOffRequired == false || context.ApprovedByStore == true)
+             @if(context.SignOffRequired == true && context.ApprovedByStore == false)
              {
-                 <MudButton StartIcon="@Icons.Material.Filled.Details" Variant="Variant.Filled" Color="Color.Primary"
-                    OnClick="((e) => OpenDeliveryTicketDialog(context))">Details
+                 <MudButton StartIcon="@Icons.Material.Filled.RateReview" Variant="Variant.Filled" Color="Color.Primary"
+                    OnClick="((e) => OpenSignatureDeliveryTicketDialog(context))">Needs Signature
                 </MudButton>
             }
             else
             {
-                <MudButton StartIcon="@Icons.Material.Filled.RateReview" Variant="Variant.Filled" Color="Color.Primary"
-                    OnClick="((e) => OpenSignatureDeliveryTicketDialog(context))">Needs Signature
+                <MudButton StartIcon="@Icons.Material.Filled.Details" Variant="Variant.Filled" Color="Color.Primary"
+                    OnClick="((e) => OpenDeliveryTicketDialog(context))">Details
                 </MudButton>
             }
         </MudTd> 
