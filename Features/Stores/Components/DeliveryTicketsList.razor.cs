@@ -65,7 +65,7 @@ namespace WiiTrakClient.Features.Stores.Components
             var parameters = new DialogParameters();
             var store = await StoreHttpRepository.GetStoreByIdAsync(deliveryTicket.StoreId);
             var deliveryTicketSummary = await DeliveryTicketHttpRepository.GetDeliveryTicketSummaryAsync(deliveryTicket.Id);
-            cartsTable = await CartRepository.GetCartsByDeliveryTicketIdAsync(deliveryTicket.Id);
+            cartsTable = await CartRepository.GetCartsByStoreIdAsync(deliveryTicket.StoreId);
             _editDeliveryTicket.StoreId = deliveryTicket.StoreId;
             _editDeliveryTicket.PicUrl = deliveryTicket.PicUrl;
             _editDeliveryTicket.DriverId = deliveryTicket.DriverId;

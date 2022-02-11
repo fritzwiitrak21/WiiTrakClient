@@ -1,56 +1,6 @@
 ﻿@page "/"
-@using WiiTrakClient.Services
-@inject IJSRuntime JSRuntime
 
 <PageTitle>Index</PageTitle>
-<MudGrid class="my-8">
-    <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="string" Label="Select User View" Value=@_selectedUserView ValueChanged="(value) => HandleStoreSelected(value)" AnchorOrigin="Origin.BottomCenter">
-            <MudSelectItem Value="@("All")" />
-            <MudSelectItem Value="@("WiiTrak")" />
-            <MudSelectItem Value="@("Corporate")" />
-            <MudSelectItem Value="@("PrimeCompany")" />
-            <MudSelectItem Value="@("SubContractor")" />
-            <MudSelectItem Value="@("Driver")" />
-            <MudSelectItem Value="@("Store")" />
-            <MudSelectItem Value="@("ServiceProvider")" />
-            <MudSelectItem Value="@("Technician")" />
-        </MudSelect>
-    </MudItem>
-</MudGrid>
 
-@code{
-
-    [Inject]
-    IlocalStorageService? LocalStorageService { get; set; }
-
-    string _selectedUserView = "";
-
-    protected override async Task OnInitializedAsync()
-    {
-        var _localData = await LocalStorageService.GetItem<LocalStorageDto>("SelectedUserView");
-        if (_localData != null)
-        {
-            _selectedUserView = _localData.SelectedUserView;
-        }
-        else
-        {
-            _selectedUserView = "All";
-        }
-        StateHasChanged();
-    }
-
-    private async Task HandleStoreSelected(string value)
-    {
-        _selectedUserView = value;
-        var selectedUserData = new LocalStorageDto
-        {
-            SelectedUserView = value
-        };
-        await LocalStorageService.SetItem<LocalStorageDto>("SelectedUserView", selectedUserData);
-        await JSRuntime.InvokeVoidAsync("reloadPage");
-        StateHasChanged();
-    }
-
-}
+<h1>WiiTrak MVP!</h1>
 

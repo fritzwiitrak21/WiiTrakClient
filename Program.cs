@@ -36,7 +36,6 @@ builder.Services.AddScoped<IDeliveryTicketHttpRepository, DeliveryTicketHttpRepo
 builder.Services.AddScoped<IDeliveryTicketHttpRepository, DeliveryTicketHttpRepository>();
 builder.Services.AddScoped<ICartHistoryHttpRepository, CartHistoryHttpRepository>();
 builder.Services.AddScoped<IWorkOrderHttpRepository, WorkOrderHttpRepository>();
-builder.Services.AddScoped<IlocalStorageService, LocalStorageService>();
 
 builder.Services.AddMudServices();
 builder.Services.AddSweetAlert2(options =>
