@@ -15,6 +15,7 @@
     <PackageReference Include="MudBlazor" Version="6.0.2" />
     <PackageReference Include="MudBlazor.ThemeManager" Version="1.0.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Syncfusion.Blazor" Version="19.4.0.41" />
   </ItemGroup>
 
   <ItemGroup>

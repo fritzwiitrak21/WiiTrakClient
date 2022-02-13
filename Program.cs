@@ -6,10 +6,19 @@ using WiiTrakClient;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.HttpRepository;
 using WiiTrakClient.Services;
+using Syncfusion.Blazor;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
+
+// Syncfusion -- register community service license
+Syncfusion.Licensing.SyncfusionLicenseProvider
+    .RegisterLicense(builder.Configuration["SyncfusionLicense"]);
+
+
+// Syncfusion
+builder.Services.AddSyncfusionBlazor();
 
 // builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
