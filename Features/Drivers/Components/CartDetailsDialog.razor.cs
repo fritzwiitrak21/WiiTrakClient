@@ -64,6 +64,29 @@ namespace WiiTrakClient.Features.Drivers.Components
 
         void Cancel() => MudDialog.Cancel();
 
+        private async Task Showroute()
+        {
+            if (Cart.TrackingDevice is not null && Cart.TrackingDevice.Latitude > 0)
+            {
+                _cartHasGeolocation = true;
+
+                var cartMarker = new CartMarkerInfo
+                {
+                    CartId = Cart.Id,
+                    Lat = Cart.TrackingDevice.Latitude,
+                    Long = Cart.TrackingDevice.Longitude,
+                    PopupContent = "Cart #" + Cart.CartNumber,
+                    Color = "MidnightBlue",
+                    Number = Cart.CartNumber
+                };
+                await _jsModule.InvokeVoidAsync("GetCartRoute", cartMarker);
+            }
+            else
+            {
+                _cartHasGeolocation = false;
+            }
+        }
+
         public async ValueTask DisposeAsync()
         {
             if (_jsModule is not null)
