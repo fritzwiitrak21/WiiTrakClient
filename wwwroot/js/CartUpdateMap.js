@@ -7,7 +7,7 @@ export function GetRoutePermission(dotNetObjRef) {
         //User current location
         userPosition = [position.coords.longitude, position.coords.latitude];
         //Demo Start location
-        userPosition = [-84.48422720029426, 33.90691578580798];
+        //userPosition = [-84.48422720029426, 33.90691578580798];
         //console.log(new atlas.data.Point(userPosition));
         dotNetObjRef.invokeMethodAsync("ShowCartRoute", true);
         //console.log("End Point : " + endPoint);
