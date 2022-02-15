@@ -39,6 +39,13 @@
                 {
                     <MudTextField T="string" Label="Other" Variant="Variant.Text" Text="@_otherText" Lines="5" Required="true" AutoFocus="true" />
                 }
+                @if(_cartHasGeolocation) {
+                  <div id="cartMap" style="display:none;position:relative;width:100%;min-width:290px;height:400px;"></div>
+                }
+                @if (showRoute)
+                {
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" id="btnShowRoute" OnClick="Showroute">Showroute</MudButton>
+                }
             </MudForm>
         </div>
 

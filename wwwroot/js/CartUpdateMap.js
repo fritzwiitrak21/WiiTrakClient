@@ -1,4 +1,35 @@
-var map, datasource, routeURL;
+var map, datasource, routeURL, startPoint, endPoint, userPosition;
+
+export function GetRoutePermission(dotNetObjRef) {
+    //Request the user's location
+    navigator.geolocation.getCurrentPosition(function (position) {
+        console.log("location permission accepted");
+        //User current location
+        userPosition = [position.coords.longitude, position.coords.latitude];
+        //Demo Start location
+        userPosition = [-84.48422720029426, 33.90691578580798];
+        //console.log(new atlas.data.Point(userPosition));
+        dotNetObjRef.invokeMethodAsync("ShowCartRoute", true);
+        //console.log("End Point : " + endPoint);
+    }, function (error) {
+        //If an error occurs when trying to access the users position information, display an error message.
+        dotNetObjRef.invokeMethodAsync("ShowCartRoute", false);
+        //switch (error.code) {
+        //    case error.PERMISSION_DENIED:
+        //        alert('User denied the request for Geolocation.');
+        //        break;
+        //    case error.POSITION_UNAVAILABLE:
+        //        alert('Position information is unavailable.');
+        //        break;
+        //    case error.TIMEOUT:
+        //        alert('The request to get user position timed out.');
+        //        break;
+        //    case error.UNKNOWN_ERROR:
+        //        alert('An unknown error occurred.');
+        //        break;
+        //}
+    });
+}
 
 export function GetMap(cartMarker) { 
 
@@ -94,22 +125,22 @@ export function GetCartRoute(cartMarker) {
     console.log("getMap invoked!!")
 
     const stringifiedObj = JSON.stringify(cartMarker);
-    console.log("stringifiedObj: " + stringifiedObj);
+    //console.log("stringifiedObj: " + stringifiedObj);
 
 
     const cartMarkerObj = JSON.parse(stringifiedObj);
-    console.log("cartMarkerObj: " + cartMarkerObj);
+    //console.log("cartMarkerObj: " + cartMarkerObj);
 
     // Get coordinates of first element for center
     const centerLong = cartMarkerObj.long;
     const centerLat = cartMarkerObj.lat;
 
     console.log("longitude: " + centerLong);
-
+    console.log("latitude: " + centerLat);
     //Initialize a map instance.
     map = new atlas.Map('cartMap', {
         view: 'Auto',
-        zoom: 12,
+        zoom: 15,
         center: [centerLong, centerLat],
         //Add authentication details for connecting to Azure Maps.
         authOptions: {
@@ -128,7 +159,11 @@ export function GetCartRoute(cartMarker) {
             subscriptionKey: 'wl9Qr2Z0K1Aw5aZjlFYYBw9KTZ5FVoSnhZ_cKzqKdKo'
         }
     });
+    var mapDiv = document.getElementById("cartMap");
+    mapDiv.style.display = "block";
 
+    var showRouteBtn = document.getElementById("btnShowRoute");
+    showRouteBtn.style.display = "none";
     //Use MapControlCredential to share authentication between a map control and the service module.
     var pipeline = atlas.service.MapsURL.newPipeline(new atlas.service.MapControlCredential(map));
 
@@ -159,46 +194,52 @@ export function GetCartRoute(cartMarker) {
         });
 
         map.markers.add(newCartMarker);
-
-        //Request the user's location
-        navigator.geolocation.getCurrentPosition(function (position) {
-            //console.log(position);
-            //User current location
-            //var userPosition = [position.coords.longitude, position.coords.latitude];
-            //Demo Start location
-            var userPosition = [-84.48422720029426, 33.90691578580798];
-            //console.log(new atlas.data.Point(userPosition));
-            var startPoint = new atlas.data.Feature(new atlas.data.Point(userPosition), {
-                title: 'You',
-                iconImage: 'pin-round-blue'
-            });
-            console.log("Start Point : " + startPoint);
-
-            var endPosition = [cartMarkerObj.long, cartMarkerObj.lat];
-            var endPoint = new atlas.data.Feature(new atlas.data.Point(endPosition), {
-                title: 'You',
-                iconImage: 'pin-blue'
-            });
-            console.log("End Point : " + endPoint);
-
-            calculateRoute(startPoint, endPoint);
-        }, function (error) {
-            //If an error occurs when trying to access the users position information, display an error message.
-            switch (error.code) {
-                case error.PERMISSION_DENIED:
-                    alert('User denied the request for Geolocation.');
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    alert('Position information is unavailable.');
-                    break;
-                case error.TIMEOUT:
-                    alert('The request to get user position timed out.');
-                    break;
-                case error.UNKNOWN_ERROR:
-                    alert('An unknown error occurred.');
-                    break;
-            }
+        startPoint = new atlas.data.Feature(new atlas.data.Point(userPosition), {
+            title: 'You',
+            iconImage: 'pin-blue'
         });
+        console.log("Start Point : " + startPoint.geometry.coordinates);
+
+        var endPosition = [cartMarkerObj.long, cartMarkerObj.lat];
+        endPoint = new atlas.data.Feature(new atlas.data.Point(endPosition));
+        calculateRoute(startPoint, endPoint);
+        console.log("End Point : " + startPoint.geometry.coordinates);
+        //Request the user's location
+        //navigator.geolocation.getCurrentPosition(function (position) {
+        //    //console.log(position);
+        //    //User current location
+        //    var userPosition = [position.coords.longitude, position.coords.latitude];
+        //    //Demo Start location
+        //    //var userPosition = [-84.48422720029426, 33.90691578580798];
+        //    //console.log(new atlas.data.Point(userPosition));
+        //    var startPoint = new atlas.data.Feature(new atlas.data.Point(userPosition), {
+        //        title: 'You',
+        //        iconImage: 'pin-blue'
+        //    });
+        //    console.log("Start Point : " + startPoint);
+
+        //    var endPosition = [cartMarkerObj.long, cartMarkerObj.lat];
+        //    var endPoint = new atlas.data.Feature(new atlas.data.Point(endPosition));
+        //    console.log("End Point : " + endPoint);
+
+        //    calculateRoute(startPoint, endPoint);
+        //}, function (error) {
+        //    //If an error occurs when trying to access the users position information, display an error message.
+        //    switch (error.code) {
+        //        case error.PERMISSION_DENIED:
+        //            alert('User denied the request for Geolocation.');
+        //            break;
+        //        case error.POSITION_UNAVAILABLE:
+        //            alert('Position information is unavailable.');
+        //            break;
+        //        case error.TIMEOUT:
+        //            alert('The request to get user position timed out.');
+        //            break;
+        //        case error.UNKNOWN_ERROR:
+        //            alert('An unknown error occurred.');
+        //            break;
+        //    }
+        //});
         
     });
 }
@@ -215,26 +256,26 @@ function calculateRoute(startPoint, endPoint) {
     datasource.add([startPoint, endPoint]);
 
     //Create a layer for rendering the route line under the road labels.
-    //map.layers.add(new atlas.layer.LineLayer(datasource, null, {
-    //    strokeColor: '#2272B9',
-    //    strokeWidth: 5,
-    //    lineJoin: 'round',
-    //    lineCap: 'round'
-    //}), 'labels');
+    map.layers.add(new atlas.layer.LineLayer(datasource, null, {
+        strokeColor: '#2272B9',
+        strokeWidth: 5,
+        lineJoin: 'round',
+        lineCap: 'round'
+    }), 'labels');
 
-    ////Create a layer for rendering the start and end points of the route as symbols.
-    //map.layers.add(new atlas.layer.SymbolLayer(datasource, null, {
-    //    iconOptions: {
-    //        image: ['get', 'icon'],
-    //        allowOverlap: true,
-    //        ignorePlacement: true
-    //    },
-    //    textOptions: {
-    //        textField: ['get', 'title'],
-    //        offset: [0, 1.2]
-    //    },
-    //    filter: ['any', ['==', ['geometry-type'], 'Point'], ['==', ['geometry-type'], 'MultiPoint']] //Only render Point or MultiPoints in this layer.
-    //}));
+    //Create a layer for rendering the start and end points of the route as symbols.
+    map.layers.add(new atlas.layer.SymbolLayer(datasource, null, {
+        iconOptions: {
+            image: ['get', 'icon'],
+            allowOverlap: true,
+            ignorePlacement: true
+        },
+        textOptions: {
+            textField: ['get', 'title'],
+            offset: [0, 1.2]
+        },
+        filter: ['any', ['==', ['geometry-type'], 'Point'], ['==', ['geometry-type'], 'MultiPoint']] //Only render Point or MultiPoints in this layer.
+    }));
 
     //Calculate a route.
     routeURL.calculateRouteDirections(atlas.service.Aborter.timeout(10000), coordinates).then((directions) => {
