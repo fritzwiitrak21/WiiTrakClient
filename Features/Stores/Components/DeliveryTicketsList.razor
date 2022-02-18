@@ -9,13 +9,12 @@
             Photo
         </MudTh>
         <MudTh>
-            <MudTableSortLabel InitialDirection="@SortDirection.Ascending"
-                               SortBy="new Func<DeliveryTicketDto, object>(x => x.DeliveryTicketNumber)">
+            <MudTableSortLabel SortBy="new Func<DeliveryTicketDto, object>(x => x.DeliveryTicketNumber)">
                 Ticket Number
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<DeliveryTicketDto, object>(x=>x.DeliveredAt)">
+            <MudTableSortLabel InitialDirection="@SortDirection.Descending" SortBy="new Func<DeliveryTicketDto, object>(x=>x.DeliveredAt)">
                 Delivery Date
             </MudTableSortLabel>
         </MudTh>

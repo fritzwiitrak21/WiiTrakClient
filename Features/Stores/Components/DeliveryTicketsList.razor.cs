@@ -20,7 +20,7 @@ namespace WiiTrakClient.Features.Stores.Components
         [Inject] IWorkOrderHttpRepository WorkOrderHttpRepository { get; set; }
         [Inject]
         IJSRuntime _js { get; set; }
-        IJSInProcessObjectReference module;
+        IJSObjectReference? module;
         [Inject]
         IDialogService? DialogService { get; set; }
 
@@ -31,13 +31,13 @@ namespace WiiTrakClient.Features.Stores.Components
 
         protected override async Task OnInitializedAsync()
         {
-            //module = await _js.InvokeAsync<IJSInProcessObjectReference>("import", "./js/ss.js?$$REVISION$$");
-            //module = await _js.InvokeAsync<IJSInProcessObjectReference>("import", "./js/ss.ui.js?$$REVISION$$");
+            //module = await _js.InvokeAsync<IJSObjectReference>("import", "./js/ss.js?$$REVISION$$");
+            //module = await _js.InvokeAsync<IJSObjectReference>("import", "./js/ss.ui.js?$$REVISION$$");
             var targetUrl = "js/ss.js?$$REVISION$$";
-            await _js.InvokeVoidAsync("loadJs", targetUrl);
+            await _js.InvokeVoidAsync("loadJs", targetUrl, "ssFile");
 
             targetUrl = "js/ss.ui.js?$$REVISION$$";
-            await _js.InvokeVoidAsync("loadJs", targetUrl);
+            await _js.InvokeVoidAsync("loadJs", targetUrl, "ssUiFile");
 
         }
         protected override void OnParametersSet()
@@ -180,10 +180,10 @@ namespace WiiTrakClient.Features.Stores.Components
         async ValueTask IAsyncDisposable.DisposeAsync()
         {
             var targetUrl = "js/ss.js?$$REVISION$$";
-            await _js.InvokeVoidAsync("unloadJs", targetUrl);
+            await _js.InvokeVoidAsync("unloadJs", targetUrl, "ssFile");
 
             targetUrl = "js/ss.ui.js?$$REVISION$$";
-            await _js.InvokeVoidAsync("unloadJs", targetUrl);
+            await _js.InvokeVoidAsync("unloadJs", targetUrl, "ssUiFile");
             if (module is not null)
             {
                 await module.DisposeAsync();
