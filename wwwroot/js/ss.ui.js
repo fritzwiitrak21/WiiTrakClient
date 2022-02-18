@@ -52,17 +52,18 @@ function saveSignatureAsync(dotNetObjectReference) {
         var divResize = $("#divResize");
         var signW = parseInt(divResize.width());
         var signH = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
-
+        
         // adjust the values as required to match your UI
         if (isMobile) {
-            signH = signH - 50;
+            signH = signH - 100;
             signW = signW - 10;
             $("#bTitle").hide();
         } else {
-            signH = signH - 250;
+            signH = signH - 450;
             signW = signW - 50;
         }
-
+        
+        
         try {
             ResizeSignature(instanceId, signW, signH);
             setTimeout(function () { ClearSignature(instanceId); }, 100);
