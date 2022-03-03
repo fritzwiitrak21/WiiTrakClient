@@ -37,7 +37,7 @@ export function GetMap(cartMarker) {
 
             //Alternatively, use an Azure Maps key. Get an Azure Maps key at https://azure.com/maps. NOTE: The primary key should be used as the key.
             authType: 'subscriptionKey',
-            subscriptionKey: 'wl9Qr2Z0K1Aw5aZjlFYYBw9KTZ5FVoSnhZ_cKzqKdKo'
+            subscriptionKey: 'KeCEGMJad72lJuE71dvTmMrEvwQswAbVAvZqHG8buYY'
         }
     });
 
