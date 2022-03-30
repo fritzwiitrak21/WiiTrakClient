@@ -11,8 +11,10 @@
         <div style="width: 400px;height:450px;overflow: auto;">
             <MudForm Model="@editDeliveryTicket">
             <MudText Class="my-4" Typo="Typo.h5">Store: @StoreName</MudText>
+            <MudText Class="my-4" Typo="Typo.h5">Driver: @deliveryTicketDto.DriverName</MudText>
             <MudText Class="my-4" Typo="Typo.h5">Number of Carts: @deliveryTicketDto.NumberOfCarts</MudText>
-            @if(deliveryTicketSummary != null)
+            <MudTextField @bind-Value="@editDeliveryTicket.Signee" Label="Signee" Variant="Variant.Text"></MudTextField> 
+            @*@if(deliveryTicketSummary != null)
             {
                
                 <MudText Class="" Typo="Typo.h6">Delivered: @deliveryTicketSummary.Delivered</MudText>
@@ -27,7 +29,7 @@
             @if(cartsTable != null)
             {
            <CartsTable Carts="@cartsTable"></CartsTable>
-            }
+            }*@
             @if (!string.IsNullOrWhiteSpace(_fileUrl)) {
                     <div class="d-flex justify-center mt-6">
                         <img src="@_fileUrl" width="300" height="300" />
@@ -42,7 +44,7 @@
                         RefreshImage="/images/clear.png"
                         PenCursor="/images/pen.cur"
                         SignWidth="450"
-                        SignHeight="100"
+                        SignHeight="75"
                         PenColor="blue"
                         RequiredPoints="50">
                             </SSignature>

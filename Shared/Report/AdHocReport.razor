@@ -1,0 +1,99 @@
+﻿@page "/report"
+
+@using WiiTrakClient.Services;
+@inject WiiTrakClient.Services.ExcelService excelservice
+@inject Microsoft.JSInterop.IJSRuntime JS
+@using WiiTrakClient.Cores;
+@inject IDeliveryTicketHttpRepository DeliveryTicketHttpRepository
+
+<h3>Report</h3>
+
+
+<div class="col-md-12">
+<div class="row">
+<div class="col-md-3">
+<MudDatePicker Label="Start Date" Editable="true" @bind-Date="Startdate" Placeholder="Select Start Date" />
+</div>
+<div class="col-md-3">
+<MudDatePicker Label="End Date" Editable="true" @bind-Date="Enddate" Placeholder="Select End Date" />
+</div>
+<div class="col-md-1">
+   
+   <MudIconButton Icon="@Icons.Outlined.Search" 
+                  Variant="Variant.Filled" 
+                  Color="Color.Primary" 
+                  Size="Size.Large"
+                  OnClick="Search" />
+</div>
+<div class="col-md-2">
+<MudText Class="my-4" Typo="Typo.h6">Total Deliveries: @TotalNoofDeliveries</MudText>
+</div>
+<div class="col-md-2">
+<MudText Class="my-4" Typo="Typo.h6">Total Carts: @TotalNoofCarts</MudText>
+</div>
+<div class="col-md-1">
+   
+   <MudIconButton Icon="@Icons.Outlined.FileDownload" 
+                  Variant="Variant.Filled" 
+                  Color="Color.Primary" 
+                  Size="Size.Large"
+                  OnClick="ExportExcel" />
+</div>
+</div>
+</div>
+
+<ReportDeliveryTicketsList _ReportDeliveryTicketsList="_deliveryTickets" />
+
+@code {
+    DateTime? Startdate { get; set; } = DateTime.Today.AddDays(-14);
+    DateTime? Enddate { get; set; } = DateTime.Today;
+
+    int TotalNoofDeliveries { get; set; } = 0;
+    int TotalNoofCarts { get; set; } = 0;
+    List<DeliveryTicketDto> _deliveryTickets = new();
+    private MemoryStream ms;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Search();
+    }
+
+    protected  async Task Search()
+    {
+        try
+        {
+            var deliveryTickets = CurrentUser.UserRoleId <= 4 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId) :
+                                  // For the role of System Owner - 1, Corporate - 2, Prime Company -3, Sub Company - 4
+                                  CurrentUser.UserRoleId == 5 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByDriverIdAsync(CurrentUser.UserId) :
+                                  // For the role of Driver
+                                  CurrentUser.UserRoleId == 6 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(CurrentUser.UserId) :
+                                  // For the role of Store
+                                  await DeliveryTicketHttpRepository.GetAllDeliveryTicketsAsync();
+                                  // To get all the delivery tickets
+
+            if (deliveryTickets is not null)
+            {
+                _deliveryTickets = deliveryTickets.Where(x => x.DeliveredAt.Date >= Startdate && x.DeliveredAt.Date <= Enddate).ToList();
+                TotalNoofDeliveries = _deliveryTickets.Count;
+                TotalNoofCarts = _deliveryTickets.Sum(x => x.NumberOfCarts);
+            }
+        }
+        catch (Exception ex)
+        {
+        }
+    }
+    private async Task ExportExcel()
+    {
+        try
+        {
+            var dt = Core.ToDataTable(_deliveryTickets);
+            ms = excelservice.CreateExcel(dt);
+            await FileUtils.SaveAs(JS,"DeliveryReports.xlsx", ms.ToArray());
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+}
+

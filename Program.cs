@@ -46,6 +46,11 @@ builder.Services.AddScoped<IDeliveryTicketHttpRepository, DeliveryTicketHttpRepo
 builder.Services.AddScoped<ICartHistoryHttpRepository, CartHistoryHttpRepository>();
 builder.Services.AddScoped<IWorkOrderHttpRepository, WorkOrderHttpRepository>();
 builder.Services.AddScoped<IlocalStorageService, LocalStorageService>();
+builder.Services.AddScoped<ILoginHttpRepository, LoginHttpRepository>();
+builder.Services.AddScoped<IEmailHttpRepository, EmailHttpRepository>();
+builder.Services.AddSingleton<ExcelService>();
+
+
 
 builder.Services.AddMudServices();
 builder.Services.AddSweetAlert2(options =>

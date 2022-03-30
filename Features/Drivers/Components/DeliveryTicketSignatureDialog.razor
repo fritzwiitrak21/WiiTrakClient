@@ -1,0 +1,163 @@
+﻿@namespace WiiTrakClient.Features.Drivers.Components
+@using WiiTrakClient.Shared.Components
+@using System.Net.Http.Headers
+@using System.Net.Mime
+@using System.Text
+
+
+
+<MudDialog>
+    <DialogContent>
+        <div style="width: 400px;height:450px;overflow: auto;">
+            <MudForm Model="@editDeliveryTicket">
+            <MudText Class="my-4" Typo="Typo.h5">Store: @StoreName</MudText>
+            <MudText Class="my-4" Typo="Typo.h5">Number of Carts: @deliveryTicketDto.NumberOfCarts </MudText>
+            <MudTextField @bind-Value="@editDeliveryTicket.Signee" Label="Signee" Variant="Variant.Text"></MudTextField>  
+            @*@if(deliveryTicketSummary != null)
+                {
+
+                    <MudText Class="" Typo="Typo.h6">Delivered: @deliveryTicketSummary.Delivered</MudText>
+
+                    <MudText Class="" Typo="Typo.h6">Lost: @deliveryTicketSummary.Lost</MudText>
+
+                    <MudText Class="" Typo="Typo.h6">Damaged: @deliveryTicketSummary.Damaged</MudText>
+
+                    <MudText Class="" Typo="Typo.h6">Trashed: @deliveryTicketSummary.Trashed</MudText>
+
+                }*@
+           @* @if(cartsTable != null)
+                {
+               <CartsTable Carts="@cartsTable"></CartsTable>
+                }*@
+            @if (!string.IsNullOrWhiteSpace(_picUrl))
+                {
+                        <div class="d-flex justify-center mt-6">
+                            <img src="@_picUrl" width="300" height="300" />
+                        </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(_fileUrl))
+                {
+                    <MudText Class="" Typo="Typo.h6">Signature:</MudText>
+                        <div class="d-flex justify-center mt-6">
+                            <img src="@_fileUrl" width="300" height="300" />
+                        </div>
+                }
+                else
+                {
+                    @if (!_isSigned)
+                    {
+                                <div id="divResize" class="">
+                                    <SSignature SignObject="ctlSignature"
+                                    RefreshImage="/images/clear.png"
+                                    PenCursor="/images/pen.cur"
+                                    SignWidth="450"
+                                    SignHeight="75"
+                                    PenColor="blue"
+                                    RequiredPoints="50">
+                                    </SSignature>
+                                </div>
+                                <div class="col-lg-6 col-sm-12">
+                                    <img src="/images/spacer.png" id="pngImg"/>
+                                </div>
+                    }
+                }
+                @if (!_isSigned)
+                {
+                      <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                    OnClick="SaveSignature">Sign
+                    </MudButton>
+
+                }
+                else
+                {
+                    <MudText Typo="Typo.h5" Class="text-success">Signature Complete</MudText>
+                }
+
+
+            </MudForm>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" 
+                OnClick="Submit" 
+                Disabled="_disableSaveButton">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [Parameter]
+    public DeliveryTicketDto? deliveryTicketDto { get; set; }
+
+    [Parameter]
+    public string StoreName { get; set; }
+    
+
+    [Parameter]
+    public DeliveryTicketSummaryDto? deliveryTicketSummary { get; set; }
+
+    [Parameter]
+    public DeliveryTicketUpdateDto? editDeliveryTicket { get; set; }
+
+    [Parameter]
+    public List<CartDto>? cartsTable { get; set; }
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Inject]
+    protected IPicUploadHttpRepository PicUploadHttpRepository { get; set; }
+    [Inject]
+    IJSRuntime _js
+    {
+        get;
+        set;
+    }
+    private string _fileUrl = "";
+    private string _picUrl = "";
+    private string _imageData = "";
+    bool _disableSaveButton = false;
+    bool _isSigned = false;
+
+    protected override Task OnParametersSetAsync()
+    {
+        _picUrl = editDeliveryTicket.PicUrl;
+        _disableSaveButton = true;
+        return base.OnParametersSetAsync();
+    }
+
+    private async Task SaveSignature()
+    {
+        var dotNetObjectRef = DotNetObjectReference.Create(this);
+        await _js.InvokeAsync<string>("saveSignatureAsync", dotNetObjectRef);
+    }
+
+    [JSInvokable]
+    public async Task SaveSignatureAsync(string imageData)
+    {
+        _imageData = imageData;
+        var imageDataStripped = imageData.Replace("data:image/png;base64,", "");
+        var imageByteArray = Convert.FromBase64String(imageDataStripped);
+
+        await using var memoryStream = new MemoryStream(imageByteArray);
+
+        var content = new MultipartFormDataContent();
+        content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+        var streamContent = new StreamContent(memoryStream, Convert.ToInt32(memoryStream.Length));
+        streamContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+        content.Add(streamContent, "file", "signature.png");
+        _fileUrl = await PicUploadHttpRepository.UploadSignature(content);
+        editDeliveryTicket.SignaturePicUrl = _fileUrl;
+        editDeliveryTicket.ApprovedByStore = true;
+        _disableSaveButton = false;
+        _isSigned = true;
+        StateHasChanged();
+    }
+
+    void Submit()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+}

@@ -1,22 +1,24 @@
 @page "/drivers"
 
 @using WiiTrakClient.Features.Companies.Components
+@using WiiTrakClient.Cores
 
 @inject IJSRuntime JsRuntime
 @inject ICompanyHttpRepository CompanyHttpRepository
 @inject IDialogService DialogService
 
 @inject IDriverHttpRepository DriverHttpRepository
+@inject IEmailHttpRepository EmailHttpRepository
 
 
 <h1>Drivers</h1>
 
 <div class="d-flex justify-end">
     <MudButton Variant="Variant.Filled" 
-        StartIcon="@Icons.Material.Filled.Add" 
+        StartIcon="@Icons.Material.Filled.Add"  
         IconColor="Color.Secondary" 
         Size="Size.Large"
-        OnClick="OpenDialog">Add</MudButton>
+        OnClick="OpenDialog">Add</MudButton> 
 </div>
 
 <div class="my-8">
@@ -26,36 +28,52 @@
 
 
 @code {
-    List<DriverDto> _drivers = new ();
-    
+    List<DriverDto> _drivers = new();
+
     DriverCreationDto _newDriver = new();
 
     protected override async Task OnInitializedAsync()
     {
-        _drivers = await DriverHttpRepository.GetAllDriversAsync();  
-    }  
+        _drivers = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
+    }
 
-    private async Task OpenDialog() 
+    private async Task OpenDialog()
     {
-        var parameters = new DialogParameters(); 
+        var parameters = new DialogParameters();
         parameters.Add("NewDriver", _newDriver);
 
-         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
-         var dialog  = DialogService.Show<AddDriverDialog>("Add Driver", parameters);
-        var result = await dialog.Result; 
+        var dialog = DialogService.Show<AddDriverDialog>("Add Driver", parameters);
+        var result = await dialog.Result;
 
-        if (!result.Cancelled) 
+        if (!result.Cancelled)
         {
             // add new driver to backend
-            var driverCreation = new DriverCreationDto {
-                FirstName = _newDriver.FirstName,
-                LastName = _newDriver.LastName,
-                Email = _newDriver.Email,
-                Phone = _newDriver.Phone,
-                CompanyId = _newDriver.CompanyId
-            };
-           await DriverHttpRepository.CreateDriverAsync(_newDriver);
-        }  
+            var driverCreation = new DriverCreationDto
+                {
+                    FirstName = _newDriver.FirstName,
+                    LastName = _newDriver.LastName,
+                    Email = _newDriver.Email,
+                    Phone = _newDriver.Phone,
+                    StreetAddress1 = _newDriver.StreetAddress1,
+                    StreetAddress2 = _newDriver.StreetAddress2,
+                    City = _newDriver.City,
+                    State = _newDriver.State,
+                    CountryCode = _newDriver.CountryCode,
+                    PostalCode = _newDriver.PostalCode,
+                    CompanyId = CurrentUser.UserId,
+                    IsActive = true,
+                    IsSuspended = false
+                };
+            await DriverHttpRepository.CreateDriverAsync(driverCreation);
+            _drivers = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
+
+            #region Send Login details to User
+            MailRequest request = new MailRequest();
+            request.MailTo = request.Name = driverCreation.Email;
+            await EmailHttpRepository.SendMailAsync(request);
+            #endregion
+        }
     } 
 }

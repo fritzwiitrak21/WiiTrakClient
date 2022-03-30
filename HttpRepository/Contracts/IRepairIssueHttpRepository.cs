@@ -9,6 +9,7 @@ namespace WiiTrakClient.HttpRepository.Contracts
     public interface IRepairIssueHttpRepository
     {
         Task<List<RepairIssueDto>> GetAllRepairIssuesAsync();
+        Task<RepairIssueDto> GetRepairIssueByIdAsync(Guid Id);
 
         Task CreateRepairIssueAsync(RepairIssueDto cart);
 

@@ -15,6 +15,7 @@
                 <MudTextField class="my-6" @bind-Value="NewStore.City" Label="City" Variant="Variant.Text"></MudTextField>  
                 <MudTextField class="my-6" @bind-Value="NewStore.State" Label="State" Variant="Variant.Text"></MudTextField>  
                 <MudTextField class="my-6" @bind-Value="NewStore.PostalCode" Label="Zip Code" Variant="Variant.Text"></MudTextField>  
+                <MudCheckBox @bind-Checked="NewStore.IsSignatureRequired" Label="Signature Reqired For Deliveries" Color="Color.Primary"></MudCheckBox>
             </MudForm>
         </div>
     </DialogContent>

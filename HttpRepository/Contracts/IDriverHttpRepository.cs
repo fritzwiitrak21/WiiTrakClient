@@ -5,6 +5,7 @@ namespace WiiTrakClient.HttpRepository.Contracts
     public interface IDriverHttpRepository
     {
         Task<List<DriverDto>> GetAllDriversAsync();
+        Task<List<DriverDto>> GetDriversByCompanyIdAsync(Guid Id);
 
         Task<DriverDto> GetDriverByIdAsync(Guid id);
 

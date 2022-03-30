@@ -2,13 +2,14 @@
 
 
 @using WiiTrakClient.Features.ServiceProviders.Components
+@using WiiTrakClient.Cores
 
 @inject IJSRuntime JsRuntime
 @inject IDialogService DialogService
 @inject IStoreHttpRepository StoreHttpRepository
 
 
-<h1>Stores</h1>
+<h1>Stores*</h1>
 
 <div class="d-flex justify-end">
     <MudButton Variant="Variant.Filled" 
@@ -31,7 +32,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _stores = await StoreHttpRepository.GetAllStoresAsync();
+        _stores = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);
     }  
 
     private async Task OpenDialog() 
@@ -58,9 +59,12 @@
                 Email = _newStore.Email,
                 PhonePrimary = _newStore.PhonePrimary,
                 PhoneSecondary = _newStore.PhoneSecondary,
-                ServiceProviderId = _newStore.ServiceProviderId
+                ServiceProviderId = _newStore.ServiceProviderId,
+                IsSignatureRequired=_newStore.IsSignatureRequired
+               
             };
-           await StoreHttpRepository.CreateStoreAsync(_newStore);
+           await StoreHttpRepository.CreateStoreAsync(storeCreation);
+           _stores = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);
         }  
     } 
 }

@@ -1,0 +1,65 @@
+@using WiiTrakClient.Shared.Report
+
+
+@namespace WiiTrakClient.Shared.Report
+
+<MudTable Items="@_ReportDeliveryTicketsList" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@listIsLoading"
+    LoadingProgressColor="Color.Primary">
+    <HeaderContent>
+        <MudTh>
+            <MudTableSortLabel 
+                SortBy="new Func<DeliveryTicketDto, object>(x => x.DriverName)">Driver Name
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel 
+                SortBy="new Func<DeliveryTicketDto, object>(x => x.DriverNumber)">Driver Number
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel 
+                SortBy="new Func<DeliveryTicketDto, object>(x => x.DeliveredAt)">Delivery Date
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel 
+                SortBy="new Func<DeliveryTicketDto, object>(x=>x.StoreName)">Store
+            </MudTableSortLabel>
+        </MudTh>
+        
+         <MudTh>
+            <MudTableSortLabel 
+                SortBy="new Func<DeliveryTicketDto, object>(x=>x.NumberOfCarts)">Number of Carts
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel 
+                SortBy="new Func<DeliveryTicketDto, object>(x=>x.Signee)">Signee Name
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            Photo
+        </MudTh>
+       
+       
+          
+       
+
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="DriverName">@context.DriverName</MudTd>
+        <MudTd DataLabel="DriverName">@context.DriverNumber</MudTd>
+        <MudTd DataLabel="DeliveryDate">@($"{context.DeliveredAt.ToShortDateString()}")</MudTd>
+        <MudTd DataLabel="Store">@($"{context.StoreNumber} - {context.StoreName}")</MudTd>
+         <MudTd DataLabel="NumberOfCarts">@context.NumberOfCarts</MudTd>
+         <MudTd DataLabel="SigneeName">@context.Signee</MudTd>
+        <MudTd DataLabel="Photo">
+            <img src="@context.PicUrl" width="48" height="48" />
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+    </PagerContent>
+</MudTable>
+

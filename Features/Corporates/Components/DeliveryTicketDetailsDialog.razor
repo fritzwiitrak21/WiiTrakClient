@@ -1,0 +1,58 @@
+﻿@namespace WiiTrakClient.Features.Corporates.Components
+@using WiiTrakClient.Shared.Components
+
+<MudDialog>
+    <DialogContent>
+        <div style="width: 400px;height:450px;overflow: auto;">
+           <MudText Class="my-4" Typo="Typo.h5">Store: @StoreName</MudText>
+            <MudText Class="my-4" Typo="Typo.h5">Store Number: @deliveryTicketDto.StoreNumber</MudText>
+            <MudText Class="my-4" Typo="Typo.h5">Date Time: @deliveryTicketDto.DeliveredAt</MudText>
+            <MudText Class="my-4" Typo="Typo.h5">Driver Name: @deliveryTicketDto.DriverName</MudText>
+            <MudText Class="my-4" Typo="Typo.h5">Number of Carts: @deliveryTicketDto.NumberOfCarts</MudText>
+            @*@if(deliveryTicketSummary != null)
+            {
+               
+                <MudText Class="" Typo="Typo.h6">Delivered: @deliveryTicketSummary.Delivered</MudText>
+                        
+                <MudText Class="" Typo="Typo.h6">Lost: @deliveryTicketSummary.Lost</MudText>
+                       
+                <MudText Class="" Typo="Typo.h6">Damaged: @deliveryTicketSummary.Damaged</MudText>
+                       
+                <MudText Class="" Typo="Typo.h6">Trashed: @deliveryTicketSummary.Trashed</MudText>
+                       
+            }
+            @if(cartsTable != null)
+            {
+           <CartsTable Carts="@cartsTable"></CartsTable>
+            }*@
+            @if (!string.IsNullOrWhiteSpace(deliveryTicketDto.PicUrl)) {
+                <div class="d-flex justify-center mt-6">
+                    <img src="@deliveryTicketDto.PicUrl" width="300" height="300" />
+                </div>
+            }
+             @if (!string.IsNullOrWhiteSpace(deliveryTicketDto.SignaturePicUrl)) {
+                
+ <MudText Class="" Typo="Typo.h6">Signature: @deliveryTicketDto.Signee</MudText> 
+                  @*<MudText Class="" Typo="Typo.h6">Signature: </MudText> *@
+                <div class="d-flex justify-center mt-6">
+                    <img src="@deliveryTicketDto.SignaturePicUrl" width="300" height="300" />
+                </div>
+            }
+            
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [Parameter]
+    public DeliveryTicketDto? deliveryTicketDto{ get; set; }
+
+    [Parameter]
+    public string StoreName { get; set; }
+
+    [Parameter]
+    public DeliveryTicketSummaryDto? deliveryTicketSummary{ get; set; }
+
+    [Parameter]
+    public List<CartDto>? cartsTable { get; set; }
+}

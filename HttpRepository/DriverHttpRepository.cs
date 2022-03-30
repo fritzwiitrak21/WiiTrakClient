@@ -26,6 +26,16 @@ namespace WiiTrakClient.HttpRepository
             }
             return response.Response;
         }
+        public async Task<List<DriverDto>> GetDriversByCompanyIdAsync(Guid Id)
+        {
+            var Url = $"{_apiUrl}/Company/{Id}";
+            var response = await _httpService.Get<List<DriverDto>>(Url);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
 
         public async Task<DriverDto> GetDriverByIdAsync(Guid id)
         {

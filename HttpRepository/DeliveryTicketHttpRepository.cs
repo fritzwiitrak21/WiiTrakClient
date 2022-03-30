@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WiiTrakClient.DTOs;
+using WiiTrakClient.Enums;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.Services;
 
@@ -77,7 +78,52 @@ namespace WiiTrakClient.HttpRepository
             }
             return response.Response;
         }
+        public async Task<List<DeliveryTicketDto>> GetDeliveryTicketsByPrimaryIdAsync(Guid Id,Role role)
+        {
+            string url = $"{_apiUrl}/DeliveryTickets/{Id}/{(int)role}";
 
+            var response = await _httpService.Get<List<DeliveryTicketDto>>(url);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
+
+        public async Task<List<DeliveryTicketDto>> GetReportByDateAsync(Guid Id, Role role,DateTime Startdate,DateTime Enddate)
+        {
+            string url = $"{_apiUrl}/Report/{Id}/{(int)role}/{Startdate}/{Enddate}";
+
+            var response = await _httpService.Get<List<DeliveryTicketDto>>(url);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
+
+        public async Task<List<DeliveryTicketDto>> GetDeliveryTicketsByCorporateIdAsync(Guid CorporateId)
+        {
+            string url = $"{_apiUrl}/Corporate/{CorporateId}";
+
+            var response = await _httpService.Get<List<DeliveryTicketDto>>(url);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
+        public async Task<List<DeliveryTicketDto>> GetDeliveryTicketsByCompanyIdAsync(Guid CompanyId)
+        {
+            string url = $"{_apiUrl}/company/{CompanyId}";
+
+            var response = await _httpService.Get<List<DeliveryTicketDto>>(url);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
         public async Task<List<DeliveryTicketDto>> GetDeliveryTicketsByServiceProviderIdAsync(Guid serviceProviderId)
         {
             string url = $"{_apiUrl}/serviceprovider/{serviceProviderId}";

@@ -1,0 +1,114 @@
+@namespace WiiTrakClient.Shared.Components
+@using WiiTrakClient.Shared.Components
+
+<style>
+.mud-dialog .mud-dialog-title
+{
+color: #fff !important;
+background-color: #214162;
+}
+
+.mud-dialog .mud-dialog-content
+{
+    background-color: #f1f7f7;
+}
+
+.mud-dialog .mud-dialog-actions
+{
+     background-color: #f1f7f7;
+}
+
+.mud-icon-button-label
+{
+    color:#fff;
+}
+</style>
+
+
+<MudDialog>
+    <DialogContent>
+        <div style="width: 320px;height:100px;overflow: auto;">
+            <MudForm Model="@DisplayMessage">
+               @if (IsSuccessNotification)
+                {
+                    <span style="color:green">
+                    <MudText  Class="my-4" Typo="Typo.h6">@DisplayMessage</MudText>
+                    </span>
+                }
+                else
+                {
+                    <span style="color:red">
+                    <MudText  Class="my-4" Typo="Typo.h6">@DisplayMessage</MudText>
+                    </span>
+                }
+            </MudForm>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        @if (CancelVisibility)
+        {
+                 <MudButton OnClick="Cancel">@CancelButtonText</MudButton>
+        }
+        @if (Visibility)
+        {
+                <MudButton Color="Color.Primary" OnClick="Submit">@OkButtonText</MudButton>
+        }   
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [Parameter]
+    public string DisplayMessage { get; set; }
+
+    [Parameter]
+    public string FromWindow { get; set; }
+    [Parameter]
+    public bool IsSuccessNotification { get; set; }
+
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+
+    string OkButtonText = "";
+    string CancelButtonText = "";
+    bool DisableSaveButton = false;
+    bool CancelVisibility = false;
+    bool Visibility = false;
+
+
+
+    protected override void OnParametersSet()
+    {
+        if (FromWindow.ToLower().Contains("login"))
+        {
+            OkButtonText = "Try Again";
+            Visibility = true;
+        }
+        else if (FromWindow.ToLower().Contains("forgot"))
+        {
+            if (IsSuccessNotification)
+            {
+                OkButtonText = "Ok";
+                Visibility = true;
+            }
+            else
+            {
+                CancelVisibility = true;
+                CancelButtonText = "Try Again";
+            }
+        }
+        else if (FromWindow.ToLower().Contains("reset"))
+        {
+            OkButtonText = "Login";
+            Visibility = true;
+        }
+    }
+
+    void Submit()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

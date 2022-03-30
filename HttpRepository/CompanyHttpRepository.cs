@@ -37,6 +37,31 @@ namespace WiiTrakClient.HttpRepository
             }
             return response.Response;
         }
+        public async Task<List<CompanyDto>> GetCompaniesBySystemOwnerIdAsync(Guid id)
+        {
+            string url = $"{_apiUrl}/systemowner/{id}";
+
+            var response = await _httpService.Get<List<CompanyDto>>(url);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
+
+        public async Task<List<CompanyDto>> GetCompaniesByCorporateIdAsync(Guid id)
+        {
+            string url = $"{_apiUrl}/Corporate/{id}";
+
+            var response = await _httpService.Get<List<CompanyDto>>(url);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
+
+
 
         public async Task<CompanyDto> GetCompanyByIdAsync(Guid id)
         {

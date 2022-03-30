@@ -12,7 +12,13 @@
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<DriverDto, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel  SortBy="new Func<DriverDto, object>(x=>x.LastName)">LastName</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.Email)">Email</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.Phone)">Phone</MudTableSortLabel></MudTh>        
+        <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.Phone)">Phone</MudTableSortLabel></MudTh> 
+        <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.StreetAddress1)">Street Address 1</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.StreetAddress2)">Street Address 2</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.City)">City</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.State)">State</MudTableSortLabel></MudTh> 
+        <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.CountryCode)">Country Code</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.PostalCode)">Postal Code</MudTableSortLabel></MudTh> 
         <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
@@ -28,7 +34,24 @@
          <MudTd DataLabel="Phone">
             @context.Phone
         </MudTd>
-     
+        <MudTd DataLabel="Street Address 1">
+            @context.StreetAddress1
+        </MudTd>
+        <MudTd DataLabel="Street Address 2">
+            @context.StreetAddress2
+        </MudTd>
+        <MudTd DataLabel="City">
+            @context.City
+        </MudTd>
+        <MudTd DataLabel="State">
+            @context.State
+        </MudTd>
+        <MudTd DataLabel="Country Code">
+            @context.CountryCode 
+        </MudTd>
+        <MudTd DataLabel="Postal Code">
+            @context.PostalCode
+        </MudTd>
         <MudTd DataLabel="Action">           
             <MudButton 
                 Variant="Variant.Filled" 
@@ -69,6 +92,12 @@
                 LastName = driver.LastName,
                 Email = driver.Email,
                 Phone = driver.Phone,
+                StreetAddress1=driver.StreetAddress1,
+                StreetAddress2=driver.StreetAddress2,
+                City=driver.City,
+                State=driver.State,
+                CountryCode=driver.CountryCode,
+                PostalCode=driver.PostalCode,
                 CompanyId = driver.CompanyId
             };
            await DriverHttpRepository.UpdateDriverAsync(driver.Id, driverUpdate);

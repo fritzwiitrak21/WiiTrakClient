@@ -1,7 +1,7 @@
 @page "/sub-companies"
 
 @using WiiTrakClient.Features.Companies.Components
-
+@using WiiTrakClient.Cores
 @inject IJSRuntime JsRuntime
 @inject ICompanyHttpRepository CompanyRepository
 @inject IDialogService DialogService
@@ -25,41 +25,44 @@
 
 
 @code {
-    List<CompanyDto> _companies = new ();
-    
+    List<CompanyDto> _companies = new();
+
     CompanyCreationDto _newCompany = new();
 
     protected override async Task OnInitializedAsync()
     {
-        _companies = await CompanyRepository.GetAllCompaniesAsync();     
-    }  
+        _companies = await CompanyRepository.GetChildCompaniesAsync(CurrentUser.UserId);
+    }
 
-    private async Task OpenDialog() 
+    private async Task OpenDialog()
     {
-        var parameters = new DialogParameters(); 
+        var parameters = new DialogParameters();
         parameters.Add("NewCompany", _newCompany);
 
-         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
-         var dialog  = DialogService.Show<AddCompanyDialog>("Add Company", parameters);
-        var result = await dialog.Result; 
+        var dialog = DialogService.Show<AddCompanyDialog>("Add Company", parameters);
+        var result = await dialog.Result;
 
-        if (!result.Cancelled) 
+        if (!result.Cancelled)
         {
             // add new customer to backend
-            var customerCreation = new CompanyCreationDto {
-                Name = _newCompany.Name,
-                StreetAddress1 = _newCompany.StreetAddress1,
-                StreetAddress2 = _newCompany.StreetAddress2,
-                City = _newCompany.City,
-                State = _newCompany.State,
-                PostalCode = _newCompany.PostalCode,
-                ProfilePicUrl = _newCompany.ProfilePicUrl,
-                Email = _newCompany.Email,
-                PhonePrimary = _newCompany.PhonePrimary,
-                PhoneSecondary = _newCompany.PhoneSecondary,
-            };
-           await CompanyRepository.CreateCompanyAsync(_newCompany);
-        } 
+            var customerCreation = new CompanyCreationDto
+                {
+                    Name = _newCompany.Name,
+                    StreetAddress1 = _newCompany.StreetAddress1,
+                    StreetAddress2 = _newCompany.StreetAddress2,
+                    City = _newCompany.City,
+                    State = _newCompany.State,
+                    PostalCode = _newCompany.PostalCode,
+                    ProfilePicUrl = _newCompany.ProfilePicUrl,
+                    Email = _newCompany.Email,
+                    PhonePrimary = _newCompany.PhonePrimary,
+                    PhoneSecondary = _newCompany.PhoneSecondary,
+                    ParentId = CurrentUser.UserId,
+                };
+            await CompanyRepository.CreateCompanyAsync(customerCreation);
+             _companies = await CompanyRepository.GetChildCompaniesAsync(CurrentUser.UserId);
+        }
     } 
 }

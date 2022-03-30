@@ -37,5 +37,7 @@ namespace WiiTrakClient.DTOs
         public Guid StoreId { get; set; } = Guid.Empty;
 
         public Guid DriverId { get; set; } = Guid.Empty;
+        public string Signee { get;set; } = string.Empty;
+        public int DriverNumber { get; set; }
     }
 }

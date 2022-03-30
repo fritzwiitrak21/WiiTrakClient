@@ -7,7 +7,7 @@ using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.Services;
 
 namespace WiiTrakClient.HttpRepository
-{    
+{
     public class RepairIssueHttpRepository : IRepairIssueHttpRepository
     {
         private readonly IHttpService _httpService;
@@ -16,13 +16,26 @@ namespace WiiTrakClient.HttpRepository
 
         public RepairIssueHttpRepository(IHttpService httpService)
         {
-             _httpService = httpService;
+            _httpService = httpService;
             _apiUrl = $"{ httpService.BaseUrl }{ ControllerName }";
         }
 
         public async Task<List<RepairIssueDto>> GetAllRepairIssuesAsync()
         {
             var response = await _httpService.Get<List<RepairIssueDto>>(_apiUrl);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
+
+
+        public async Task<RepairIssueDto> GetRepairIssueByIdAsync(Guid Id)
+        {
+            var Url = $"{_apiUrl}/{Id}";
+            
+            var response = await _httpService.Get<RepairIssueDto>(Url);
             if (!response.Success)
             {
                 // throw new ApplicationException(await response.GetBody());
@@ -55,6 +68,6 @@ namespace WiiTrakClient.HttpRepository
             {
                 // throw new ApplicationException(await response.GetBody());
             }
-        }            
+        }
     }
 }

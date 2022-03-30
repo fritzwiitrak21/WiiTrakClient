@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor;
 using WiiTrakClient.DTOs;
 using WiiTrakClient.Enums;
@@ -7,7 +8,7 @@ using WiiTrakClient.HttpRepository.Contracts;
 
 namespace WiiTrakClient.Features.Drivers.Components
 {
-    public partial class DeliveryTicketsList : ComponentBase
+    public partial class DeliveryTicketsList : ComponentBase, IAsyncDisposable
     {
         [Inject] IDriverHttpRepository DriverRepository { get; set; }
         [Inject] public IDeliveryTicketHttpRepository DeliveryTicketHttpRepository { get; set; }
@@ -16,7 +17,10 @@ namespace WiiTrakClient.Features.Drivers.Components
         [Inject] public IStoreHttpRepository StoreHttpRepository { get; set; }
         [Inject] ICartHttpRepository CartRepository { get; set; }
         [Parameter]
-        public List<DeliveryTicketDto>? DeliveryTickets { get; set; }       
+        public List<DeliveryTicketDto>? DeliveryTickets { get; set; }
+        [Inject]
+        IJSRuntime _js { get; set; }
+        IJSObjectReference? module;
 
         [Parameter]
         public EventCallback DeliveryTicketUpdatedEventCallback { get; set; }
@@ -34,6 +38,18 @@ namespace WiiTrakClient.Features.Drivers.Components
         DeliveryTicketUpdateDto _editDeliveryTicket = new();
         Guid deliveryTicketId = Guid.Empty;
         List<CartDto>? cartsTable { get; set; } = new();
+
+        protected override async Task OnInitializedAsync()
+        {
+            //module = await _js.InvokeAsync<IJSObjectReference>("import", "./js/ss.js?$$REVISION$$");
+            //module = await _js.InvokeAsync<IJSObjectReference>("import", "./js/ss.ui.js?$$REVISION$$");
+            var targetUrl = "js/ss.js?$$REVISION$$";
+            await _js.InvokeVoidAsync("loadJs", targetUrl, "ssFile");
+
+            targetUrl = "js/ss.ui.js?$$REVISION$$";
+            await _js.InvokeVoidAsync("loadJs", targetUrl, "ssUiFile");
+
+        }
         protected override void OnParametersSet()
         {
             _listIsLoading = false;
@@ -74,7 +90,9 @@ namespace WiiTrakClient.Features.Drivers.Components
                     StoreId = _editDeliveryTicket.StoreId,
                     ServiceProviderId = _editDeliveryTicket.ServiceProviderId,
                     DriverId = _editDeliveryTicket.DriverId,
-                    DeliveryTicketNumber = _editDeliveryTicket.DeliveryTicketNumber
+                    DeliveryTicketNumber = _editDeliveryTicket.DeliveryTicketNumber,
+                     SignOffRequired = _stores.FirstOrDefault(x => x.Id == _editDeliveryTicket.StoreId).IsSignatureRequired
+
                 };
 
                 await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId,deliveryTicketUpdate);
@@ -93,7 +111,7 @@ namespace WiiTrakClient.Features.Drivers.Components
                         StoreId = cart.StoreId,
                         DriverId = selectedDriver.Id,
                         Condition = cart.Condition,
-                        Status = CartStatus.InsideGeofence,
+                        Status = CartStatus.PickedUp,// CartStatus.InsideGeofence, Need to change in connected asserts
                         IsDelivered = true,
                         CartId = cart.Id
                     };
@@ -104,7 +122,7 @@ namespace WiiTrakClient.Features.Drivers.Components
                         DateManufactured = cart.DateManufactured,
                         OrderedFrom = cart.OrderedFrom,
                         Condition = cart.Condition,
-                        Status = CartStatus.InsideGeofence,
+                        Status = CartStatus.PickedUp,// CartStatus.InsideGeofence, Need to change in connected asserts
                         PicUrl = cart.PicUrl,
                         IsProvisioned = cart.IsProvisioned,
                         BarCode = cart.BarCode,
@@ -175,6 +193,88 @@ namespace WiiTrakClient.Features.Drivers.Components
             DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
             var dialog = DialogService.Show<DeliveryTicketDetailsDialog>("Delivery Ticket Summary", parameters);
+        }
+
+        public async Task OpenSignatureDeliveryTicketDialog(DeliveryTicketDto deliveryTicket)
+        {
+            var parameters = new DialogParameters();
+            var store = await StoreHttpRepository.GetStoreByIdAsync(deliveryTicket.StoreId);
+            var deliveryTicketSummary = await DeliveryTicketHttpRepository.GetDeliveryTicketSummaryAsync(deliveryTicket.Id);
+            cartsTable = await CartRepository.GetCartsByDeliveryTicketIdAsync(deliveryTicket.Id);
+            _editDeliveryTicket.StoreId = deliveryTicket.StoreId;
+            _editDeliveryTicket.PicUrl = deliveryTicket.PicUrl;
+            _editDeliveryTicket.DriverId = deliveryTicket.DriverId;
+            _editDeliveryTicket.NumberOfCarts = deliveryTicket.NumberOfCarts;
+            _editDeliveryTicket.ServiceProviderId = deliveryTicket.ServiceProviderId;
+            _editDeliveryTicket.DeliveryTicketNumber = deliveryTicket.DeliveryTicketNumber;
+            _editDeliveryTicket.DeliveredAt = deliveryTicket.DeliveredAt;
+            parameters.Add("deliveryTicketDto", deliveryTicket);
+            parameters.Add("StoreName", store.StoreNumber + "-" + store.StoreName);
+            parameters.Add("deliveryTicketSummary", deliveryTicketSummary);
+            parameters.Add("editDeliveryTicket", _editDeliveryTicket);
+            parameters.Add("cartsTable", cartsTable);
+            deliveryTicketId = deliveryTicket.Id;
+            DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+
+            var dialog = DialogService.Show<DeliveryTicketSignatureDialog>("Delivery Ticket Signature", parameters);
+
+            var result = await dialog.Result;
+            if (!result.Cancelled)
+            {
+                if (_editDeliveryTicket.ApprovedByStore)
+                {
+                    var _carts = await CartRepository.GetCartsByDriverIdAsync(_editDeliveryTicket.DriverId);
+                    foreach (var cart in _carts)
+                    {
+                        if (cart.Condition == CartCondition.Damage)
+                        {
+                            var newWorkOrder = new WorkOrderCreationDto
+                            {
+                                Issue = cart.DamageIssue,
+                                Notes = "",
+                                CartId = cart.Id,
+                                StoreId = cart.Store != null ? cart.Store.Id : null
+                            };
+
+                            //await WorkOrderHttpRepository.CreateWorkOrderAsync(newWorkOrder);
+                        }
+                    }
+                }
+                // add new delivery ticket to backend
+                var deliveryTicketUpdate = new DeliveryTicketUpdateDto
+                {
+                    NumberOfCarts = _editDeliveryTicket.NumberOfCarts,
+                    PicUrl = _editDeliveryTicket.PicUrl,
+                    DeliveredAt = _editDeliveryTicket.DeliveredAt,
+                    StoreId = _editDeliveryTicket.StoreId,
+                    ServiceProviderId = _editDeliveryTicket.ServiceProviderId,
+                    DriverId = _editDeliveryTicket.DriverId,
+                    DeliveryTicketNumber = _editDeliveryTicket.DeliveryTicketNumber,
+                    ApprovedByStore = _editDeliveryTicket.ApprovedByStore,
+                    SignOffRequired = _editDeliveryTicket.SignOffRequired,
+                    SignaturePicUrl = _editDeliveryTicket.SignaturePicUrl,
+                    Signee=_editDeliveryTicket.Signee 
+                };
+
+                await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);
+
+                // update Delivery Ticket List
+                DeliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(_editDeliveryTicket.StoreId);
+            }
+        }
+
+        async ValueTask IAsyncDisposable.DisposeAsync()
+        {
+            var targetUrl = "js/ss.js?$$REVISION$$";
+            await _js.InvokeVoidAsync("unloadJs", targetUrl, "ssFile");
+
+            targetUrl = "js/ss.ui.js?$$REVISION$$";
+            await _js.InvokeVoidAsync("unloadJs", targetUrl, "ssUiFile");
+            if (module is not null)
+            {
+                await module.DisposeAsync();
+            }
+            StateHasChanged();
         }
     }    
 }

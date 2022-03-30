@@ -1,82 +1,179 @@
 ﻿@using WiiTrakClient.Services
+@using WiiTrakClient.Cores
 
-<PersonCard Style="background-color: var(--mud-palette-drawer-background);color: var(--mud-palette-drawer-text);" />
 <MudDivider Class="mb-4" />
 <MudNavMenu>
-    <MudNavLink Href="#" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Dashboard">Dashboard</MudNavLink>
-    <MudNavLink Href="#" Icon="@Icons.Material.Outlined.Person">Account</MudNavLink>
-    <MudNavLink Href="#" Icon="@Icons.Material.Outlined.Settings">Settings</MudNavLink>
-    @if (_selectedUserView == "All" || _selectedUserView == "WiiTrak")
+  
+    @if (UserView == "All" || UserView == "WiiTrak")
     {
-        <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">WiiTrak</MudText>
-        <MudNavLink Href="/companies" Icon="@Icons.Material.Outlined.ViewList">Companies</MudNavLink>
-        <MudNavLink Href="/technicians" Icon="@Icons.Material.Outlined.ViewList">Technicians</MudNavLink>
-        <MudNavLink Href="/tracking-devices" Icon="@Icons.Material.Outlined.ViewList">Tracking Devices</MudNavLink>
+            @*<MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">WiiTrak</MudText>
+            <MudNavLink Href="/companies" Icon="@Icons.Material.Outlined.ViewList">Companies</MudNavLink>
+            <MudNavLink Href="/technicians" Icon="@Icons.Material.Outlined.ViewList">Technicians</MudNavLink>
+            <MudNavLink Href="/tracking-devices" Icon="@Icons.Material.Outlined.ViewList">Tracking Devices</MudNavLink>*@
+
+            <MudNavLink Href="/" Icon="@Icons.Material.Outlined.ManageAccounts">System Admin</MudNavLink>
+            <MudNavLink Href="/corporates" Icon="@Icons.Filled.Apartment">Corparates</MudNavLink>
+            <MudNavLink Href="/companies" Icon="@Icons.Filled.Business">Companies</MudNavLink>
+            <MudNavLink Href="/technicians" Icon="@Icons.Material.Outlined.Build">Technician</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.BarChart">Sales</MudNavLink>
+            <MudNavLink Href="/systemowner-delivery-tickets" Icon="@Icons.Material.Outlined.FactCheck">Deliveries</MudNavLink>
+
+            
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Inventory">Inventory</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.ShoppingCart"> - Cart In</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Outlined.ShoppingCart"> - Cart Out</MudNavLink>
+
+            <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Others</MudText>
+
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Construction">Repair</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.WarningAmber">Missing</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.AttachMoney">Billing</MudNavLink>
+            <MudNavLink Href="/report" Icon="@Icons.Outlined.Description">Ad Hoc Report</MudNavLink>
+
+
     }
 
-    @if (_selectedUserView == "All" || _selectedUserView == "Corporate")
+    @if (UserView == "All" || UserView == "Corporate")
     {
-        <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Corporate</MudText>
-        <MudNavLink Href="/corporate-carts" Icon="@Icons.Material.Outlined.ViewList">Carts</MudNavLink>
+            @*<MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Corporate</MudText>
+            <MudNavLink Href="/corporate-carts" Icon="@Icons.Material.Outlined.ViewList">Carts</MudNavLink>*@
+
+            <MudNavLink Href="/corporate-carts" Icon="@Icons.Material.Outlined.Inventory">Inventory</MudNavLink>
+
+            <MudNavLink Href="/prime-companies" Icon="@Icons.Material.Outlined.ManageAccounts">Companies</MudNavLink>
+            <MudNavLink Href="/stores" Icon="@Icons.Material.Outlined.Store">Stores</MudNavLink>
+            <MudNavLink Href="/corporate-delivery-tickets" Icon="@Icons.Material.Outlined.FactCheck">Deliveries</MudNavLink>
+             
+
+
+            <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Others</MudText>
+
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Construction">Repair</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.WarningAmber">Missing</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Outlined.LocationCity">District</MudNavLink>
+            
+            <MudNavLink Href="/report" Icon="@Icons.Outlined.Description">Ad Hoc Report</MudNavLink>
     }
 
-    @if (_selectedUserView == "All" || _selectedUserView == "PrimeCompany")
+    @if (UserView == "All" || UserView == "PrimeCompany")
     {
-        <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Primary Company</MudText>
-        <MudNavLink Href="/company-carts" Icon="@Icons.Material.Outlined.ViewList">Carts</MudNavLink>
-        <MudNavLink Href="/sub-companies" Icon="@Icons.Material.Outlined.ViewList">Sub Contractors</MudNavLink>
-        <MudNavLink Href="/drivers" Icon="@Icons.Material.Outlined.ViewList">Drivers</MudNavLink>
-        <MudNavLink Href="/company-technicians" Icon="@Icons.Material.Outlined.ViewList">Technicians</MudNavLink>
+           @* <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Primary Company</MudText>
+            <MudNavLink Href="/company-carts" Icon="@Icons.Material.Outlined.ViewList">Carts</MudNavLink>
+            <MudNavLink Href="/sub-companies" Icon="@Icons.Material.Outlined.ViewList">Sub Contractors</MudNavLink>
+            <MudNavLink Href="/drivers" Icon="@Icons.Material.Outlined.ViewList">Drivers</MudNavLink>
+            <MudNavLink Href="/company-technicians" Icon="@Icons.Material.Outlined.ViewList">Technicians</MudNavLink>*@
+
+            @*<MudNavLink Href="" Icon="@Icons.Material.Outlined.CorporateFare">Corparate</MudNavLink>*@
+
+            <MudNavLink Href="/sub-companies" Icon="@Icons.Material.Outlined.ManageAccounts">Companies</MudNavLink>
+             <MudNavLink Href="/drivers" Icon="@Icons.Filled.GroupAdd">Drivers</MudNavLink>
+            <MudNavLink Href="/company-carts" Icon="@Icons.Material.Outlined.Inventory">Inventory</MudNavLink>
+            <MudNavLink Href="/company-delivery-tickets" Icon="@Icons.Material.Outlined.FactCheck">Deliveries</MudNavLink>
+
+            <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Others</MudText>
+
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Construction">Repair</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.WarningAmber">Missing</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Store">Store</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.AttachMoney">Billing</MudNavLink>
+            <MudNavLink Href="/report" Icon="@Icons.Outlined.Description">Ad Hoc Report</MudNavLink>
     }
 
-    @if (_selectedUserView == "All" || _selectedUserView == "SubContractor")
+    @if (UserView == "All" || UserView == "SubContractor")
     {
-        <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Sub Contractor</MudText>
-        <MudNavLink Href="/company-carts" Icon="@Icons.Material.Outlined.ViewList">Carts</MudNavLink>
-        <MudNavLink Href="/sub-companies" Icon="@Icons.Material.Outlined.ViewList">Sub Contractors</MudNavLink>
-        <MudNavLink Href="/service-providers" Icon="@Icons.Material.Outlined.ViewList">Service Providers</MudNavLink>
-        <MudNavLink Href="/drivers" Icon="@Icons.Material.Outlined.ViewList">Drivers</MudNavLink>
-        <MudNavLink Href="/company-technicians" Icon="@Icons.Material.Outlined.ViewList">Technicians</MudNavLink>
+            @*<MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Sub Contractor</MudText>
+            <MudNavLink Href="/company-carts" Icon="@Icons.Material.Outlined.ViewList">Carts</MudNavLink>
+            <MudNavLink Href="/sub-companies" Icon="@Icons.Material.Outlined.ViewList">Sub Contractors</MudNavLink>
+            <MudNavLink Href="/service-providers" Icon="@Icons.Material.Outlined.ViewList">Service Providers</MudNavLink>
+            <MudNavLink Href="/drivers" Icon="@Icons.Material.Outlined.ViewList">Drivers</MudNavLink>
+            <MudNavLink Href="/company-technicians" Icon="@Icons.Material.Outlined.ViewList">Technicians</MudNavLink>*@
+
+            
+           
+            <MudNavLink Href="/drivers" Icon="@Icons.Filled.GroupAdd">Drivers</MudNavLink>
+          
+            <MudNavGroup Title="Inventory" Expanded="true">
+            <MudNavLink Href="/company-carts" Icon="@Icons.Material.Outlined.ShoppingCart">Cart In</MudNavLink>
+            <MudNavLink Href="/company-carts" Icon="@Icons.Outlined.ShoppingCart">Cart Out</MudNavLink>
+            </MudNavGroup>
+            <MudNavLink Href="/company-delivery-tickets" Icon="@Icons.Material.Outlined.FactCheck">Deliveries</MudNavLink>
+
+            
+            <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Others</MudText>
+
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Construction">Repair</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.AttachMoney">Billing</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.WarningAmber">Missing</MudNavLink>
+            <MudNavLink Href="/report" Icon="@Icons.Outlined.Description">Ad Hoc Report</MudNavLink>
+
+
     }
 
-    @if (_selectedUserView == "All" || _selectedUserView == "Driver")
+    @if (UserView == "All" || UserView == "Driver")
     {
-        <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Driver</MudText>
-        <MudNavLink Href="/driver-carts" Icon="@Icons.Material.Outlined.ShoppingCart">Carts</MudNavLink>
-        <MudNavLink Href="/driver-delivery-tickets" Icon="@Icons.Material.Outlined.ViewList">Delivery Tickets</MudNavLink>
-        <MudNavLink Href="/driver-workorders" Icon="@Icons.Material.Outlined.ViewList">Work Orders</MudNavLink>
+            @*<MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Driver</MudText>*@
+
+           @* <MudNavLink Href="/driver-carts" Icon="@Icons.Material.Outlined.ShoppingCart">Carts</MudNavLink>
+            <MudNavLink Href="/driver-delivery-tickets" Icon="@Icons.Material.Outlined.ViewList">Delivery Tickets</MudNavLink>
+            <MudNavLink Href="/driver-workorders" Icon="@Icons.Material.Outlined.ViewList">Work Orders</MudNavLink>*@
+
+             <MudNavLink Href="/driver-carts" Icon="@Icons.Material.Outlined.ShoppingCart">List of Carts</MudNavLink>
+             <MudNavLink Href="/driver-carts" Icon="@Icons.Material.Outlined.Map">Map</MudNavLink>
+             <MudNavLink Href="/driver-carts" Icon="@Icons.Outlined.LocalShipping">On Truck</MudNavLink>
+
+            <MudNavLink Href="/driver-delivery-tickets" Icon="@Icons.Material.Outlined.FactCheck">Deliveries</MudNavLink>
+            <MudNavLink Href="/driver-workorders" Icon="@Icons.Material.Outlined.Add">Add Equipment</MudNavLink>
+
+            <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Others</MudText>
+
+             <MudNavLink Href="" Icon="@Icons.Material.Outlined.History">History</MudNavLink>
+             <MudNavLink Href="" Icon="@Icons.Material.Outlined.AttachMoney">Billing</MudNavLink>
+             <MudNavLink Href="" Icon="@Icons.Material.Outlined.Message">Message</MudNavLink>
+             <MudNavLink Href="/report" Icon="@Icons.Outlined.Description">Ad Hoc Report</MudNavLink>
     }
 
     @* <MudNavLink Href="#" Icon="@Icons.Material.Outlined.Store">Stores</MudNavLink> *@
 
-    @if (_selectedUserView == "All" || _selectedUserView == "Store")
+    @if (UserView == "All" || UserView == "Store")
     {
-        <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Store</MudText>
-        <MudNavLink Href="/store-carts" Icon="@Icons.Material.Outlined.ShoppingCart">Carts</MudNavLink>
-        <MudNavLink Href="/store-delivery-tickets" Icon="@Icons.Material.Outlined.ViewList">Delivery Tickets</MudNavLink>
+            @*<MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Store</MudText>
+            <MudNavLink Href="/store-carts" Icon="@Icons.Material.Outlined.ShoppingCart">Carts</MudNavLink>
+            <MudNavLink Href="/store-delivery-tickets" Icon="@Icons.Material.Outlined.ViewList">Delivery Tickets</MudNavLink>*@
+            <MudNavLink Href="/store-delivery-tickets" Icon="@Icons.Material.Outlined.ViewList">Deliveries</MudNavLink>
+            <MudNavLink Href="/store-carts" Icon="@Icons.Material.Outlined.Inventory">Inventory</MudNavLink>
+            <MudNavLink Href="/carts" Icon="@Icons.Material.Outlined.ShoppingCart">Inventory</MudNavLink>
+
+            <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Others</MudText>
+
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Construction">Repair</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.WarningAmber">Missing</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Store">Store</MudNavLink>
+            <MudNavLink Href="/report" Icon="@Icons.Outlined.Description">Ad Hoc Report</MudNavLink>
+
+
     }
 
-    @if (_selectedUserView == "All" || _selectedUserView == "ServiceProvider")
+    @if (UserView == "All" || UserView == "ServiceProvider")
     {
-        <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Service Provider</MudText>
-        <MudNavLink Href="/stores" Icon="@Icons.Material.Outlined.ShoppingCart">Stores</MudNavLink>
+            <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Service Provider</MudText> 
+            <MudNavLink Href="/stores" Icon="@Icons.Material.Outlined.Store">Stores</MudNavLink>
     }
 
-    @if (_selectedUserView == "All" || _selectedUserView == "Technician")
+    @if (UserView == "All" || UserView == "Technician")
     {
-        <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Technician</MudText>
-        <MudNavLink Href="#" Icon="@Icons.Material.Outlined.ShoppingCart">Carts</MudNavLink>
-        <MudNavLink Href="#" Icon="@Icons.Material.Outlined.ViewList">Work Orders</MudNavLink>   
+            <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Technician</MudText>
+            <MudNavLink Href="#" Icon="@Icons.Material.Outlined.ShoppingCart">Carts</MudNavLink>
+            <MudNavLink Href="#" Icon="@Icons.Material.Outlined.ViewList">Work Orders</MudNavLink>   
     }
 
-    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Communication</MudText>
+    @*<MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Communication</MudText>
     <MudNavLink Href="#" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Email">Email</MudNavLink>
     <MudNavLink Href="#" Icon="@Icons.Material.Outlined.Textsms">Text Messages</MudNavLink>
     <MudNavLink Href="#" Icon="@Icons.Material.Outlined.Forum">Chat</MudNavLink>
 
     <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Pages</MudText>
     <MudNavGroup Title="Authentication" Icon="@Icons.Material.Outlined.AssignmentInd" HideExpandIcon="true">
-        <MudNavLink Href="#" Icon="@Icons.Material.Outlined.InsertDriveFile">Login</MudNavLink>
+        <MudNavLink Href="/" Icon="@Icons.Material.Outlined.InsertDriveFile">Login</MudNavLink>
         <MudNavLink Href="#" Icon="@Icons.Material.Outlined.InsertDriveFile">Register</MudNavLink>
         <MudNavLink Href="#" Icon="@Icons.Material.Outlined.InsertDriveFile">Forgot Password</MudNavLink>
         <MudNavLink Href="#" Icon="@Icons.Material.Outlined.InsertDriveFile">Reset Password</MudNavLink>
@@ -87,29 +184,19 @@
     <MudNavGroup Title="Utility" Icon="@Icons.Material.Outlined.Assignment" HideExpandIcon="true">
         <MudNavLink Href="pages/utility/faq" Icon="@Icons.Material.Outlined.InsertDriveFile">Faq</MudNavLink>
     </MudNavGroup>
-    <MudNavLink Href="/claims" Icon="@Icons.Material.Outlined.InsertDriveFile">Claims</MudNavLink>    
+    <MudNavLink Href="/claims" Icon="@Icons.Material.Outlined.InsertDriveFile">Claims</MudNavLink>  *@  
 </MudNavMenu>
 
 @code {
 
-    [Inject]
-    IlocalStorageService? LocalStorageService { get; set; }
 
-    string _selectedUserView = "";
+    string UserView = "";
 
     string AlertAssignmentIcon { get; set; } = "<path d=\"M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3H9.18C9.6,1.84 10.7,1 12,1C13.3,1 14.4,1.84 14.82,3H19M12,3A1,1 0 0,0 11,4A1,1 0 0,0 12,5A1,1 0 0,0 13,4A1,1 0 0,0 12,3M7,7V5H5V19H19V5H17V7H7M11,9H13V13.5H11V9M11,15H13V17H11V15Z\" />";
     protected override async Task OnInitializedAsync()
-    {   
-        var _localData = await LocalStorageService.GetItem<LocalStorageDto>("SelectedUserView");
-        if (_localData != null)
-        {
-            _selectedUserView = _localData.SelectedUserView;
-        }
-        else
-        {
-            _selectedUserView = "All";
-        }
-        StateHasChanged();
+    {
+        UserView = CurrentUser.UserRole;
+       
     }
 } 
 
@@ -122,6 +209,6 @@
 
     private void ToggleNavMenu()
     {
-        collapseNavMenu = !collapseNavMenu;
+    collapseNavMenu = !collapseNavMenu;
     }
-}*@
+    }*@

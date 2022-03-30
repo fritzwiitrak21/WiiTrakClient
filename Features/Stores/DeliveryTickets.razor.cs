@@ -2,6 +2,7 @@
 using Microsoft.JSInterop;
 using MudBlazor;
 using WiiTrakClient.DTOs;
+using WiiTrakClient.Cores;
 using WiiTrakClient.Enums;
 using WiiTrakClient.Features.Drivers.Components;
 using WiiTrakClient.HttpRepository.Contracts;
@@ -22,35 +23,31 @@ namespace WiiTrakClient.Features.Stores
 
         [Inject] IDialogService DialogService { get; set; }
 
-        DriverDto _selectedDriver = new();
+        ///DriverDto _selectedDriver = new();
+        ///List<CartDto> _carts = new();
+        ///List<DriverDto> _drivers = new();
         StoreDto _selectedStore = new();
-        List<DriverDto> _drivers = new();
         List<DeliveryTicketDto> _deliveryTickets = new();
-        List<CartDto> _carts = new();
-        List<StoreDto> _stores = new();
+        
+       
         DeliveryTicketCreationDto _newDeliveryTicket = new();
 
         protected override async Task OnInitializedAsync()
         {
             //_drivers = await DriverRepository.GetAllDriversAsync();
-            _stores = await StoreHttpRepository.GetAllStoresAsync();
-            _selectedStore = _stores[0];
-
+            _selectedStore =  await StoreHttpRepository.GetStoreByIdAsync(CurrentUser.UserId);
             await HandleStoreSelected(_selectedStore);
-            StateHasChanged();
         }
 
         private async Task HandleStoreSelected(StoreDto store)
         {
-            System.Console.WriteLine(store.Id);
-            _selectedStore = store;
-            await GetDeliveryTicketsByStoreId(_selectedStore.Id);
-            _carts = await CartHttpRepository.GetCartsByStoreIdAsync(_selectedStore.Id);
+            await GetDeliveryTicketsByStoreId();
+            ///_carts = await CartHttpRepository.GetCartsByStoreIdAsync(CurrentUser.UserId);
         }
 
-        private async Task GetDeliveryTicketsByStoreId(Guid id)
+        private async Task GetDeliveryTicketsByStoreId()
         {
-            var deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(id);
+            var deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(CurrentUser.UserId);
             if (deliveryTickets is not null)
             {
                 _deliveryTickets = deliveryTickets;

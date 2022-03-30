@@ -31,5 +31,6 @@
         public double Latitude { get; set; }
 
         public Guid ServiceProviderId { get; set; }
+        public bool IsSignatureRequired { get; set; }
     }
 }

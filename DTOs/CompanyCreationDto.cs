@@ -32,6 +32,8 @@
 
         public Guid SystemOwnerId { get; set; }
 
+        public Guid CorparateId { get; set; }
+
         public List<ServiceProviderDto>? ServiceProviders { get; set; }
 
         public List<DriverDto>? Drivers { get; set; }

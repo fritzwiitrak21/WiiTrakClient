@@ -1,34 +1,48 @@
 @namespace WiiTrakClient.Features.Drivers.Components
 @using WiiTrakClient.Shared.Components
 
+
+
+
 <MudDialog>
     <DialogContent>
         <div style="width: 400px;height:450px;overflow: auto;">
             <MudForm Model="@NewDeliveryTicket">
+
+
+      @*  <MudAutocomplete T="StoreDto" Label="Store Name" HelperText="Select a Store"  
+        ResetValueOnEmptyText="true"  SearchFunc="@Search1"  @bind-Value="selectedStore"
+        CoerceText="true"/>*@
+
                 <MudSelect Class="my-6" T="StoreDto" Label="Store" AnchorOrigin="Origin.BottomCenter"
-                    HelperText="Select a Store" @bind-Value="@_selectedStore" Required="true"
-                    AdornmentColor="Color.Primary">
+                        HelperText="Select a Store" @bind-Value="@_selectedStore" Required="true" 
+                        AdornmentColor="Color.Primary">
+                       
+                       
+
                     @foreach (var store in Stores)
                     {
-                        <MudSelectItem T="StoreDto" Value="@store">@store.StoreNumber - @store.StoreName</MudSelectItem>
+                        <MudSelectItem T="StoreDto" Value="@store">@store.StoreName - @store.StoreNumber</MudSelectItem>
                     }
-                </MudSelect>
+                    </MudSelect>
+
 
                 @{
-                    UpdateNumberOfCarts();                  
+                    //UpdateNumberOfCarts();
                     UpdateStoreAndServiceProviderIds();
                 }
 
-                <MudText Class="my-4" Typo="Typo.h5">Number of Carts: @NewDeliveryTicket.NumberOfCarts</MudText>
-
+                @*<MudText Class="my-4" Typo="Typo.h5">No of available carts to pickup: @NoOfCartsToPickUp</MudText>*@
+                <MudTextField @bind-Value="@NewDeliveryTicket.NumberOfCarts" Label="No of carts" Variant="Variant.Text"></MudTextField>
                 <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
 
-                @if (!string.IsNullOrWhiteSpace(_fileUrl)) {
-                    <div class="d-flex justify-center mt-6">
-                        <img src="@_fileUrl" width="300" height="300" />
-                    </div>
+                @if (!string.IsNullOrWhiteSpace(_fileUrl))
+                {
+                  <div class="d-flex justify-center mt-6">
+                      <img src="@_fileUrl" width="300" height="300" />
+                  </div>
                 }
-                
+
             </MudForm>
         </div>
     </DialogContent>
@@ -56,23 +70,44 @@
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
+    public List<StoreDto>? TempStores { get; set; } = new();
     StoreDto _selectedStore = new();
+    StoreDto selectedStore = new();
+
     private string _fileUrl = "";
+    private int NoOfCartsToPickUp = 0;
+    private string StoreName = "";
 
     bool _disableSaveButton = false;
+
+    
+
     protected override void OnParametersSet()
-    { 
-        if (Stores != null && Stores.Count() >= 1) {
+    {
+        if (Stores != null && Stores.Count() >= 1)
+        {
             _selectedStore = Stores[0];
             NewDeliveryTicket.StoreId = _selectedStore.Id;
         }
-        
+
         NewDeliveryTicket.DriverId = Driver.Id;
     }
 
-    private void UpdateNumberOfCarts() 
+    private async Task<IEnumerable<StoreDto>> Search1(string value)
     {
-        NewDeliveryTicket.NumberOfCarts = Carts.Count(x => x.StoreId == _selectedStore.Id && x.Status == CartStatus.PickedUp);
+       
+       
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return Stores;
+
+        return Stores.Where(x => x.StoreName.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private void UpdateNumberOfCarts()
+    {
+        NoOfCartsToPickUp = Carts.Count(x => x.StoreId == _selectedStore.Id && x.Status == CartStatus.PickedUp);
     }
 
     private void UpdateStoreAndServiceProviderIds()
@@ -82,16 +117,42 @@
         NewDeliveryTicket.ServiceProviderId = store.ServiceProviderId;
     }
 
-    private void PicUploadStart() 
+    private void PicUploadStart()
     {
         _disableSaveButton = true;
     }
-   
+
     private void PicUploadComplete(string url)
     {
         _fileUrl = url;
         _disableSaveButton = false;
         NewDeliveryTicket.PicUrl = _fileUrl;
+    }
+
+    private void StoreFilter()
+    {
+
+        if (StoreName != "")
+        {
+            TempStores = new();
+            foreach (var item in Stores)
+            {
+                if (item.StoreName.ToLower().Contains(StoreName.ToLower().Trim()))
+                {
+                    TempStores.Add(item);
+                }
+            }
+
+
+            //TempStores = Stores.Where(x => x.StoreName.ToLower().Contains(StoreName.ToLower().Trim()));
+
+
+        }
+        else
+        {
+            TempStores = new();
+            TempStores = Stores;
+        }
     }
 
     void Submit()

@@ -1,0 +1,153 @@
+﻿@page "/profile-info"
+@using WiiTrakClient.Cores
+@using WiiTrakClient.HttpRepository
+@inject IDriverHttpRepository DriverHttpRepository
+@inject ICompanyHttpRepository CompanyHttpRepository
+@inject ICorporateHttpRepository CorporateHttpRepository
+@inject IStoreHttpRepository StoreHttpRepository
+@inject ISystemOwnerHttpRepository SystemOwnerHttpRepository
+
+<MudCard Outlined="true" Class="pa-5">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h4">Profile Info</MudText>
+        </CardHeaderContent>
+            @*<CardHeaderActions>
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" />
+            </CardHeaderActions>*@
+    </MudCardHeader>
+    <MudCardContent> 
+        <MudTextField @bind-Value="@name" Label="Name"  ReadOnly="true" Variant="Variant.Outlined"  />
+        @*<MudText Typo="Typo.h6"> Name: @firstname </MudText>*@
+        @*<MudTextField @bind-Value="@lastname" Label="Last Name" Variant="Variant.Outlined" Disabled="true" />*@
+        @*<MudText Typo="Typo.h6"> Last Name: @lastname </MudText>*@
+        <MudTextField @bind-Value="@email" Label="Email ID" ReadOnly="true" Variant="Variant.Outlined" />
+        @*<MudText Typo="Typo.h6"> Email: @email </MudText>*@
+        <MudTextField @bind-Value="@phone" Label="Phone" ReadOnly="true" Variant="Variant.Outlined"  />
+        @*<MudText Typo="Typo.h6"> Phone:@phone </MudText> *@
+        <MudTextField @bind-Value="@address" Label="Address" ReadOnly="true" Variant="Variant.Outlined"  />
+        @*<MudText Typo="Typo.h6"> Address: @address </MudText>*@ 
+    </MudCardContent>
+</MudCard> 
+        
+@code {
+
+    string firstname;
+    string lastname;
+    string name;
+    string email;
+    string phone;
+    string address1;
+    string address2;
+    string city;
+    string state;
+    string countrycode;
+    string postalcode;
+    string address;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (CurrentUser.UserRole == "WiiTrak")
+        {
+            var wiitrak = await SystemOwnerHttpRepository.GetSystemOwnerByIdAsync(CurrentUser.UserId);
+            name = wiitrak.Name;
+            email = wiitrak.Email;
+            phone = wiitrak.PhonePrimary;
+            address1 = wiitrak.StreetAddress1;
+            address2 = wiitrak.StreetAddress2;
+            city = wiitrak.City;
+            state = wiitrak.State;
+            countrycode = wiitrak.CountryCode;
+            postalcode = wiitrak.PostalCode;
+            address = address1 + ", " + address2 + ", " + city + ", " + state + ", " + countrycode + ", " + postalcode;
+        }
+        else if (CurrentUser.UserRole == "Company")
+        {
+            var companies = await CompanyHttpRepository.GetCompanyByIdAsync(CurrentUser.UserId);
+            name = companies.Name;
+            email = companies.Email;
+            phone = companies.PhonePrimary;
+            address1 = companies.StreetAddress1;
+            address2 = companies.StreetAddress2;
+            city = companies.City;
+            state = companies.State;
+            countrycode = companies.CountryCode;
+            postalcode = companies.PostalCode;
+            address = address1 + ", " + address2 + ", " + city + ", " + state + ", " + countrycode + ", " + postalcode;
+        }
+        else if (CurrentUser.UserRole == "PrimeCompany")
+        {
+            var prime = await CompanyHttpRepository.GetCompanyByIdAsync(CurrentUser.UserId);
+            name = prime.Name;
+            email = prime.Email;
+            phone = prime.PhonePrimary;
+            address1 = prime.StreetAddress1;
+            address2 = prime.StreetAddress2;
+            city = prime.City;
+            state = prime.State;
+            countrycode = prime.CountryCode;
+            postalcode = prime.PostalCode;
+            address = address1 + ", " + address2 + ", " + city + ", " + state + ", " + countrycode + ", " + postalcode;
+        }
+        else if (CurrentUser.UserRole == "SubContractor")
+        {
+            var sub = await CompanyHttpRepository.GetCompanyByIdAsync(CurrentUser.UserId);
+            name = sub.Name;
+            email = sub.Email;
+            phone = sub.PhonePrimary;
+            address1 = sub.StreetAddress1;
+            address2 = sub.StreetAddress2;
+            city = sub.City;
+            state = sub.State;
+            countrycode = sub.CountryCode;
+            postalcode = sub.PostalCode;
+            address = address1 + ", " + address2 + ", " + city + ", " + state + ", " + countrycode + ", " + postalcode;
+        }
+        else if (CurrentUser.UserRole == "Corporate")
+        {
+            var corporates = await CorporateHttpRepository.GetCorporateByIdAsync(CurrentUser.UserId);
+            name = corporates.Name;
+            email = corporates.Email;
+            phone = corporates.PhonePrimary;
+            address1 = corporates.StreetAddress1;
+            address2 = corporates.StreetAddress2;
+            city = corporates.City;
+            state = corporates.State;
+            countrycode = corporates.CountryCode;
+            postalcode = corporates.PostalCode;
+            address = address1 + ", " + address2 + ", " + city + ", " + state + ", " + countrycode + ", " + postalcode;
+        }
+        else if (CurrentUser.UserRole == "Store")
+        {
+            var stores = await StoreHttpRepository.GetStoreByIdAsync(CurrentUser.UserId);
+            name = stores.StoreName;
+            email = stores.Email;
+            phone = stores.PhonePrimary;
+            address1 = stores.StreetAddress1;
+            address2 = stores.StreetAddress2;
+            city = stores.City;
+            state = stores.State;
+            countrycode = stores.CountryCode;
+            postalcode = stores.PostalCode;
+            address = address1 + ", " + address2 + ", " + city + ", " + state + ", " + countrycode + ", " + postalcode;
+        }
+        else if (CurrentUser.UserRole == "Driver")
+        {
+            var drivers = await DriverHttpRepository.GetDriverByIdAsync(CurrentUser.UserId);
+            firstname = drivers.FirstName;
+            lastname = drivers.LastName;
+            name = firstname + " " + lastname;
+            email = drivers.Email;
+            phone = drivers.Phone;
+            address1 = drivers.StreetAddress1;
+            address2 = drivers.StreetAddress2;
+            city = drivers.City;
+            state = drivers.State;
+            countrycode = drivers.CountryCode;
+            postalcode = drivers.PostalCode;
+            address = address1 + ", " + address2 + ", " + city + ", " + state + ", " + countrycode + ", " + postalcode;
+        }
+    }
+}

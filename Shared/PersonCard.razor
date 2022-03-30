@@ -1,16 +1,44 @@
-﻿<MudCard Elevation="0" Square="true" Class="@Class" Style="@Style">
+﻿@using WiiTrakClient.Cores
+
+<MudCard Elevation="0" Square="true" Class="@Class" Style="@Style">
     <MudCardHeader>
         <CardHeaderAvatar>
             <MudAvatar Image="https://avatars.dicebear.com/api/avataaars/Dan.svg" />
         </CardHeaderAvatar>
         <CardHeaderContent>
-            <MudText Typo="Typo.body2">Bob Jones</MudText>
-            <MudText Typo="Typo.caption">Driver</MudText>
+            <MudText Typo="Typo.body2">@UserName</MudText>
+            <MudText Typo="Typo.caption">@UserRole</MudText>
         </CardHeaderContent>
     </MudCardHeader>
 </MudCard>
 
-@code { 
+@code {
     [Parameter] public string Class { get; set; }
     [Parameter] public string Style { get; set; }
+
+    private string UserName { get; set; }
+    private string UserRole { get; set; }
+
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        try
+        {
+            UserName = CurrentUser.UserName;
+            UserRole = CurrentUser.UserRole;
+        }
+        catch (Exception ex)
+        {
+            UserName = "User";
+            UserRole = "Role";
+        }
+
+
+    }
+
+
+
 }

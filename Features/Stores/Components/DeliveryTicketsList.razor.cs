@@ -117,7 +117,8 @@ namespace WiiTrakClient.Features.Stores.Components
                     DeliveryTicketNumber = _editDeliveryTicket.DeliveryTicketNumber,
                     ApprovedByStore = _editDeliveryTicket.ApprovedByStore,
                     SignOffRequired = _editDeliveryTicket.SignOffRequired,  
-                    SignaturePicUrl = _editDeliveryTicket.SignaturePicUrl
+                    SignaturePicUrl = _editDeliveryTicket.SignaturePicUrl,
+                    Signee=_editDeliveryTicket.Signee
                 };
 
                 await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);

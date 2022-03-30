@@ -53,6 +53,7 @@
               
             };
            await TechnicianRepository.CreateTechnicianAsync(_newTechnician);
+           _technicians = await TechnicianRepository.GetAllTechniciansAsync();    
         }  
     } 
 }

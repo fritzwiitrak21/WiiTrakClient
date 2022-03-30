@@ -13,6 +13,7 @@ using WiiTrakClient.DTOs;
 using MudBlazor;
 using WiiTrakClient.Enums;
 using WiiTrakClient.Helpers;
+using WiiTrakClient.Cores;
 
 namespace WiiTrakClient.Features.Drivers
 {
@@ -65,12 +66,12 @@ namespace WiiTrakClient.Features.Drivers
 
         protected override async Task OnInitializedAsync()
         {
-            _drivers = await DriverRepository.GetAllDriversAsync();
-            await GetCartsByDriverId(_drivers[0].Id);
-            _selectedDriver = _drivers[0];
+            _selectedDriver =  await DriverRepository.GetDriverByIdAsync(CurrentUser.UserId);
+            await GetCartsByDriverId(CurrentUser.UserId);
+
 
             _repairIssues = await RepairIssueHttpRepository.GetAllRepairIssuesAsync();
-            StateHasChanged();
+            //StateHasChanged();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -78,12 +79,12 @@ namespace WiiTrakClient.Features.Drivers
             await ReadSummary();
         }
 
-        private async Task HandleDriverSelected(DriverDto driver)
-        {
-            System.Console.WriteLine(driver.Id);
-            await GetCartsByDriverId(driver.Id);
-            _selectedDriver = driver;
-        }
+        //private async Task HandleDriverSelected(DriverDto driver)
+        //{
+        //    System.Console.WriteLine(driver.Id);
+        //    await GetCartsByDriverId(driver.Id);
+        //    _selectedDriver = driver;
+        //}
 
         private async Task GetCartsByDriverId(Guid id)
         {
@@ -158,7 +159,7 @@ namespace WiiTrakClient.Features.Drivers
              var cartHistory = new CartHistoryUpdateDto {
                         ServiceProviderId = cart.Store != null ? cart.Store.ServiceProviderId : null,
                         StoreId = cart.StoreId,
-                        DriverId = _selectedDriver.Id,
+                        DriverId = CurrentUser.UserId,
                         Condition = cart.Condition,
                         Status = CartStatus.PickedUp,
                         CartId = cart.Id

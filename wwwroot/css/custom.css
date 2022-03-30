@@ -1,0 +1,134 @@
+.mud-drawer {
+    position: fixed;
+    left: -30%;
+    width: var(--nav-width);
+    height: 100vh !important;
+    padding: 0px !important;
+    transition: .5s;
+    z-index: var(--z-fixed);
+    background-color: #15283c !important;
+    color: #fff;
+    transition: all 0.3s;
+    background-image: url(../images/pattern_h.png) !important;
+    top: 0px !important;
+}
+.mud-drawer-fixed.mud-drawer-responsive.mud-drawer-clipped-always {
+    top: 0px !important;
+}
+header.mud-elevation-1 {
+    width: 100%;
+    height: var(--header-height);
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    background-color: #15283c;
+    z-index: var(--z-fixed);
+    transition: .5s;
+    width: 100%;
+}
+.mud-appbar .mud-toolbar-appbar {
+    width: 100%;
+}
+.mud-appbar.mud-appbar-fixed-top {
+    padding: 0px;
+}
+.mud-drawer .mud-nav-link.active {
+    background-color: #9dd334 !important;
+    border-radius: 5px;
+    color: #fff;
+    color: #ffffff !important;
+}
+.mud-drawer .mud-svg-icon {
+    color: #ffffff !important;
+}
+.mud-drawer .mud-nav-item {
+    margin-bottom: 5px;
+}
+.mud-drawer.mud-drawer-responsive.mud-drawer-pos-left.mud-drawer--closed {
+    left: 0px !important;
+    width: 70px;
+}
+    .mud-drawer.mud-drawer--closed .mud-nav-link {
+        padding: 8px 16px 8px 9px;
+    }
+.sidebarbrand {
+    display: flex;
+    justify-content: space-between;
+    background: #214162;
+    padding: 12px 15px;
+}
+    .mud-drawer.mud-drawer--closed .sidebarbrand img {
+        display: none;
+    }
+.mud-drawer.mud-drawer--closed .mud-icon-button {
+    margin-left: 0px !important;
+    padding-left: 8px;
+}
+.mud-main-content {
+    margin-left: 70px;
+    padding-left:70px;
+}
+.mud-drawer-open-responsive-md-left .mud-main-content {
+padding-left:15px;
+}
+.mud-drawer-close-responsive-md-left .mud-appbar {
+    padding-left: 60px;
+}
+.mud-drawer-close-responsive-md-left .mud-typography-subtitle2{
+    display: none;
+}
+.mud-drawer-close-responsive-md-left .mud-nav-link-text {
+    display: none;
+}
+.mud-drawer-open-responsive-md-left .mud-appbar {
+    padding-left: 240px;
+}
+.mud-navmenu{
+    padding: 15px !important;
+}
+.sidebarbrand .mud-icon-button {
+    background: #15283c !important;
+    border-radius: 5px;
+    padding: 10px !important;
+    height: 40px;
+    margin-top: 5px;
+}
+.mud-appbar .mud-toolbar-appbar {
+    height: 70px !important;
+}
+.mud-typography-subtitle2 {
+    font-size: 15px;
+    color: #3f75e6;
+    font-weight: bold;
+    padding-left: 24px;
+}
+.welcomemsg {
+    font-size: 18px;
+}
+.welcomemsg span {
+    color: #3f75e6;
+}
+.mud-appbar .mud-card-header-content{
+    color: #fff;
+}
+.mud-avatar{
+    border-radius: 0px;
+}
+.mud-list-item-icon {
+    min-width: 40px !important;
+}
+.mud-nav-link .mud-nav-link-text {
+    color: #FFF;
+}
+.mud-table-root .mud-table-head .mud-table-cell {
+    color: #fff !important;
+    background-color: #214162;
+    border: 1px solid #142d46;
+}
+.mud-button-root.mud-table-sort-label {
+    color: #fff;
+}

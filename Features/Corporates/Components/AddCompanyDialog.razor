@@ -1,0 +1,41 @@
+ @namespace WiiTrakClient.Features.Corporates.Components
+
+ <MudDialog>
+    <DialogContent>              
+        <div style="width: 400px;height:450px;overflow: auto;">
+                <MudForm Model="@NewCompany">   
+                    <MudTextField class="my-6" @bind-Value="NewCompany.Name" Label="Name" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField class="my-6" @bind-Value="NewCompany.StreetAddress1" Label="Street Address 1" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField class="my-6" @bind-Value="NewCompany.StreetAddress2" Label="Street Address 2" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField class="my-6" @bind-Value="NewCompany.City" Label="City" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField class="my-6" @bind-Value="NewCompany.State" Label="State" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField class="my-6" @bind-Value="NewCompany.PostalCode" Label="ZipCode" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField class="my-6" @bind-Value="NewCompany.Email" Label="Email" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField class="my-6" @bind-Value="NewCompany.PhonePrimary" Label="Phone" Variant="Variant.Text"></MudTextField>  
+                    <MudCheckBox @bind-Checked="NewCompany.CannotHaveChildren" Label="Do Not Allow Sub Companies" Color="Color.Primary"></MudCheckBox>
+                </MudForm>
+        </div>
+      
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [Parameter]
+    public CompanyCreationDto? NewCompany {get; set;}
+
+     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    protected override void OnParametersSet() {
+            
+    }
+
+    void Submit() 
+    { 
+        MudDialog.Close(DialogResult.Ok(true)); 
+    }
+    void Cancel() => MudDialog.Cancel();
+}

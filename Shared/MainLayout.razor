@@ -10,7 +10,7 @@
     Position="DialogPosition.Center" 
 />
 <MudSnackbarProvider />
-
+ 
 @*<div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -32,13 +32,13 @@
     <MudAppBar Elevation="_themeManager.AppBarElevation">
         <MudHidden Breakpoint="Breakpoint.SmAndDown">
             @*<MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Size="Size.Large" />*@
-            <img src="/images/wiitrak_logo_80x40.png" width="80" height="40" />
+            @*<img src="/images/wiitrak_logo_80x40.png" width="80" height="40" /> *@
         </MudHidden>
         <MudHidden Breakpoint="Breakpoint.MdAndUp">
             <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         </MudHidden>
         <MudHidden Breakpoint="Breakpoint.Xs">
-            <MudText Typo="Typo.h6" Class="ml-4">WiiTrak</MudText>
+            <div Class="welcomemsg">Welcome to <span>WiiTrak</span></div>
         </MudHidden>
         <MudHidden Breakpoint="Breakpoint.Xs" Invert="true">
             <MudText Typo="Typo.subtitle2">WiiTrak</MudText>
@@ -49,29 +49,34 @@
             <MudMenuItem>Swedish</MudMenuItem>
             <MudMenuItem>Old Norse</MudMenuItem>
         </MudMenu>
-        <MudMenu Icon="@Icons.Material.Outlined.Widgets" Color="Color.Inherit" Direction="Direction.Bottom" OffsetY="true" Dense="true">
-            @*<MudMenuItem Link="https://mudblazor.com/">MudBlazor</MudMenuItem>
-            <MudMenuItem Link="https://github.com/Garderoben/MudBlazor.Templates">Source Code</MudMenuItem>*@
-        </MudMenu>
-        <MudMenu Direction="Direction.Left" OffsetX="true" Dense="true" Class="mt-1 ml-4">
+       @* <MudMenu Icon="@Icons.Material.Outlined.Widgets" Color="Color.Inherit" Direction="Direction.Bottom" OffsetY="true" Dense="true">
+            <MudMenuItem Link="https://mudblazor.com/">MudBlazor</MudMenuItem>
+            <MudMenuItem Link="https://github.com/Garderoben/MudBlazor.Templates">Source Code</MudMenuItem>
+        </MudMenu>*@ 
+        <MudMenu Direction="Direction.Left" OffsetX="true" Dense="true" Class="mt-1">
             <ActivatorContent>
-                <MudAvatar Image="https://avatars.dicebear.com/api/avataaars/Dan.svg" />
+                <PersonCard Style="background-color: transparent;" />
             </ActivatorContent>
             <ChildContent>
-                <PersonCard Class="mt-2" />
+                <PersonCard Class="" />
                 <MudDivider Class="mb-2" />
-                <MudListItem Text="Account" Icon="@Icons.Material.Outlined.Person" Href="/personal/account" />
-                <MudListItem Text="Logout" Icon="@Icons.Material.Outlined.Login" Href="/pages/authentication/login" />
+                <MudListItem Text="Account" Icon="@Icons.Material.Outlined.Person" Href="/profile-info" />
+                <MudListItem Text="Logout" Icon="@Icons.Material.Outlined.Login" Href="/" />
+                @*<MudListItem Text="Logout" Icon="@Icons.Material.Outlined.Login" Href="/pages/authentication/login" />*@
             </ChildContent>
         </MudMenu>
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" Elevation="_themeManager.DrawerElevation" ClipMode="_themeManager.DrawerClipMode">
+        <div class="sidebarbrand">
+        <img src="/images/WiiTrak-logo.png" width="96" height="" />
+        <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="ml-3" />
+</div>
         <NavMenu />
     </MudDrawer>
     <MudMainContent>
         <MudHidden Breakpoint="Breakpoint.SmAndDown">
             <MudToolBar DisableGutters="true">
-                <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="ml-3" />
+        @* <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="ml-3" />*@
                 <MudBreadcrumbs Items="_items"></MudBreadcrumbs>
                 <MudSpacer />  
             </MudToolBar>
@@ -122,7 +127,7 @@
 
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
-        new BreadcrumbItem("Personal", href: "#"),
-        new BreadcrumbItem("Dashboard", href: "#"),
+        new BreadcrumbItem("Personal", href: "/profile-info"),
+        new BreadcrumbItem("Dashboard", href: "/index"),
     };
 }

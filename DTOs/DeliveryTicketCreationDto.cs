@@ -13,6 +13,7 @@ namespace WiiTrakClient.DTOs
         public string PicUrl { get; set; } = string.Empty;
 
         public string SignaturePicUrl { get; set; } = string.Empty;
+        public bool SignOffRequired { get; set; }
 
         public DateTime DeliveredAt { get; set; }
 
@@ -21,5 +22,6 @@ namespace WiiTrakClient.DTOs
         public Guid StoreId { get; set; } = Guid.Empty;
 
         public Guid DriverId { get; set; } = Guid.Empty;
+        public string Signee { get; set; } = string.Empty;
     }
 }

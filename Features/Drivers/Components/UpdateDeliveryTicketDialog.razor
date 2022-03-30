@@ -15,12 +15,12 @@
                 </MudSelect>
 
                 @{
-                    UpdateNumberOfCarts();                  
+                    //UpdateNumberOfCarts();                  
                     UpdateStoreAndServiceProviderIds();
                 }
 
-                <MudText Class="my-4" Typo="Typo.h5">Number of Carts: @editDeliveryTicket.NumberOfCarts</MudText>
-
+                @*<MudText Class="my-4" Typo="Typo.h5">Number available carts to pickup: @editDeliveryTicket.NumberOfCarts</MudText>*@
+                 <MudTextField @bind-Value="@editDeliveryTicket.NumberOfCarts" Label="No of carts" Variant="Variant.Text"></MudTextField>
                 <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
 
                 @if (!string.IsNullOrWhiteSpace(_fileUrl)) {
