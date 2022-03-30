@@ -5,6 +5,8 @@
 @inject Microsoft.JSInterop.IJSRuntime JS
 @using WiiTrakClient.Cores;
 @inject IDeliveryTicketHttpRepository DeliveryTicketHttpRepository
+@using Newtonsoft
+
 
 <h3>Report</h3>
 
@@ -84,16 +86,23 @@
     }
     private async Task ExportExcel()
     {
-        try
-        {
-            var dt = Core.ToDataTable(_deliveryTickets);
-            ms = excelservice.CreateExcel(dt);
-            await FileUtils.SaveAs(JS,"DeliveryReports.xlsx", ms.ToArray());
-        }
-        catch (Exception ex)
-        {
-            throw ex;
-        }
+        //try
+        //{
+
+        //    var dt = Core.ToDataTable(_deliveryTickets);
+            
+        //    ms = excelservice.CreateExcel(dt);
+           
+        //    await FileUtils.SaveAs(JS,"DeliveryReports.xlsx",ms.ToArray());
+
+
+        //}
+        //catch (Exception ex)
+        //{
+        //    throw ex;
+        //}
     }
+   
+    
 }
 
