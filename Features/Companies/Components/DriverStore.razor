@@ -1,0 +1,55 @@
+﻿@page "/driver-store"
+@using WiiTrakClient.Cores
+@using WiiTrakClient.Features.Companies.Components
+
+
+<div class="my-8">
+    <MudGrid>
+        <MudItem xs="12" sm="6" md="4"> 
+            <MudSelect  Value=@_selectedUserView  
+                        Class="my-6" T=DriverDto Label="Driver" AnchorOrigin="Origin.BottomCenter"
+                        HelperText="Select a Driver"  Required="true" 
+                        AdornmentColor="Color.Primary">
+                    @foreach (var driver in Drivers)
+                    {
+                        <MudSelectItem T=DriverDto Value="@driver">@driver.FirstName @driver.LastName</MudSelectItem>  
+                    }
+             </MudSelect>
+        </MudItem>
+    </MudGrid>
+</div>
+
+
+
+<DriverStoreList driverstore ="_driverstore"/>
+
+
+
+@code {
+
+    public List<DriverDto> Drivers { get; set; }=new();
+    public List<StoreDto> Stores { get; set; } = new();
+    public List<DriverStoreDetailsDto> _driverstore { get; set; } = new();
+    public DriverDto _selectedUserView = new();
+
+    [Inject]
+    public IDriverStoresHttpRepository DriverStoreRepos { get; set; }
+    public Guid DriverId { get; set; }
+
+    [Inject]
+    public IDriverHttpRepository Driver { get; set; }
+
+    [Inject]
+    public IStoreHttpRepository Store { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Drivers = (await Driver.GetDriversByCompanyIdAsync(CurrentUser.UserId)).ToList();
+       // _driverstore = await DriverStoreRepos.GetDriverStoresByDriverIdAsync(); 
+        var _Stores = (await Store.GetStoresByCompanyId(CurrentUser.UserId)).ToList();
+        //if(_Stores is not null)
+        //{
+        //    Stores = _Stores;
+        //}
+    } 
+}

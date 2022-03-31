@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>WiiTrak</title>
+    <title>WiiTrakClient</title>
     <base href="/" />
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
@@ -38,9 +38,9 @@
         };
     </script>
 
-    <!--<script type="text/javascript">
+    <script type="text/javascript">
         function saveAsFile(filename, bytesBase64) {
-            alert
+            
             if (navigator.msSaveBlob) {
                 //Download document in Edge browser
                 var data = window.atob(bytesBase64);
@@ -61,7 +61,7 @@
             }
         }
     </script>
-    <script src="_framework/blazor.server.js"></script>
+    <!--<script src="_framework/blazor.server.js"></script>
     <script src="SaveFile.js"></script>-->
 </head>
 
@@ -78,6 +78,7 @@
     <script src="_content/CurrieTechnologies.Razor.SweetAlert2/sweetAlert2.min.js"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     <script src="js/TakePicture.js"></script>
+    <script src="js/localstorage.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>
     <!--jQuery-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

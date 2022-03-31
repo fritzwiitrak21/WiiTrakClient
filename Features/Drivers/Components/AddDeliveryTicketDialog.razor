@@ -8,6 +8,7 @@
     <DialogContent>
         <div style="width: 400px;height:450px;overflow: auto;">
             <MudForm Model="@NewDeliveryTicket">
+                <DataAnnotationsValidator />
 
 
       @*  <MudAutocomplete T="StoreDto" Label="Store Name" HelperText="Select a Store"  
@@ -34,11 +35,13 @@
 
                 @*<MudText Class="my-4" Typo="Typo.h5">No of available carts to pickup: @NoOfCartsToPickUp</MudText>*@
                 <MudTextField @bind-Value="@NewDeliveryTicket.NumberOfCarts" Label="No of carts" Variant="Variant.Text"></MudTextField>
+                    <ValidationMessage For="@(() => @NewDeliveryTicket.NumberOfCarts)" />
                 <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
+                    <ValidationMessage For="@(() => @NewDeliveryTicket.PicUrl)" />
 
                 @if (!string.IsNullOrWhiteSpace(_fileUrl))
                 {
-                  <div class="d-flex justify-center mt-6">
+                  <div class="d-flex justify-start mt-6">
                       <img src="@_fileUrl" width="300" height="300" />
                   </div>
                 }
@@ -78,9 +81,9 @@
     private int NoOfCartsToPickUp = 0;
     private string StoreName = "";
 
-    bool _disableSaveButton = false;
+    bool _disableSaveButton = true;
 
-    
+
 
     protected override void OnParametersSet()
     {
@@ -95,8 +98,8 @@
 
     private async Task<IEnumerable<StoreDto>> Search1(string value)
     {
-       
-       
+
+
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
@@ -107,7 +110,7 @@
 
     private void UpdateNumberOfCarts()
     {
-        NoOfCartsToPickUp = Carts.Count(x => x.StoreId == _selectedStore.Id && x.Status == CartStatus.PickedUp);
+       NoOfCartsToPickUp = Carts.Count(x => x.StoreId == _selectedStore.Id && x.Status == CartStatus.PickedUp);  
     }
 
     private void UpdateStoreAndServiceProviderIds()

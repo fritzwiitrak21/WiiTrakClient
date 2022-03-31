@@ -44,11 +44,11 @@
             <MudText Typo="Typo.subtitle2">WiiTrak</MudText>
         </MudHidden>
         <MudSpacer />
-        <MudMenu Icon="@Icons.Material.Outlined.Translate" Color="Color.Inherit" Direction="Direction.Bottom" OffsetY="true" Dense="true">
+        @*<MudMenu Icon="@Icons.Material.Outlined.Translate" Color="Color.Inherit" Direction="Direction.Bottom" OffsetY="true" Dense="true">
             <MudMenuItem>English</MudMenuItem>
             <MudMenuItem>Swedish</MudMenuItem>
             <MudMenuItem>Old Norse</MudMenuItem>
-        </MudMenu>
+        </MudMenu>*@
        @* <MudMenu Icon="@Icons.Material.Outlined.Widgets" Color="Color.Inherit" Direction="Direction.Bottom" OffsetY="true" Dense="true">
             <MudMenuItem Link="https://mudblazor.com/">MudBlazor</MudMenuItem>
             <MudMenuItem Link="https://github.com/Garderoben/MudBlazor.Templates">Source Code</MudMenuItem>
@@ -61,7 +61,8 @@
                 <PersonCard Class="" />
                 <MudDivider Class="mb-2" />
                 <MudListItem Text="Account" Icon="@Icons.Material.Outlined.Person" Href="/profile-info" />
-                <MudListItem Text="Logout" Icon="@Icons.Material.Outlined.Login" Href="/" />
+                <MudListItem Text="Change Password" Icon="@Icons.Material.Outlined.Password" Href="/change-password" />
+                <MudListItem Text="Logout" Icon="@Icons.Material.Outlined.Logout" Href="/" />
                 @*<MudListItem Text="Logout" Icon="@Icons.Material.Outlined.Login" Href="/pages/authentication/login" />*@
             </ChildContent>
         </MudMenu>
@@ -77,7 +78,7 @@
         <MudHidden Breakpoint="Breakpoint.SmAndDown">
             <MudToolBar DisableGutters="true">
         @* <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="ml-3" />*@
-                <MudBreadcrumbs Items="_items"></MudBreadcrumbs>
+                @*<MudBreadcrumbs Items="_items"></MudBreadcrumbs>*@
                 <MudSpacer />  
             </MudToolBar>
         </MudHidden>

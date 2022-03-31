@@ -8,10 +8,10 @@ using WiiTrakClient.Services;
 
 namespace WiiTrakClient.HttpRepository
 {
-    public class LoginHttpRepository : ILoginHttpRepository
+    public class LoginHttpRepository : ILoginHttpRepository 
     {
         private readonly IHttpService _httpService;
-        private const string ControllerName = "login";
+        private const string ControllerName = "login"; 
         private readonly string _apiUrl = "";
        
 
@@ -59,9 +59,17 @@ namespace WiiTrakClient.HttpRepository
             var response = await _httpService.Put($"{ _apiUrl }/{ id }", reset);
             if (!response.Success)
             {
-                // throw new ApplicationException(await response.GetBody());
-            }
+                // throw new ApplicationException(await response.GetBody()); 
+            } 
         }
+        //public async Task ChangeUserPasswordAsync(Guid id,ChangePasswordDto change)
+        //{
+        //    var response = await _httpService.Put($"{ _apiUrl }/{ id }", change);
+        //    if(!response.Success)
+        //    {
+        //        // throw new ApplicationException(await response.GetBody()); 
+        //    }
+        //}
 
        
     }

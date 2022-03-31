@@ -1,0 +1,111 @@
+﻿@using WiiTrakClient.Features.Companies.Components
+@using System.Linq
+@using System.Collections.Generic;
+
+@namespace WiiTrakClient.Features.Companies.Components
+
+<MudTable Items=@driverstore  Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@_listIsLoading"
+    LoadingProgressColor="Color.Primary">
+    <HeaderContent>
+        <MudTh>
+            <MudTableSortLabel InitialDirection="@SortDirection.Ascending"
+                SortBy="new Func<StoreDto, object>(x => x.StoreNumber)">Store Number
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+           Store Name
+        </MudTh>
+        <MudTh>
+            Email
+        </MudTh>
+        <MudTh>
+            Phone
+        </MudTh>
+        <MudTh>
+            Street Address 1
+        </MudTh>
+        <MudTh>
+            Street Address 2
+        </MudTh>
+        <MudTh>
+            City
+        </MudTh>
+        <MudTh>
+            State
+        </MudTh>
+        <MudTh>
+            Postal Code
+        </MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="Store Number">@context.StoreNumber</MudTd>
+        <MudTd DataLabel="Store Name">@context.StoreName</MudTd>
+        <MudTd DataLabel="Email">@context.Email</MudTd>
+        <MudTd DataLabel="Phone">@context.PhonePrimary</MudTd>
+        <MudTd DataLabel="Street Address 1">@context.StreetAddress1</MudTd>
+        <MudTd DataLabel="Street Address 2">@context.StreetAddress2</MudTd>
+        <MudTd DataLabel="City">@context.City</MudTd>
+        <MudTd DataLabel="State">@context.State</MudTd>
+        <MudTd DataLabel="Postal Code">@context.PostalCode</MudTd> 
+        
+        <MudTd DataLabel="">
+            @if(@context.IsActive==false)
+            {
+                <MudButton Variant="Variant.Filled" 
+                    StartIcon="@Icons.Material.Filled.Send" 
+                    Color="Color.Primary">Assign
+                </MudButton>
+            } 
+            else
+            {
+                <MudButton Variant="Variant.Filled" 
+                    EndIcon="@Icons.Material.Filled.Send" 
+                    Color="Color.Default">Assigned
+                </MudButton>
+            } 
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+    </PagerContent>
+</MudTable>
+
+@code{
+    [Parameter] 
+    public List<StoreDto> stores { get; set; }
+    public bool _listIsLoading = false;
+    [Parameter] 
+    public List<DriverStoreDetailsDto> driverstore { get; set; } 
+
+    [Inject]
+    public IDriverStoresHttpRepository DriverStoreRepos { get; set; }
+
+    public Guid DriverId { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync() 
+    {
+        //driverstore = (await DriverStoreRepos.GetDriverStoresByDriverIdAsync(DriverId)).ToList();
+
+        //var table = (from s in stores 
+        //             join ds in driverstore
+        //             on s.Id equals ds.StoreId
+        //             select new
+        //             {
+        //                 s.StoreNumber,
+        //                 s.StoreName,
+        //                 s.Email,
+        //                 s.PhonePrimary,
+        //                 s.StreetAddress1,
+        //                 s.StreetAddress2,
+        //                 s.City,
+        //                 s.State,
+        //                 s.PostalCode,
+        //                 ds.IsActive
+        //             }).ToList();
+      
+    }   
+}

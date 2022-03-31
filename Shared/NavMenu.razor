@@ -1,5 +1,6 @@
 ﻿@using WiiTrakClient.Services
 @using WiiTrakClient.Cores
+@inject IJSRuntime JSRuntime
 
 <MudDivider Class="mb-4" />
 <MudNavMenu>
@@ -15,6 +16,7 @@
             <MudNavLink Href="/corporates" Icon="@Icons.Filled.Apartment">Corparates</MudNavLink>
             <MudNavLink Href="/companies" Icon="@Icons.Filled.Business">Companies</MudNavLink>
             <MudNavLink Href="/technicians" Icon="@Icons.Material.Outlined.Build">Technician</MudNavLink>
+            <MudNavLink Href="/driver-store" Icon="@Icons.Material.Outlined.Store">Assign</MudNavLink>
             <MudNavLink Href="" Icon="@Icons.Material.Outlined.BarChart">Sales</MudNavLink>
             <MudNavLink Href="/systemowner-delivery-tickets" Icon="@Icons.Material.Outlined.FactCheck">Deliveries</MudNavLink>
 
@@ -67,8 +69,11 @@
 
             <MudNavLink Href="/sub-companies" Icon="@Icons.Material.Outlined.ManageAccounts">Companies</MudNavLink>
              <MudNavLink Href="/drivers" Icon="@Icons.Filled.GroupAdd">Drivers</MudNavLink>
+             <MudNavLink Href="/driver-store" Icon="@Icons.Material.Outlined.Store">Assign</MudNavLink>
             <MudNavLink Href="/company-carts" Icon="@Icons.Material.Outlined.Inventory">Inventory</MudNavLink>
             <MudNavLink Href="/company-delivery-tickets" Icon="@Icons.Material.Outlined.FactCheck">Deliveries</MudNavLink>
+            
+
 
             <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Others</MudText>
 
@@ -91,6 +96,9 @@
             
            
             <MudNavLink Href="/drivers" Icon="@Icons.Filled.GroupAdd">Drivers</MudNavLink>
+            <MudNavLink Href="/company-carts" Icon="@Icons.Material.Outlined.Inventory">Inventory</MudNavLink>
+            <MudNavLink Href="/driver-store" Icon="@Icons.Material.Outlined.Store">Assign</MudNavLink>
+            
           
             <MudNavGroup Title="Inventory" Expanded="true">
             <MudNavLink Href="/company-carts" Icon="@Icons.Material.Outlined.ShoppingCart">Cart In</MudNavLink>
@@ -191,10 +199,25 @@
 
 
     string UserView = "";
-
+    private IJSObjectReference _jsModules;
     string AlertAssignmentIcon { get; set; } = "<path d=\"M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3H9.18C9.6,1.84 10.7,1 12,1C13.3,1 14.4,1.84 14.82,3H19M12,3A1,1 0 0,0 11,4A1,1 0 0,0 12,5A1,1 0 0,0 13,4A1,1 0 0,0 12,3M7,7V5H5V19H19V5H17V7H7M11,9H13V13.5H11V9M11,15H13V17H11V15Z\" />";
     protected override async Task OnInitializedAsync()
     {
+        try
+        {
+            _jsModules = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var id = await _jsModules.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(id);
+            var name = CurrentUser.UserName = await _jsModules.InvokeAsync<string>("getUserName");
+            var role = CurrentUser.UserRole = await _jsModules.InvokeAsync<string>("getUserRole");
+            var roleid = await _jsModules.InvokeAsync<string>("getUserRoleId");
+            CurrentUser.UserRoleId = Convert.ToInt32(roleid);
+
+        }
+        catch (Exception ex)
+        {
+            
+        }
         UserView = CurrentUser.UserRole;
        
     }

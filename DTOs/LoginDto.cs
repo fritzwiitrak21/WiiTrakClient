@@ -27,4 +27,14 @@ namespace WiiTrakClient.DTOs
         [Compare("NewPassword")]
         public string ConfirmPassword { get; set; }
     }
+    public class ChangePasswordDto
+    {
+        [Required]
+        public string Password { get; set; }
+        [Required]
+        public string NewPassword { get; set; }
+        [Required]
+        [Compare("NewPassword")]
+        public string ConfirmPassword { get; set; }
+    }
 }

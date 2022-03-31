@@ -8,6 +8,7 @@
 @using WiiTrakClient.Shared;
 @using WiiTrakClient.Shared.Components;
 @inject IDialogService DialogService 
+@inject IJSRuntime JSRuntime
 
 
 
@@ -260,6 +261,12 @@ margin-top: 30px;
     private LoginDto login = new LoginDto();
     private bool formInvalid = false;
     private string ErrorMessage { get; set; } = "";
+    private IJSObjectReference _jsModule;
+
+    protected override async Task OnInitializedAsync()
+    {
+         _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+    }
 
 
     private async void OnSubmit()
@@ -281,6 +288,15 @@ margin-top: 30px;
                 CurrentUser.UserName = Core.ToPascalCase(string.Concat(UserDetails.FirstName, " ", UserDetails.LastName));
                 CurrentUser.IsFirstLogin = Convert.ToBoolean(UserDetails.IsFirstLogin);
                 CurrentUser.PasswordLastUpdatedAt = UserDetails.PasswordLastUpdatedAt;
+
+               
+                await _jsModule.InvokeVoidAsync("saveUserId",CurrentUser.UserId);
+                await _jsModule.InvokeVoidAsync("saveUserName",CurrentUser.UserName);
+                await _jsModule.InvokeVoidAsync("saveUserRole",CurrentUser.UserRole);
+                await _jsModule.InvokeVoidAsync("saveUserRoleId",CurrentUser.UserRoleId);
+
+                var user=  await _jsModule.InvokeAsync<string>("getUserId");
+
 
                 if (CurrentUser.IsFirstLogin)
                 {

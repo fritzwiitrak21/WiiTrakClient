@@ -30,9 +30,10 @@
                     <img src="@deliveryTicketDto.PicUrl" width="300" height="300" />
                 </div>
             }
-             @if (!string.IsNullOrWhiteSpace(deliveryTicketDto.SignaturePicUrl)) {
-                
- <MudText Class="" Typo="Typo.h6">Signature: @deliveryTicketDto.Signee</MudText> 
+             @if (!string.IsNullOrWhiteSpace(deliveryTicketDto.SignaturePicUrl)) 
+             {
+
+                <MudText Class="" Typo="Typo.h6">Signature: @deliveryTicketDto.Signee</MudText> 
                   @*<MudText Class="" Typo="Typo.h6">Signature: </MudText> *@
                 <div class="d-flex justify-center mt-6">
                     <img src="@deliveryTicketDto.SignaturePicUrl" width="300" height="300" />

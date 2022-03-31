@@ -20,6 +20,8 @@
         <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.CountryCode)">Country Code</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.PostalCode)">Postal Code</MudTableSortLabel></MudTh> 
         <MudTh></MudTh>
+        <MudTh></MudTh>
+        <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="FirstName">
@@ -58,6 +60,20 @@
                 Color="Color.Primary" 
                 OnClick="((e) => OpenDialog(context))">Update
             </MudButton>
+        </MudTd>
+        <MudTd DataLabel="Action"> 
+            <MudCheckBox 
+                @bind-Checked="@context.IsSuspended"
+                Label="Temporary Disable" 
+                Color="Color.Primary">
+            </MudCheckBox>  
+        </MudTd>
+        <MudTd DataLabel="Action"> 
+            <MudCheckBox 
+            @bind-Checked="@context.IsSuspended" 
+            Label="Permanent Disable" 
+            Color="Color.Primary">
+        </MudCheckBox>
         </MudTd>
     </RowTemplate>
     <PagerContent>
