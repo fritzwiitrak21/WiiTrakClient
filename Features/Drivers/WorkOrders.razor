@@ -3,7 +3,7 @@
 @using WiiTrakClient.Features.Drivers.Components
 
 
-<MudGrid class="my-8">
+<MudGrid class="my-4">
     <MudItem xs="12" sm="6" md="4">
         <MudSelect T="DriverDto" Label="Select Driver" ValueChanged="(value) => HandleDriverSelected(value)"
             AnchorOrigin="Origin.BottomCenter">
@@ -15,7 +15,7 @@
     </MudItem>
 </MudGrid>
 
-<h3>Work Orders</h3>
+<h3 class="mb-4">Work Orders</h3>
 
 @* <div class="d-flex justify-end my-8 mr-8">
    <MudIconButton Icon="@Icons.Material.Filled.Add" 

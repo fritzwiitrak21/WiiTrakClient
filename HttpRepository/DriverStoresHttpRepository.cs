@@ -15,9 +15,9 @@ namespace WiiTrakClient.HttpRepository
             _httpService = httpService;
             _apiUrl = $"{ httpService.BaseUrl }{ ControllerName }"; 
         }
-        public async Task <List<DriverStoreDetailsDto>> GetDriverStoresByDriverIdAsync(Guid DriverId,Guid CompanyId) 
-        {
-            string url = $"{_apiUrl}/{DriverId}/{CompanyId}";
+        public async Task <List<DriverStoreDetailsDto>> GetDriverStoresByCompanyIdAsync(Guid CompanyId, Guid DriverId) 
+        { 
+            string url = $"{_apiUrl}/company/{CompanyId}/{DriverId}";
 
             var response = await _httpService.Get<List<DriverStoreDetailsDto>>(url);
             if (!response.Success)
@@ -26,6 +26,24 @@ namespace WiiTrakClient.HttpRepository
             }
             return response.Response;
         }
-      
+        public async Task<List<DriverStoreDetailsDto>> GetDriverStoresBySystemownerIdAsync(Guid SystemOwnerId, Guid DriverId)
+        {
+            string url = $"{_apiUrl}/systemowner/{SystemOwnerId}/{DriverId}";
+
+            var response = await _httpService.Get<List<DriverStoreDetailsDto>>(url);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
+        public async Task UpdateDriverStoresAsync(Guid DriverId,DriverStoreDetailsDto _DriverStoreDto)
+        {
+            var response = await _httpService.Put($"{ _apiUrl }/{ DriverId }", _DriverStoreDto);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+        }
     }
 } 

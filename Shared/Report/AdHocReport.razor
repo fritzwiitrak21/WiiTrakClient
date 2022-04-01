@@ -5,41 +5,57 @@
 @inject Microsoft.JSInterop.IJSRuntime JS
 @using WiiTrakClient.Cores;
 @inject IDeliveryTicketHttpRepository DeliveryTicketHttpRepository
-@using Newtonsoft
 
-
-<h3>Report</h3>
+<h3 class="pageheader">Reports</h3>
 
 
 <div class="col-md-12">
 <div class="row">
-<div class="col-md-3">
+    <div class="col-md-7 col-sm-12">
+        <div class="filtercard">
+ <div class="filtercardbody">
+<div class="filteritem">
 <MudDatePicker Label="Start Date" Editable="true" @bind-Date="Startdate" Placeholder="Select Start Date" />
 </div>
-<div class="col-md-3">
+<div class="filteritem">
 <MudDatePicker Label="End Date" Editable="true" @bind-Date="Enddate" Placeholder="Select End Date" />
 </div>
-<div class="col-md-1">
+</div>
+<div class="filterlapbtn">
    
    <MudIconButton Icon="@Icons.Outlined.Search" 
                   Variant="Variant.Filled" 
                   Color="Color.Primary" 
                   Size="Size.Large"
-                  OnClick="Search" />
+                  OnClick="Search"
+                  Class="Datebutton"
+                  />
 </div>
-<div class="col-md-2">
-<MudText Class="my-4" Typo="Typo.h6">Total Deliveries: @TotalNoofDeliveries</MudText>
 </div>
-<div class="col-md-2">
-<MudText Class="my-4" Typo="Typo.h6">Total Carts: @TotalNoofCarts</MudText>
 </div>
-<div class="col-md-1">
+    <div class="col-md-5 col-sm-12">
+        <div class="filtercard">
+<div class="filtercardbody">
+    <div class="filteritem">
+<MudText Class="my-4" Typo="Typo.h6">Total Deliveries:</MudText>
+<span class="itemcount">@TotalNoofDeliveries</span>
+</div>
+<div class="filteritem">
+<MudText Class="my-4" Typo="Typo.h6">Total Carts:</MudText>
+<span class="itemcount">@TotalNoofCarts</span>
+</div>
+</div>
+<div class="filterlapbtn">
    
    <MudIconButton Icon="@Icons.Outlined.FileDownload" 
                   Variant="Variant.Filled" 
                   Color="Color.Primary" 
                   Size="Size.Large"
-                  OnClick="ExportExcel" />
+                  OnClick="ExportExcel"
+                  Class="Datebutton"
+                  />
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -86,23 +102,16 @@
     }
     private async Task ExportExcel()
     {
-        //try
-        //{
-
-        //    var dt = Core.ToDataTable(_deliveryTickets);
-            
-        //    ms = excelservice.CreateExcel(dt);
-           
-        //    await FileUtils.SaveAs(JS,"DeliveryReports.xlsx",ms.ToArray());
-
-
-        //}
-        //catch (Exception ex)
-        //{
-        //    throw ex;
-        //}
+        try
+        {
+            var dt = Core.ToDataTable(_deliveryTickets);
+            ms = excelservice.CreateExcel(dt);
+            await FileUtils.SaveAs(JS,"DeliveryReports.xlsx", ms.ToArray());
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
-   
-    
 }
 

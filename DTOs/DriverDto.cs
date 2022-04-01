@@ -25,6 +25,7 @@
 
         public string ProfilePic { get; set; } = string.Empty;
         public bool IsSuspended { get; set; }
+        public bool IsTerminated { get; set; }
         public bool IsActive { get; set; }
 
         public Guid CompanyId { get; set; }

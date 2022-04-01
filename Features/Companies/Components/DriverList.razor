@@ -20,8 +20,6 @@
         <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.CountryCode)">Country Code</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.PostalCode)">Postal Code</MudTableSortLabel></MudTh> 
         <MudTh></MudTh>
-        <MudTh></MudTh>
-        <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="FirstName">
@@ -60,21 +58,7 @@
                 Color="Color.Primary" 
                 OnClick="((e) => OpenDialog(context))">Update
             </MudButton>
-        </MudTd>
-        <MudTd DataLabel="Action"> 
-            <MudCheckBox 
-                @bind-Checked="@context.IsSuspended"
-                Label="Temporary Disable" 
-                Color="Color.Primary">
-            </MudCheckBox>  
-        </MudTd>
-        <MudTd DataLabel="Action"> 
-            <MudCheckBox 
-            @bind-Checked="@context.IsSuspended" 
-            Label="Permanent Disable" 
-            Color="Color.Primary">
-        </MudCheckBox>
-        </MudTd>
+        </MudTd> 
     </RowTemplate>
     <PagerContent>
         <MudTablePager PageSizeOptions="new int[]{50, 100}" />
@@ -87,8 +71,8 @@
     public List<DriverDto>? Drivers {get; set;} = null;
     private bool _enabled = true;
     public async Task OpenDialog(DriverDto driver) {
-
-         // TODO Update for technicians 
+        driver.IsTerminated = !driver.IsActive;
+        // TODO Update for technicians 
  
         Console.WriteLine("driver id: " + driver.Id);
 
@@ -114,7 +98,9 @@
                 State=driver.State,
                 CountryCode=driver.CountryCode,
                 PostalCode=driver.PostalCode,
-                CompanyId = driver.CompanyId
+                CompanyId = driver.CompanyId,
+                IsSuspended=driver.IsSuspended,
+                IsActive=!driver.IsTerminated 
             };
            await DriverHttpRepository.UpdateDriverAsync(driver.Id, driverUpdate);
         }  

@@ -13,6 +13,6 @@ namespace WiiTrakClient.HttpRepository.Contracts
         Task<UserDto> GetUsersDetailsByUserNameAsync(ForgotPasswordDto forgot);
 
         Task UpdatePasswordAsync(Guid id, ResetPasswordDto reset);
-        //Task<UserDto> ChangePasswordAsync(Guid id, ChangePasswordDto change);
+        Task ChangeUserPasswordAsync(Guid id, ChangePasswordDto change);
     }
 }

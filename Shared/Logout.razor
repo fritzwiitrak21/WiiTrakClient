@@ -1,0 +1,19 @@
+﻿@page "/logout"
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavManager
+@using WiiTrakClient.Cores;
+
+@code {
+    private IJSObjectReference _jsModule;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        await _jsModule.InvokeVoidAsync("clearSession");
+        CurrentUser.UserId = Guid.Empty;
+        CurrentUser.UserName = "";
+        CurrentUser.UserRole = "";
+        CurrentUser.UserRoleId = 0;
+        NavManager.NavigateTo("/");
+    }
+}

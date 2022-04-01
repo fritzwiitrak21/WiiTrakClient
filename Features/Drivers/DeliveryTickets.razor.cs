@@ -49,9 +49,7 @@ namespace WiiTrakClient.Features.Drivers
                 await GetDeliveryTicketsByDriverId(CurrentUser.UserId);
                 _selectedDriver = await DriverRepository.GetDriverByIdAsync(CurrentUser.UserId);
 
-                
-                _stores = await StoreHttpRepository.GetStoresByDriverId(CurrentUser.UserId);
-                _carts = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
+              
 
             }
             catch (Exception ex)
@@ -66,7 +64,8 @@ namespace WiiTrakClient.Features.Drivers
 
         private async Task HandleDriverSelected()
         {
-            
+            _stores = await StoreHttpRepository.GetStoresByDriverId(CurrentUser.UserId);
+            _carts = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
         }
 
         private async Task GetDeliveryTicketsByDriverId(Guid id)
@@ -138,7 +137,7 @@ namespace WiiTrakClient.Features.Drivers
                         StoreId = cart.StoreId,
                         DriverId = CurrentUser.UserId,
                         Condition = cart.Condition,
-                        Status = CartStatus.InsideGeofence,
+                        Status = CartStatus.PickedUp,// CartStatus.InsideGeofence,
                         IsDelivered = true,
                         CartId = cart.Id
                     };
@@ -148,7 +147,7 @@ namespace WiiTrakClient.Features.Drivers
                         DateManufactured = cart.DateManufactured,
                         OrderedFrom = cart.OrderedFrom,
                         Condition = cart.Condition,
-                        Status = CartStatus.InsideGeofence,
+                        Status = CartStatus.PickedUp,// CartStatus.InsideGeofence,
                         PicUrl = cart.PicUrl,
                         IsProvisioned = cart.IsProvisioned,
                         BarCode = cart.BarCode,
@@ -157,7 +156,7 @@ namespace WiiTrakClient.Features.Drivers
                     };
 
                     await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
-                   
+                    await GetDeliveryTicketsByDriverId(CurrentUser.UserId);
                 }
             }
         }

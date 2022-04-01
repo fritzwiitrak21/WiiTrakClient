@@ -87,10 +87,10 @@ background-color: #214162;
         }
         else if (FromWindow.ToLower().Contains("forgot"))
         {
-            if (IsSuccessNotification)
+            OkButtonText = "Ok";
+               if (IsSuccessNotification)
             {
-                OkButtonText = "Ok";
-                Visibility = true;
+                 Visibility = true;
             }
             else
             {
@@ -102,6 +102,20 @@ background-color: #214162;
         {
             OkButtonText = "Login";
             Visibility = true;
+        }
+
+        if(FromWindow.ToLower().Contains("change"))
+        {
+               OkButtonText = "Ok";
+               if (IsSuccessNotification)
+            {
+                 Visibility = true;
+            }
+            else
+            {
+                CancelVisibility = true;
+                CancelButtonText = "Try Again";
+            }  
         }
     }
 

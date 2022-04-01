@@ -31,14 +31,14 @@
                 }*@
             @if (!string.IsNullOrWhiteSpace(_picUrl))
                 {
-                        <div class="d-flex justify-center mt-6">
+                        <div class="d-flex justify-center mt-6 popupitemimage">
                             <img src="@_picUrl" width="300" height="300" />
                         </div>
                 }
                 @if (!string.IsNullOrWhiteSpace(_fileUrl))
                 {
                     <MudText Class="" Typo="Typo.h6">Signature:</MudText>
-                        <div class="d-flex justify-center mt-6">
+                        <div class="d-flex justify-center mt-6 popupitemimage">
                             <img src="@_fileUrl" width="300" height="300" />
                         </div>
                 }

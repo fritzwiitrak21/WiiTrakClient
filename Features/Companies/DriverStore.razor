@@ -1,0 +1,69 @@
+﻿@page "/company-driver-store"
+@using WiiTrakClient.Cores
+@using WiiTrakClient.Features.Companies.Components
+
+
+<div class="my-8">
+@*    <MudGrid>
+        <MudItem xs="12" sm="6" md="4">
+            <MudSelect  Class="my-6" T=DriverDto Label="Driver" AnchorOrigin="Origin.BottomCenter" 
+            ValueChanged="(value) => HandleDriverSelected(value)" Placeholder="Select Driver"
+                        HelperText="Select a Driver"  Required="true"  Value=@_selectedDriver
+                        AdornmentColor="Color.Primary">
+                       
+                    @foreach (var driver in Drivers)
+                    {
+                        <MudSelectItem T=DriverDto Value="@driver">@driver.FirstName @driver.LastName</MudSelectItem>  
+                    }
+             </MudSelect>
+           </MudItem>
+    </MudGrid>*@
+    <MudGrid class="my-8">
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect T="DriverDto" Label="Select Driver" ValueChanged="(value) => HandleDriverSelected(value)"
+            AnchorOrigin="Origin.BottomCenter">
+            @foreach (var driver in Drivers)
+            {
+                <MudSelectItem T="DriverDto" Value="@driver">@driver.FirstName @driver.LastName</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+</div>
+
+<DriverStoreList driverstore ="_driverstore"/>
+
+@code {
+
+    public List<DriverDto> Drivers { get; set; }=new();
+
+    public List<DriverStoreDetailsDto> _driverstore { get; set; } = new();
+    public DriverDto _selectedDriver = new();
+
+    [Inject]
+    public IDriverStoresHttpRepository DriverStoreRepository { get; set; }
+
+    [Inject]
+    public IDriverHttpRepository DriverRepository { get; set; }
+   
+    protected override async Task OnInitializedAsync()
+    {
+        Drivers = await DriverRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
+
+        if (Drivers.Count > 0)
+        {
+            _selectedDriver = Drivers[0];
+        }
+        //_driverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId,_selectedDriver.Id);
+        Core.SelectedDriverId = _selectedDriver.Id;
+        
+
+           await HandleDriverSelected(_selectedDriver);
+    } 
+    private async Task HandleDriverSelected(DriverDto Driver)
+    {
+        _driverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId,Driver.Id); 
+        Core.SelectedDriverId = Driver.Id;
+        
+    }
+}

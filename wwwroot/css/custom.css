@@ -74,8 +74,9 @@ header.mud-elevation-1 {
 }
 .mud-drawer-open-responsive-md-left .mud-main-content {
 padding-left:15px;
+padding-bottom: 30px;
 }
-.mud-drawer-close-responsive-md-left .mud-appbar {
+    .mud-drawer-close-responsive-md-left .mud-appbar {
     padding-left: 60px;
 }
 .mud-drawer-close-responsive-md-left .mud-typography-subtitle2{
@@ -132,9 +133,9 @@ padding-left:15px;
 .mud-button-root.mud-table-sort-label {
     color: #fff;
 }
-.mud-dialog-container.mud-dialog-center {
+/* .mud-dialog-container.mud-dialog-center {
     z-index: 99999;
-}
+} */
 .mud-fab-extended.mud-fab-size-large {
     margin-top: 15px;
 }
@@ -148,21 +149,24 @@ padding-left:15px;
     padding-top: 70px;
 }
     .mud-main-content .mud-toolbar {
-        display: none;
+        height: auto;
     }
 .pagetitle {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
+    .pagetitle h1 {
+        font-size: 26px;
+    }
 .login input + i.fa {
     z-index: 99;
 }
 .mud-button-filled-size-large, .mud-button-filled-size-large:hover {
     padding: 8px 22px;
     font-size: .9375rem;
-    background-color: #3f75e6 !important;
+    background-color: #2b83cc !important;
     color: #fff !important;
-    box-shadow: none !important;
 }
 .mud-dialog-title {
     background-color: #214162;
@@ -188,115 +192,223 @@ padding-left:15px;
 .mud-button-label .mud-button-icon-start svg {
     color: #fff !important;
 }
+.mud-appbar.mud-appbar-fixed-top {
+    z-index: 9999;
+}
+.mud-drawer {
+    z-index: 9999 !important;
+}
+#popovercontent-c9c1d50f-3128-4036-80cd-4d619915ebc9 {
+    z-index: 99999 !important;
+}
+.mud-button-text.mud-button-root:disabled {
+    color: #fff !important;
+}
+#ctlSignature_toolbar img {
+    width: auto !important;
+    height: auto !important;
+}
+.mud-button-text.mud-button-text-primary {
+    background: #2c86d2 !important;
+    color: rgb(255, 255, 255) !important;
+    border-radius: 5px;
+}
+h5 {
+    font-size: 16px !important;
+}
+.filtercard {
+    background: #fff;
+    box-shadow: 0px 0px 4px 0px #e1e1e1;
+    border-radius: 5px;
+    padding: 15px;
+    display: flex;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+.filtercardbody {
+    display: flex;
+    max-width: calc(100% - 50px);
+    margin-right: 15px;
+    width: 100%;
+}
+.filteritem {
+    padding: 0px 6px;
+    width: 50%;
+}
 
-    @media screen and (max-width: 960px) {
-        .mud-drawer.mud-drawer-responsive.mud-drawer-pos-left.mud-drawer--closed {
+.filterlapbtn {
+    display: flex;
+    align-items: flex-end;
+}
+
+    .filterlapbtn .mud-icon-button .mud-icon-root.mud-svg-icon {
+        font-size: 24px;
+    }
+.pagetitle h1 {
+    font-size: 26px;
+}
+
+.filteritem h6 {
+    font-size: 12px;
+    margin-bottom: 0px !important;
+    margin-top: 0px !important;
+}
+
+.filteritem .itemcount {
+    font-size: 24px;
+}
+.filteritem .mud-input-adornment .mud-icon-button:hover, .filteritem .mud-input-adornment .mud-icon-button:focus {
+    background: none !important;
+    color: #2b83cc !important;
+}
+.pageheader{
+    margin-top:35px;
+}
+.mud-xs-table .mud-table-cell:before {
+    font-weight: 700;
+}
+.popupitemimage img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+}
+.mud-popover-provider .mud-popover-open:first-child {
+    z-index: 99999 !important;
+}
+
+
+@media screen and (max-width: 960px) {
+    .mud-drawer.mud-drawer-responsive.mud-drawer-pos-left.mud-drawer--closed {
             left: -230px !important;
             width: 230px;
         }
+
         .mud-drawer-close-responsive-md-left .mud-appbar {
             padding-left: 0px;
         }
+
         .sidebarbrand .mud-icon-button {
             display: none;
         }
+
         .mud-drawer--open {
             z-index: 9999 !important;
         }
+
         .mud-appbar.mud-appbar-fixed-top {
             z-index: 9999;
         }
+
             .mud-appbar.mud-appbar-fixed-top .mud-typography-subtitle2 {
                 display: none;
             }
+
         .mud-main-content {
             padding-left: 0px;
         }
+
         .mud-popover-provider .mud-popover.mud-popover-top-left {
             z-index: 99999 !important;
             right: 10px !important;
             left: auto !important;
         }
+
         .mud-table-cell .mud-button {
             font-size: 0px;
             padding: 6px 10px !important;
             min-width: 28px;
         }
+
         .mud-table-cell .mud-button-label {
             padding: 0px !important;
             width: auto !important;
         }
+
             .mud-table-cell .mud-button-label .mud-button-icon-start {
                 margin-right: 0px;
             }
     }
-@media screen and (max-width: 768px) {
-    .hidden-sm {
-        display: none;
-    }
-    .loginbg {
-        height: auto;
-        min-height: 100%;
-    }
-    .wrapper {
-        padding-bottom: 100px;
-        height: 100vh;
-    }
-    .mud-table-root .mud-table-head .mud-table-cell {
-        line-height: 1.3rem;
-    }
-}
-@media screen and (max-width: 600px) {
-    td .mud-table-cell {
-        flex-direction: column;
-    }
-    td .mud-table-cell .mud-button {
-        flex-direction: column;
-        width: 100%;
-    }
-        td.mud-table-cell:last-child {
-            justify-content: flex-end;
+
+    @media screen and (max-width: 768px) {
+        .hidden-sm {
+            display: none;
         }
-            td.mud-table-cell:last-child .mud-button {
-                margin-right: 5px;
+
+        .loginbg {
+            height: auto;
+            min-height: 100%;
+        }
+
+        .wrapper {
+            padding-bottom: 100px;
+            height: 100vh;
+        }
+
+        .mud-table-root .mud-table-head .mud-table-cell {
+            line-height: 1.3rem;
+        }
+    }
+
+    @media screen and (max-width: 600px) {
+        td .mud-table-cell {
+            flex-direction: column;
+        }
+
+            td .mud-table-cell .mud-button {
+                flex-direction: column;
+                width: 100%;
             }
-    .mud-table-cell .mud-button {
-        font-size: 16px;
-        padding: 6px 15px !important;
-        min-width: 28px;
-    }
 
-    .mud-table-cell .mud-button-label {
-        padding: 0px !important;
-        width: auto !important;
-    }
+            td.mud-table-cell:last-child {
+                justify-content: flex-end;
+            }
 
-        .mud-table-cell .mud-button-label .mud-button-icon-start {
-            margin-right: 8px;
+                td.mud-table-cell:last-child .mud-button {
+                    margin-right: 5px;
+                }
+
+        .mud-table-cell .mud-button {
+            font-size: 16px;
+            padding: 6px 15px !important;
+            min-width: 28px;
         }
-}
-@media screen and (max-width: 480px) {
-    .mud-dialog-container.mud-dialog-center {
-        width: 100%;
-        padding: 0px 15px;
+
+        .mud-table-cell .mud-button-label {
+            padding: 0px !important;
+            width: auto !important;
+        }
+
+            .mud-table-cell .mud-button-label .mud-button-icon-start {
+                margin-right: 8px;
+            }
     }
 
-    .mud-dialog-width-xl {
-        width: 100%;
+    @media screen and (max-width: 480px) {
+        .mud-dialog-container.mud-dialog-center {
+            width: 100%;
+            padding: 0px 15px;
+        }
+
+        .mud-dialog-width-xl {
+            width: 100%;
+        }
+
+        .mud-dialog-width-xl {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .mud-dialog-content > div {
+            width: 100% !important;
+            max-width: 400px !important;
+        }
+
+        td.mud-table-cell {
+            justify-content: center;
+            flex-direction: column;
+        }
+
+            td.mud-table-cell .mud-button {
+                width: 100%;
+            }
     }
-    .mud-dialog-width-xl {
-        width: 100%;
-        max-width: 420px;
-    }
-    .mud-dialog-content > div {
-        width: 100% !important;
-        max-width: 400px !important;
-    }
-    td.mud-table-cell {
-        justify-content: center;
-        flex-direction: column;
-    }
-    td.mud-table-cell .mud-button {
-        width: 100%;
-    }
-}

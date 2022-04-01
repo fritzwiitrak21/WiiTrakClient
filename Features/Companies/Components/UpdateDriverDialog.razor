@@ -14,10 +14,13 @@
                 <MudTextField class="my-6" @bind-Value="Driver.State" Label="State" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Driver.CountryCode" Label="Country Code" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Driver.PostalCode" Label="Postal Code" Variant="Variant.Text"></MudTextField>
+                <MudCheckBox class="my-6"  @bind-Checked="@Driver.IsSuspended" Label="Suspend" Color="Color.Primary"></MudCheckBox>  
+                <MudCheckBox class="my-6" @bind-Checked="@Driver.IsTerminated" Label="Terminate" Color="Color.Primary"></MudCheckBox> 
+
             </MudForm>
         </div>
     </DialogContent>
-    <DialogActions>
+    <DialogActions> 
         <MudButton OnClick="Cancel">Cancel</MudButton>
         <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
     </DialogActions>

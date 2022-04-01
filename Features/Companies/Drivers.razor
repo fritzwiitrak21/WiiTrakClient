@@ -71,7 +71,8 @@
 
             #region Send Login details to User
             MailRequest request = new MailRequest();
-            request.MailTo = request.Name = driverCreation.Email;
+            request.MailTo =  driverCreation.Email;
+            request.Name = string.Concat(driverCreation.FirstName, " ", driverCreation.LastName);
             await EmailHttpRepository.SendMailAsync(request);
             #endregion
         }

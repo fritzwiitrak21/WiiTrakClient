@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using Microsoft.JSInterop;
+using System.Data;
 using System.Reflection;
 
 namespace WiiTrakClient.Cores
@@ -15,6 +16,7 @@ namespace WiiTrakClient.Cores
 
     public static class Core
     {
+        public static Guid SelectedDriverId { get; set;}
         public static string ToPascalCase(string Text)
         {
             try
@@ -102,5 +104,7 @@ namespace WiiTrakClient.Cores
             }
         }
         #endregion
-    }
+
+        
+        }
 }

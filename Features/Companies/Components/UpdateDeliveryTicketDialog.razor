@@ -24,7 +24,7 @@
                 <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
 
                 @if (!string.IsNullOrWhiteSpace(_fileUrl)) {
-                    <div class="d-flex justify-center mt-6">
+                    <div class="d-flex justify-center mt-6 popupitemimage">
                         <img src="@_fileUrl" width="300" height="300" />
                     </div>
                 }

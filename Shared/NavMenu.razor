@@ -12,24 +12,26 @@
             <MudNavLink Href="/technicians" Icon="@Icons.Material.Outlined.ViewList">Technicians</MudNavLink>
             <MudNavLink Href="/tracking-devices" Icon="@Icons.Material.Outlined.ViewList">Tracking Devices</MudNavLink>*@
 
-            <MudNavLink Href="/" Icon="@Icons.Material.Outlined.ManageAccounts">System Admin</MudNavLink>
-            <MudNavLink Href="/corporates" Icon="@Icons.Filled.Apartment">Corparates</MudNavLink>
+            <MudNavLink Href="/" Icon="@Icons.Material.Outlined.ManageAccounts" Disabled="true">System Admin</MudNavLink>
+            <MudNavLink Href="/corporates" Icon="@Icons.Filled.Apartment" Disabled="true">Corparates</MudNavLink>
             <MudNavLink Href="/companies" Icon="@Icons.Filled.Business">Companies</MudNavLink>
             <MudNavLink Href="/technicians" Icon="@Icons.Material.Outlined.Build">Technician</MudNavLink>
-            <MudNavLink Href="/driver-store" Icon="@Icons.Material.Outlined.Store">Assign</MudNavLink>
-            <MudNavLink Href="" Icon="@Icons.Material.Outlined.BarChart">Sales</MudNavLink>
+            @*<MudNavLink Href="/systemowner-driver-store" Icon="@Icons.Outlined.PersonAddAlt">Assign Drivers</MudNavLink>*@
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.BarChart" Disabled="true">Sales</MudNavLink>
             <MudNavLink Href="/systemowner-delivery-tickets" Icon="@Icons.Material.Outlined.FactCheck">Deliveries</MudNavLink>
 
+            <MudNavGroup Title="Inventory" Expanded="false" Icon="@Icons.Material.Outlined.Inventory">
+            <MudNavLink Href="/company-carts" Icon="@Icons.Material.Outlined.ShoppingCart">Cart In</MudNavLink>
+            <MudNavLink Href="/company-carts" Icon="@Icons.Outlined.ShoppingCart">Cart Out</MudNavLink>
+            </MudNavGroup>
+
             
-            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Inventory">Inventory</MudNavLink>
-            <MudNavLink Href="" Icon="@Icons.Material.Outlined.ShoppingCart"> - Cart In</MudNavLink>
-            <MudNavLink Href="" Icon="@Icons.Outlined.ShoppingCart"> - Cart Out</MudNavLink>
 
             <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Others</MudText>
 
-            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Construction">Repair</MudNavLink>
-            <MudNavLink Href="" Icon="@Icons.Material.Outlined.WarningAmber">Missing</MudNavLink>
-            <MudNavLink Href="" Icon="@Icons.Material.Outlined.AttachMoney">Billing</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Construction" Disabled="true">Repair</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.WarningAmber" Disabled="true">Missing</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.AttachMoney" Disabled="true">Billing</MudNavLink>
             <MudNavLink Href="/report" Icon="@Icons.Outlined.Description">Ad Hoc Report</MudNavLink>
 
 
@@ -50,9 +52,9 @@
 
             <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Others</MudText>
 
-            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Construction">Repair</MudNavLink>
-            <MudNavLink Href="" Icon="@Icons.Material.Outlined.WarningAmber">Missing</MudNavLink>
-            <MudNavLink Href="" Icon="@Icons.Outlined.LocationCity">District</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Construction" Disabled="true">Repair</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.WarningAmber" Disabled="true">Missing</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Outlined.LocationCity" Disabled="true">District</MudNavLink>
             
             <MudNavLink Href="/report" Icon="@Icons.Outlined.Description">Ad Hoc Report</MudNavLink>
     }
@@ -69,7 +71,7 @@
 
             <MudNavLink Href="/sub-companies" Icon="@Icons.Material.Outlined.ManageAccounts">Companies</MudNavLink>
              <MudNavLink Href="/drivers" Icon="@Icons.Filled.GroupAdd">Drivers</MudNavLink>
-             <MudNavLink Href="/driver-store" Icon="@Icons.Material.Outlined.Store">Assign</MudNavLink>
+             <MudNavLink Href="/company-driver-store" Icon="@Icons.Outlined.PersonAddAlt">Assign Driver</MudNavLink>
             <MudNavLink Href="/company-carts" Icon="@Icons.Material.Outlined.Inventory">Inventory</MudNavLink>
             <MudNavLink Href="/company-delivery-tickets" Icon="@Icons.Material.Outlined.FactCheck">Deliveries</MudNavLink>
             
@@ -77,10 +79,10 @@
 
             <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Others</MudText>
 
-            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Construction">Repair</MudNavLink>
-            <MudNavLink Href="" Icon="@Icons.Material.Outlined.WarningAmber">Missing</MudNavLink>
-            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Store">Store</MudNavLink>
-            <MudNavLink Href="" Icon="@Icons.Material.Outlined.AttachMoney">Billing</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Construction" Disabled="true">Repair</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.WarningAmber" Disabled="true">Missing</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Store" Disabled="true">Store</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.AttachMoney" Disabled="true">Billing</MudNavLink>
             <MudNavLink Href="/report" Icon="@Icons.Outlined.Description">Ad Hoc Report</MudNavLink>
     }
 
@@ -97,10 +99,10 @@
            
             <MudNavLink Href="/drivers" Icon="@Icons.Filled.GroupAdd">Drivers</MudNavLink>
             <MudNavLink Href="/company-carts" Icon="@Icons.Material.Outlined.Inventory">Inventory</MudNavLink>
-            <MudNavLink Href="/driver-store" Icon="@Icons.Material.Outlined.Store">Assign</MudNavLink>
+            <MudNavLink Href="/company-driver-store" Icon="@Icons.Outlined.PersonAddAlt">Assign Driver</MudNavLink>
             
           
-            <MudNavGroup Title="Inventory" Expanded="true">
+            <MudNavGroup Title="Inventory" Expanded="false" Icon="@Icons.Material.Outlined.Inventory">
             <MudNavLink Href="/company-carts" Icon="@Icons.Material.Outlined.ShoppingCart">Cart In</MudNavLink>
             <MudNavLink Href="/company-carts" Icon="@Icons.Outlined.ShoppingCart">Cart Out</MudNavLink>
             </MudNavGroup>
@@ -109,9 +111,9 @@
             
             <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Others</MudText>
 
-            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Construction">Repair</MudNavLink>
-            <MudNavLink Href="" Icon="@Icons.Material.Outlined.AttachMoney">Billing</MudNavLink>
-            <MudNavLink Href="" Icon="@Icons.Material.Outlined.WarningAmber">Missing</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Construction" Disabled="true">Repair</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.AttachMoney" Disabled="true">Billing</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.WarningAmber" Disabled="true">Missing</MudNavLink>
             <MudNavLink Href="/report" Icon="@Icons.Outlined.Description">Ad Hoc Report</MudNavLink>
 
 
@@ -134,9 +136,9 @@
 
             <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Others</MudText>
 
-             <MudNavLink Href="" Icon="@Icons.Material.Outlined.History">History</MudNavLink>
-             <MudNavLink Href="" Icon="@Icons.Material.Outlined.AttachMoney">Billing</MudNavLink>
-             <MudNavLink Href="" Icon="@Icons.Material.Outlined.Message">Message</MudNavLink>
+             <MudNavLink Href="" Icon="@Icons.Material.Outlined.History" Disabled="true">History</MudNavLink>
+             <MudNavLink Href="" Icon="@Icons.Material.Outlined.AttachMoney" Disabled="true">Billing</MudNavLink>
+             <MudNavLink Href="" Icon="@Icons.Material.Outlined.Message" Disabled="true">Message</MudNavLink>
              <MudNavLink Href="/report" Icon="@Icons.Outlined.Description">Ad Hoc Report</MudNavLink>
     }
 
@@ -153,9 +155,9 @@
 
             <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Others</MudText>
 
-            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Construction">Repair</MudNavLink>
-            <MudNavLink Href="" Icon="@Icons.Material.Outlined.WarningAmber">Missing</MudNavLink>
-            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Store">Store</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Construction" Disabled="true">Repair</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.WarningAmber" Disabled="true">Missing</MudNavLink>
+            <MudNavLink Href="" Icon="@Icons.Material.Outlined.Store" Disabled="true">Store</MudNavLink>
             <MudNavLink Href="/report" Icon="@Icons.Outlined.Description">Ad Hoc Report</MudNavLink>
 
 
