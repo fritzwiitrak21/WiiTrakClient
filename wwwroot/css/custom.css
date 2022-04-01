@@ -201,9 +201,9 @@ padding-bottom: 30px;
 #popovercontent-c9c1d50f-3128-4036-80cd-4d619915ebc9 {
     z-index: 99999 !important;
 }
-.mud-button-text.mud-button-root:disabled {
+/*.mud-button-text.mud-button-root:disabled {
     color: #fff !important;
-}
+}*/
 #ctlSignature_toolbar img {
     width: auto !important;
     height: auto !important;
@@ -265,7 +265,8 @@ h5 {
     margin-top:35px;
 }
 .mud-xs-table .mud-table-cell:before {
-    font-weight: 700;
+    font-weight: 700 !important;
+    padding-right: 0px !important;
 }
 .popupitemimage img {
     width: 100%;
