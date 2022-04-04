@@ -1,41 +1,62 @@
- @namespace WiiTrakClient.Features.Companies.Components
+@namespace WiiTrakClient.Features.Companies.Components
+@using System.ComponentModel.DataAnnotations
 
  <MudDialog>
     <DialogContent>              
         <div style="width: 400px;height:450px;overflow: auto;">
-                <MudForm Model="@NewCompany">   
-                    <MudTextField class="my-6" @bind-Value="NewCompany.Name" Label="Name" Variant="Variant.Text"></MudTextField>  
-                    <MudTextField class="my-6" @bind-Value="NewCompany.StreetAddress1" Label="Street Address 1" Variant="Variant.Text"></MudTextField>  
-                    <MudTextField class="my-6" @bind-Value="NewCompany.StreetAddress2" Label="Street Address 2" Variant="Variant.Text"></MudTextField>  
-                    <MudTextField class="my-6" @bind-Value="NewCompany.City" Label="City" Variant="Variant.Text"></MudTextField>  
-                    <MudTextField class="my-6" @bind-Value="NewCompany.State" Label="State" Variant="Variant.Text"></MudTextField>  
-                    <MudTextField class="my-6" @bind-Value="NewCompany.PostalCode" Label="ZipCode" Variant="Variant.Text"></MudTextField>  
-                    <MudTextField class="my-6" @bind-Value="NewCompany.Email" Label="Email" Variant="Variant.Text"></MudTextField>  
-                    <MudTextField class="my-6" @bind-Value="NewCompany.PhonePrimary" Label="Phone" Variant="Variant.Text"></MudTextField>  
-                    <MudCheckBox @bind-Checked="NewCompany.CannotHaveChildren" Label="Do Not Allow Sub Companies" Color="Color.Primary"></MudCheckBox>
-                </MudForm>
+                <MudForm @ref=form Model="@NewCompany" @bind-IsValid="@success" @bind-Errors="@errors"> 
+                    <DataAnnotationsValidator />
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.Name" Label="Name" Required="true" RequiredError="Name is required!" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.StreetAddress1" Label="Street Address 1" Required="true" RequiredError="Street Address 1 is required!" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.StreetAddress2" Label="Street Address 2" Required="true" RequiredError="Street Address 2 is required!" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.City" Label="City" Required="true" RequiredError="City is required!" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.State" Label="State" Required="true" RequiredError="State is required!" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.PostalCode" Label="ZipCode" Required="true" RequiredError="Zipcode is required!"  Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.Email" Label="Email" Required="true" RequiredError="Email is required!" Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" Variant="Variant.Text"></MudTextField>
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.PhonePrimary" Label="Phone" Required="true" RequiredError="Phone is required!" Validation="@(new PhoneAttribute() {ErrorMessage = " The phone number is invalid"})" Variant="Variant.Text"></MudTextField>  
+                    <MudCheckBox @bind-Checked="NewCompany.CannotHaveChildren" Label="Do Not Allow Sub Companies" Color="Color.Primary"></MudCheckBox>  
+                    <div class="d-flex">
+@*                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
+*@                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="formSubmit" Class="ml-auto">Save</MudButton>
+                    </div>
+                </MudForm> 
         </div>
       
     </DialogContent>
-    <DialogActions>
+              
+    @*<DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
-    </DialogActions>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" disabled="@(!context.Validate())" Class="ml-auto">Save</MudButton>
+        @if (formInvalid)
+                {
+                    <MudButton OnClick="Cancel">Cancel</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary"  Class="ml-auto">Save</MudButton>
+                }
+                else
+                {
+                    <MudButton OnClick="Cancel">Cancel</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary"   Disabled=true  Class="ml-auto">Save</MudButton>
+                }             
+    </DialogActions>*@
+    
 </MudDialog>
 
 @code {
     [Parameter]
     public CompanyCreationDto? NewCompany {get; set;}
 
-     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    bool success;
+    string[] errors = { };
+    MudForm form;
 
     protected override void OnParametersSet() {
-            
+
     }
 
-    void Submit() 
-    { 
-        MudDialog.Close(DialogResult.Ok(true)); 
+    void formSubmit() 
+    {
+        MudDialog.Close(DialogResult.Ok(true));
     }
     void Cancel() => MudDialog.Cancel();
 }

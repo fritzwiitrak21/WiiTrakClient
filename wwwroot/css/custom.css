@@ -328,6 +328,13 @@ h5 {
             .mud-table-cell .mud-button-label .mud-button-icon-start {
                 margin-right: 0px;
             }
+
+    .mud-dialog-container.mud-dialog-center {
+        align-items: flex-start !important;
+        top: 80px;
+        max-height: calc(100% - 80px);
+        overflow: auto;
+    }
     }
 
     @media screen and (max-width: 768px) {

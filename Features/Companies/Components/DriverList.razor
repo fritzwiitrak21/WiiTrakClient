@@ -1,4 +1,5 @@
 @using WiiTrakClient.Features.SystemOwner.Components
+@using WiiTrakClient.Cores
 
 @namespace WiiTrakClient.Features.Companies.Components
 
@@ -61,7 +62,7 @@
         </MudTd> 
     </RowTemplate>
     <PagerContent>
-        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+        <MudTablePager PageSizeOptions="new int[]{10, 50, 100}" />
     </PagerContent>
 </MudTable> 
 
@@ -103,6 +104,7 @@
                 IsActive=!driver.IsTerminated 
             };
            await DriverHttpRepository.UpdateDriverAsync(driver.Id, driverUpdate);
+           Drivers = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
         }  
     }
 }

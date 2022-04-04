@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace WiiTrakClient.DTOs
 {
     public class LoginDto
     {
-        [Required]
+        [Required] 
         [EmailAddress]
         public string Username { get; set; }
 
@@ -27,11 +29,14 @@ namespace WiiTrakClient.DTOs
         [Compare("NewPassword")]
         public string ConfirmPassword { get; set; }
     }
-    public class ChangePasswordDto
+    public class ChangePasswordDto 
     {
         [Required]
         public string Password { get; set; }
         [Required]
+        [Compare("Password")]
+        [NotMapped]
+        
         public string NewPassword { get; set; }
         [Required]
         [Compare("NewPassword")]

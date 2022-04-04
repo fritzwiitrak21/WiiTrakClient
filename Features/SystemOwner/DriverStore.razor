@@ -4,20 +4,6 @@
 
 
 <div class="my-8">
-@*    <MudGrid>
-        <MudItem xs="12" sm="6" md="4">
-            <MudSelect  Class="my-6" T=DriverDto Label="Driver" AnchorOrigin="Origin.BottomCenter" 
-            ValueChanged="(value) => HandleDriverSelected(value)" Placeholder="Select Driver"
-                        HelperText="Select a Driver"  Required="true"  Value=@_selectedDriver
-                        AdornmentColor="Color.Primary">
-                       
-                    @foreach (var driver in Drivers)
-                    {
-                        <MudSelectItem T=DriverDto Value="@driver">@driver.FirstName @driver.LastName</MudSelectItem>  
-                    }
-             </MudSelect>
-           </MudItem>
-    </MudGrid>*@
     <MudGrid class="my-8">
     <MudItem xs="12" sm="6" md="4">
         <MudSelect T="DriverDto" Label="Select Driver" ValueChanged="(value) => HandleDriverSelected(value)"
@@ -48,7 +34,7 @@
    
     protected override async Task OnInitializedAsync()
     {
-        Drivers = await DriverRepository.GetAllDriversAsync();//need to create specific method against systemowner
+        Drivers = await DriverRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
 
         if (Drivers.Count > 0)
         {
@@ -57,8 +43,7 @@
         
         Core.SelectedDriverId = _selectedDriver.Id;
         
-
-           await HandleDriverSelected(_selectedDriver);
+        await HandleDriverSelected(_selectedDriver);
     } 
     private async Task HandleDriverSelected(DriverDto Driver)
     {

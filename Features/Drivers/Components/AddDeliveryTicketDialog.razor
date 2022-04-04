@@ -23,7 +23,7 @@
 
                     @foreach (var store in Stores)
                     {
-                        <MudSelectItem T="StoreDto" Value="@store">@store.StoreName - @store.StoreNumber</MudSelectItem>
+                        <MudSelectItem T="StoreDto" Value="@store">@store.StoreName</MudSelectItem>
                     }
                     </MudSelect>
 
@@ -34,7 +34,7 @@
                 }
 
                 @*<MudText Class="my-4" Typo="Typo.h5">No of available carts to pickup: @NoOfCartsToPickUp</MudText>*@
-                <MudTextField @bind-Value="@NewDeliveryTicket.NumberOfCarts" Label="No of carts" Variant="Variant.Text"></MudTextField>
+                <MudTextField @bind-Value="@NewDeliveryTicket.NumberOfCarts" Label="No of Carts" Variant="Variant.Text"></MudTextField>
                     <ValidationMessage For="@(() => @NewDeliveryTicket.NumberOfCarts)" />
                 <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
                     <ValidationMessage For="@(() => @NewDeliveryTicket.PicUrl)" />

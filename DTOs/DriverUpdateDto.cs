@@ -1,4 +1,6 @@
-﻿namespace WiiTrakClient.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WiiTrakClient.DTOs
 {
     public class DriverUpdateDto
     {
@@ -15,6 +17,8 @@
         public string City { get; set; } = string.Empty;
         public string State { get; set; } = string.Empty;
         public string CountryCode { get; set; } = string.Empty;
+        [Required]
+        [RegularExpression(@"^\d{5}(-\d{4})?$", ErrorMessage = "Invalid Zip")]
         public string PostalCode { get; set; } = string.Empty;
         public string ProfilePic { get; set; } = string.Empty;
         public bool IsSuspended { get; set; }

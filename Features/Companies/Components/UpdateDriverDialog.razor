@@ -4,16 +4,16 @@
     <DialogContent>              
         <div style="width: 400px;height:450px;overflow: auto;">
             <MudForm Model="@Driver">   
-                <MudTextField class="my-6" @bind-Value="Driver.FirstName" Label="First Name" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="Driver.LastName" Label="Last Name" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="Driver.Email" Label="Email" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="Driver.Phone" Label="Phone" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Driver.StreetAddress1" Label="Street Address 1" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Driver.StreetAddress2" Label="Street Address 2" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Driver.City" Label="City" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Driver.State" Label="State" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Driver.CountryCode" Label="Country Code" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Driver.PostalCode" Label="Postal Code" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Driver.FirstName" For="@(()=>Driver.FirstName)" Label="First Name" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Driver.LastName"For="@(()=>Driver.LastName)" Label="Last Name" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Driver.Email"For="@(()=>Driver.Email)" Label="Email" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Driver.Phone"For="@(()=>Driver.Phone)" Label="Phone" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Driver.StreetAddress1"For="@(()=>Driver.StreetAddress1)" Label="Street Address 1" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Driver.StreetAddress2"For="@(()=>Driver.StreetAddress2)" Label="Street Address 2" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Driver.City"For="@(()=>Driver.City)" Label="City" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Driver.State" For="@(()=>Driver.State)" Label="State" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Driver.CountryCode" For="@(()=>Driver.CountryCode)" Label="Country Code" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Driver.PostalCode" For="@(()=>Driver.PostalCode)" Label="Postal Code" Variant="Variant.Text"></MudTextField>
                 <MudCheckBox class="my-6"  @bind-Checked="@Driver.IsSuspended" Label="Suspend" Color="Color.Primary"></MudCheckBox>  
                 <MudCheckBox class="my-6" @bind-Checked="@Driver.IsTerminated" Label="Terminate" Color="Color.Primary"></MudCheckBox> 
 
@@ -21,8 +21,18 @@
         </div>
     </DialogContent>
     <DialogActions> 
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
+        @*<MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>*@
+        @if (formInvalid)
+                {
+                    <MudButton OnClick="Cancel">Cancel</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Disabled=true Class="ml-auto">Update</MudButton>
+                }
+                else
+                {
+                    <MudButton OnClick="Cancel">Cancel</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Update</MudButton>
+                }   
     </DialogActions>
 </MudDialog>
 
@@ -32,12 +42,14 @@
     public DriverDto? Driver {get; set;}
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
+    private bool formInvalid = false;
     protected override void OnParametersSet() {
             
     }
 
     void Submit() 
     { 
+        formInvalid = false;
         MudDialog.Close(DialogResult.Ok(true)); 
     }
     void Cancel() => MudDialog.Cancel();

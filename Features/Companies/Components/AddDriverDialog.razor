@@ -1,27 +1,42 @@
 @namespace WiiTrakClient.Features.Companies.Components
+@using System.ComponentModel.DataAnnotations
 
  
 <MudDialog>
     <DialogContent>              
         <div style="width: 400px;height:450px;overflow: auto;">
-            <MudForm Model="@NewDriver">   
-                <MudTextField class="my-6" @bind-Value="NewDriver.FirstName" Label="First Name" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="NewDriver.LastName" Label="Last Name" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="NewDriver.Email" Label="Email" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="NewDriver.Phone" Label="Phone" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="NewDriver.StreetAddress1" Label="Street Address 1" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewDriver.StreetAddress2" Label="Street Address 2" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewDriver.City" Label="City" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewDriver.State" Label="State" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewDriver.CountryCode" Label="Country Code" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewDriver.PostalCode" Label="Postal Code" Variant="Variant.Text"></MudTextField>
+            <MudForm Model="@NewDriver" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">   
+                <MudTextField class="my-6" @bind-Value="NewDriver.FirstName" Label="First Name" Required="true" RequiredError="First Name is required!" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewDriver.LastName" Label="Last Name" Required="true" RequiredError="Last Name is required!" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewDriver.Email" Label="Email" Required="true" RequiredError="Email is required!" Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewDriver.Phone" Label="Phone" Required="true" RequiredError="Phone is required!" Validation="@(new PhoneAttribute() {ErrorMessage = " The phone number is invalid"})" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewDriver.StreetAddress1" Required="true" RequiredError="Street Address 1 is required!" Label="Street Address 1" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="NewDriver.StreetAddress2" Required="true" RequiredError="Street Address 2 is required!" Label="Street Address 2" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="NewDriver.City" Label="City" Required="true" RequiredError="City is required!" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="NewDriver.State" Label="State" Required="true" RequiredError="State is required!" Variant="Variant.Text"></MudTextField>
+                @*<MudTextField class="my-6" @bind-Value="NewDriver.CountryCode" Label="Country Code" Variant="Variant.Text"></MudTextField>*@
+                <MudTextField class="my-6" @bind-Value="NewDriver.PostalCode" Label="Postal Code" Required="true" RequiredError="Zipcode is required!"  Variant="Variant.Text"></MudTextField>
+                <div class="d-flex">
+@*                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
+*@                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                    </div>
             </MudForm>
         </div>
     </DialogContent>
-    <DialogActions>
+    @*<DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
-    </DialogActions>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Save</MudButton>
+        @if (formInvalid)
+                {
+                    <MudButton OnClick="Cancel">Cancel</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Disabled=true Class="ml-auto">Save</MudButton>
+                }
+                else
+                {
+                    <MudButton OnClick="Cancel">Cancel</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                }   
+    </DialogActions>*@
 </MudDialog>
 
 @code {
@@ -29,7 +44,9 @@
     public DriverCreationDto? NewDriver {get; set;}
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-
+    bool success;
+    string[] errors = { };
+    MudForm form;
     protected override void OnParametersSet() {
             
     }

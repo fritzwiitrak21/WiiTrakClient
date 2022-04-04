@@ -1,4 +1,5 @@
-﻿using WiiTrakClient.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using WiiTrakClient.Enums;
 
 namespace WiiTrakClient.DTOs
 {
@@ -11,7 +12,8 @@ namespace WiiTrakClient.DTOs
         public DateTime CreatedAt { get; set; }
 
         public long DeliveryTicketNumber { get; set; }
-
+        [Required]
+        [Range(1, 300, ErrorMessage = "No of Carts should be above 1")] 
         public int NumberOfCarts { get; set; }
 
         public string Grid { get; set; } = string.Empty;
