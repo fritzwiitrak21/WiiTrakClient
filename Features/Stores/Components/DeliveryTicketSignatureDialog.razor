@@ -39,7 +39,7 @@
                 {
                     @if (!_isSigned)
                     {
-                        <div id="divResize" class="">
+                        <div id="divResize" class="justify-center mt-6 popupitemimage">
                             <SSignature SignObject="ctlSignature"
                         RefreshImage="/images/clear.png"
                         PenCursor="/images/pen.cur"
@@ -49,9 +49,9 @@
                         RequiredPoints="50">
                             </SSignature>
                         </div>
-                        <div class="col-lg-6 col-sm-12">
+                      @*  <div class="col-lg-6 col-sm-12">
                             <img src="/images/spacer.png" id="pngImg"/>
-                        </div>
+                        </div>*@
                     }
                 }
             @if (!_isSigned) {

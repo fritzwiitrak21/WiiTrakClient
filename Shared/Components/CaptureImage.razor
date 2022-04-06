@@ -1,0 +1,87 @@
+﻿
+@namespace WiiTrakClient.Shared.Components
+@inject IJSRuntime JSRuntime
+@using WiiTrakClient.Shared.Components
+@using System.Net.Http.Headers
+@using System.Net.Mime
+@using System.Text
+
+<MudButton StartIcon="@Icons.Material.Filled.PhotoCamera" Variant="Variant.Filled" Color="Color.Primary"
+           OnClick="((e) => OpenCamera())">Open Camera</MudButton>
+
+<video id="videoFeed" width="300" height="300" />
+<canvas class="d-none" id="currentFrame" width="300" height="300" />
+<br />
+
+@if (VisibleElements)
+{
+    <button class="btn btn-primary mb-3" @onclick="CaptureImages">Capture</button>
+}
+ <div class="d-flex justify-start mt-6 popupitemimage">
+                      <img src="@frameUri" width="300" height="300" />
+                  </div>
+                  <textarea rows="10" cols=50>@frameUri</textarea>>
+
+
+@code {
+
+    [Parameter]
+    public EventCallback<string> OnPicUploadComplete { get; set; }
+
+    [Parameter]
+    public EventCallback OnPicUploadStart { get; set; }
+
+     [Inject]
+    protected IPicUploadHttpRepository PicUploadHttpRepository { get; set; }
+
+    private IJSObjectReference _jsModule;
+    private string frameUri = "";
+    bool VisibleElements = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/webcam.js");
+    }
+
+    private async Task OpenCamera()
+    {
+        VisibleElements = true;
+        await _jsModule.InvokeVoidAsync("startVideo", "videoFeed");
+    }
+
+    private async Task CaptureImages()
+    {
+        var frame = await _jsModule.InvokeAsync<String>("getFrame", "videoFeed", "currentFrame", DotNetObjectReference.Create(this));
+    }
+
+    [JSInvokable]
+    public async Task ProcessImage(string imageString)
+    {
+
+        try
+        {
+
+            var imageData = imageString;
+            var imageDataStripped = imageData.Replace("data:image/png;base64,", "");
+            var imageByteArray = Convert.FromBase64String(imageDataStripped);
+
+            await using var memoryStream = new MemoryStream(imageByteArray);
+
+            var content = new MultipartFormDataContent();
+            content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+            var streamContent = new StreamContent(memoryStream, Convert.ToInt32(memoryStream.Length));
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+            content.Add(streamContent, "file", "Carts.png");
+            frameUri = await PicUploadHttpRepository.UploadSignature(content);
+             await OnPicUploadComplete.InvokeAsync(frameUri); 
+            
+
+        }
+        catch (Exception ex)
+        {
+            await OnPicUploadComplete.InvokeAsync("");
+        }
+
+    }
+}
+

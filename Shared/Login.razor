@@ -2,14 +2,12 @@
 @layout CustomLayout
 @using WiiTrakClient.Cores
 @using WiiTrakClient.Enums
-@inject NavigationManager NavManager
-@inject ILoginHttpRepository LoginHttpRepository
 @using WiiTrakClient.Shared;
 @using WiiTrakClient.Shared.Components;
+@inject NavigationManager NavManager
+@inject ILoginHttpRepository LoginHttpRepository
 @inject IDialogService DialogService
 @inject IJSRuntime JSRuntime
-
-
 
 <!DOCTYPE html>
 <html>
@@ -29,18 +27,7 @@
             background-size: cover;
             height: 100%;
         }
-        /*.loginbg{
-          background: url("https://images.unsplash.com/photo-1525328437458-0c4d4db7cab4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80") 50% fixed;
-          background-size: cover;
-          height: 100%;
-            position: absolute;
-            left: 0px;
-            top: 0px;
-            right: 0px;
-            bottom: 0px;
-            z-index: 9999;
-              overflow: auto;
-            }*/
+       
         .mud-dialog-container {
             z-index: 99999 !important;
         }
@@ -308,8 +295,6 @@
                 await _jsModule.InvokeVoidAsync("saveUserName",CurrentUser.UserName);
                 await _jsModule.InvokeVoidAsync("saveUserRole",CurrentUser.UserRole);
                 await _jsModule.InvokeVoidAsync("saveUserRoleId",CurrentUser.UserRoleId);
-
-                var user=  await _jsModule.InvokeAsync<string>("getUserId");
 
 
                 if (CurrentUser.IsFirstLogin)

@@ -36,9 +36,9 @@
         <MudTd DataLabel="Photo">
             <img src="@context.PicUrl" width="48" height="48" />
         </MudTd>
-        <MudTd DataLabel="TicketNumber">@context.DeliveryTicketNumber</MudTd>
-        <MudTd DataLabel="DeliveryDate">@($"{context.DeliveredAt.ToShortDateString()}")</MudTd>
-        <MudTd DataLabel="NumberOfCarts">@context.NumberOfCarts</MudTd>
+        <MudTd DataLabel="Ticket Number">@context.DeliveryTicketNumber</MudTd>
+        <MudTd DataLabel="Delivery Date">@($"{context.DeliveredAt.ToShortDateString()}")</MudTd>
+        <MudTd DataLabel="Number Of Carts">@context.NumberOfCarts</MudTd>
         <MudTd DataLabel="Store">@($"{context.StoreNumber} - {context.StoreName}")</MudTd>
         <MudTd DataLabel="">
             @if (context.ApprovedByStore != true && context.SignOffRequired == true)

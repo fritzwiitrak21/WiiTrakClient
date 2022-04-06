@@ -2,7 +2,7 @@
 @using System.ComponentModel.DataAnnotations
 
  
-<MudDialog>
+<MudDialog> 
     <DialogContent>              
         <div style="width: 400px;height:450px;overflow: auto;">
             <MudForm Model="@NewDriver" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">   
@@ -14,9 +14,10 @@
                 <MudTextField class="my-6" @bind-Value="NewDriver.StreetAddress2" Required="true" RequiredError="Street Address 2 is required!" Label="Street Address 2" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="NewDriver.City" Label="City" Required="true" RequiredError="City is required!" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="NewDriver.State" Label="State" Required="true" RequiredError="State is required!" Variant="Variant.Text"></MudTextField>
-                @*<MudTextField class="my-6" @bind-Value="NewDriver.CountryCode" Label="Country Code" Variant="Variant.Text"></MudTextField>*@
-                <MudTextField class="my-6" @bind-Value="NewDriver.PostalCode" Label="Postal Code" Required="true" RequiredError="Zipcode is required!"  Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="NewDriver.CountryCode" Label="Country Code" Required="true" RequiredError="Country code is required!" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="NewDriver.PostalCode" Label="Postal Code" Required="true" RequiredError="Zipcode is required!" Validation="@(new RegularExpressionAttribute(@"^[0-9]+$"){ErrorMessage = "The zip code is invalid"})" Variant="Variant.Text"></MudTextField>
                 <div class="d-flex">
+                    <MudButton OnClick="Cancel">Cancel</MudButton>
 @*                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
 *@                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
                     </div>

@@ -39,7 +39,7 @@
         <MudTd DataLabel="Ticket Number">@context.DeliveryTicketNumber</MudTd>
         <MudTd DataLabel="Delivery Date">@($"{context.DeliveredAt.ToShortDateString()}")</MudTd>
         <MudTd DataLabel="Number Of Carts">@context.NumberOfCarts</MudTd>
-        <MudTd DataLabel="Store">@($"{context.StoreNumber} - {context.StoreName}")</MudTd>
+        <MudTd DataLabel="Store">@($"{context.StoreNumber} - {context.StoreName}")</MudTd>       
         <MudTd DataLabel="">
            
                 <MudButton StartIcon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary"

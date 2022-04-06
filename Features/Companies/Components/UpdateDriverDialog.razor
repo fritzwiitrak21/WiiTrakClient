@@ -1,28 +1,33 @@
 @namespace WiiTrakClient.Features.Companies.Components
+@using System.ComponentModel.DataAnnotations
 
 <MudDialog>
     <DialogContent>              
         <div style="width: 400px;height:450px;overflow: auto;">
-            <MudForm Model="@Driver">   
-                <MudTextField class="my-6" @bind-Value="Driver.FirstName" For="@(()=>Driver.FirstName)" Label="First Name" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="Driver.LastName"For="@(()=>Driver.LastName)" Label="Last Name" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="Driver.Email"For="@(()=>Driver.Email)" Label="Email" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="Driver.Phone"For="@(()=>Driver.Phone)" Label="Phone" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Driver.StreetAddress1"For="@(()=>Driver.StreetAddress1)" Label="Street Address 1" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Driver.StreetAddress2"For="@(()=>Driver.StreetAddress2)" Label="Street Address 2" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Driver.City"For="@(()=>Driver.City)" Label="City" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Driver.State" For="@(()=>Driver.State)" Label="State" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Driver.CountryCode" For="@(()=>Driver.CountryCode)" Label="Country Code" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Driver.PostalCode" For="@(()=>Driver.PostalCode)" Label="Postal Code" Variant="Variant.Text"></MudTextField>
+            <MudForm Model="@Driver" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">   
+                <MudTextField class="my-6" @bind-Value="Driver.FirstName" Label="First Name" Required="true" RequiredError="First Name is required!" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Driver.LastName" Label="Last Name" Required="true" RequiredError="Last Name is required!" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Driver.Email" Label="Email" Required="true" RequiredError="Email is required!" Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Driver.Phone" Label="Phone" Required="true" RequiredError="Phone is required!" Validation="@(new PhoneAttribute() {ErrorMessage = " The phone number is invalid"})" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Driver.StreetAddress1" Label="Street Address 1" Required="true" RequiredError="Street Address 1 is required!" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Driver.StreetAddress2" Label="Street Address 2" Required="true" RequiredError="Street Address 2 is required!" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Driver.City" Label=City Required="true" RequiredError="City is required!" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Driver.State" Required="true" RequiredError="State is required!"  Label="State" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Driver.CountryCode"  Label="Country Code" Required="true" RequiredError="Country code is required!" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Driver.PostalCode" Label="Postal Code" Required="true" RequiredError="Zipcode is required!" Validation="@(new RegularExpressionAttribute(@"^[0-9]+$"){ErrorMessage = "The zip code is invalid"})" Variant="Variant.Text"></MudTextField>
                 <MudCheckBox class="my-6"  @bind-Checked="@Driver.IsSuspended" Label="Suspend" Color="Color.Primary"></MudCheckBox>  
                 <MudCheckBox class="my-6" @bind-Checked="@Driver.IsTerminated" Label="Terminate" Color="Color.Primary"></MudCheckBox> 
-
+                <div class="d-flex">
+                    <MudButton OnClick="Cancel">Cancel</MudButton>
+@*                  <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
+*@                  <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Update</MudButton>
+                </div>
             </MudForm>
         </div>
     </DialogContent>
-    <DialogActions> 
-        @*<MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>*@
+    @*<DialogActions> 
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
         @if (formInvalid)
                 {
                     <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -33,7 +38,7 @@
                     <MudButton OnClick="Cancel">Cancel</MudButton>
                     <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Update</MudButton>
                 }   
-    </DialogActions>
+    </DialogActions>*@
 </MudDialog>
 
 
@@ -41,15 +46,15 @@
     [Parameter]
     public DriverDto? Driver {get; set;}
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-
-    private bool formInvalid = false;
+    bool success;
+    string[] errors = { };
+    MudForm form;
     protected override void OnParametersSet() {
             
     }
 
     void Submit() 
     { 
-        formInvalid = false;
         MudDialog.Close(DialogResult.Ok(true)); 
     }
     void Cancel() => MudDialog.Cancel();

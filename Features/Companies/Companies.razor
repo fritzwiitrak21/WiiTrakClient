@@ -37,6 +37,7 @@
     private async Task OpenDialog()
     {
         var parameters = new DialogParameters();
+        _newCompany = new CompanyCreationDto();
         parameters.Add("NewCompany", _newCompany);
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };

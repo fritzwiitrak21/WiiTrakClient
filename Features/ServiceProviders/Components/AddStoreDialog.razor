@@ -1,28 +1,34 @@
 @namespace WiiTrakClient.Features.ServiceProviders.Components
+@using System.ComponentModel.DataAnnotations
 
  
 <MudDialog>
     <DialogContent>              
         <div style="width: 400px;height:450px;overflow: auto;">
-            <MudForm Model="@NewStore">   
-                <MudTextField class="my-6" @bind-Value="NewStore.StoreName" Label="Store Name" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="NewStore.StoreNumber" Label="Store Number" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="NewStore.Email" Label="Email" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="NewStore.PhonePrimary" Label="Phone Primary" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="NewStore.PhoneSecondary" Label="Phone Secondary" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="NewStore.StreetAddress1" Label="Street Address 1" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="NewStore.StreetAddress2" Label="Street Address 2" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="NewStore.City" Label="City" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="NewStore.State" Label="State" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="NewStore.PostalCode" Label="Zip Code" Variant="Variant.Text"></MudTextField>  
+            <MudForm Model="@NewStore" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">   
+                <MudTextField class="my-6" @bind-Value="NewStore.StoreName" Label="Store Name" Required="true" RequiredError="Store Name is required!" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewStore.StoreNumber" Label="Store Number" Required="true" RequiredError="Store Number is required!" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewStore.Email" Label="Email" Required="true" RequiredError="Email is required!" Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewStore.PhonePrimary" Label="Phone Primary" Required="true" RequiredError="Phone is required!" Validation="@(new PhoneAttribute() {ErrorMessage = " The phone number is invalid"})" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewStore.PhoneSecondary" Label="Phone Secondary" Required="true" RequiredError="Phone is required!" Validation="@(new PhoneAttribute() {ErrorMessage = " The phone number is invalid"})" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewStore.StreetAddress1" Label="Street Address 1" Required="true" RequiredError="Street Address 1 is required!" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewStore.StreetAddress2" Label="Street Address 2" Required="true" RequiredError="Street Address 2 is required!" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewStore.City" Label="City" Required="true" RequiredError="City is required!" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewStore.State" Label="State" Required="true" RequiredError="State is required!" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewStore.PostalCode" Label="Zip Code" Required="true" RequiredError="Zipcode is required!" Validation="@(new RegularExpressionAttribute(@"^[0-9]+$"){ErrorMessage = "The zip code is invalid"})" Variant="Variant.Text"></MudTextField>  
                 <MudCheckBox @bind-Checked="NewStore.IsSignatureRequired" Label="Signature Reqired For Deliveries" Color="Color.Primary"></MudCheckBox>
+                <div class="d-flex">
+                    <MudButton OnClick="Cancel">Cancel</MudButton>
+@*                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
+*@                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                </div>
             </MudForm>
         </div>
     </DialogContent>
-    <DialogActions>
+    @*<DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
         <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
-    </DialogActions>
+    </DialogActions>*@
 </MudDialog>
 
 @code {
@@ -30,7 +36,9 @@
     public StoreCreationDto? NewStore {get; set;}
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-
+    bool success;
+    string[] errors = { };
+    MudForm form;
     protected override void OnParametersSet() {
             
     }

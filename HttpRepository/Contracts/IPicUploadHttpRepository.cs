@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace WiiTrakClient.HttpRepository.Contracts
-{    public interface IPicUploadHttpRepository
+{
+    public interface IPicUploadHttpRepository
     {
         Task<string> UploadImage(MultipartFormDataContent content);
         Task<string> UploadSignature(MultipartFormDataContent content);
+        Task<string> UploadPicture(MultipartFormDataContent content);
     }
 }

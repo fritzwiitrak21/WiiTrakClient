@@ -23,7 +23,7 @@
 
                     @foreach (var store in Stores)
                     {
-                        <MudSelectItem T="StoreDto" Value="@store">@store.StoreName</MudSelectItem>
+                        <MudSelectItem T="StoreDto" Value="@store">@store.StoreName - @store.StoreNumber</MudSelectItem>
                     }
                     </MudSelect>
 
@@ -34,11 +34,12 @@
                 }
 
                 @*<MudText Class="my-4" Typo="Typo.h5">No of available carts to pickup: @NoOfCartsToPickUp</MudText>*@
-                <MudTextField @bind-Value="@NewDeliveryTicket.NumberOfCarts" Label="No of Carts" Variant="Variant.Text"></MudTextField>
-                    <ValidationMessage For="@(() => @NewDeliveryTicket.NumberOfCarts)" />
-                <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
-                    <ValidationMessage For="@(() => @NewDeliveryTicket.PicUrl)" />
-
+                <MudTextField @bind-Value="@NewDeliveryTicket.NumberOfCarts" Label="No of Carts" For="@(() => @NewDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
+@*                    <ValidationMessage For="@(() => @NewDeliveryTicket.NumberOfCarts)" />
+*@                <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
+@*                    <ValidationMessage For="@(() => @NewDeliveryTicket.PicUrl)" />
+                        @*<CaptureImage OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete"/>
+                        <ValidationMessage For="@(() => @NewDeliveryTicket.PicUrl)" />*@
                 @if (!string.IsNullOrWhiteSpace(_fileUrl))
                 {
                   <div class="d-flex justify-start mt-6 popupitemimage">

@@ -20,7 +20,7 @@
                 }
 
                 @*<MudText Class="my-4" Typo="Typo.h5">Number available carts to pickup: @editDeliveryTicket.NumberOfCarts</MudText>*@
-                 <MudTextField @bind-Value="@editDeliveryTicket.NumberOfCarts" Label="No of carts" Variant="Variant.Text"></MudTextField>
+                 <MudTextField @bind-Value="@editDeliveryTicket.NumberOfCarts" Label="No of carts" For="@(() => @editDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
                 <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
 
                 @if (!string.IsNullOrWhiteSpace(_fileUrl)) {

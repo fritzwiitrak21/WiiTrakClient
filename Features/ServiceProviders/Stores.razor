@@ -27,7 +27,7 @@
 
 @code {
     List<StoreDto> _stores = new ();
-    
+
     StoreCreationDto _newStore = new();
 
     protected override async Task OnInitializedAsync()
@@ -37,7 +37,8 @@
 
     private async Task OpenDialog() 
     {
-        var parameters = new DialogParameters(); 
+        var parameters = new DialogParameters();
+        _newStore = new StoreCreationDto();
         parameters.Add("NewStore", _newStore);
 
          DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 

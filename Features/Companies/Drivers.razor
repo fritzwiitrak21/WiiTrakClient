@@ -40,6 +40,7 @@
     private async Task OpenDialog()
     {
         var parameters = new DialogParameters();
+        _newDriver = new DriverCreationDto();
         parameters.Add("NewDriver", _newDriver);
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
