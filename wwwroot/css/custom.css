@@ -210,11 +210,12 @@ padding-bottom: 30px;
 }
 
 #ctlSignature_Container {
-    width: 295px !important;
+    margin-left: 0px !important;
+    width: 100% !important;
     height: 310px !important;
 }
 #ctlSignature {
-    width: 295px !important;
+    width: 100% !important;
     height: 310px !important;
 }
 .mud-button-text.mud-button-text-primary {

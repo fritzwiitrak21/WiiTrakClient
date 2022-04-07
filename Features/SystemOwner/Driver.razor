@@ -1,10 +1,10 @@
-@page "/drivers"
+﻿@page "/system-owner-driver"
 
-@using WiiTrakClient.Features.Companies.Components
+@using WiiTrakClient.Features.SystemOwner.Components
 @using WiiTrakClient.Cores
 
 @inject IJSRuntime JsRuntime
-@inject ICompanyHttpRepository CompanyHttpRepository
+@inject ISystemOwnerHttpRepository SystemOwnerHttpRepository
 @inject IDialogService DialogService
 
 @inject IDriverHttpRepository DriverHttpRepository
@@ -22,19 +22,19 @@
 </div> 
 
 <div class="my-8">
-    <DriverList Drivers="@_drivers" />
+    <DriverList Driver="@_driver" />
 </div>
 
 
 
 @code {
-    List<DriverDto> _drivers = new();
+    List<DriverDto> _driver = new();
 
     DriverCreationDto _newDriver = new();
 
     protected override async Task OnInitializedAsync()
     {
-        _drivers = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
+        _driver = await DriverHttpRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
     }
 
     private async Task OpenDialog()
@@ -68,7 +68,7 @@
                     IsSuspended = false
                 };
             await DriverHttpRepository.CreateDriverAsync(driverCreation);
-            _drivers = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
+            _driver = await DriverHttpRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
 
             #region Send Login details to User
             MailRequest request = new MailRequest();

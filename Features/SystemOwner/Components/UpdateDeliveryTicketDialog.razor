@@ -1,10 +1,11 @@
 ﻿@namespace WiiTrakClient.Features.SystemOwner.Components
+@using System.ComponentModel.DataAnnotations
 @using WiiTrakClient.Shared.Components
 
 <MudDialog>
     <DialogContent>
         <div style="width: 400px;height:450px;overflow: auto;">
-            <MudForm Model="@editDeliveryTicket">
+            <MudForm Model="@editDeliveryTicket" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudSelect Class="my-6" T="StoreDto" Label="Store" AnchorOrigin="Origin.BottomCenter"
                     HelperText="Select a Store" @bind-Value="@_selectedStore" Required="true"
                     AdornmentColor="Color.Primary">
@@ -20,7 +21,7 @@
                 }
 
                 @*<MudText Class="my-4" Typo="Typo.h5">Number available carts to pickup: @editDeliveryTicket.NumberOfCarts</MudText>*@
-                 <MudTextField @bind-Value="@editDeliveryTicket.NumberOfCarts" Label="No of carts" For="@(() => @editDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
+                 <MudTextField @bind-Value="@editDeliveryTicket.NumberOfCarts" Label="No of carts" Required="true" For="@(() => @editDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
                 <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
 
                 @if (!string.IsNullOrWhiteSpace(_fileUrl)) {
@@ -36,7 +37,7 @@
         <MudButton OnClick="Cancel">Cancel</MudButton>
         <MudButton Color="Color.Primary" 
                 OnClick="Submit" 
-                Disabled="_disableSaveButton">Save</MudButton>
+                Disabled="@(!success)">Save</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -59,7 +60,9 @@
     StoreDto _selectedStore = new();
     private string _fileUrl = "";
 
-    bool _disableSaveButton = false;
+    bool success;
+    string[] errors = { };
+    MudForm form;
     protected override void OnParametersSet()
     { 
         if(editDeliveryTicket != null)
@@ -87,13 +90,13 @@
 
     private void PicUploadStart() 
     {
-        _disableSaveButton = true;
+        success=false;
     }
    
     private void PicUploadComplete(string url)
     {
         _fileUrl = url;
-        _disableSaveButton = false;
+        success=true;
         editDeliveryTicket.PicUrl = _fileUrl;
     }
 

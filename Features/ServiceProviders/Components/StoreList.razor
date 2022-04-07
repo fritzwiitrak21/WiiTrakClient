@@ -2,6 +2,7 @@
 @inject IDialogService DialogService
 
 @inject IStoreHttpRepository StoreHttpRepository
+@using WiiTrakClient.Cores
 
 
    <MudTable Items="@Stores" Hover="true" SortLabel="Sort By">
@@ -100,6 +101,7 @@
                 ServiceProviderId = store.ServiceProviderId
             };
            await StoreHttpRepository.UpdateStoreAsync(store.Id, storeUpdate);
-        }  
+        } 
+        Stores = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);
     }
 }

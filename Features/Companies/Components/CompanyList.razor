@@ -2,6 +2,7 @@
 @inject IDialogService DialogService
 
 @inject ICompanyHttpRepository CompanyHttpRepository
+@using WiiTrakClient.Cores
 
    <MudTable Items="@Companies" Hover="true" SortLabel="Sort By">
     <HeaderContent>
@@ -72,6 +73,7 @@
                 PhoneSecondary = company.PhoneSecondary,
             };
            await CompanyHttpRepository.UpdateCompanyAsync(company.Id, companyUpdate);
-        } 
+        }
+         Companies = await CompanyHttpRepository.GetChildCompaniesAsync(CurrentUser.UserId);
     }
 }

@@ -13,7 +13,7 @@ namespace WiiTrakClient.DTOs
 
         public long DeliveryTicketNumber { get; set; }
         [Required]
-        [Range(1, 300, ErrorMessage = "No of Carts should be above 1")] 
+        [Range(1, 300, ErrorMessage = " ")] 
         public int NumberOfCarts { get; set; }
 
         public string Grid { get; set; } = string.Empty;

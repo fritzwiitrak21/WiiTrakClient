@@ -1,14 +1,14 @@
-@using WiiTrakClient.Features.SystemOwner.Components
+﻿@using WiiTrakClient.Features.SystemOwner.Components
 @using WiiTrakClient.Cores
 
-@namespace WiiTrakClient.Features.Companies.Components
+@namespace WiiTrakClient.Features.SystemOwner.Components
 
 @inject IDialogService DialogService 
 
-@inject ICompanyHttpRepository CompanyHttpRepository
+@inject ISystemOwnerHttpRepository SystemOwnerHttpRepository
 @inject IDriverHttpRepository DriverHttpRepository
 
-   <MudTable Items="@Drivers" Hover="true" SortLabel="Sort By">
+   <MudTable Items="@Driver" Hover="true" SortLabel="Sort By">
     <HeaderContent>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<DriverDto, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel  SortBy="new Func<DriverDto, object>(x=>x.LastName)">LastName</MudTableSortLabel></MudTh>
@@ -69,7 +69,7 @@
 
 @code {
     [Parameter]
-    public List<DriverDto>? Drivers {get; set;} = null;
+    public List<DriverDto>? Driver {get; set;} = null;
     private bool _enabled = true;
     public async Task OpenDialog(DriverDto driver) {
         driver.IsTerminated = !driver.IsActive;
@@ -104,8 +104,7 @@
                 IsActive=!driver.IsTerminated 
             };
            await DriverHttpRepository.UpdateDriverAsync(driver.Id, driverUpdate);
-           
+           Driver = await DriverHttpRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
         }  
-        Drivers = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
     }
 }

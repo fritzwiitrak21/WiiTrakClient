@@ -19,7 +19,7 @@ namespace WiiTrakClient.Features.Drivers
 {
     public partial class DeliveryTickets : ComponentBase
     {
-        
+        [Inject] NavigationManager NavManager { get; set; }
         [Inject] IJSRuntime JsRuntime { get; set; }
 
         [Inject] IDriverHttpRepository DriverRepository { get; set; }
@@ -48,17 +48,12 @@ namespace WiiTrakClient.Features.Drivers
             {
                 await GetDeliveryTicketsByDriverId(CurrentUser.UserId);
                 _selectedDriver = await DriverRepository.GetDriverByIdAsync(CurrentUser.UserId);
-
-              
-
             }
             catch (Exception ex)
             {
 
                 
             }
-            
-
            await HandleDriverSelected();
         }
 

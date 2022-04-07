@@ -1,4 +1,5 @@
 @namespace WiiTrakClient.Features.Drivers.Components
+@using System.ComponentModel.DataAnnotations
 @using WiiTrakClient.Shared.Components
 
 
@@ -7,7 +8,7 @@
 <MudDialog>
     <DialogContent>
         <div style="width: 400px;height:450px;overflow: auto;">
-            <MudForm Model="@NewDeliveryTicket">
+            <MudForm Model="@NewDeliveryTicket" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
                 <DataAnnotationsValidator />
 
 
@@ -34,7 +35,7 @@
                 }
 
                 @*<MudText Class="my-4" Typo="Typo.h5">No of available carts to pickup: @NoOfCartsToPickUp</MudText>*@
-                <MudTextField @bind-Value="@NewDeliveryTicket.NumberOfCarts" Label="No of Carts" For="@(() => @NewDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
+                <MudTextField @bind-Value="@NewDeliveryTicket.NumberOfCarts" Label="No of Carts" Required="true" For="@(() => @NewDeliveryTicket.NumberOfCarts)"  Variant="Variant.Text"></MudTextField>
 @*                    <ValidationMessage For="@(() => @NewDeliveryTicket.NumberOfCarts)" />
 *@                <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
 @*                    <ValidationMessage For="@(() => @NewDeliveryTicket.PicUrl)" />
@@ -54,7 +55,7 @@
         <MudButton OnClick="Cancel">Cancel</MudButton>
         <MudButton Color="Color.Primary" 
                 OnClick="Submit" 
-                Disabled="_disableSaveButton">Save</MudButton>
+                Disabled="@(!success)">Save</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -62,6 +63,10 @@
 
     [Parameter]
     public DeliveryTicketCreationDto? NewDeliveryTicket { get; set; }
+
+
+    public int NoOfCarts = 1;
+    
 
     [Parameter]
     public DriverDto? Driver { get; set; }
@@ -73,6 +78,9 @@
     public List<StoreDto>? Stores { get; set; } = new();
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    bool success;
+    string[] errors = { };
+    MudForm form;
 
     public List<StoreDto>? TempStores { get; set; } = new();
     StoreDto _selectedStore = new();
@@ -82,7 +90,7 @@
     private int NoOfCartsToPickUp = 0;
     private string StoreName = "";
 
-    bool _disableSaveButton = true;
+    
 
 
 
@@ -123,13 +131,13 @@
 
     private void PicUploadStart()
     {
-        _disableSaveButton = true;
+        success=false;
     }
 
     private void PicUploadComplete(string url)
     {
         _fileUrl = url;
-        _disableSaveButton = false;
+        success=true;
         NewDeliveryTicket.PicUrl = _fileUrl;
     }
 

@@ -9,11 +9,11 @@
 <MudDialog>
     <DialogContent>
         <div style="width: 400px;height:450px;overflow: auto;">
-            <MudForm Model="@editDeliveryTicket">
+            <MudForm Model="@editDeliveryTicket" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
             <MudText Class="my-4" Typo="Typo.h5">Store: @StoreName</MudText>
             <MudText Class="my-4" Typo="Typo.h5">Driver: @deliveryTicketDto.DriverName</MudText>
             <MudText Class="my-4" Typo="Typo.h5">Number of Carts: @deliveryTicketDto.NumberOfCarts</MudText>
-            <MudTextField @bind-Value="@editDeliveryTicket.Signee" Label="Signee" Variant="Variant.Text"></MudTextField> 
+            <MudTextField @bind-Value="@editDeliveryTicket.Signee" Label="Signee Name" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField> 
             @*@if(deliveryTicketSummary != null)
             {
                
@@ -39,7 +39,7 @@
                 {
                     @if (!_isSigned)
                     {
-                        <div id="divResize" class="justify-center mt-6 popupitemimage">
+                        <div id="divResize" class="">
                             <SSignature SignObject="ctlSignature"
                         RefreshImage="/images/clear.png"
                         PenCursor="/images/pen.cur"
@@ -71,7 +71,7 @@
         <MudButton OnClick="Cancel">Cancel</MudButton>
         <MudButton Color="Color.Primary" 
                 OnClick="Submit" 
-                Disabled="_disableSaveButton">Save</MudButton>
+                Disabled="@(!success)">Save</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -93,6 +93,9 @@
     public List<CartDto>? cartsTable { get; set; }
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    bool success;
+    string[] errors = { };
+    MudForm form;
     [Inject]
     protected IPicUploadHttpRepository PicUploadHttpRepository {get; set;}
     [Inject] IJSRuntime _js {
@@ -101,12 +104,12 @@
     }
     private string _fileUrl = "";
     private string _imageData = "";
-    bool _disableSaveButton = false;
+    
     bool _isSigned = false;
 
     protected override Task OnParametersSetAsync()
     {
-        _disableSaveButton = true;
+        success = false;
         return base.OnParametersSetAsync();
     }
 
@@ -133,7 +136,7 @@
         _fileUrl = await PicUploadHttpRepository.UploadSignature(content);
         editDeliveryTicket.SignaturePicUrl = _fileUrl;
         editDeliveryTicket.ApprovedByStore = true;
-        _disableSaveButton = false;
+        success=true;
         _isSigned = true;
          StateHasChanged();
      }

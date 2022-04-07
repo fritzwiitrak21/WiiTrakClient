@@ -6,14 +6,14 @@
         <div style="width: 400px;height:450px;overflow: auto;">
                 <MudForm @ref=form Model="@NewCompany" @bind-IsValid="@success" @bind-Errors="@errors"> 
                     <DataAnnotationsValidator />
-                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.Name" Label="Name" Required="true" RequiredError="Name is required!" Variant="Variant.Text"></MudTextField>  
-                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.StreetAddress1" Label="Street Address 1" Required="true" RequiredError="Street Address 1 is required!" Variant="Variant.Text"></MudTextField>  
-                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.StreetAddress2" Label="Street Address 2" Required="true" RequiredError="Street Address 2 is required!" Variant="Variant.Text"></MudTextField>  
-                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.City" Label="City" Required="true" RequiredError="City is required!" Variant="Variant.Text"></MudTextField>  
-                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.State" Label="State" Required="true" RequiredError="State is required!" Variant="Variant.Text"></MudTextField>  
-                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.PostalCode" Label="ZipCode" Required="true" RequiredError="Zipcode is required!" Validation="@(new RegularExpressionAttribute(@"^[0-9]+$"){ErrorMessage = "The zip code is invalid"})" Variant="Variant.Text"></MudTextField>  
-                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.Email" Label="Email" Required="true" RequiredError="Email is required!" Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" Variant="Variant.Text"></MudTextField>
-                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.PhonePrimary" Label="Phone" Required="true" RequiredError="Phone is required!" Validation="@(new PhoneAttribute() {ErrorMessage = " The phone number is invalid"})" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.Name" Label="Name" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.StreetAddress1" Label="Street Address 1" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.StreetAddress2" Label="Street Address 2" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.City" Label="City" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.State" Label="State" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.PostalCode" Label="ZipCode" Required="true" RequiredError="" Validation="@(new RegularExpressionAttribute(@"^[0-9]+$"){ErrorMessage =""})" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.Email" Label="Email" Required="true" RequiredError="" Validation="@(new EmailAddressAttribute() {ErrorMessage = ""})" Variant="Variant.Text"></MudTextField>
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.PhonePrimary" Label="Phone" Required="true" RequiredError="" Validation="@(new PhoneAttribute() {ErrorMessage = ""})" Variant="Variant.Text"></MudTextField>  
                     <MudCheckBox @bind-Checked="NewCompany.CannotHaveChildren" Label="Do Not Allow Sub Companies" Color="Color.Primary"></MudCheckBox>  
                     <div class="d-flex">
                         <MudButton OnClick="Cancel">Cancel</MudButton>

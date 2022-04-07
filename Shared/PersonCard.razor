@@ -1,4 +1,7 @@
 ﻿@using WiiTrakClient.Cores
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavManager
+
 
 <MudCard Elevation="0" Square="true" Class="@Class" Style="@Style">
     <MudCardHeader>
@@ -16,17 +19,20 @@
     [Parameter] public string Class { get; set; }
     [Parameter] public string Style { get; set; }
 
-    private string UserName { get; set; }
-    private string UserRole { get; set; }
+    private string UserName { get; set; }= "User";
+    private string UserRole { get; set; }="Role";
 
 
-
+     private IJSObjectReference JsModule;
 
     protected override async Task OnInitializedAsync()
     {
 
         try
         {
+            JsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            CurrentUser.UserName = await JsModule.InvokeAsync<string>("getUserName");
+            CurrentUser.UserRole = await JsModule.InvokeAsync<string>("getUserRole");
             UserName = CurrentUser.UserName;
             UserRole = CurrentUser.UserRole;
         }

@@ -2,19 +2,7 @@
 @using WiiTrakClient.Features.Drivers.Components
 
 
-
-@*<MudGrid class="my-8">
-    <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="DriverDto" Label="Select Driver" Value=@_selectedDriver ValueChanged="(value) => HandleDriverSelected(value)"
-            AnchorOrigin="Origin.BottomCenter">
-            @foreach (var driver in _drivers)
-            {
-                <MudSelectItem T="DriverDto" Value="@driver">@driver.FirstName @driver.LastName</MudSelectItem>
-            }
-        </MudSelect>
-    </MudItem>
-</MudGrid>*@
-
+<UserAuthentication/>
 
 <div class="my-8">
     <!-- driver summary -->

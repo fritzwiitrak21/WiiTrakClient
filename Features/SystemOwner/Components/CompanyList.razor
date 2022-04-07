@@ -2,6 +2,7 @@
 @inject IDialogService DialogService
 
 @inject ICompanyHttpRepository CompanyHttpRepository
+@using WiiTrakClient.Cores
 
    <MudTable Items="@Companies" Hover="true" SortLabel="Sort By">
     <HeaderContent>
@@ -45,15 +46,14 @@
     public List<CompanyDto>? Companies {get; set;} = null;
     private bool _enabled = true;
     public async Task OpenDialog(CompanyDto company) {
- 
+
         Console.WriteLine("company id: " + company.Id);
-
         var parameters = new DialogParameters();
-                parameters.Add("Company", company);   
+        parameters.Add("Company", company);   
 
-         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
 
-         var dialog  = DialogService.Show<UpdateCompanyDialog>("Update Company", parameters);
+        var dialog  = DialogService.Show<UpdateCompanyDialog>("Update Company", parameters);
         var result = await dialog.Result; 
 
         if (!result.Cancelled) 
@@ -71,7 +71,9 @@
                 PhonePrimary = company.PhonePrimary,
                 PhoneSecondary = company.PhoneSecondary,
             };
-           await CompanyHttpRepository.UpdateCompanyAsync(company.Id, companyUpdate);
-        } 
+            await CompanyHttpRepository.UpdateCompanyAsync(company.Id, companyUpdate);
+        }
+        
+          Companies = await CompanyHttpRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);   
     }
 }
