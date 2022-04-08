@@ -3,34 +3,60 @@ namespace WiiTrakClient.DTOs
 {
     public class CompanyCreationDto
     {
-        [Required]
-        [StringLength(50)]
+        [Required(ErrorMessage = " ")]
+        [StringLength(25, ErrorMessage = " ")]
+        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = " ")]
         public string Name { get; set; } = string.Empty;
-        [Required] 
-        [MaxLength(50)]
+
+
+        [Required(ErrorMessage = " ")]
+        [StringLength(25, ErrorMessage = " ")]
         public string StreetAddress1 { get; set; } = string.Empty;
-        [Required]
-        [MaxLength(50)]
+
+
+        [Required(ErrorMessage = " ")]
+        [StringLength(25, ErrorMessage = " ")]
         public string StreetAddress2 { get; set; } = string.Empty;
-        [Required, MaxLength(20)]
+
+
+        [Required(ErrorMessage = " ")]
+        [MaxLength(15, ErrorMessage = " ")]
+        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = " ")]
+
         public string City { get; set; } = string.Empty;
-        [Required, MaxLength(20)]
+
+
+        [Required(ErrorMessage = " ")]
+        [MaxLength(15, ErrorMessage = " ")]
+        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = " ")]
+
         public string State { get; set; } = string.Empty;
 
         public string CountryCode { get; set; } = string.Empty;
-        [Required]
-        [RegularExpression(@"^\d{5}(-\d{4})?$", ErrorMessage = "Invalid Zip")]
+
+
+        [Required(ErrorMessage = " ")]
+        [MinLength(4)]
+        [RegularExpression(@"^[1-9][0-9]*$", ErrorMessage = " ")]
         public string PostalCode { get; set; } = string.Empty;
 
+
+
         public string ProfilePicUrl { get; set; } = string.Empty;
-        [Required]
-        [EmailAddress]
+
+
+        [Required(ErrorMessage = " ")]
+        [RegularExpression(@"^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$", ErrorMessage = " ")]
         public string Email { get; set; } = string.Empty;
-        [Required]
-        [Phone]
+
+
+        [Required(ErrorMessage = " ")]
+        [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$", ErrorMessage = " ")]
         public string PhonePrimary { get; set; } = string.Empty;
-        [Required]
-        [Phone]
+
+
+        [Required(ErrorMessage = " ")]
+        [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$", ErrorMessage = " ")]
         public string PhoneSecondary { get; set; } = string.Empty;
 
         public Guid? ParentId { get; set; } = null;

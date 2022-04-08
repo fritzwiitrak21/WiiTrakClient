@@ -20,13 +20,20 @@
 </div>
 
 <div class="my-8">
-@if (_companies.Count > 0)
+    @if (LoaderVisibility)
+{
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
+}
+else
+{
+if (_companies.Count > 0)
 {
     <CompanyList Companies="@_companies" />
 }
 else
 {
-    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7"/>
+  <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+}
 }
     
 </div>
@@ -37,10 +44,13 @@ else
     List<CompanyDto> _companies = new ();
 
     CompanyCreationDto _newCompany = new();
+        bool LoaderVisibility = false;
 
     protected override async Task OnInitializedAsync()
     {
+         LoaderVisibility = true;
         _companies = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);     
+         LoaderVisibility = false;
     }  
 
     private async Task OpenDialog() 

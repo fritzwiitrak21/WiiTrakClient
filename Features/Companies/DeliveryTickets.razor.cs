@@ -35,7 +35,7 @@ namespace WiiTrakClient.Features.Companies
         //[Inject] IWorkOrderHttpRepository WorkOrderHttpRepository { get; set; }
 
         //DriverDto _selectedDriver = new();
-        //List<DriverDto> _drivers = new();
+        List<DeliveryTicketDto> deliveryTickets = new();
         List<DeliveryTicketDto> _deliveryTickets = new();
         //List<CartDto> _carts = new();
         //List<StoreDto> _stores = new();
@@ -46,7 +46,7 @@ namespace WiiTrakClient.Features.Companies
 
             try
             {
-                var deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+                 deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
                 if (deliveryTickets is not null)
                 {
                     _deliveryTickets = deliveryTickets;

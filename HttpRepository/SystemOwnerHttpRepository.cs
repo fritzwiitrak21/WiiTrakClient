@@ -37,7 +37,15 @@ namespace WiiTrakClient.HttpRepository
             }
             return response.Response;
         }
-
+        public async Task<bool> CheckEmailIdAsync(string EmailId)
+        {
+            var response = await _httpService.Get<bool>(EmailId);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
         public async Task UpdateSystemOwnerAsync(Guid id, SystemOwnerUpdateDto client)
         {
 
@@ -56,5 +64,7 @@ namespace WiiTrakClient.HttpRepository
                 // throw new ApplicationException(await response.GetBody());
             }
         }
+      
+
     }
 }

@@ -1,18 +1,37 @@
  @namespace WiiTrakClient.Features.Corporates.Components
 @using System.ComponentModel.DataAnnotations
 
- <MudDialog>
+ <style>
+    .validation-message {
+    font-size:0;
+    display:none;
+    font-display:block;
+    
+    color: red;
+}
+.mud-input-helper-text.mud-input-error {
+    font-size: 0;
+}
+.mud-input-helper-text {
+    color: var(--mud-palette-text-secondary);
+    margin: 0;
+    font-size: 0;   
+}
+        </style> 
+    
+        
+        <MudDialog>
     <DialogContent>              
-        <div style="width: 400px;height:450px;overflow: auto;">
-             <MudForm Model="@Company" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">   
-                <MudTextField Class="my-6" @bind-Value="Company.Name"  Label="Name" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>  
-                <MudTextField Class="my-6" @bind-Value="Company.StreetAddress1" Label="Street Address 1" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>  
-                <MudTextField Class="my-6" @bind-Value="Company.StreetAddress2" Label="Street Address 2" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>  
-                <MudTextField Class="my-6" @bind-Value="Company.City" Label="City" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>  
-                <MudTextField Class="my-6" @bind-Value="Company.State" Label="State" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>  
-                <MudTextField Class="my-6" @bind-Value="Company.PostalCode" Label="ZipCode" Required="true" RequiredError="" Validation="@(new RegularExpressionAttribute(@"^[0-9]+$"){ErrorMessage = ""})" Variant="Variant.Text"></MudTextField>  
-                <MudTextField Class="my-6" @bind-Value="Company.Email" Required="true" RequiredError="" Validation="@(new EmailAddressAttribute() {ErrorMessage = ""})" Label="Email" Variant="Variant.Text"></MudTextField>  
-                <MudTextField Class="my-6" @bind-Value="Company.PhonePrimary" Label="Phone" Required="true" RequiredError="" Validation="@(new PhoneAttribute() {ErrorMessage = ""})" Variant="Variant.Text"></MudTextField>
+        <div style="width: 400px;height:450px;overflow: auto;" > 
+            <MudForm Model="@Company" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">   
+                <MudTextField Class="my-6" @bind-Value="Company.Name"  Label="Name" Required="true" RequiredError=" " For="@(() => @Company.Name)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField Class="my-6" @bind-Value="Company.StreetAddress1" Label="Street Address 1" Required="true" RequiredError=" " For="@(() => @Company.StreetAddress1)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField Class="my-6" @bind-Value="Company.StreetAddress2" Label="Street Address 2" Required="true" RequiredError=" " For="@(() => @Company.StreetAddress2)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField Class="my-6" @bind-Value="Company.City" Label="City" Required="true" RequiredError=" " For="@(() => @Company.City)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField Class="my-6" @bind-Value="Company.State" Label="State" Required="true" RequiredError=" " For="@(() => @Company.State)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField Class="my-6" @bind-Value="Company.PostalCode" Label="Zip Code" Required="true" RequiredError=" " For="@(() => @Company.PostalCode)"  Variant="Variant.Text"></MudTextField>  
+                <MudTextField Class="my-6" @bind-Value="Company.Email" Label="Email" Required="true" RequiredError=" " For="@(() => @Company.Email)"  Variant="Variant.Text"></MudTextField>  
+                <MudTextField Class="my-6" @bind-Value="Company.PhonePrimary" Label="Phone" Required="true" RequiredError=" " For="@(() => @Company.PhonePrimary)"  Variant="Variant.Text"></MudTextField>
                 <MudCheckBox @bind-Checked="Company.CannotHaveChildren" Label="Do Not Allow Sub Companies" Color="Color.Primary"></MudCheckBox> 
                 <div class="d-flex">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -20,22 +39,8 @@
 *@                  <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Update</MudButton>
                     </div>
             </MudForm>
-        </div>
+        </div> 
     </DialogContent>
-    @*<DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
-        @if (formInvalid)
-                {
-                    <MudButton OnClick="Cancel">Cancel</MudButton>
-                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Disabled=true Class="ml-auto">Update</MudButton>
-                }
-                else
-                {
-                    <MudButton OnClick="Cancel">Cancel</MudButton>
-                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Update</MudButton>
-                }   
-    </DialogActions>*@
 </MudDialog>
 
 

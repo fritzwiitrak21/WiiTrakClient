@@ -1,21 +1,38 @@
 @namespace WiiTrakClient.Features.Companies.Components
 @using System.ComponentModel.DataAnnotations
 
+<style>
+    .validation-message {
+    font-size:0;
+    display:none;
+    font-display:block;
+    
+    color: red;
+}
+.mud-input-helper-text.mud-input-error {
+    font-size: 0;
+}
+.mud-input-helper-text {
+    color: var(--mud-palette-text-secondary);
+    margin: 0;
+    font-size: 0;
+}
+</style>
  
 <MudDialog> 
     <DialogContent>              
         <div style="width: 400px;height:450px;overflow: auto;">
             <MudForm Model="@NewDriver" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">   
-                <MudTextField class="my-6" @bind-Value="NewDriver.FirstName" Label="First Name" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="NewDriver.LastName" Label="Last Name" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="NewDriver.Email" Label="Email" Required="true" RequiredError="" Validation="@(new EmailAddressAttribute() {ErrorMessage = ""})" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="NewDriver.Phone" Label="Phone" Required="true" RequiredError="" Validation="@(new PhoneAttribute() {ErrorMessage = ""})" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="NewDriver.StreetAddress1" Required="true" RequiredError="" Label="Street Address 1" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewDriver.StreetAddress2" Required="true" RequiredError="" Label="Street Address 2" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewDriver.City" Label="City" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewDriver.State" Label="State" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="NewDriver.FirstName" Label="First Name" Required="true" RequiredError="" For="@(() => @NewDriver.FirstName)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewDriver.LastName" Label="Last Name" Required="true" RequiredError="" For="@(() => @NewDriver.LastName)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewDriver.Email" Label="Email" Required="true" RequiredError="" For="@(() => @NewDriver.Email)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewDriver.Phone" Label="Phone" Required="true" RequiredError="" For="@(() => @NewDriver.Phone)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="NewDriver.StreetAddress1" Required="true" RequiredError="" Label="Street Address 1" For="@(() => @NewDriver.StreetAddress1)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="NewDriver.StreetAddress2" Required="true" RequiredError="" Label="Street Address 2" For="@(() => @NewDriver.StreetAddress2)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="NewDriver.City" Label="City" Required="true" RequiredError="" For="@(() => @NewDriver.City)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="NewDriver.State" Label="State" Required="true" RequiredError="" For="@(() => @NewDriver.State)" Variant="Variant.Text"></MudTextField>
                 @*<MudTextField class="my-6" @bind-Value="NewDriver.CountryCode" Label="Country Code" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>*@
-                <MudTextField class="my-6" @bind-Value="NewDriver.PostalCode" Label="Postal Code" Required="true" RequiredError="" Validation="@(new RegularExpressionAttribute(@"^[0-9]+$"){ErrorMessage = ""})" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="NewDriver.PostalCode" Label="Zip Code" Required="true" RequiredError="" For="@(() => @NewDriver.PostalCode)" Variant="Variant.Text"></MudTextField>
                 <div class="d-flex">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
 @*                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
@@ -24,20 +41,7 @@
             </MudForm>
         </div>
     </DialogContent>
-    @*<DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Save</MudButton>
-        @if (formInvalid)
-                {
-                    <MudButton OnClick="Cancel">Cancel</MudButton>
-                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Disabled=true Class="ml-auto">Save</MudButton>
-                }
-                else
-                {
-                    <MudButton OnClick="Cancel">Cancel</MudButton>
-                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
-                }   
-    </DialogActions>*@
+    
 </MudDialog>
 
 @code {

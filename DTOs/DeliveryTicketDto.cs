@@ -13,6 +13,7 @@ namespace WiiTrakClient.DTOs
 
         public long DeliveryTicketNumber { get; set; }
         [Required]
+        [RegularExpression(@"^[1-9][0-9]*$", ErrorMessage = " ")]
         [Range(1, 300, ErrorMessage = " ")] 
         public int NumberOfCarts { get; set; }
 
@@ -39,6 +40,9 @@ namespace WiiTrakClient.DTOs
         public Guid StoreId { get; set; } = Guid.Empty;
 
         public Guid DriverId { get; set; } = Guid.Empty;
+        [Required]
+        [StringLength(25, ErrorMessage = " ")]
+        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = " ")]
         public string Signee { get;set; } = string.Empty;
         public int DriverNumber { get; set; }
     }

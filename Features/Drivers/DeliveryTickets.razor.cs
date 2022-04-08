@@ -37,6 +37,7 @@ namespace WiiTrakClient.Features.Drivers
         DriverDto _selectedDriver = new();
         //List<DriverDto> _drivers = new();
         List<DeliveryTicketDto> _deliveryTickets = new();
+        List<DeliveryTicketDto> deliveryTickets = new();
         List<CartDto> _carts = new();
         List<StoreDto> _stores = new();
         DeliveryTicketCreationDto _newDeliveryTicket = new();
@@ -65,7 +66,7 @@ namespace WiiTrakClient.Features.Drivers
 
         private async Task GetDeliveryTicketsByDriverId(Guid id)
         {
-            var deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByDriverIdAsync(id);
+            deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByDriverIdAsync(id);
             if (deliveryTickets is not null)
             {
                 _deliveryTickets = deliveryTickets;

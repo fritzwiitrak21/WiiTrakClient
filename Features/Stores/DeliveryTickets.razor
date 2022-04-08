@@ -3,9 +3,16 @@
 @using WiiTrakClient.Features.Stores.Components
 
 <UserAuthentication/>
-
+<div class="pagetitle my-8">
 <h3>Delivery Tickets</h3>
-@if (_deliveryTickets.Count > 0)
+</div>
+
+@if(deliveryTickets == null)
+{
+    <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+
+}
+else if (_deliveryTickets.Count > 0)
 {
     <DeliveryTicketsList DeliveryTickets="_deliveryTickets" />
 }

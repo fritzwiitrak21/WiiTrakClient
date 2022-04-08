@@ -28,8 +28,9 @@ namespace WiiTrakClient.Features.Stores
         ///List<DriverDto> _drivers = new();
         StoreDto _selectedStore = new();
         List<DeliveryTicketDto> _deliveryTickets = new();
-        
-       
+        List<DeliveryTicketDto> deliveryTickets = new();
+
+
         DeliveryTicketCreationDto _newDeliveryTicket = new();
 
         protected override async Task OnInitializedAsync()
@@ -47,7 +48,7 @@ namespace WiiTrakClient.Features.Stores
 
         private async Task GetDeliveryTicketsByStoreId()
         {
-            var deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(CurrentUser.UserId);
+             deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(CurrentUser.UserId);
             if (deliveryTickets is not null)
             {
                 _deliveryTickets = deliveryTickets;

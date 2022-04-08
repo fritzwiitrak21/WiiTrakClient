@@ -7,7 +7,7 @@
 @inject ISystemOwnerHttpRepository SystemOwnerHttpRepository
 @inject IDialogService DialogService
 
-@inject IDriverHttpRepository DriverHttpRepository
+@inject IDriverHttpRepository DriverHttpRepository 
 @inject IEmailHttpRepository EmailHttpRepository
 
 <UserAuthentication/>
@@ -22,7 +22,22 @@
 </div> 
 
 <div class="my-8">
+    @if (LoaderVisibility)
+{
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
+}
+else
+{
     <DriverList Driver="@_driver" />
+    if (_driver.Count > 0)
+{
+    <DriverList Driver="@_driver" />
+}
+else
+{
+     <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+}
+}
 </div>
 
 
@@ -31,10 +46,12 @@
     List<DriverDto> _driver = new();
 
     DriverCreationDto _newDriver = new();
-
+     bool LoaderVisibility = false;
     protected override async Task OnInitializedAsync()
     {
+          LoaderVisibility = true;
         _driver = await DriverHttpRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
+         LoaderVisibility = false;
     }
 
     private async Task OpenDialog()
@@ -51,8 +68,9 @@
         if (!result.Cancelled)
         {
             // add new driver to backend
-            var driverCreation = new DriverCreationDto
+            var driverCreation = new DriverCreationDto     
                 {
+                    CompanyId=_newDriver.CompanyId,
                     FirstName = _newDriver.FirstName,
                     LastName = _newDriver.LastName,
                     Email = _newDriver.Email,
@@ -63,7 +81,7 @@
                     State = _newDriver.State,
                     CountryCode = _newDriver.CountryCode,
                     PostalCode = _newDriver.PostalCode,
-                    CompanyId = CurrentUser.UserId,
+                    SystemOwnerId = CurrentUser.UserId,
                     IsActive = true,
                     IsSuspended = false
                 };

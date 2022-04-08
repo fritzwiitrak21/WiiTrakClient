@@ -21,13 +21,20 @@
 @*Need to fix in future phase*@
 
 <div class="my-8">
-@if (_stores.Count > 0)
+@if (LoaderVisibility)
+{
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
+}
+else
+{
+if (_stores.Count > 0)
 {
    <StoreList Stores="@_stores" />
 }
 else
 {
-    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7"/>
+      <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+}
 }
    
 </div>
@@ -38,10 +45,12 @@ else
     List<StoreDto> _stores = new ();
 
     StoreCreationDto _newStore = new();
-
+       bool LoaderVisibility = false;
     protected override async Task OnInitializedAsync()
     {
+         LoaderVisibility = true;
         _stores = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);
+         LoaderVisibility = false;
     }  
 
     private async Task OpenDialog() 

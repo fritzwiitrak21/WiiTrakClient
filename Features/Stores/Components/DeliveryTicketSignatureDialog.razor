@@ -4,7 +4,24 @@
 @using System.Net.Mime
 @using System.Text
 
+<style>
+    .validation-message {
+    font-size:0;
+    display:none;
+    font-display:block;
 
+    color: red;
+}
+.mud-input-helper-text.mud-input-error {
+    font-size: 0;
+}
+.mud-input-helper-text {
+    color: var(--mud-palette-text-secondary);
+    margin: 0;
+    font-size: 0;
+
+}      
+</style>
 
 <MudDialog>
     <DialogContent>
@@ -13,7 +30,7 @@
             <MudText Class="my-4" Typo="Typo.h5">Store: @StoreName</MudText>
             <MudText Class="my-4" Typo="Typo.h5">Driver: @deliveryTicketDto.DriverName</MudText>
             <MudText Class="my-4" Typo="Typo.h5">Number of Carts: @deliveryTicketDto.NumberOfCarts</MudText>
-            <MudTextField @bind-Value="@editDeliveryTicket.Signee" Label="Signee Name" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField> 
+            <MudTextField @bind-Value="@editDeliveryTicket.Signee" Label="Signee Name" Required="true" RequiredError="" For="@(() => @editDeliveryTicket.Signee)" Variant="Variant.Text"></MudTextField> 
             @*@if(deliveryTicketSummary != null)
             {
                
@@ -48,6 +65,7 @@
                         PenColor="blue"
                         RequiredPoints="50">
                             </SSignature>
+                          
                         </div>
                       @*  <div class="col-lg-6 col-sm-12">
                             <img src="/images/spacer.png" id="pngImg"/>
@@ -55,7 +73,7 @@
                     }
                 }
             @if (!_isSigned) {
-                  <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                  <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)"
                     OnClick="SaveSignature">Sign
                 </MudButton>
                 
@@ -71,7 +89,7 @@
         <MudButton OnClick="Cancel">Cancel</MudButton>
         <MudButton Color="Color.Primary" 
                 OnClick="Submit" 
-                Disabled="@(!success)">Save</MudButton>
+                Disabled="@(!IsSigned)">Save</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -104,7 +122,7 @@
     }
     private string _fileUrl = "";
     private string _imageData = "";
-    
+    bool IsSigned = false;
     bool _isSigned = false;
 
     protected override Task OnParametersSetAsync()
@@ -117,6 +135,7 @@
     {
         var dotNetObjectRef = DotNetObjectReference.Create(this);
         await _js.InvokeAsync<string>("saveSignatureAsync", dotNetObjectRef);
+        IsSigned = true;
     }
 
     [JSInvokable]

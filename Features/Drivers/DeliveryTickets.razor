@@ -21,7 +21,12 @@
         OnClick="OpenDialog">Add</MudButton> 
 </div>
 </div>
-@if (_deliveryTickets.Count > 0)
+@if(deliveryTickets == null)
+{
+    <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+
+}
+else if (_deliveryTickets.Count > 0)
 {
     <DeliveryTicketsList DeliveryTickets="_deliveryTickets" />
 }

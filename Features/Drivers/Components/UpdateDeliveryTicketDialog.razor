@@ -2,6 +2,25 @@
 @using System.ComponentModel.DataAnnotations
 @using WiiTrakClient.Shared.Components
 
+<style>
+    .validation-message {
+    font-size:0;
+    display:none;
+    font-display:block;
+    
+    color: red;
+}
+.mud-input-helper-text.mud-input-error {
+    font-size: 0;
+}
+.mud-input-helper-text {
+    color: var(--mud-palette-text-secondary);
+    margin: 0;
+    font-size: 0;
+    
+}      
+</style>
+
 <MudDialog>
     <DialogContent>
         <div style="width: 400px;height:450px;overflow: auto;">

@@ -33,7 +33,7 @@ namespace WiiTrakClient.Features.SystemOwner
         //[Inject] IDialogService DialogService { get; set; }
 
         //[Inject] IWorkOrderHttpRepository WorkOrderHttpRepository { get; set; }
-
+        List<DeliveryTicketDto> deliveryTickets = new();
         //DriverDto _selectedDriver = new();
         //List<DriverDto> _drivers = new();
         List<DeliveryTicketDto> _deliveryTickets = new();
@@ -46,7 +46,7 @@ namespace WiiTrakClient.Features.SystemOwner
            
             try
             {
-                var deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId,(Role)CurrentUser.UserRoleId);
+                 deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId,(Role)CurrentUser.UserRoleId);
                 if (deliveryTickets is not null)
                 {
                     _deliveryTickets = deliveryTickets;

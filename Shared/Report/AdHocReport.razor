@@ -6,67 +6,77 @@
 @using WiiTrakClient.Cores;
 @inject IDeliveryTicketHttpRepository DeliveryTicketHttpRepository
 
-<UserAuthentication/>
+<UserAuthentication />
 <h3 class="pageheader">Reports</h3>
 
 
 <div class="col-md-12">
-<div class="row">
-    <div class="col-md-7 col-sm-12">
-        <div class="filtercard">
- <div class="filtercardbody">
-<div class="filteritem">
-<MudDatePicker Label="Start Date" Editable="true" @bind-Date="Startdate" Placeholder="Select Start Date" />
+    <div class="row">
+        <div class="col-md-7 col-sm-12">
+            <div class="filtercard">
+                <div class="filtercardbody">
+                    <div class="filteritem">
+                        <MudDatePicker Label="Start Date" Editable="true" MaxDate="Enddate" @bind-Date="Startdate" Placeholder="Select Start Date" />
+                    </div>
+                    <div class="filteritem">
+                        <MudDatePicker Label="End Date" Editable="true" MinDate="Startdate" MaxDate="Enddate" @bind-Date="Enddate" Placeholder="Select End Date" />
+                    </div>
+                </div>
+                <div class="filterlapbtn">
+
+                    <MudIconButton Icon="@Icons.Outlined.Search"
+                                   Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   Size="Size.Large"
+                                   OnClick="Search"
+                                   Class="Datebutton" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 col-sm-12">
+            <div class="filtercard">
+                <div class="filtercardbody">
+                    <div class="filteritem">
+                        <MudText Class="my-4" Typo="Typo.h6">Total Deliveries:</MudText>
+                        <span class="itemcount">@TotalNoofDeliveries</span>
+                    </div>
+                    <div class="filteritem">
+                        <MudText Class="my-4" Typo="Typo.h6">Total Carts:</MudText>
+                        <span class="itemcount">@TotalNoofCarts</span>
+                    </div>
+                </div>
+                <div class="filterlapbtn">
+                    @if (TotalNoofCarts > 0 && TotalNoofDeliveries > 0)
+                    {
+                        <MudIconButton Icon="@Icons.Outlined.FileDownload"
+                                   Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   Size="Size.Large"
+                                   OnClick="ExportExcel"
+                                   Class="Datebutton" />
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="filteritem">
-<MudDatePicker Label="End Date" Editable="true" @bind-Date="Enddate" Placeholder="Select End Date" />
-</div>
-</div>
-<div class="filterlapbtn">
-   
-   <MudIconButton Icon="@Icons.Outlined.Search" 
-                  Variant="Variant.Filled" 
-                  Color="Color.Primary" 
-                  Size="Size.Large"
-                  OnClick="Search"
-                  Class="Datebutton"
-                  />
-</div>
-</div>
-</div>
-    <div class="col-md-5 col-sm-12">
-        <div class="filtercard">
-<div class="filtercardbody">
-    <div class="filteritem">
-<MudText Class="my-4" Typo="Typo.h6">Total Deliveries:</MudText>
-<span class="itemcount">@TotalNoofDeliveries</span>
-</div>
-<div class="filteritem">
-<MudText Class="my-4" Typo="Typo.h6">Total Carts:</MudText>
-<span class="itemcount">@TotalNoofCarts</span>
-</div>
-</div>
-<div class="filterlapbtn">
-   
-   <MudIconButton Icon="@Icons.Outlined.FileDownload" 
-                  Variant="Variant.Filled" 
-                  Color="Color.Primary" 
-                  Size="Size.Large"
-                  OnClick="ExportExcel"
-                  Class="Datebutton"
-                  />
-</div>
-</div>
-</div>
-</div>
-</div>
-@if (_deliveryTickets.Count > 0)
+
+
+@if (LoaderVisibility)
 {
-    <ReportDeliveryTicketsList _ReportDeliveryTicketsList="_deliveryTickets" />
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
 }
 else
 {
-    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7"/>
+    if (_deliveryTickets.Count > 0)
+    {
+        <ReportDeliveryTicketsList _ReportDeliveryTicketsList="_deliveryTickets" />
+    }
+    else
+    {
+        <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+
+    }
 }
 
 
@@ -77,17 +87,22 @@ else
     int TotalNoofDeliveries { get; set; } = 0;
     int TotalNoofCarts { get; set; } = 0;
     List<DeliveryTicketDto> _deliveryTickets = new();
+    List<DeliveryTicketDto> TicketsList = new();
+    List<DeliveryTicketDto> deliveryTickets2 = new();
     private MemoryStream ms;
+
+    bool LoaderVisibility { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
         await Search();
     }
 
-    protected  async Task Search()
+    protected async Task Search()
     {
         try
         {
+            LoaderVisibility = true;
             var deliveryTickets = CurrentUser.UserRoleId <= 4 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId) :
                                   // For the role of System Owner - 1, Corporate - 2, Prime Company -3, Sub Company - 4
                                   CurrentUser.UserRoleId == 5 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByDriverIdAsync(CurrentUser.UserId) :
@@ -95,17 +110,19 @@ else
                                   CurrentUser.UserRoleId == 6 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(CurrentUser.UserId) :
                                   // For the role of Store
                                   await DeliveryTicketHttpRepository.GetAllDeliveryTicketsAsync();
-                                  // To get all the delivery tickets
-
+            // To get all the delivery tickets
+           
             if (deliveryTickets is not null)
             {
                 _deliveryTickets = deliveryTickets.Where(x => x.DeliveredAt.Date >= Startdate && x.DeliveredAt.Date <= Enddate).ToList();
                 TotalNoofDeliveries = _deliveryTickets.Count;
                 TotalNoofCarts = _deliveryTickets.Sum(x => x.NumberOfCarts);
             }
+            LoaderVisibility = false;
         }
         catch (Exception ex)
         {
+            LoaderVisibility = false;
         }
     }
     private async Task ExportExcel()
@@ -113,8 +130,28 @@ else
         try
         {
             var dt = Core.ToDataTable(_deliveryTickets);
+            dt.Columns.Remove("Id");
+            dt.Columns.Remove("UpdatedAt");
+            dt.Columns.Remove("CreatedAt");
+            dt.Columns.Remove("Grid");
+            dt.Columns.Remove("SignaturePicUrl");
+            dt.Columns.Remove("SignOffRequired");
+            dt.Columns.Remove("ApprovedByStore");
+            dt.Columns.Remove("ServiceProviderId");
+            dt.Columns.Remove("StoreId");
+            dt.Columns.Remove("DriverId");
+
+            dt.Columns["DriverName"].SetOrdinal(0);
+            dt.Columns["DriverNumber"].SetOrdinal(1);
+            dt.Columns["DeliveredAt"].SetOrdinal(2);
+            dt.Columns["StoreName"].SetOrdinal(3);
+            dt.Columns["StoreNumber"].SetOrdinal(4);
+            dt.Columns["NumberOfCarts"].SetOrdinal(5);
+            dt.Columns["Signee"].SetOrdinal(6);
+            dt.Columns["PicUrl"].SetOrdinal(7);
+
             ms = excelservice.CreateExcel(dt);
-            await FileUtils.SaveAs(JS,"DeliveryReports.xlsx", ms.ToArray());
+            await FileUtils.SaveAs(JS, "DeliveryReports.xlsx", ms.ToArray());
         }
         catch (Exception ex)
         {
