@@ -60,8 +60,15 @@
 </div>
 </div>
 </div>
+@if (_deliveryTickets.Count > 0)
+{
+    <ReportDeliveryTicketsList _ReportDeliveryTicketsList="_deliveryTickets" />
+}
+else
+{
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7"/>
+}
 
-<ReportDeliveryTicketsList _ReportDeliveryTicketsList="_deliveryTickets" />
 
 @code {
     DateTime? Startdate { get; set; } = DateTime.Today.AddDays(-14);

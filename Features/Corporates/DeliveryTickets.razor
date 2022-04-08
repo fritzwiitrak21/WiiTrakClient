@@ -3,23 +3,17 @@
 @using WiiTrakClient.Features.Corporates.Components
 
 <UserAuthentication/>
-@*<MudGrid class="my-8">
-    <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="DriverDto" Label="Select Driver" ValueChanged="(value) => HandleDriverSelected(value)"
-            AnchorOrigin="Origin.BottomCenter">
-            @foreach (var driver in _drivers)
-            {
-                <MudSelectItem T="DriverDto" Value="@driver">@driver.FirstName @driver.LastName</MudSelectItem>
-            }
-        </MudSelect>
-    </MudItem>
-</MudGrid>*@
+
 
 <h3>Delivery Tickets</h3>
-
-
-
-<DeliveryTicketsList DeliveryTickets="_deliveryTickets" />
+@if (_deliveryTickets.Count > 0)
+{
+    <DeliveryTicketsList DeliveryTickets="_deliveryTickets" />
+}
+else
+{
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7"/>
+}
 
 @code {
 

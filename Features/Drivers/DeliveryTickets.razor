@@ -21,9 +21,14 @@
         OnClick="OpenDialog">Add</MudButton> 
 </div>
 </div>
-
-<DeliveryTicketsList DeliveryTickets="_deliveryTickets" />
-
+@if (_deliveryTickets.Count > 0)
+{
+    <DeliveryTicketsList DeliveryTickets="_deliveryTickets" />
+}
+else
+{
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7"/>
+}
 
 @code {
 

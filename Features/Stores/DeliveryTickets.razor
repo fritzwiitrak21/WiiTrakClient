@@ -3,23 +3,16 @@
 @using WiiTrakClient.Features.Stores.Components
 
 <UserAuthentication/>
-@*<MudGrid class="my-8">
-    <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="StoreDto" Label="Select Store" Value=@_selectedStore ValueChanged="(value) => HandleStoreSelected(value)"
-            AnchorOrigin="Origin.BottomCenter">
-            @foreach (var store in _stores)
-            {
-                <MudSelectItem T="StoreDto" Value="@store">@store.StoreNumber - @store.StoreName</MudSelectItem>
-            }
-        </MudSelect>
-    </MudItem>
-</MudGrid>*@
 
 <h3>Delivery Tickets</h3>
-
-
-<DeliveryTicketsList DeliveryTickets="_deliveryTickets" />
-
+@if (_deliveryTickets.Count > 0)
+{
+    <DeliveryTicketsList DeliveryTickets="_deliveryTickets" />
+}
+else
+{
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7"/>
+}
 @code {
 
 }

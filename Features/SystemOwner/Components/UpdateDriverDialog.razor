@@ -13,7 +13,7 @@
                 <MudTextField class="my-6" @bind-Value="Driver.StreetAddress2" Label="Street Address 2" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Driver.City" Label=City Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Driver.State" Required="true" RequiredError=""  Label="State" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Driver.CountryCode"  Label="Country Code" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>
+                @*<MudTextField class="my-6" @bind-Value="Driver.CountryCode"  Label="Country Code" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>*@
                 <MudTextField class="my-6" @bind-Value="Driver.PostalCode" Label="Postal Code" Required="true" RequiredError="" Validation="@(new RegularExpressionAttribute(@"^[0-9]+$"){ErrorMessage = ""})" Variant="Variant.Text"></MudTextField>
                 <MudCheckBox class="my-6"  @bind-Checked="@Driver.IsSuspended" Label="Suspend" Color="Color.Primary"></MudCheckBox>  
                 <MudCheckBox class="my-6" @bind-Checked="@Driver.IsTerminated" Label="Terminate" Color="Color.Primary"></MudCheckBox> 

@@ -286,7 +286,7 @@ h5 {
 .mud-popover-provider .mud-popover-open:first-child {
     z-index: 99999 !important;
 }
-.mud-popover .mud-popover-open {
+.mud-popover.mud-popover-open.mud-popover-top-center.mud-popover-anchor-bottom-center.mud-popover-overflow-flip-onopen.mud-popover-relative-width.mud-paper.mud-elevation-8.overflow-y-auto {
     z-index: 999999 !important;
 }
 

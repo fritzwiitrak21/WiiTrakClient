@@ -21,7 +21,15 @@
 @*Need to fix in future phase*@
 
 <div class="my-8">
-    <StoreList Stores="@_stores" />
+@if (_stores.Count > 0)
+{
+   <StoreList Stores="@_stores" />
+}
+else
+{
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7"/>
+}
+   
 </div>
 
 

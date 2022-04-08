@@ -22,7 +22,15 @@
 </div> 
 
 <div class="my-8">
+@if (_drivers.Count > 0)
+{
     <DriverList Drivers="@_drivers" />
+}
+else
+{
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7"/>
+}
+    
 </div>
 
 
