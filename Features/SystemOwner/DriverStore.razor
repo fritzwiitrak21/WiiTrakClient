@@ -16,14 +16,16 @@
     </MudItem>
 </MudGrid>
 </div>
-
-<DriverStoreList driverstore ="_driverstore"/>
+@if (driverstore.Count>0)
+{
+    <DriverStoreList driverstore ="driverstore"/>
+}
 
 @code {
 
     public List<DriverDto> Drivers { get; set; }=new();
 
-    public List<DriverStoreDetailsDto> _driverstore { get; set; } = new();
+    public List<DriverStoreDetailsDto> driverstore { get; set; } = new();
     public DriverDto _selectedDriver = new();
 
     [Inject]
@@ -35,20 +37,10 @@
     protected override async Task OnInitializedAsync()
     {
         Drivers = await DriverRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
-
-        if (Drivers.Count > 0)
-        {
-            _selectedDriver = Drivers[0];
-        }
-        
-        Core.SelectedDriverId = _selectedDriver.Id;
-        
-        await HandleDriverSelected(_selectedDriver);
     } 
     private async Task HandleDriverSelected(DriverDto Driver)
     {
-        _driverstore = await DriverStoreRepository.GetDriverStoresBySystemownerIdAsync(CurrentUser.UserId,Driver.Id); 
+        driverstore = await DriverStoreRepository.GetDriverStoresBySystemownerIdAsync(CurrentUser.UserId,Driver.Id); 
         Core.SelectedDriverId = Driver.Id;
-        
     }
 }
