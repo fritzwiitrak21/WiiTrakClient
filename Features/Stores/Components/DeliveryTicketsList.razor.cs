@@ -2,6 +2,7 @@
 using Microsoft.JSInterop;
 using MudBlazor;
 using WiiTrakClient.DTOs;
+using WiiTrakClient.Cores;
 using WiiTrakClient.Enums;
 using WiiTrakClient.HttpRepository.Contracts;
 
@@ -130,7 +131,7 @@ namespace WiiTrakClient.Features.Stores.Components
                 // update Delivery Ticket List
               
             }
-            DeliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(_editDeliveryTicket.StoreId);
+            DeliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(CurrentUser.UserId);
         }
 
         public async Task OpenUpdateDeliveryTicketDialog(DeliveryTicketDto deliveryTicket)

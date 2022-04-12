@@ -45,21 +45,34 @@
         <MudTd DataLabel="Number Of Carts">@context.NumberOfCarts</MudTd>
         <MudTd DataLabel="Store">@($"{context.StoreNumber} - {context.StoreName}")</MudTd>
          <MudTd DataLabel="">
-             @if(context.SignOffRequired == true && context.ApprovedByStore == false)
-             {
-                 <MudButton StartIcon="@Icons.Material.Filled.RateReview" Variant="Variant.Filled" Color="Color.Primary"
-                    OnClick="((e) => OpenSignatureDeliveryTicketDialog(context))">Needs Signature
+             @if (context.ApprovedByStore != true && context.SignOffRequired == true)
+            {
+                <MudButton StartIcon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary"
+                       OnClick="((e) => OpenUpdateDeliveryTicketDialog(context))">
+                    Edit
+                </MudButton>
+                <MudButton StartIcon="@Icons.Material.Filled.RateReview" Variant="Variant.Filled" Color="Color.Primary"
+                       OnClick="((e) => OpenSignatureDeliveryTicketDialog(context))">
+                    Needs Signature
+                </MudButton>
+            }
+            else if (context.ApprovedByStore == true && context.SignOffRequired == true)
+            {
+                <MudButton StartIcon="@Icons.Material.Filled.Details" Variant="Variant.Filled" Color="Color.Primary"
+                       OnClick="((e) => OpenDeliveryTicketDialog(context))">
+                    Details
+
+                </MudButton>
+                <MudButton StartIcon="@Icons.Material.Filled.Check" Disabled="true" Variant="Variant.Filled" Color="Color.Success">
+                    Signed
                 </MudButton>
             }
             else
             {
                 <MudButton StartIcon="@Icons.Material.Filled.Details" Variant="Variant.Filled" Color="Color.Primary"
-                    OnClick="((e) => OpenDeliveryTicketDialog(context))">Details
+                       OnClick="((e) => OpenDeliveryTicketDialog(context))">
+                    Details
                 </MudButton>
-                 <MudButton StartIcon="@Icons.Material.Filled.Check" Disabled="true" Variant="Variant.Filled" Color="Color.Success"
-           >Signed
-                </MudButton>
-              
             }
         </MudTd> 
     </RowTemplate>

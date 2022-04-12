@@ -149,7 +149,7 @@
         var dotNetObjectRef = DotNetObjectReference.Create(this);
         await _js.InvokeAsync<string>("saveSignatureAsync", dotNetObjectRef);
         IsSigned = true;
-       
+
     }
 
     [JSInvokable]
@@ -169,6 +169,7 @@
         _fileUrl = await PicUploadHttpRepository.UploadSignature(content);
         editDeliveryTicket.SignaturePicUrl = _fileUrl;
         editDeliveryTicket.ApprovedByStore = true;
+        editDeliveryTicket.SignOffRequired = true;
         success = true;
         _isSigned = true;
         StateHasChanged();

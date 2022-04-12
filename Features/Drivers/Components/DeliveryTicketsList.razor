@@ -4,29 +4,30 @@
 @namespace WiiTrakClient.Features.Drivers.Components
 
 <MudTable Items="@DeliveryTickets" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@_listIsLoading"
-    LoadingProgressColor="Color.Primary">
+          LoadingProgressColor="Color.Primary">
     <HeaderContent>
         <MudTh>
             Photo
         </MudTh>
         <MudTh>
-            <MudTableSortLabel 
-                SortBy="new Func<DeliveryTicketDto, object>(x => x.DeliveryTicketNumber)">Ticket Number
+            <MudTableSortLabel SortBy="new Func<DeliveryTicketDto, object>(x => x.DeliveryTicketNumber)">
+                Ticket Number
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
             <MudTableSortLabel InitialDirection="@SortDirection.Descending"
-                SortBy="new Func<DeliveryTicketDto, object>(x=>x.DeliveredAt)">Delivery Date                    
+                               SortBy="new Func<DeliveryTicketDto, object>(x=>x.DeliveredAt)">
+                Delivery Date
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel 
-                SortBy="new Func<DeliveryTicketDto, object>(x=>x.NumberOfCarts)">Number of Carts
+            <MudTableSortLabel SortBy="new Func<DeliveryTicketDto, object>(x=>x.NumberOfCarts)">
+                Number of Carts
             </MudTableSortLabel>
         </MudTh>
-          <MudTh>
-            <MudTableSortLabel 
-                SortBy="new Func<DeliveryTicketDto, object>(x=>x.StoreName)">Store
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<DeliveryTicketDto, object>(x=>x.StoreName)">
+                Store
             </MudTableSortLabel>
         </MudTh>
         <MudTh></MudTh>
@@ -44,20 +45,31 @@
             @if (context.ApprovedByStore != true && context.SignOffRequired == true)
             {
                 <MudButton StartIcon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary"
-                OnClick="((e) => OpenUpdateDeliveryTicketDialog(context))">Edit
+                       OnClick="((e) => OpenUpdateDeliveryTicketDialog(context))">
+                    Edit
                 </MudButton>
                 <MudButton StartIcon="@Icons.Material.Filled.RateReview" Variant="Variant.Filled" Color="Color.Primary"
-                OnClick="((e) => OpenSignatureDeliveryTicketDialog(context))">Needs Signature
+                       OnClick="((e) => OpenSignatureDeliveryTicketDialog(context))">
+                    Needs Signature
+                </MudButton>
+            }
+            else if (context.ApprovedByStore == true && context.SignOffRequired == true)
+            {
+                <MudButton StartIcon="@Icons.Material.Filled.Details" Variant="Variant.Filled" Color="Color.Primary"
+                       OnClick="((e) => OpenDeliveryTicketDialog(context))">
+                    Details
+
+                </MudButton>
+                <MudButton StartIcon="@Icons.Material.Filled.Check" Disabled="true" Variant="Variant.Filled" Color="Color.Success">
+                    Signed
                 </MudButton>
             }
             else
             {
                 <MudButton StartIcon="@Icons.Material.Filled.Details" Variant="Variant.Filled" Color="Color.Primary"
-            OnClick="((e) => OpenDeliveryTicketDialog(context))">Details
+                       OnClick="((e) => OpenDeliveryTicketDialog(context))">
+                    Details
                 </MudButton>
-                 <MudButton StartIcon="@Icons.Material.Filled.Check" Disabled="true"  Variant="Variant.Filled" Color="Color.Success">Signed
-                </MudButton>
-                
             }
         </MudTd>
     </RowTemplate>

@@ -267,8 +267,9 @@ namespace WiiTrakClient.Features.Drivers.Components
                 await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);
 
                 // update Delivery Ticket List
-                DeliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(_editDeliveryTicket.StoreId);
+               
             }
+            DeliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByDriverIdAsync(CurrentUser.UserId);
         }
 
         async ValueTask IAsyncDisposable.DisposeAsync()
