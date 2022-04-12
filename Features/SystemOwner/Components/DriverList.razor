@@ -104,7 +104,8 @@
                 IsActive=!driver.IsTerminated 
             };
            await DriverHttpRepository.UpdateDriverAsync(driver.Id, driverUpdate);
-           Driver = await DriverHttpRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
-        }  
+           
+        }
+        Driver = await DriverHttpRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
     }
 }

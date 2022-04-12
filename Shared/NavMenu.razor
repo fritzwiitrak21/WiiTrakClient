@@ -211,8 +211,8 @@
             _jsModules = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
             var id = await _jsModules.InvokeAsync<string>("getUserId");
             CurrentUser.UserId = new Guid(id);
-            var name = CurrentUser.UserName = await _jsModules.InvokeAsync<string>("getUserName");
-            var role = CurrentUser.UserRole = await _jsModules.InvokeAsync<string>("getUserRole");
+            CurrentUser.UserName = await _jsModules.InvokeAsync<string>("getUserName");
+            CurrentUser.UserRole = await _jsModules.InvokeAsync<string>("getUserRole");
             var roleid = await _jsModules.InvokeAsync<string>("getUserRoleId");
             CurrentUser.UserRoleId = Convert.ToInt32(roleid);
 
@@ -225,16 +225,3 @@
        
     }
 } 
-
-
-
-@*@code {
-    private bool collapseNavMenu = true;
-
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-    collapseNavMenu = !collapseNavMenu;
-    }
-    }*@

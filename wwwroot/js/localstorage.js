@@ -33,3 +33,14 @@ export function getUserRoleId() {
 export function clearSession(){
     localStorage.clear();
 }
+
+
+export function getValue() {
+
+    var value = document.getElementById("Selected").value;
+    
+    var storeid = $('#textsearch [value="' + value + '"]').data('value');
+
+    return storeid;
+}
+

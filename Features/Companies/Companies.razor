@@ -7,45 +7,54 @@
 @inject IDialogService DialogService
 
 
-<UserAuthentication/>
+<UserAuthentication />
 <h1>Companies</h1>
 
 <div class="d-flex justify-end">
-    <MudButton Variant="Variant.Filled" 
-        StartIcon="@Icons.Material.Filled.Add" 
-        IconColor="Color.Secondary" 
-        Size="Size.Large"
-        OnClick="OpenDialog">Add</MudButton>
+    <MudButton Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Add"
+               IconColor="Color.Secondary"
+               Size="Size.Large"
+               OnClick="OpenDialog">Add</MudButton>
 </div>
 
 <div class="my-8">
-@if (LoaderVisibility)
-{
-    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
-}
-else
-{
-if (_companies.Count > 0)
-{
-    <CompanyList Companies="@_companies" />
-}
-else
-{
-      <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
-}
-}  
+    @if (LoaderVisibility)
+    {
+        <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
+    }
+    else
+    {
+        if (_companies.Count > 0)
+        {
+            <CompanyList Companies="@_companies" />
+        }
+        else
+        {
+            <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+        }
+    }
 </div>
 
 
 
 @code {
+    private IJSObjectReference JsModule;
     List<CompanyDto> _companies = new();
 
     CompanyCreationDto _newCompany = new();
-     bool LoaderVisibility = false;
+    bool LoaderVisibility = false;
     protected override async Task OnInitializedAsync()
     {
         LoaderVisibility = true;
+
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
+
         _companies = await CompanyRepository.GetChildCompaniesAsync(CurrentUser.UserId);
         LoaderVisibility = false;
     }
@@ -79,7 +88,8 @@ else
                     ParentId = CurrentUser.UserId,
                 };
             await CompanyRepository.CreateCompanyAsync(customerCreation);
-             _companies = await CompanyRepository.GetChildCompaniesAsync(CurrentUser.UserId);
+             
         }
+        _companies = await CompanyRepository.GetChildCompaniesAsync(CurrentUser.UserId);
     } 
 }

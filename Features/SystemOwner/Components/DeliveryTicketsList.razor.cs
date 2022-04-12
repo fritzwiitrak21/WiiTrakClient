@@ -5,6 +5,7 @@ using WiiTrakClient.DTOs;
 using WiiTrakClient.Enums;
 using WiiTrakClient.Features.SystemOwner;
 using WiiTrakClient.HttpRepository.Contracts;
+using WiiTrakClient.Cores;
 
 namespace WiiTrakClient.Features.SystemOwner.Components
 {
@@ -86,42 +87,42 @@ namespace WiiTrakClient.Features.SystemOwner.Components
                 await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId,deliveryTicketUpdate);
 
                 // update status of carts to delivered and update cart hitory
-                var carts = _carts.Where(x => x.StoreId == _editDeliveryTicket.StoreId).ToList();
-                foreach (var cart in carts)
-                {
-                    var cartHistory = new CartHistoryUpdateDto
-                    {
-                        DeliveryTicketId = deliveryTicketId,
-                        PickupLatitude = cart.TrackingDevice != null ? cart.TrackingDevice.Latitude : 0,
-                        PickupLongitude = cart.TrackingDevice != null ? cart.TrackingDevice.Longitude : 0,
-                        DroppedOffAt = DateTime.Now,
-                        ServiceProviderId = cart.Store != null ? cart.Store.ServiceProviderId : null,
-                        StoreId = cart.StoreId,
-                        DriverId = selectedDriver.Id,
-                        Condition = cart.Condition,
-                        Status = CartStatus.InsideGeofence,
-                        IsDelivered = true,
-                        CartId = cart.Id
-                    };
+                //var carts = _carts.Where(x => x.StoreId == _editDeliveryTicket.StoreId).ToList();
+                //foreach (var cart in carts)
+                //{
+                //    var cartHistory = new CartHistoryUpdateDto
+                //    {
+                //        DeliveryTicketId = deliveryTicketId,
+                //        PickupLatitude = cart.TrackingDevice != null ? cart.TrackingDevice.Latitude : 0,
+                //        PickupLongitude = cart.TrackingDevice != null ? cart.TrackingDevice.Longitude : 0,
+                //        DroppedOffAt = DateTime.Now,
+                //        ServiceProviderId = cart.Store != null ? cart.Store.ServiceProviderId : null,
+                //        StoreId = cart.StoreId,
+                //        DriverId = selectedDriver.Id,
+                //        Condition = cart.Condition,
+                //        Status = CartStatus.InsideGeofence,
+                //        IsDelivered = true,
+                //        CartId = cart.Id
+                //    };
 
-                    var cartUpdate = new CartUpdateDto
-                    {
-                        ManufacturerName = cart.ManufacturerName,
-                        DateManufactured = cart.DateManufactured,
-                        OrderedFrom = cart.OrderedFrom,
-                        Condition = cart.Condition,
-                        Status = CartStatus.InsideGeofence,
-                        PicUrl = cart.PicUrl,
-                        IsProvisioned = cart.IsProvisioned,
-                        BarCode = cart.BarCode,
-                        StoreId = cart.StoreId,
-                        CartHistory = cartHistory
-                    };
+                //    var cartUpdate = new CartUpdateDto
+                //    {
+                //        ManufacturerName = cart.ManufacturerName,
+                //        DateManufactured = cart.DateManufactured,
+                //        OrderedFrom = cart.OrderedFrom,
+                //        Condition = cart.Condition,
+                //        Status = CartStatus.InsideGeofence,
+                //        PicUrl = cart.PicUrl,
+                //        IsProvisioned = cart.IsProvisioned,
+                //        BarCode = cart.BarCode,
+                //        StoreId = cart.StoreId,
+                //        CartHistory = cartHistory
+                //    };
 
-                    await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
-                }
+                //    await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
+                //}
             }
-
+            _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
 
             //var cartPreUpdate = cart;
 

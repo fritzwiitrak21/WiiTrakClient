@@ -10,27 +10,33 @@
 @inject IDriverHttpRepository DriverHttpRepository
 @inject IEmailHttpRepository EmailHttpRepository
 
-<UserAuthentication/>
+<UserAuthentication />
 <h1>Drivers</h1>
 
 <div class="d-flex justify-end">
-    <MudButton Variant="Variant.Filled"  
-        StartIcon="@Icons.Material.Filled.Add"  
-        IconColor="Color.Secondary" 
-        Size="Size.Large"
-        OnClick="OpenDialog">Add</MudButton> 
-</div> 
+    <MudButton Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Add"
+               IconColor="Color.Secondary"
+               Size="Size.Large"
+               OnClick="OpenDialog">Add</MudButton>
+</div>
 
 <div class="my-8">
-@if (_drivers.Count > 0)
+    @if (LoaderVisibility)
 {
-    <DriverList Drivers="@_drivers" />
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
 }
 else
 {
-    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7"/>
+    if (_drivers.Count > 0)
+    {
+        <DriverList Drivers="@_drivers" />
+    }
+    else
+    {
+        <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+    }
 }
-    
 </div>
 
 
@@ -39,10 +45,22 @@ else
     List<DriverDto> _drivers = new();
 
     DriverCreationDto _newDriver = new();
+    private IJSObjectReference JsModule;
+    bool LoaderVisibility { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
+        LoaderVisibility = true;
+
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+           
+        }
         _drivers = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
+        LoaderVisibility = false;
     }
 
     private async Task OpenDialog()
@@ -80,10 +98,10 @@ else
 
             #region Send Login details to User
             MailRequest request = new MailRequest();
-            request.MailTo =  driverCreation.Email;
+            request.MailTo = driverCreation.Email;
             request.Name = string.Concat(driverCreation.FirstName, " ", driverCreation.LastName);
             await EmailHttpRepository.SendMailAsync(request);
             #endregion
         }
-    } 
+    }
 }

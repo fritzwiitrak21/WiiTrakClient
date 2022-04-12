@@ -45,10 +45,19 @@ else
 
     CompanyCreationDto _newCompany = new();
     bool LoaderVisibility = false;
+    private IJSObjectReference JsModule;
 
     protected override async Task OnInitializedAsync()
     {
         LoaderVisibility = true;
+
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
+
         _companies = await CompanyRepository.GetCompaniesByCorporateIdAsync(CurrentUser.UserId);
         LoaderVisibility = false;
     }  
@@ -81,7 +90,8 @@ else
                 CorparateId = CurrentUser.UserId,
             };
            await CompanyRepository.CreateCompanyAsync(customerCreation);
-           _companies = await CompanyRepository.GetAllCompaniesAsync();  
+           
         } 
+       _companies = await CompanyRepository.GetCompaniesByCorporateIdAsync(CurrentUser.UserId); 
     } 
 }

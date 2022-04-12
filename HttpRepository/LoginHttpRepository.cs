@@ -71,6 +71,18 @@ namespace WiiTrakClient.HttpRepository
             }
         }
 
+        //public async Task<string> AuthenticateAsync()
+        //{
+        //    try
+        //    {
+        //        return await _httpService.AuthenticateAsync().ConfigureAwait(false);
+        //    }
+        //    catch (Exception ex) when (ex != null)
+        //    {
+        //        //_logger.LogWarning(MyLogEvents.Unhandled, ex, Extension.LoggerFormat(AppConstants.EXCEPTIONINREPOSITORY));
+        //        return null;
+        //    }
+        //}
 
     }
 }

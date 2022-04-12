@@ -8,82 +8,93 @@
 @inject IDialogService DialogService
 @inject IStoreHttpRepository StoreHttpRepository
 
-<UserAuthentication/>
+<UserAuthentication />
 <h1>Stores</h1>
 
 @*<div class="d-flex justify-end">
-    <MudButton Variant="Variant.Filled" 
-        StartIcon="@Icons.Material.Filled.Add" 
-        IconColor="Color.Secondary" 
-        Size="Size.Large"
-        OnClick="OpenDialog">Add</MudButton>
-</div>*@
+    <MudButton Variant="Variant.Filled"
+    StartIcon="@Icons.Material.Filled.Add"
+    IconColor="Color.Secondary"
+    Size="Size.Large"
+    OnClick="OpenDialog">Add</MudButton>
+    </div>*@
 @*Need to fix in future phase*@
 
 <div class="my-8">
-@if (LoaderVisibility)
-{
-    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
-}
-else
-{
-if (_stores.Count > 0)
-{
-   <StoreList Stores="@_stores" />
-}
-else
-{
-      <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
-}
-}
-   
+    @if (LoaderVisibility)
+    {
+        <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
+    }
+    else
+    {
+        if (_stores.Count > 0)
+        {
+            <StoreList Stores="@_stores" />
+        }
+        else
+        {
+            <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+        }
+    }
+
 </div>
 
 
 
 @code {
-    List<StoreDto> _stores = new ();
+    List<StoreDto> _stores = new();
 
     StoreCreationDto _newStore = new();
-       bool LoaderVisibility = false;
+    bool LoaderVisibility = false;
+    private IJSObjectReference JsModule;
+
     protected override async Task OnInitializedAsync()
     {
-         LoaderVisibility = true;
-        _stores = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);
-         LoaderVisibility = false;
-    }  
+        LoaderVisibility = true;
 
-    private async Task OpenDialog() 
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
+
+        _stores = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);
+        LoaderVisibility = false;
+    }
+
+    private async Task OpenDialog()
     {
         var parameters = new DialogParameters();
         _newStore = new StoreCreationDto();
         parameters.Add("NewStore", _newStore);
 
-         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
-         var dialog  = DialogService.Show<AddStoreDialog>("Add Store", parameters);
-        var result = await dialog.Result; 
+        var dialog = DialogService.Show<AddStoreDialog>("Add Store", parameters);
+        var result = await dialog.Result;
 
-        if (!result.Cancelled) 
+        if (!result.Cancelled)
         {
             // add new store to backend
-            var storeCreation = new StoreCreationDto {
-                StoreName = _newStore.StoreName,
-                StreetAddress1 = _newStore.StreetAddress1,
-                StreetAddress2 = _newStore.StreetAddress2,
-                City = _newStore.City,
-                State = _newStore.State,
-                PostalCode = _newStore.PostalCode,
-                ProfilePicUrl = _newStore.ProfilePicUrl,
-                Email = _newStore.Email,
-                PhonePrimary = _newStore.PhonePrimary,
-                PhoneSecondary = _newStore.PhoneSecondary,
-                ServiceProviderId = _newStore.ServiceProviderId,
-                IsSignatureRequired=_newStore.IsSignatureRequired
-               
-            };
-           await StoreHttpRepository.CreateStoreAsync(storeCreation);
-           _stores = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);
-        }  
-    } 
+            var storeCreation = new StoreCreationDto
+                {
+                    StoreName = _newStore.StoreName,
+                    StreetAddress1 = _newStore.StreetAddress1,
+                    StreetAddress2 = _newStore.StreetAddress2,
+                    City = _newStore.City,
+                    State = _newStore.State,
+                    PostalCode = _newStore.PostalCode,
+                    ProfilePicUrl = _newStore.ProfilePicUrl,
+                    Email = _newStore.Email,
+                    PhonePrimary = _newStore.PhonePrimary,
+                    PhoneSecondary = _newStore.PhoneSecondary,
+                    ServiceProviderId = _newStore.ServiceProviderId,
+                    IsSignatureRequired = _newStore.IsSignatureRequired
+
+                };
+            await StoreHttpRepository.CreateStoreAsync(storeCreation);
+            _stores = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);
+        }
+    }
 }

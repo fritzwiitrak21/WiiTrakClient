@@ -8,52 +8,60 @@
 @inject IDialogService DialogService
 
 
-<UserAuthentication/>
+<UserAuthentication  />
 <h1>WiiTrak Companies</h1>
 
 <div class="d-flex justify-end">
-    <MudButton Variant="Variant.Filled" 
-        StartIcon="@Icons.Material.Filled.Add" 
-        IconColor="Color.Secondary" 
-        Size="Size.Large"
-        OnClick="OpenDialog">Add</MudButton>
+    <MudButton Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Add"
+               IconColor="Color.Secondary"
+               Size="Size.Large"
+                      OnClick="OpenDialog">Add</MudButton>
 </div>
 
 <div class="my-8">
     @if (LoaderVisibility)
-{
-    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
-}
-else
-{
-if (_companies.Count > 0)
-{
-    <CompanyList Companies="@_companies" />
-}
-else
-{
-  <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
-}
-}
-    
+        {
+        <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
+        }
+        else
+        {
+                if (_companies.Count > 0)
+                {
+            <CompanyList Companies="@_companies" />
+                }
+                else
+                {
+            <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+                }
+        }
+
 </div>
 
 
 
 @code {
-    List<CompanyDto> _companies = new ();
+    List<CompanyDto> _companies = new();
 
     CompanyCreationDto _newCompany = new();
-        bool LoaderVisibility = false;
+    bool LoaderVisibility = false;
+    private IJSObjectReference JsModule;
 
     protected override async Task OnInitializedAsync()
     {
-         LoaderVisibility = true;
-        _companies = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);     
-         LoaderVisibility = false;
-    }  
+        LoaderVisibility = true;
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
 
-    private async Task OpenDialog() 
+        _companies = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
+        LoaderVisibility = false;
+    }
+
+    private async Task OpenDialog()
     {
         try
         {
@@ -61,34 +69,35 @@ else
             _newCompany = new CompanyCreationDto();
             parameters.Add("NewCompany", _newCompany);
 
-            DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+            DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
-            var dialog  = DialogService.Show<AddCompanyDialog>("Add Company", parameters);
-            var result = await dialog.Result; 
+            var dialog = DialogService.Show<AddCompanyDialog>("Add Company", parameters);
+            var result = await dialog.Result;
 
-            if (!result.Cancelled) 
+            if (!result.Cancelled)
             {
                 // add new customer to backend
-                var customerCreation = new CompanyCreationDto {
-                Name = _newCompany.Name,
-                StreetAddress1 = _newCompany.StreetAddress1,
-                StreetAddress2 = _newCompany.StreetAddress2,
-                City = _newCompany.City,
-                State = _newCompany.State,
-                PostalCode = _newCompany.PostalCode,
-                ProfilePicUrl = _newCompany.ProfilePicUrl,
-                Email = _newCompany.Email,
-                PhonePrimary = _newCompany.PhonePrimary,
-                PhoneSecondary = _newCompany.PhoneSecondary,
-                SystemOwnerId = CurrentUser.UserId,
-            };
+                var customerCreation = new CompanyCreationDto
+                    {
+                                Name = _newCompany.Name,
+                                StreetAddress1 = _newCompany.StreetAddress1,
+                                StreetAddress2 = _newCompany.StreetAddress2,
+                                City = _newCompany.City,
+                                State = _newCompany.State,
+                                PostalCode = _newCompany.PostalCode,
+                                ProfilePicUrl = _newCompany.ProfilePicUrl,
+                                Email = _newCompany.Email,
+                                PhonePrimary = _newCompany.PhonePrimary,
+                                PhoneSecondary = _newCompany.PhoneSecondary,
+                                SystemOwnerId = CurrentUser.UserId,
+                            };
                 await CompanyRepository.CreateCompanyAsync(customerCreation);
-                _companies = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);  
-            } 
+            }
+            _companies = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);  
         }
-        catch(Exception ex)
+        catch  (Exception ex)
         {
-            
+
         }
-    } 
+    }
 }

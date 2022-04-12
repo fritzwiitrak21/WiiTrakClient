@@ -1,25 +1,26 @@
 @namespace WiiTrakClient.Features.Drivers.Components
 @using System.ComponentModel.DataAnnotations
 @using WiiTrakClient.Shared.Components
+@using Blazored.Typeahead
 
 
 <style>
     .validation-message {
-    font-size:0;
-    display:none;
-    font-display:block;
-    
-    color: red;
-}
-.mud-input-helper-text.mud-input-error {
-    font-size: 0;
-}
-.mud-input-helper-text {
-    color: var(--mud-palette-text-secondary);
-    margin: 0;
-    font-size: 0;
-    
-}      
+        font-size: 0;
+        display: none;
+        font-display: block;
+        color: red;
+    }
+
+    .mud-input-helper-text.mud-input-error {
+        font-size: 0;
+    }
+
+    .mud-input-helper-text {
+        color: var(--mud-palette-text-secondary);
+        margin: 0;
+        font-size: 0;
+    }
 </style>
 
 <MudDialog>
@@ -27,21 +28,27 @@
         <div style="width: 400px;height:450px;overflow: auto;">
             <MudForm Model="@NewDeliveryTicket" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
                 <DataAnnotationsValidator />
+                @*<MudText Class="my-4" Typo="Typo.h6">Store</MudText>
+                <input id="Selected" type="text" list="textsearch" autocomplete="on" @onchange="eventArgs => { OnSelect(eventArgs); }" />
+                <datalist id="textsearch">
+                    @foreach (var store in Stores)
+                    {
+                        <option id="@store.Id" data-value="@store.Id" value="@store.StoreName - @store.StoreNumber"></option>
+
+                    }
+                </datalist>*@
 
 
-      @*  <MudAutocomplete T="StoreDto" Label="Store Name" HelperText="Select a Store"  
-        ResetValueOnEmptyText="true"  SearchFunc="@Search1"  @bind-Value="selectedStore"
-        CoerceText="true"/>*@
 
                 <MudSelect Class="my-6" T="StoreDto" Label="Store" AnchorOrigin="Origin.BottomCenter"
-                        HelperText="Select a Store" @bind-Value="@_selectedStore" Required="true" 
-                        AdornmentColor="Color.Primary">
-                       
-                       
+                    HelperText="Select a Store" @bind-Value="@_selectedStore" Required="true"
+                    AdornmentColor="Color.Primary">
+
+
 
                     @foreach (var store in Stores)
                     {
-                        <MudSelectItem T="StoreDto" Value="@store">@store.StoreName - @store.StoreNumber</MudSelectItem>
+                    <MudSelectItem T="StoreDto" Value="@store">@store.StoreName - @store.StoreNumber</MudSelectItem>
                     }
                     </MudSelect>
 
@@ -52,27 +59,47 @@
                 }
 
                 @*<MudText Class="my-4" Typo="Typo.h5">No of available carts to pickup: @NoOfCartsToPickUp</MudText>*@
-                <MudTextField @bind-Value="@NewDeliveryTicket.NumberOfCarts" Label="No of Carts" Required="true" For="@(() => @NewDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
-@*                    <ValidationMessage For="@(() => @NewDeliveryTicket.NumberOfCarts)" />
-*@                <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
-@*                    <ValidationMessage For="@(() => @NewDeliveryTicket.PicUrl)" />
-                        @*<CaptureImage OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete"/>
-                        <ValidationMessage For="@(() => @NewDeliveryTicket.PicUrl)" />*@
+                <MudTextField @bind-Value="@NewDeliveryTicket.NumberOfCarts" Label="No of Carts" Required="true" RequiredError=" " Validation="@(new RegularExpressionAttribute(@"^[1-9][0-9]*$") {ErrorMessage = " "})" For="@(() => @NewDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
+                @if (@NewDeliveryTicket.NumberOfCarts == 0)
+                {
+
+                    success = false;
+                }
+                else if (@NewDeliveryTicket.NumberOfCarts > 0)
+                {
+                    success = true;
+                }
+                @*<ValidationMessage For="@(() => @NewDeliveryTicket.NumberOfCarts)" />*@
+                <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
+                @*                    <ValidationMessage For="@(() => @NewDeliveryTicket.PicUrl)" />
+                    @*<CaptureImage OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete"/>
+                    <ValidationMessage For="@(() => @NewDeliveryTicket.PicUrl)" />*@
+
                 @if (!string.IsNullOrWhiteSpace(_fileUrl))
                 {
-                  <div class="d-flex justify-start mt-6 popupitemimage">
-                      <img src="@_fileUrl" width="300" height="300" />
-                  </div>
+                    <div class="d-flex justify-start mt-6 popupitemimage">
+                        <img src="@_fileUrl" width="300" height="300" />
+                    </div>
                 }
+                @if (success == true && picupload == true)
+                {
+                    formvalid = true;
+                }
+                else
+                {
+                    @*<ValidationMessage For="@(() => @NewDeliveryTicket.NumberOfCarts)" />*@
+                    formvalid = false;
+                }
+
 
             </MudForm>
         </div>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" 
-                OnClick="Submit" 
-                Disabled="@(!success)">Save</MudButton>
+        <MudButton Color="Color.Primary"
+                   OnClick="Submit"
+                   Disabled="@(!formvalid)">Save</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -82,8 +109,9 @@
     public DeliveryTicketCreationDto? NewDeliveryTicket { get; set; }
 
 
-    public int NoOfCarts = 1;
-    
+    public int NoOfCarts;
+
+
 
     [Parameter]
     public DriverDto? Driver { get; set; }
@@ -94,8 +122,13 @@
     [Parameter]
     public List<StoreDto>? Stores { get; set; } = new();
 
+
+    [Inject] IJSRuntime JsRuntime { get; set; }
+
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     bool success;
+    bool picupload;
+    bool formvalid;
     string[] errors = { };
     MudForm form;
 
@@ -103,11 +136,14 @@
     StoreDto _selectedStore = new();
     StoreDto selectedStore = new();
 
+
+
+
     private string _fileUrl = "";
     private int NoOfCartsToPickUp = 0;
     private string StoreName = "";
+    private IJSObjectReference JsModule;
 
-    
 
 
 
@@ -115,19 +151,18 @@
     {
         if (Stores != null && Stores.Count() >= 1)
         {
+            Stores = Stores.OrderBy(o => o.StoreName).ToList();
             _selectedStore = Stores[0];
-            NewDeliveryTicket.StoreId = _selectedStore.Id;
+             NewDeliveryTicket.StoreId = _selectedStore.Id;
         }
 
         NewDeliveryTicket.DriverId = Driver.Id;
+        //NoOfCarts = 1;
+        //NewDeliveryTicket.NumberOfCarts=NoOfCarts;
     }
 
     private async Task<IEnumerable<StoreDto>> Search1(string value)
     {
-
-
-
-        // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
             return Stores;
 
@@ -136,7 +171,7 @@
 
     private void UpdateNumberOfCarts()
     {
-       NoOfCartsToPickUp = Carts.Count(x => x.StoreId == _selectedStore.Id && x.Status == CartStatus.PickedUp);  
+        NoOfCartsToPickUp = Carts.Count(x => x.StoreId == _selectedStore.Id && x.Status == CartStatus.PickedUp);
     }
 
     private void UpdateStoreAndServiceProviderIds()
@@ -148,40 +183,34 @@
 
     private void PicUploadStart()
     {
-        success=false;
+        //success = false;
+        picupload = false;
     }
 
     private void PicUploadComplete(string url)
     {
         _fileUrl = url;
-        success=true;
+        //success = true;
+        picupload = true;
         NewDeliveryTicket.PicUrl = _fileUrl;
     }
 
-    private void StoreFilter()
+
+    private async Task OnSelect(object e)
     {
-
-        if (StoreName != "")
+        try
         {
-            TempStores = new();
-            foreach (var item in Stores)
-            {
-                if (item.StoreName.ToLower().Contains(StoreName.ToLower().Trim()))
-                {
-                    TempStores.Add(item);
-                }
-            }
-
-
-            //TempStores = Stores.Where(x => x.StoreName.ToLower().Contains(StoreName.ToLower().Trim()));
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getValue");
+            NewDeliveryTicket.StoreId = new Guid(Id);
+        }
+        catch (Exception ex)
+        {
 
 
         }
-        else
-        {
-            TempStores = new();
-            TempStores = Stores;
-        }
+
+
     }
 
     void Submit()

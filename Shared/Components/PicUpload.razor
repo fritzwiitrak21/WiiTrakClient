@@ -9,7 +9,7 @@
         Color="Color.Secondary"
         Icon="@Icons.Filled.PhotoCamera"
         Label="Take Picture"
-        for="fileInput" />
+        for="fileInput" Required=true RequiredError=" " />
 
 @code {
     [Parameter]
@@ -25,10 +25,12 @@
     public IPicUploadHttpRepository PicUploadHttpRepository {get; set;}
 
     IBrowserFile? _imageFile = null;
+    
     private async Task UploadFile(InputFileChangeEventArgs e)
     {
-        await OnPicUploadStart.InvokeAsync();
         
+        await OnPicUploadStart.InvokeAsync();
+
         _imageFile = e.File;
 
         if (_imageFile != null)
@@ -46,6 +48,7 @@
         else 
         {
             await OnPicUploadComplete.InvokeAsync("");
+            
         }
     }
 }

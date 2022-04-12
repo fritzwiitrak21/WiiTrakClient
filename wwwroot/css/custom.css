@@ -212,11 +212,11 @@ padding-bottom: 30px;
 #ctlSignature_Container {
     margin-left: 0px !important;
     width: 100% !important;
-    height: 310px !important;
+    height: 125px !important;
 }
 #ctlSignature {
     width: 100% !important;
-    height: 310px !important;
+    height: 125px !important;
 }
 .mud-button-text.mud-button-text-primary {
     background: #2c86d2 !important;
@@ -433,3 +433,6 @@ h5 {
                 width: 100%;
             }
     }
+.mud-popover.mud-popover-open.mud-popover-top-center.mud-popover-anchor-bottom-center.mud-popover-overflow-flip-onopen.mud-popover-relative-width.mud-paper.mud-elevation-8.overflow-y-auto {
+    z-index: 999999 !important;
+}

@@ -22,31 +22,29 @@ namespace WiiTrakClient.Features.SystemOwner
         
         [Inject] IJSRuntime JsRuntime { get; set; }
 
-        //[Inject] IDriverHttpRepository DriverRepository { get; set; }
-
         [Inject] public IDeliveryTicketHttpRepository DeliveryTicketHttpRepository { get; set; }
 
-        //[Inject] public ICartHttpRepository CartHttpRepository { get; set; }
-
-        //[Inject] public IStoreHttpRepository StoreHttpRepository { get; set; }
-
-        //[Inject] IDialogService DialogService { get; set; }
-
-        //[Inject] IWorkOrderHttpRepository WorkOrderHttpRepository { get; set; }
         List<DeliveryTicketDto> deliveryTickets = new();
-        //DriverDto _selectedDriver = new();
-        //List<DriverDto> _drivers = new();
+        
         List<DeliveryTicketDto> _deliveryTickets = new();
-        //List<CartDto> _carts = new();
-        //List<StoreDto> _stores = new();
-        //DeliveryTicketCreationDto _newDeliveryTicket = new();
+        
+        private IJSObjectReference JsModule;
 
         protected override async Task OnInitializedAsync()
         {
            
             try
             {
-                 deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId,(Role)CurrentUser.UserRoleId);
+                if (CurrentUser.UserId == Guid.Empty)
+                {
+                    JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+                    var Id = await JsModule.InvokeAsync<string>("getUserId");
+                    CurrentUser.UserId = new Guid(Id);
+                    var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
+                    CurrentUser.UserRoleId = Convert.ToInt32(roleid);
+                }
+
+                deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId,(Role)CurrentUser.UserRoleId);
                 if (deliveryTickets is not null)
                 {
                     _deliveryTickets = deliveryTickets;

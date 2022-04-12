@@ -24,7 +24,7 @@
     <DialogContent>              
         <div style="width: 400px;height:450px;overflow: auto;" > 
             <MudForm Model="@Company" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">   
-                <MudTextField Class="my-6" @bind-Value="Company.Name"  Label="Name" Required="true" RequiredError=" " For="@(() => @Company.Name)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField Class="my-6" @bind-Value="Company.Name"  Label="Company Name" Required="true" RequiredError=" " For="@(() => @Company.Name)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField Class="my-6" @bind-Value="Company.StreetAddress1" Label="Street Address 1" Required="true" RequiredError=" " For="@(() => @Company.StreetAddress1)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField Class="my-6" @bind-Value="Company.StreetAddress2" Label="Street Address 2" Required="true" RequiredError=" " For="@(() => @Company.StreetAddress2)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField Class="my-6" @bind-Value="Company.City" Label="City" Required="true" RequiredError=" " For="@(() => @Company.City)" Variant="Variant.Text"></MudTextField>  

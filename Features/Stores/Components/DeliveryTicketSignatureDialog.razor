@@ -27,9 +27,9 @@
     <DialogContent>
         <div style="width: 400px;height:450px;overflow: auto;">
             <MudForm Model="@editDeliveryTicket" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
-            <MudText Class="my-4" Typo="Typo.h5">Store: @StoreName</MudText>
+            @*<MudText Class="my-4" Typo="Typo.h5">Store: @StoreName</MudText>*@
             <MudText Class="my-4" Typo="Typo.h5">Driver: @deliveryTicketDto.DriverName</MudText>
-            <MudText Class="my-4" Typo="Typo.h5">Number of Carts: @deliveryTicketDto.NumberOfCarts</MudText>
+            @*<MudText Class="my-4" Typo="Typo.h5">Number of Carts: @deliveryTicketDto.NumberOfCarts</MudText>*@
             <MudTextField @bind-Value="@editDeliveryTicket.Signee" Label="Signee Name" Required="true" RequiredError="" For="@(() => @editDeliveryTicket.Signee)" Variant="Variant.Text"></MudTextField> 
             @*@if(deliveryTicketSummary != null)
             {

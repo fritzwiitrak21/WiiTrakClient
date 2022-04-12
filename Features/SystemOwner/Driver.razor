@@ -7,37 +7,37 @@
 @inject ISystemOwnerHttpRepository SystemOwnerHttpRepository
 @inject IDialogService DialogService
 
-@inject IDriverHttpRepository DriverHttpRepository 
+@inject IDriverHttpRepository DriverHttpRepository
 @inject IEmailHttpRepository EmailHttpRepository
 
-<UserAuthentication/>
+<UserAuthentication />
 <h1>Drivers</h1>
 
 <div class="d-flex justify-end">
-    <MudButton Variant="Variant.Filled"  
-        StartIcon="@Icons.Material.Filled.Add"  
-        IconColor="Color.Secondary" 
-        Size="Size.Large"
-        OnClick="OpenDialog">Add</MudButton> 
-</div> 
+    <MudButton Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Add"
+               IconColor="Color.Secondary"
+               Size="Size.Large"
+               OnClick="OpenDialog">Add</MudButton>
+</div>
 
 <div class="my-8">
     @if (LoaderVisibility)
-{
-    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
-}
-else
-{
- 
-if (_driver.Count > 0)
-{
-    <DriverList Driver="@_driver" />
-}
-else
-{
-     <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
-}
-}
+    {
+        <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
+    }
+    else
+    {
+
+        if (_driver.Count > 0)
+        {
+            <DriverList Driver="@_driver" />
+        }
+        else
+        {
+            <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+        }
+    }
 </div>
 
 
@@ -46,12 +46,22 @@ else
     List<DriverDto> _driver = new();
 
     DriverCreationDto _newDriver = new();
-     bool LoaderVisibility = false;
+    bool LoaderVisibility = false;
+    private IJSObjectReference JsModule;
+
     protected override async Task OnInitializedAsync()
     {
-          LoaderVisibility = true;
+        LoaderVisibility = true;
+
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
+
         _driver = await DriverHttpRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
-         LoaderVisibility = false;
+        LoaderVisibility = false;
     }
 
     private async Task OpenDialog()
@@ -68,9 +78,9 @@ else
         if (!result.Cancelled)
         {
             // add new driver to backend
-            var driverCreation = new DriverCreationDto     
+            var driverCreation = new DriverCreationDto
                 {
-                    CompanyId=_newDriver.CompanyId,
+                    CompanyId = _newDriver.CompanyId,
                     FirstName = _newDriver.FirstName,
                     LastName = _newDriver.LastName,
                     Email = _newDriver.Email,
@@ -86,14 +96,15 @@ else
                     IsSuspended = false
                 };
             await DriverHttpRepository.CreateDriverAsync(driverCreation);
-            _driver = await DriverHttpRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
+          
 
             #region Send Login details to User
             MailRequest request = new MailRequest();
-            request.MailTo =  driverCreation.Email;
+            request.MailTo = driverCreation.Email;
             request.Name = string.Concat(driverCreation.FirstName, " ", driverCreation.LastName);
             await EmailHttpRepository.SendMailAsync(request);
             #endregion
         }
+          _driver = await DriverHttpRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
     } 
 }

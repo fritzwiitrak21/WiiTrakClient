@@ -14,7 +14,7 @@ namespace WiiTrakClient.DTOs
         public string LastName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = " ")]
-        [RegularExpression(@"^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$", ErrorMessage = " ")]
+        [RegularExpression(@"^[a-zA-Z0-9]+@[a-z]+\.[a-z]{2,3}$", ErrorMessage = " ")]
         public string Email { get; set; } = string.Empty;
 
 

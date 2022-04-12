@@ -35,18 +35,26 @@ namespace WiiTrakClient.Features.Drivers
         [Inject] IWorkOrderHttpRepository WorkOrderHttpRepository { get; set; }
 
         DriverDto _selectedDriver = new();
-        //List<DriverDto> _drivers = new();
+       
         List<DeliveryTicketDto> _deliveryTickets = new();
         List<DeliveryTicketDto> deliveryTickets = new();
         List<CartDto> _carts = new();
         List<StoreDto> _stores = new();
         DeliveryTicketCreationDto _newDeliveryTicket = new();
+        private IJSObjectReference JsModule;
 
         protected override async Task OnInitializedAsync()
         {
            
             try
             {
+                if (CurrentUser.UserId == Guid.Empty)
+                {
+                    JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+                    var Id = await JsModule.InvokeAsync<string>("getUserId");
+                    CurrentUser.UserId = new Guid(Id);
+                   
+                }
                 await GetDeliveryTicketsByDriverId(CurrentUser.UserId);
                 _selectedDriver = await DriverRepository.GetDriverByIdAsync(CurrentUser.UserId);
             }
@@ -76,6 +84,10 @@ namespace WiiTrakClient.Features.Drivers
         private async Task OpenDialog()
         {
             var parameters = new DialogParameters();
+            _newDeliveryTicket = new DeliveryTicketCreationDto();
+            //_selectedDriver = new DriverDto();
+            //_carts = new List<CartDto>();
+            //_stores = new List<StoreDto>();
             parameters.Add("NewDeliveryTicket", _newDeliveryTicket);
             parameters.Add("Driver", _selectedDriver);
             parameters.Add("Carts", _carts);

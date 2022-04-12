@@ -46,7 +46,7 @@
                     </div>
                 </div>
                 <div class="filterlapbtn">
-                    @if (TotalNoofCarts > 0 && TotalNoofDeliveries > 0)
+                    @if (TotalNoofCarts > 0 && TotalNoofDeliveries > 0 && CurrentUser.UserRoleId != 5)
                     {
                         <MudIconButton Icon="@Icons.Outlined.FileDownload"
                                    Variant="Variant.Filled"
@@ -87,9 +87,8 @@ else
     int TotalNoofDeliveries { get; set; } = 0;
     int TotalNoofCarts { get; set; } = 0;
     List<DeliveryTicketDto> _deliveryTickets = new();
-    List<DeliveryTicketDto> TicketsList = new();
-    List<DeliveryTicketDto> deliveryTickets2 = new();
     private MemoryStream ms;
+    private IJSObjectReference JsModule;
 
     bool LoaderVisibility { get; set; } = false;
 
@@ -103,6 +102,16 @@ else
         try
         {
             LoaderVisibility = true;
+
+            if (CurrentUser.UserId == Guid.Empty)
+            {
+                JsModule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+                var Id = await JsModule.InvokeAsync<string>("getUserId");
+                CurrentUser.UserId = new Guid(Id);
+                var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
+                CurrentUser.UserRoleId = Convert.ToInt32(roleid);
+            }
+
             var deliveryTickets = CurrentUser.UserRoleId <= 4 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId) :
                                   // For the role of System Owner - 1, Corporate - 2, Prime Company -3, Sub Company - 4
                                   CurrentUser.UserRoleId == 5 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByDriverIdAsync(CurrentUser.UserId) :
@@ -111,7 +120,7 @@ else
                                   // For the role of Store
                                   await DeliveryTicketHttpRepository.GetAllDeliveryTicketsAsync();
             // To get all the delivery tickets
-           
+
             if (deliveryTickets is not null)
             {
                 _deliveryTickets = deliveryTickets.Where(x => x.DeliveredAt.Date >= Startdate && x.DeliveredAt.Date <= Enddate).ToList();

@@ -11,7 +11,7 @@ namespace WiiTrakClient.DTOs
         public int NumberOfCarts { get; set; }
 
         public string Grid { get; set; } = string.Empty;
-
+        [Required(ErrorMessage =" ")]
         public string PicUrl { get; set; } = string.Empty;
 
         public string SignaturePicUrl { get; set; } = string.Empty;

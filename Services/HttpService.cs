@@ -2,12 +2,16 @@
 using System.Text;
 using WiiTrakClient.Helpers;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using WiiTrakClient.DTOs;
+
 
 namespace WiiTrakClient.Services
 {
     public class HttpService: IHttpService
     {
         private readonly HttpClient httpClient;
+        private readonly string token;
 
         private JsonSerializerOptions defaultJsonSerializerOptions =>
             new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
@@ -21,6 +25,7 @@ namespace WiiTrakClient.Services
 
         public async Task<HttpResponseWrapper<T>> Get<T>(string url)
         {
+            //HttpClientHeaders(token);
             var responseHTTP = await httpClient.GetAsync(url);
 
             if (responseHTTP.IsSuccessStatusCode)
@@ -90,5 +95,71 @@ namespace WiiTrakClient.Services
             var responseString = await httpResponse.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<T>(responseString, options);
         }
+
+        private  void HttpClientHeaders(string token = "")
+        {
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+        }
+
+        //public async Task<string> AuthenticateAsync(LoginDto login)
+        //{
+        //    LoginDto logindto = new LoginDto
+        //    {
+        //        Username= login.Username,
+        //        Password = login.Password,
+        //    };
+
+        //    CancellationTokenSource cancellationToken = new CancellationTokenSource();
+
+        //    const string postLogin = "Authenticate/Login";
+
+        //    return await Postabc<string, LoginDto>(postLogin, logindto).ConfigureAwait(false);
+        //}
+
+        //public async Task<HttpResponseWrapper<TResponse>> Postabc<T, TResponse>(string url, T data)
+        //{
+        //    var dataJson = JsonSerializer.Serialize(data);
+        //    var stringContent = new StringContent(dataJson, Encoding.UTF8, "application/json");
+        //    var response = await httpClient.PostAsync(url, stringContent);
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        var responseDeserialized = await Deserialize<TResponse>(response, defaultJsonSerializerOptions);
+        //        return new HttpResponseWrapper<TResponse>(responseDeserialized, true, response);
+        //    }
+        //    else
+        //    {
+        //        return new HttpResponseWrapper<TResponse>(default, false, response);
+        //    }
+        //}
+
+        //private async Task<TResult> SendPostEntityAsync<TResult, TRequest>(string controller, TRequest data, bool isDeviceConfig, TResult tResult)
+        //{
+        //    try
+        //    {
+        //        if (!string.IsNullOrWhiteSpace(AppConstants.Host))
+        //        {
+        //            var content = new StringContent(JsonConvert.SerializeObject(data));
+        //            content.Headers.ContentType = new MediaTypeHeaderValue(JSON);
+        //            var response = await Client.PostAsync(new Uri(AppConstants.Host + controller), content).ConfigureAwait(false);
+
+        //            await HandleResponseAsync(response).ConfigureAwait(false);
+        //            string serialized = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        //            TResult result = await Task.Run(() =>
+        //                JsonConvert.DeserializeObject<TResult>(serialized, _serializerSettings)).ConfigureAwait(false);
+
+        //            return result;
+        //        }
+        //    }
+        //    catch (ArithmeticException)
+        //    {
+        //        return tResult;
+        //    }
+        //    return default;
+        //}'
     }
 }

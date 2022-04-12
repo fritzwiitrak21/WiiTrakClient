@@ -73,6 +73,7 @@ namespace WiiTrakClient.Features.Stores.Components
             _editDeliveryTicket.ServiceProviderId = deliveryTicket.ServiceProviderId;
             _editDeliveryTicket.DeliveryTicketNumber = deliveryTicket.DeliveryTicketNumber;
             _editDeliveryTicket.DeliveredAt = deliveryTicket.DeliveredAt;
+            _editDeliveryTicket.Signee = "";
             parameters.Add("deliveryTicketDto", deliveryTicket);
             parameters.Add("StoreName", store.StoreNumber + "-" + store.StoreName);
             parameters.Add("deliveryTicketSummary", deliveryTicketSummary);
@@ -86,25 +87,28 @@ namespace WiiTrakClient.Features.Stores.Components
             var result = await dialog.Result;
             if (!result.Cancelled)
             {
-                if(_editDeliveryTicket.ApprovedByStore)
-                {
-                    var _carts = await CartRepository.GetCartsByDriverIdAsync(_editDeliveryTicket.DriverId);
-                    foreach (var cart in _carts)
-                    {
-                        if (cart.Condition == CartCondition.Damage)
-                        {
-                            var newWorkOrder = new WorkOrderCreationDto
-                            {
-                                Issue = cart.DamageIssue,
-                                Notes = "",
-                                CartId = cart.Id,
-                                StoreId = cart.Store != null ? cart.Store.Id : null
-                            };
+              //dont remove the code 
+                    #region 
+                //if(_editDeliveryTicket.ApprovedByStore)
+                //{
+                //    var _carts = await CartRepository.GetCartsByDriverIdAsync(_editDeliveryTicket.DriverId);
+                //    //foreach (var cart in _carts)
+                //{
+                //    if (cart.Condition == CartCondition.Damage)
+                //    {
+                //        var newWorkOrder = new WorkOrderCreationDto
+                //        {
+                //            Issue = cart.DamageIssue,
+                //            Notes = "",
+                //            CartId = cart.Id,
+                //            StoreId = cart.Store != null ? cart.Store.Id : null
+                //        };
 
-                            await WorkOrderHttpRepository.CreateWorkOrderAsync(newWorkOrder);
-                        }
-                    }
-                }
+                //        await WorkOrderHttpRepository.CreateWorkOrderAsync(newWorkOrder);
+                //    }
+                //}
+                // }
+                #endregion
                 // add new delivery ticket to backend
                 var deliveryTicketUpdate = new DeliveryTicketUpdateDto
                 {
@@ -124,8 +128,9 @@ namespace WiiTrakClient.Features.Stores.Components
                 await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);
 
                 // update Delivery Ticket List
-                DeliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(_editDeliveryTicket.StoreId);
+              
             }
+            DeliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(_editDeliveryTicket.StoreId);
         }
 
         public async Task OpenUpdateDeliveryTicketDialog(DeliveryTicketDto deliveryTicket)

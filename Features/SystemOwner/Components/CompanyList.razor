@@ -6,14 +6,14 @@
 
    <MudTable Items="@Companies" Hover="true" SortLabel="Sort By">
     <HeaderContent>
-        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<CompanyDto, object>(x=>x.Name)">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<CompanyDto, object>(x=>x.Name)">Company Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel  SortBy="new Func<CompanyDto, object>(x=>x.StreetAddress1)">Address</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<CompanyDto, object>(x=>x.Email)">Email</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<CompanyDto, object>(x=>x.PhonePrimary)">Phone</MudTableSortLabel></MudTh>        
         <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Name">
+        <MudTd DataLabel="Company Name">
             @context.Name
         </MudTd>
         <MudTd DataLabel="Address">

@@ -21,10 +21,10 @@
  <MudDialog>
     <DialogContent>              
         <div style="width: 400px;height:450px;overflow: auto;">
-                <MudForm @ref=form Model="@NewCompany" @bind-IsValid="@success" @bind-Errors="@errors"> 
+                <MudForm @ref=form Model="@NewCompany" @bind-IsValid="@success" @bind-Errors="@errors">  
                     <DataAnnotationsValidator />
 
-                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.Name" Label="Name" Required="true" RequiredError=" " For="@(() => @NewCompany.Name)" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCompany.Name" Label="Company Name" Required="true" RequiredError=" " For="@(() => @NewCompany.Name)" Variant="Variant.Text"></MudTextField>  
                     <MudTextField T="string" class="my-6" @bind-Value="NewCompany.StreetAddress1" Label="Street Address 1" Required="true" RequiredError=" " For="@(() => @NewCompany.StreetAddress1)" Variant="Variant.Text"></MudTextField>  
                     <MudTextField T="string" class="my-6" @bind-Value="NewCompany.StreetAddress2" Label="Street Address 2" Required="true" RequiredError=" " For="@(() => @NewCompany.StreetAddress2)" Variant="Variant.Text"></MudTextField>  
                     <MudTextField T="string" class="my-6" @bind-Value="NewCompany.City" Label="City" Required="true" RequiredError=" " For="@(() => @NewCompany.City)" Variant="Variant.Text"></MudTextField>  

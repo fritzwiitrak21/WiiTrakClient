@@ -1,7 +1,12 @@
 ﻿@using WiiTrakClient.Features.Stores.Components
 
 @namespace WiiTrakClient.Features.Stores.Components
-
+<style>
+.mud-button-root:diabled.mud-button.mud-button-filled.mud-button-filled-success.mud-button-filled-size-medium.mud-ripple{
+    background-color:green !imporant;
+    color:white !imporant;
+}
+</style>
 <MudTable Items="@DeliveryTickets" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@_listIsLoading"
           LoadingProgressColor="Color.Primary">
     <HeaderContent>
@@ -51,6 +56,10 @@
                 <MudButton StartIcon="@Icons.Material.Filled.Details" Variant="Variant.Filled" Color="Color.Primary"
                     OnClick="((e) => OpenDeliveryTicketDialog(context))">Details
                 </MudButton>
+                 <MudButton StartIcon="@Icons.Material.Filled.Check" Disabled="true" Variant="Variant.Filled" Color="Color.Success"
+           >Signed
+                </MudButton>
+              
             }
         </MudTd> 
     </RowTemplate>

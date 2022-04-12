@@ -23,19 +23,25 @@ namespace WiiTrakClient.Features.Stores
 
         [Inject] IDialogService DialogService { get; set; }
 
-        ///DriverDto _selectedDriver = new();
-        ///List<CartDto> _carts = new();
-        ///List<DriverDto> _drivers = new();
+        
         StoreDto _selectedStore = new();
         List<DeliveryTicketDto> _deliveryTickets = new();
         List<DeliveryTicketDto> deliveryTickets = new();
 
-
         DeliveryTicketCreationDto _newDeliveryTicket = new();
+        private IJSObjectReference JsModule;
 
         protected override async Task OnInitializedAsync()
         {
             //_drivers = await DriverRepository.GetAllDriversAsync();
+
+            if (CurrentUser.UserId == Guid.Empty)
+            {
+                JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+                var Id = await JsModule.InvokeAsync<string>("getUserId");
+                CurrentUser.UserId = new Guid(Id);
+            }
+
             _selectedStore =  await StoreHttpRepository.GetStoreByIdAsync(CurrentUser.UserId);
             await HandleStoreSelected(_selectedStore);
         }
