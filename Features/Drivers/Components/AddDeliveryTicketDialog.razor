@@ -151,7 +151,7 @@
     {
         if (Stores != null && Stores.Count() >= 1)
         {
-            Stores = Stores.OrderBy(o => o.StoreName).ToList();
+            Stores = Stores.OrderBy(o => o.StoreName).ThenBy(p => p.StoreNumber).ToList();
             _selectedStore = Stores[0];
              NewDeliveryTicket.StoreId = _selectedStore.Id;
         }
