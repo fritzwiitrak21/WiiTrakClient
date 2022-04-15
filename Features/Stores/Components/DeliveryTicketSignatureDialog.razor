@@ -19,8 +19,10 @@
     color: var(--mud-palette-text-secondary);
     margin: 0;
     font-size: 0;
-
 }      
+.mud-form img{
+height: 112px !important;
+}
 </style>
 
 <MudDialog>
@@ -32,25 +34,33 @@
             @*<MudText Class="my-4" Typo="Typo.h5">Number of Carts: @deliveryTicketDto.NumberOfCarts</MudText>*@
             <MudTextField @bind-Value="@editDeliveryTicket.Signee" Label="Signee Name" Required="true" RequiredError="" For="@(() => @editDeliveryTicket.Signee)" Variant="Variant.Text"></MudTextField> 
             @*@if(deliveryTicketSummary != null)
-            {
-               
-                <MudText Class="" Typo="Typo.h6">Delivered: @deliveryTicketSummary.Delivered</MudText>
-                        
-                <MudText Class="" Typo="Typo.h6">Lost: @deliveryTicketSummary.Lost</MudText>
-                       
-                <MudText Class="" Typo="Typo.h6">Damaged: @deliveryTicketSummary.Damaged</MudText>
-                       
-                <MudText Class="" Typo="Typo.h6">Trashed: @deliveryTicketSummary.Trashed</MudText>
-                       
-            }
-            @if(cartsTable != null)
-            {
-           <CartsTable Carts="@cartsTable"></CartsTable>
-            }*@
-            @if (!string.IsNullOrWhiteSpace(_fileUrl)) {
-                    <div class="d-flex justify-center mt-6 popupitemimage">
-                        <img src="@_fileUrl" width="300" height="300" />
-                    </div>
+                {
+
+                    <MudText Class="" Typo="Typo.h6">Delivered: @deliveryTicketSummary.Delivered</MudText>
+
+                    <MudText Class="" Typo="Typo.h6">Lost: @deliveryTicketSummary.Lost</MudText>
+
+                    <MudText Class="" Typo="Typo.h6">Damaged: @deliveryTicketSummary.Damaged</MudText>
+
+                    <MudText Class="" Typo="Typo.h6">Trashed: @deliveryTicketSummary.Trashed</MudText>
+
+                }*@
+           @* @if(cartsTable != null)
+                {
+               <CartsTable Carts="@cartsTable"></CartsTable>
+                }*@
+            @if (!string.IsNullOrWhiteSpace(_picUrl))
+                {
+                        <div class="d-flex justify-center mt-6 popupitemimage">
+                            <img src="@_picUrl" width="270" height="270" />
+                        </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(_fileUrl))
+                {
+                    <MudText Class="" Typo="Typo.h5">Signature:</MudText>
+                        <div class="d-flex justify-center mt-6 popupitemimage">
+                            <img src="@_fileUrl" width="150" height="150" />
+                        </div>
                 }
                 else
                 {
@@ -121,12 +131,20 @@
         set;
     }
     private string _fileUrl = "";
+    private string _picUrl = "";
     private string _imageData = "";
     bool IsSigned = false;
     bool _isSigned = false;
 
+    private IJSObjectReference JsModule;
+
+    protected override async Task OnInitializedAsync()
+    {
+       await SetCanvasHeight();
+    }
     protected override Task OnParametersSetAsync()
     {
+        _picUrl = editDeliveryTicket.PicUrl;
         success = false;
         return base.OnParametersSetAsync();
     }
@@ -137,7 +155,19 @@
         await _js.InvokeAsync<string>("saveSignatureAsync", dotNetObjectRef);
         IsSigned = true;
     }
-
+    private async Task SetCanvasHeight()
+    {
+        try
+        {
+            JsModule = await _js.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+         
+            await JsModule.InvokeVoidAsync("updateCanvas");
+        }
+        catch(Exception ex)
+        {
+            
+        }
+    }
     [JSInvokable]
     public async Task SaveSignatureAsync(string imageData)
     {

@@ -210,14 +210,12 @@ padding-bottom: 30px;
 }
 
 #ctlSignature_Container {
-    margin-left: 0px !important;
-    width: 100% !important;
-    height: 125px !important;
+     height: 130px !important;
 }
 #ctlSignature {
-    width: 100% !important;
-    height: 125px !important;
+     height: 130px !important;
 }
+
 .mud-button-text.mud-button-text-primary {
     background: #2c86d2 !important;
     color: rgb(255, 255, 255) !important;

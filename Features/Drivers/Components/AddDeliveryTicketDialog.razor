@@ -1,8 +1,6 @@
 @namespace WiiTrakClient.Features.Drivers.Components
 @using System.ComponentModel.DataAnnotations
 @using WiiTrakClient.Shared.Components
-@using Blazored.Typeahead
-
 
 <style>
     .validation-message {
@@ -28,29 +26,28 @@
         <div style="width: 400px;height:450px;overflow: auto;">
             <MudForm Model="@NewDeliveryTicket" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
                 <DataAnnotationsValidator />
-                @*<MudText Class="my-4" Typo="Typo.h6">Store</MudText>
-                <input id="Selected" type="text" list="textsearch" autocomplete="on" @onchange="eventArgs => { OnSelect(eventArgs); }" />
+                @*<h6>Store*</h6>
+                <input type="text" list="textsearch"  @onchange="eventArgs => { OnSelect(eventArgs.Value); }" />
                 <datalist id="textsearch">
                     @foreach (var store in Stores)
                     {
-                        <option id="@store.Id" data-value="@store.Id" value="@store.StoreName - @store.StoreNumber"></option>
-
+                        <option id="@store.Id" data-value="@store.Id" value="@store.StoreName - @store.StoreNumber" />
                     }
                 </datalist>*@
 
 
 
                 <MudSelect Class="my-6" T="StoreDto" Label="Store" AnchorOrigin="Origin.BottomCenter"
-                    HelperText="Select a Store" @bind-Value="@_selectedStore" Required="true"
-                    AdornmentColor="Color.Primary">
+                           HelperText="Select a Store" @bind-Value="@_selectedStore" Required="true"
+                           AdornmentColor="Color.Primary">
 
 
 
                     @foreach (var store in Stores)
                     {
-                    <MudSelectItem T="StoreDto" Value="@store">@store.StoreName - @store.StoreNumber</MudSelectItem>
+                        <MudSelectItem T="StoreDto" Value="@store">@store.StoreName - @store.StoreNumber</MudSelectItem>
                     }
-                    </MudSelect>
+                </MudSelect>
 
 
                 @{
@@ -136,15 +133,15 @@
     StoreDto _selectedStore = new();
     StoreDto selectedStore = new();
 
-
-
-
     private string _fileUrl = "";
     private int NoOfCartsToPickUp = 0;
     private string StoreName = "";
     private IJSObjectReference JsModule;
 
-
+    protected override async Task OnInitializedAsync()
+    {
+        JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+    }
 
 
     protected override void OnParametersSet()
@@ -153,20 +150,12 @@
         {
             Stores = Stores.OrderBy(o => o.StoreName).ThenBy(p => p.StoreNumber).ToList();
             _selectedStore = Stores[0];
-             NewDeliveryTicket.StoreId = _selectedStore.Id;
+            NewDeliveryTicket.StoreId = _selectedStore.Id;
         }
 
         NewDeliveryTicket.DriverId = Driver.Id;
         //NoOfCarts = 1;
         //NewDeliveryTicket.NumberOfCarts=NoOfCarts;
-    }
-
-    private async Task<IEnumerable<StoreDto>> Search1(string value)
-    {
-        if (string.IsNullOrEmpty(value))
-            return Stores;
-
-        return Stores.Where(x => x.StoreName.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
     private void UpdateNumberOfCarts()
@@ -201,8 +190,10 @@
         try
         {
             JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-            var Id = await JsModule.InvokeAsync<string>("getValue");
-            //NewDeliveryTicket.StoreId = new Guid(Id);
+
+            var Id = await JsModule.InvokeAsync<string>("getStoreId",e.ToString());
+            NewDeliveryTicket.StoreId = new Guid(Id);
+            _selectedStore = Stores.AsEnumerable().FirstOrDefault(x => x.Id == NewDeliveryTicket.StoreId);
         }
         catch (Exception ex)
         {

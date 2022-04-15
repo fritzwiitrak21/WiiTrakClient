@@ -262,11 +262,11 @@
     private LoginDto login = new LoginDto();
     private bool formInvalid = false;
     private string ErrorMessage { get; set; } = "";
-    private IJSObjectReference _jsModule;
+    private IJSObjectReference JsModule;
 
     protected override async Task OnInitializedAsync()
     {
-         _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+         JsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
     }
 
 
@@ -291,10 +291,10 @@
                 CurrentUser.PasswordLastUpdatedAt = UserDetails.PasswordLastUpdatedAt;
 
                
-                await _jsModule.InvokeVoidAsync("saveUserId",CurrentUser.UserId);
-                await _jsModule.InvokeVoidAsync("saveUserName",CurrentUser.UserName);
-                await _jsModule.InvokeVoidAsync("saveUserRole",CurrentUser.UserRole);
-                await _jsModule.InvokeVoidAsync("saveUserRoleId",CurrentUser.UserRoleId);
+                await JsModule.InvokeVoidAsync("saveUserId",CurrentUser.UserId);
+                await JsModule.InvokeVoidAsync("saveUserName",CurrentUser.UserName);
+                await JsModule.InvokeVoidAsync("saveUserRole",CurrentUser.UserRole);
+                await JsModule.InvokeVoidAsync("saveUserRoleId",CurrentUser.UserRoleId);
 
 
                 if (CurrentUser.IsFirstLogin)

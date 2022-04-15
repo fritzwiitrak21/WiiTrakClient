@@ -19,8 +19,10 @@
     color: var(--mud-palette-text-secondary);
     margin: 0;
     font-size: 0;
-    
 }      
+.mud-form img{
+height: 146px !important;
+}
 </style>
 
 <MudDialog>
@@ -49,14 +51,14 @@
             @if (!string.IsNullOrWhiteSpace(_picUrl))
                 {
                         <div class="d-flex justify-center mt-6 popupitemimage">
-                            <img src="@_picUrl" width="300" height="300" />
+                            <img src="@_picUrl" width="270" height="270" />
                         </div>
                 }
                 @if (!string.IsNullOrWhiteSpace(_fileUrl))
                 {
-                    <MudText Class="" Typo="Typo.h6">Signature:</MudText>
+                    <MudText Class="" Typo="Typo.h5">Signature:</MudText>
                         <div class="d-flex justify-center mt-6 popupitemimage">
-                            <img src="@_fileUrl" width="300" height="300" />
+                            <img src="@_fileUrl" width="150" height="150" />
                         </div>
                 }
                 else
@@ -73,9 +75,10 @@
                                     RequiredPoints="50">
                                     </SSignature>
                                 </div>
-                                @*<div class="col-lg-6 col-sm-12">
-                                    <img src="/images/spacer.png" id="pngImg"/>
-                                </div>*@
+                        @*<div class="col-lg-6 col-sm-12">
+                            <img src="/images/spacer.png" id="pngImg"/>
+                            </div>*@
+                        
                     }
                 }
                 @if (!_isSigned)
@@ -137,6 +140,13 @@
     private string _imageData = "";
     bool IsSigned = false;
     bool _isSigned = false;
+
+    private IJSObjectReference JsModule;
+
+    protected override async Task OnInitializedAsync()
+    {
+       await SetCanvasHeight();
+    }
     protected override Task OnParametersSetAsync()
     {
         _picUrl = editDeliveryTicket.PicUrl;
@@ -151,7 +161,19 @@
         IsSigned = true;
 
     }
-
+    private async Task SetCanvasHeight()
+    {
+        try
+        {
+            JsModule = await _js.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+         
+            await JsModule.InvokeVoidAsync("updateCanvas");
+        }
+        catch(Exception ex)
+        {
+            
+        }
+    }
     [JSInvokable]
     public async Task SaveSignatureAsync(string imageData)
     {
@@ -169,7 +191,7 @@
         _fileUrl = await PicUploadHttpRepository.UploadSignature(content);
         editDeliveryTicket.SignaturePicUrl = _fileUrl;
         editDeliveryTicket.ApprovedByStore = true;
-        editDeliveryTicket.SignOffRequired = true;
+         editDeliveryTicket.SignOffRequired = true;
         success = true;
         _isSigned = true;
         StateHasChanged();

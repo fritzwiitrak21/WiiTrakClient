@@ -35,12 +35,16 @@ export function clearSession(){
 }
 
 
-export function getValue() {
-
-    var value = document.getElementById("Selected").value;
-    
+export function getStoreId(value) {
     var storeid = $('#textsearch [value="' + value + '"]').data('value');
-
     return storeid;
 }
+
+
+
+export function updateCanvas() {
+    var canvas = document.getElementById("ctlSignature");
+    canvas.height = 130;
+}
+
 
