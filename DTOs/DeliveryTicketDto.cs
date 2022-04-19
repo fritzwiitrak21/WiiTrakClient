@@ -13,8 +13,8 @@ namespace WiiTrakClient.DTOs
 
         public long DeliveryTicketNumber { get; set; }
         [Required]
-        [RegularExpression(@"^[1-9][0-9]*$", ErrorMessage = " ")]
-        [Range(1, 300, ErrorMessage = " ")] 
+        [RegularExpression(@"^[0-9]*$", ErrorMessage = " ")]
+       
         public int NumberOfCarts { get; set; }
 
         public string Grid { get; set; } = string.Empty;
