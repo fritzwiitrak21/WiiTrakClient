@@ -19,7 +19,6 @@
         margin: 0;
         font-size: 0;
     }
-    
 </style>
 
 <MudDialog>
@@ -28,30 +27,30 @@
             <MudForm Model="@NewDeliveryTicket" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
                 <DataAnnotationsValidator />
                 <div Class="Mudsearchselect mt-6">
-                <label id="targetlabel">Store*</label>
-                <input type="text" list="textsearch" Class="inputselect"  @onkeyup="OnClick"  @onchange="eventArgs => { OnSelect(eventArgs.Value); }" />
-               
-                <datalist id="textsearch">
-                    @foreach (var store in Stores)
-                    {
-                        <option id="@store.Id" data-value="@store.Id" value="@store.StoreName - @store.StoreNumber" />
-                    }
-                </datalist>
+                    <label id="targetlabel">Store*</label>
+                    <input type="text" list="textsearch" Class="inputselect" @onkeyup="OnClick" @onchange="eventArgs => { OnSelect(eventArgs.Value); }" />
+
+                    <datalist id="textsearch">
+                        @foreach (var store in Stores)
+                        {
+                            <option id="@store.Id" data-value="@store.Id" value="@store.StoreName - @store.StoreNumber" />
+                        }
+                    </datalist>
                 </div>
-               
 
-               @* <MudSelect Class="my-6" T="StoreDto" Label="Store" AnchorOrigin="Origin.BottomCenter"
-                           HelperText="Select a Store" @bind-Value="@_selectedStore" Required="true"
-                           AdornmentColor="Color.Primary">
+
+                @* <MudSelect Class="my-6" T="StoreDto" Label="Store" AnchorOrigin="Origin.BottomCenter"
+                    HelperText="Select a Store" @bind-Value="@_selectedStore" Required="true"
+                    AdornmentColor="Color.Primary">
 
 
 
                     @foreach (var store in Stores)
                     {
-                        <MudSelectItem T="StoreDto" Value="@store">@store.StoreName - @store.StoreNumber</MudSelectItem>
+                    <MudSelectItem T="StoreDto" Value="@store">@store.StoreName - @store.StoreNumber</MudSelectItem>
                     }
-                </MudSelect>
-*@
+                    </MudSelect>
+                *@
 
                 @{
                     //UpdateNumberOfCarts();
@@ -59,14 +58,17 @@
                 }
 
                 @*<MudText Class="my-4" Typo="Typo.h5">No of available carts to pickup: @NoOfCartsToPickUp</MudText>*@
-                <MudTextField @bind-Value="@NewDeliveryTicket.NumberOfCarts" Label="No of Carts" Required="true" RequiredError=" "  For="@(() => @NewDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
-                
+                <MudTextField @bind-Value="@NewDeliveryTicket.NumberOfCarts" Label="No of Carts" Required="true" RequiredError=" " For="@(() => @NewDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
+
                 @*<ValidationMessage For="@(() => @NewDeliveryTicket.NumberOfCarts)" />*@
                 <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
                 @*                    <ValidationMessage For="@(() => @NewDeliveryTicket.PicUrl)" />
                     @*<CaptureImage OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete"/>
                     <ValidationMessage For="@(() => @NewDeliveryTicket.PicUrl)" />*@
-
+                @if (NewDeliveryTicket.NumberOfCarts >= 0)
+                {
+                    success = true;
+                }
                 @if (!string.IsNullOrWhiteSpace(_fileUrl))
                 {
                     <div class="d-flex justify-start mt-6 popupitemimage">
@@ -180,34 +182,34 @@
 
     private async Task OnClick()
     {
-            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
 
-            var inputtext=await JsModule.InvokeAsync<string>("getTextBoxValue");
-            if (inputtext == "")
-            {
-                IsStoreSelected = false;
-                await JsModule.InvokeVoidAsync("addValidationClass");
-                StateHasChanged();
-            }
-            else
-            {
-                IsStoreSelected = true;
-                await JsModule.InvokeVoidAsync("removeValidationClass");
-                StateHasChanged();
-            }
+        var inputtext = await JsModule.InvokeAsync<string>("getTextBoxValue");
+        if (inputtext == "")
+        {
+            IsStoreSelected = false;
+            await JsModule.InvokeVoidAsync("addValidationClass");
+            StateHasChanged();
+        }
+        else
+        {
+            IsStoreSelected = true;
+            await JsModule.InvokeVoidAsync("removeValidationClass");
+            StateHasChanged();
+        }
     }
     private async Task OnSelect(object e)
     {
         try
         {
-            if(e.ToString()=="")
+            if (e.ToString() == "")
             {
-                IsStoreSelected =  false;
+                IsStoreSelected = false;
                 return;
             }
             JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
 
-            var Id = await JsModule.InvokeAsync<string>("getStoreId",e.ToString());
+            var Id = await JsModule.InvokeAsync<string>("getStoreId", e.ToString());
             NewDeliveryTicket.StoreId = new Guid(Id);
             _selectedStore = Stores.AsEnumerable().FirstOrDefault(x => x.Id == NewDeliveryTicket.StoreId);
             StoreName = _selectedStore.StoreName;
@@ -215,7 +217,7 @@
         }
         catch (Exception ex)
         {
-            IsStoreSelected =  false;
+            IsStoreSelected = false;
         }
     }
 
