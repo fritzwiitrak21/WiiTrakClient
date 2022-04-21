@@ -6,7 +6,10 @@ namespace WiiTrakClient.DTOs
     {
         public Guid Id { get; set; }//Store Id
         public DateTime CreatedAt { get; set; }
-        public bool IsActive { get; set; }
+        
+        public bool IsActive { get; set; }// for  Store 
+        public bool DriverStoresIsActive { get; set; }// for Driverstore
+        
         public string StoreName { get; set; } = string.Empty;
 
         public string StoreNumber { get; set; } = string.Empty;

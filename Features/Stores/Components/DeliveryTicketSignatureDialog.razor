@@ -77,9 +77,7 @@ height: 112px !important;
                             </SSignature>
                           
                         </div>
-                      @*  <div class="col-lg-6 col-sm-12">
-                            <img src="/images/spacer.png" id="pngImg"/>
-                        </div>*@
+                     
                     }
                 }
             @if (!_isSigned) {
@@ -89,6 +87,7 @@ height: 112px !important;
                 
             } else {
                 <MudText Typo="Typo.h5" Class="text-success">Signature Complete</MudText>
+
             }
               
                 
@@ -154,19 +153,12 @@ height: 112px !important;
         var dotNetObjectRef = DotNetObjectReference.Create(this);
         await _js.InvokeAsync<string>("saveSignatureAsync", dotNetObjectRef);
         IsSigned = true;
+            StateHasChanged();
     }
     private async Task SetCanvasHeight()
     {
-        try
-        {
             JsModule = await _js.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-         
             await JsModule.InvokeVoidAsync("updateCanvas");
-        }
-        catch(Exception ex)
-        {
-            
-        }
     }
     [JSInvokable]
     public async Task SaveSignatureAsync(string imageData)

@@ -6,18 +6,18 @@
 
 @inject IJSRuntime JsRuntime
 @inject IDialogService DialogService
-@inject IStoreHttpRepository StoreHttpRepository
+@inject IStoreHttpRepository StoreHttpRepository 
 
 <UserAuthentication />
 <h1>Stores</h1>
 
-@*<div class="d-flex justify-end">
-    <MudButton Variant="Variant.Filled"
-    StartIcon="@Icons.Material.Filled.Add"
-    IconColor="Color.Secondary"
-    Size="Size.Large"
-    OnClick="OpenDialog">Add</MudButton>
-    </div>*@
+<div class="d-flex justify-end">
+    <MudButton Variant="Variant.Filled" 
+        StartIcon="@Icons.Material.Filled.Add" 
+        IconColor="Color.Secondary" 
+        Size="Size.Large"
+        OnClick="OpenDialog">Add</MudButton>
+</div>
 @*Need to fix in future phase*@
 
 <div class="my-8">
@@ -77,24 +77,28 @@
         if (!result.Cancelled)
         {
             // add new store to backend
-            var storeCreation = new StoreCreationDto
-                {
-                    StoreName = _newStore.StoreName,
-                    StreetAddress1 = _newStore.StreetAddress1,
-                    StreetAddress2 = _newStore.StreetAddress2,
-                    City = _newStore.City,
-                    State = _newStore.State,
-                    PostalCode = _newStore.PostalCode,
-                    ProfilePicUrl = _newStore.ProfilePicUrl,
-                    Email = _newStore.Email,
-                    PhonePrimary = _newStore.PhonePrimary,
-                    PhoneSecondary = _newStore.PhoneSecondary,
-                    ServiceProviderId = _newStore.ServiceProviderId,
-                    IsSignatureRequired = _newStore.IsSignatureRequired
-
-                };
-            await StoreHttpRepository.CreateStoreAsync(storeCreation);
-            _stores = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);
-        }
-    }
+            var storeCreation = new StoreCreationDto {
+                CompanyId=_newStore.CompanyId,
+                StoreName = _newStore.StoreName,
+                StoreNumber=_newStore.StoreNumber,
+                Email = _newStore.Email,
+                PhonePrimary = _newStore.PhonePrimary,
+                PhoneSecondary = _newStore.PhoneSecondary,
+                StreetAddress1 = _newStore.StreetAddress1,
+                StreetAddress2 = _newStore.StreetAddress2,
+                City = _newStore.City,
+                State = _newStore.State,
+                PostalCode = _newStore.PostalCode,
+                //Latitude=_newStore.Latitude,
+                //Longitude=_newStore.Longitude,
+                CountryCode=_newStore.CountryCode,
+                CorporateId=CurrentUser.UserId,
+                ServiceProviderId = Guid.Empty,
+                IsSignatureRequired=_newStore.IsSignatureRequired,
+                IsActive=_newStore.IsActive
+            };
+           await StoreHttpRepository.CreateStoreAsync(storeCreation);
+        }  
+        _stores = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);
+    } 
 }

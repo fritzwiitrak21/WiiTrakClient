@@ -1,0 +1,118 @@
+﻿@page "/driver-stores"
+
+@using Features.Drivers.Components
+@using WiiTrakClient.Cores
+
+@inject IJSRuntime JsRuntime
+@inject IStoreHttpRepository StoreRepository
+
+<UserAuthentication/>
+<br />
+<h3>Stores Assigned to @Name</h3>
+
+<div class="my-8">
+@if (LoaderVisibility)
+{
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
+}
+else if (driverstore.Count > 0)
+{
+    <MudTable Items="@driverstore" Hover="true" SortLabel="Sort By">
+    <HeaderContent>
+        <MudTh>
+            <MudTableSortLabel 
+                InitialDirection="SortDirection.Ascending" 
+                SortBy="new Func<StoreDto, object>(x=>x.StoreName)">
+                    Store Name
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel  
+                SortBy="new Func<StoreDto, object>(x=>x.StoreNumber)">
+                    Store Number
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>Street Address</MudTh>
+        <MudTh>
+            <MudTableSortLabel  
+                SortBy="new Func<StoreDto, object>(x=>x.City)">
+                    City
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel  
+                SortBy="new Func<StoreDto, object>(x=>x.State)">
+                    State
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel  
+                SortBy="new Func<StoreDto, object>(x=>x.PostalCode)">
+                    PostalCode
+            </MudTableSortLabel>
+        </MudTh>
+        @*<MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.Latitude)">Latitude</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.Longitude)">Longitude</MudTableSortLabel></MudTh>*@
+        <MudTh>Email</MudTh>
+        <MudTh>Phone</MudTh>               
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Store Name">
+            @context.StoreName
+        </MudTd>
+        <MudTd DataLabel="StoreNumber">
+            @context.StoreNumber
+        </MudTd>
+        <MudTd DataLabel="StreetAddress1">
+            @context.StreetAddress1, @context.StreetAddress2
+        </MudTd>
+        <MudTd DataLabel="City">
+            @context.City
+        </MudTd>
+        <MudTd DataLabel="State">
+            @context.State
+        </MudTd>
+        <MudTd DataLabel="PostalCode">
+            @context.PostalCode
+        </MudTd>
+         @*<MudTd DataLabel="Latitude">
+            @context.Latitude
+        </MudTd>
+        <MudTd DataLabel="Longitude">
+            @context.Longitude
+        </MudTd>*@
+        <MudTd DataLabel="Email">
+            @context.Email
+        </MudTd>
+         <MudTd DataLabel="Phone">
+            @context.PhonePrimary
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{10, 50, 100}" />
+    </PagerContent>
+</MudTable> 
+}
+else
+{
+      <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+}
+ 
+</div>
+
+
+@code {
+
+    List<StoreDto> driverstore = new ();
+
+    bool LoaderVisibility = false;
+
+    public string Name = CurrentUser.UserName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        LoaderVisibility = true;
+        driverstore = await StoreRepository.GetStoresByDriverId(CurrentUser.UserId);
+        LoaderVisibility = false;
+    }  
+}

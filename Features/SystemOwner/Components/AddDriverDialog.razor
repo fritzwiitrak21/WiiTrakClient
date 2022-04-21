@@ -33,14 +33,14 @@
                     }
                </MudSelect> *@  
                <MudItem>
-        <MudSelect T="CompanyDto" Label="Select Company" 
-            AnchorOrigin="Origin.BottomCenter">
-            @foreach (var company in Companys)
-            {
-                <MudSelectItem T="CompanyDto" Value="@company">@company.Name</MudSelectItem>
-            }
-        </MudSelect>
-    </MudItem>
+                    <MudSelect T="CompanyDto" Label="Select Company" Required=true RequiredError=" "
+                        AnchorOrigin="Origin.BottomCenter">
+                        @foreach (var company in Companys)
+                        {
+                            <MudSelectItem T="CompanyDto" Value="@company">@company.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
                 <MudTextField class="my-6" @bind-Value="NewDriver.FirstName" Label="First Name" Required="true" RequiredError="" For="@(() => @NewDriver.FirstName)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField class="my-6" @bind-Value="NewDriver.LastName" Label="Last Name" Required="true" RequiredError="" For="@(() => @NewDriver.LastName)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField class="my-6" @bind-Value="NewDriver.Email" Label="Email" Required="true" RequiredError="" For="@(() => @NewDriver.Email)" Variant="Variant.Text"></MudTextField>  
@@ -85,9 +85,7 @@
         {
             _selectedCompany = Companys[0];
             NewDriver.CompanyId = _selectedCompany.Id;
-        }
-        
-        
+        } 
     } 
     protected override void OnParametersSet() {
             

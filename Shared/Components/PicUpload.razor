@@ -2,34 +2,46 @@
 
 @namespace WiiTrakClient.Shared.Components
 @using System.Net.Http.Headers
+@using WiiTrakClient.DTOs
+@using System.Drawing
+@using System.Drawing.Imaging
 
 <InputFile id="fileInput" OnChange="UploadFile" capture hidden accept=".jpg, .jpeg, .png" style="@styleCss" />
 
 <MudFab HtmlTag="label"
-        Color="Color.Secondary"
+        Color="MudBlazor.Color.Secondary"
         Icon="@Icons.Filled.PhotoCamera"
         Label="Take Picture"
         for="fileInput" Required=true RequiredError=" " />
 
 @code {
     [Parameter]
-    public EventCallback<string> OnPicUploadComplete {get; set;}
+    public EventCallback<string> OnPicUploadComplete { get; set; }
 
     [Parameter]
-    public EventCallback OnPicUploadStart {get; set;}
+    public EventCallback OnPicUploadStart { get; set; }
 
     [Parameter]
     public string styleCss { get; set; } = "";
 
     [Inject]
-    public IPicUploadHttpRepository PicUploadHttpRepository {get; set;}
+    public IPicUploadHttpRepository PicUploadHttpRepository { get; set; }
+
+    [Inject] IJSRuntime JsRuntime { get; set; }
 
     IBrowserFile? _imageFile = null;
-    
+    private IJSObjectReference JsModule;
+
     private async Task UploadFile(InputFileChangeEventArgs e)
     {
-        
         await OnPicUploadStart.InvokeAsync();
+
+        JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+
+        var coord = await JsModule.InvokeAsync<string>("getCoord");
+        await JsModule.InvokeVoidAsync("ClearCoord");
+        var Latitude = coord.Split("##")[0];
+        var Longitude = coord.Split("##")[1];
 
         _imageFile = e.File;
 
@@ -41,14 +53,18 @@
                 var content = new MultipartFormDataContent();
                 content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
                 content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", _imageFile.Name);
+                content.Add(new StringContent(Latitude), "Latitude");
+                content.Add(new StringContent(Longitude), "Longitude");
+                content.Add(new StringContent(DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")), "Date");
+
                 string imageUrl = await PicUploadHttpRepository.UploadImage(content);
-                await OnPicUploadComplete.InvokeAsync(imageUrl);                
+                await OnPicUploadComplete.InvokeAsync(imageUrl);
             }
         }
-        else 
+        else
         {
             await OnPicUploadComplete.InvokeAsync("");
-            
+
         }
     }
 }
