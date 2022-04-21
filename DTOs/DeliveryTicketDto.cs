@@ -12,9 +12,7 @@ namespace WiiTrakClient.DTOs
         public DateTime CreatedAt { get; set; }
 
         public long DeliveryTicketNumber { get; set; }
-        [Required]
-        [RegularExpression(@"^[0-9]*$", ErrorMessage = " ")]
-       
+         
         public int NumberOfCarts { get; set; }
 
         public string Grid { get; set; } = string.Empty;

@@ -42,11 +42,23 @@ namespace WiiTrakClient.HttpRepository
             return response.Response;
         }
 
+     
         public async Task<CorporateDto> GetCorporateByIdAsync(Guid id)
         {
             string url = $"{_apiUrl}/{id}";
 
             var response = await _httpService.Get<CorporateDto>(url);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
+       
+        public async Task<List<CorporateDto>> GetCorporatesByCompanyId(Guid companyId)
+        {
+            string url = $"{_apiUrl}/company/{companyId}";
+            var response = await _httpService.Get<List<CorporateDto>>(url);
             if (!response.Success)
             {
                 // throw new ApplicationException(await response.GetBody());

@@ -74,7 +74,17 @@ namespace WiiTrakClient.HttpRepository
             }
             return response.Response;
         }
+        public async Task<CompanyDto> GetParentCompanyAsync(Guid subcompanyId)
+        {
+            string url = $"{_apiUrl}/ParentCompany/{subcompanyId}";
 
+            var response = await _httpService.Get<CompanyDto>(url);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
         public async Task<CompanyReportDto> GetCompanyReportAsync(Guid id)
         {
             string url = $"{_apiUrl}/report/{id}";

@@ -14,7 +14,6 @@ namespace WiiTrakClient.Features.Drivers.Components
         [Inject] IDriverHttpRepository DriverRepository { get; set; }
         [Inject] public IDeliveryTicketHttpRepository DeliveryTicketHttpRepository { get; set; }
         [Inject] public ICartHttpRepository CartHttpRepository { get; set; }
-
         [Inject] public IStoreHttpRepository StoreHttpRepository { get; set; }
         [Inject] ICartHttpRepository CartRepository { get; set; }
         [Parameter]

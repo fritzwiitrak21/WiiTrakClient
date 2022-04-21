@@ -6,9 +6,8 @@ namespace WiiTrakClient.DTOs
     public class DeliveryTicketUpdateDto
     {
         public long DeliveryTicketNumber { get; set; }
-        [Required(ErrorMessage = " ")]
-        [RegularExpression(@"^[0-9]*$", ErrorMessage = " ")]
-       
+        [Required]
+        [RegularExpression(@"^[0-9]*$")]
         public int NumberOfCarts { get; set; }
 
         public string Grid { get; set; } = string.Empty;

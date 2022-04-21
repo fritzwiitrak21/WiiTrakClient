@@ -3,6 +3,7 @@
 
 @namespace WiiTrakClient.Features.Drivers.Components
 
+
 <MudTable Items="@DeliveryTickets" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@_listIsLoading"
           LoadingProgressColor="Color.Primary">
     <HeaderContent>
@@ -63,6 +64,7 @@
                 <MudButton StartIcon="@Icons.Material.Filled.Check" Disabled="true" Variant="Variant.Filled" Color="Color.Success">
                     Signed
                 </MudButton>
+
             }
             else
             {

@@ -60,7 +60,7 @@
         <MudTd DataLabel="Postal Code">@context.PostalCode</MudTd> 
      
         <MudTd DataLabel="">
-            @if (!context.IsActive)
+            @if (!context.DriverStoresIsActive)
             {
                     <MudButton Variant="Variant.Filled" 
                     StartIcon="@Icons.Material.Filled.Send"
@@ -103,12 +103,12 @@
     }
     private async Task Assign(DriverStoreDetailsDto DriverStore)
     {
-        DriverStore.IsActive = true;
+        DriverStore.DriverStoresIsActive = true;
         await DriverStoreRepository.UpdateDriverStoresAsync( Core.SelectedDriverId,DriverStore);
     }
     private async Task UnAssign(DriverStoreDetailsDto DriverStore)
     {
-        DriverStore.IsActive = false;
+        DriverStore.DriverStoresIsActive = false;
         await DriverStoreRepository.UpdateDriverStoresAsync( Core.SelectedDriverId,DriverStore);
     }
 }

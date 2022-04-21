@@ -40,11 +40,49 @@ export function getStoreId(value) {
     return storeid;
 }
 
+export function getTextBoxValue() {
+    var inputtext = $('input[type="text"].inputselect').val();
+    return inputtext;
+}
 
+export function addValidationClass() {
+    $('input[type="text"].inputselect').addClass("mud-input-error");
+    $('#targetlabel').addClass("mud-input-error");
+}
+export function removeValidationClass() {
+    $('input[type="text"].inputselect').removeClass("mud-input-error");
+    $('#targetlabel').removeClass("mud-input-error");
+}
 
 export function updateCanvas() {
     var canvas = document.getElementById("ctlSignature");
     canvas.height = 130;
 }
+
+export function  getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+        
+    } 
+}
+
+function showPosition(position) {
+    saveCoord(position.coords.latitude +"##"+ position.coords.longitude);
+}
+
+function saveCoord(Coord) {
+    localStorage.setItem("Coord", Coord);
+}
+
+export function getCoord() {
+    getLocation();
+    return localStorage.getItem("Coord");
+}
+
+export function ClearCoord() {
+    localStorage.removeItem("Coord");
+}
+
+
 
 

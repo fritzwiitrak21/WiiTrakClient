@@ -14,11 +14,22 @@
             }
         </MudSelect>
     </MudItem>
+   @*  <MudItem xs="6" md="2">
+            <MudSelect T="string" Label="Stores" Dense="true" ValueChanged="(value) => GetStoreDetails(value)">
+                <MudSelectItem T="string" Value="@("All")" />
+                <MudSelectItem T="string" Value="@("Assigned")" />
+                <MudSelectItem T="string" Value="@("Unassigned")" />
+            </MudSelect>
+        </MudItem>*@
 </MudGrid>
 </div>
 @if (driverstore.Count>0)
 {
     <DriverStoreList driverstore ="driverstore"/>
+}
+else
+{
+    <label>No Stores found</label>
 }
 
 @code {
@@ -26,6 +37,7 @@
     public List<DriverDto> Drivers { get; set; }=new();
 
     public List<DriverStoreDetailsDto> driverstore { get; set; } = new();
+    public List<DriverStoreDetailsDto> alldriverstore { get; set; } = new();
     public DriverDto _selectedDriver = new();
 
     [Inject]
@@ -40,7 +52,24 @@
     } 
     private async Task HandleDriverSelected(DriverDto Driver)
     {
-        driverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId,Driver.Id); 
+        alldriverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId, Driver.Id);
+        driverstore = alldriverstore;
         Core.SelectedDriverId = Driver.Id;
     }
+    //  public void GetStoreDetails(string value)
+    //{
+    //    if (value == "All")
+    //    {
+    //        driverstore = alldriverstore;
+    //    }
+    //    else if(value=="Assigned")
+    //    {
+    //        driverstore = alldriverstore.Where(x => x.DriverStoresIsActive == true).ToList();
+    //    }
+    //    else if(value=="Unassigned")
+    //    {
+    //       driverstore = alldriverstore.Where(x => x.DriverStoresIsActive == false).ToList();
+    //    }
+
+    //}
 }

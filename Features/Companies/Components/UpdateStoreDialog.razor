@@ -1,0 +1,77 @@
+﻿@namespace WiiTrakClient.Features.Companies.Components
+@using System.ComponentModel.DataAnnotations
+@using WiiTrakClient.Cores
+
+<MudDialog>
+    <DialogContent>
+        <div style="width: 400px;height:450px;overflow: auto;">
+            <MudForm Model="@Store" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
+                <MudSelect T="CorporateDto" Label="Select Corporate" @bind-Value="@_selectedCorporate" Required=true RequiredError=" "
+                           AnchorOrigin="Origin.BottomCenter">
+                    @foreach (var corporate in Corporate)
+                    {
+                        <MudSelectItem T="CorporateDto" Value="@corporate">@corporate.Name</MudSelectItem>
+                    }
+                </MudSelect>
+                @* <MudItem>
+                    <MudSelect T="ServiceProviderDto" Label="Select Service Provider" @bind-Value="@_selectedServiceProvider" Required=true RequiredError=" "
+                    AnchorOrigin="Origin.BottomCenter">
+                    @foreach (var provider in ServiceProviders)
+                    {
+                    <MudSelectItem T="ServiceProviderDto" Value="@provider">@provider.ServiceProviderName</MudSelectItem>
+                    }
+                    </MudSelect>
+                    </MudItem>*@
+                <MudTextField class="my-6" @bind-Value="Store.StoreName" Label="Store Name" Required="true" RequiredError="" For="@(() => @Store.StoreName)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.StoreNumber" Label="Store Number" Required="true" RequiredError="" For="@(() => @Store.StoreNumber)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.Email" Label="Email" Required="true" RequiredError="" For="@(() => @Store.Email)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.PhonePrimary" Label="Phone Primary" Required="true" RequiredError="" For="@(() => @Store.PhonePrimary)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.PhoneSecondary" Label="Phone Secondary" Required="true" RequiredError="" For="@(() => @Store.PhoneSecondary)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.StreetAddress1" Label="Street Address 1" Required="true" RequiredError="" For="@(() => @Store.StreetAddress1)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.StreetAddress2" Label="Street Address 2" Required="true" RequiredError="" For="@(() => @Store.StreetAddress2)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.City" Label="City" Required="true" RequiredError="" For="@(() => @Store.City)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.State" Label="State" Required="true" RequiredError="" For="@(() => @Store.State)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.PostalCode" Label="Zip Code" Required="true" RequiredError="" For="@(() => @Store.PostalCode)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.CountryCode" Label="Country Code" Required="true" RequiredError=" " For="@(() => @Store.CountryCode)" Variant="Variant.Text"></MudTextField>
+                <MudSwitch @bind-Checked="Store.IsActive"  Label=@(Store.IsActive? "Activate":"Deactivate") Color="Color.Primary" For="@(() => @Store.IsActive)" />
+
+                <div class="d-flex">
+                    <MudButton OnClick="Cancel">Cancel</MudButton>
+                    @*                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
+                    *@                  <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                </div>
+            </MudForm>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+
+@code {
+    [Parameter]
+    public StoreDto? Store { get; set; }
+
+    [Parameter]
+    public List<CorporateDto>? Corporate { get; set; } = new();
+
+    CorporateDto _selectedCorporate = new();
+    bool StoreStatus = false;
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    bool success;
+    string[] errors = { };
+    MudForm form;
+    protected override void OnParametersSet()
+    {
+        if (Corporate != null && Corporate.Count > 0)
+        {
+            _selectedCorporate = Corporate.Where(x => x.Id == Store.CorporateId).FirstOrDefault();
+        }
+        StoreStatus = Store.IsActive;
+    }
+    void Submit()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}
