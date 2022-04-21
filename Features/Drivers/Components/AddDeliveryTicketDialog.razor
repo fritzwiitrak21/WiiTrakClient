@@ -180,8 +180,6 @@
 
     private async Task OnClick()
     {
-        try
-        {
             JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
 
             var inputtext=await JsModule.InvokeAsync<string>("getTextBoxValue");
@@ -197,13 +195,6 @@
                 await JsModule.InvokeVoidAsync("removeValidationClass");
                 StateHasChanged();
             }
-        }
-        catch (Exception ex)
-        {
-            
-        }
-       
-       
     }
     private async Task OnSelect(object e)
     {

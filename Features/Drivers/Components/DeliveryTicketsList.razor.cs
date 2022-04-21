@@ -264,9 +264,6 @@ namespace WiiTrakClient.Features.Drivers.Components
                 };
 
                 await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);
-
-                // update Delivery Ticket List
-               
             }
             DeliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByDriverIdAsync(CurrentUser.UserId);
         }

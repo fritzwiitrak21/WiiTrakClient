@@ -53,7 +53,7 @@
                 <MudTextField class="my-6" @bind-Value="NewStore.City" Label="City" Required="true" RequiredError=" " For="@(() => @NewStore.City)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="NewStore.State" Label="State" Required="true" RequiredError=" " For="@(() => @NewStore.State)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="NewStore.PostalCode" Label="Zip Code" Required="true" RequiredError=" " For="@(() => @NewStore.PostalCode)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewStore.CountryCode" Label="Country Code" Required="true" RequiredError=" " For="@(() => @NewStore.CountryCode)" Variant="Variant.Text"></MudTextField>
+                @*<MudTextField class="my-6" @bind-Value="NewStore.CountryCode" Label="Country Code" Required="true" RequiredError=" " For="@(() => @NewStore.CountryCode)" Variant="Variant.Text"></MudTextField>*@
                 <MudCheckBox @bind-Checked="NewStore.IsSignatureRequired" Label="Signature Reqired For Deliveries" Color="Color.Primary"></MudCheckBox>
                 <div class="d-flex">
                     <MudButton OnClick="Cancel">Cancel</MudButton>

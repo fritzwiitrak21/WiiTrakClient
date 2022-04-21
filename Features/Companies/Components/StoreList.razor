@@ -15,9 +15,9 @@
         <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.City)">City</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.State)">State</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.PostalCode)">PostalCode</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.CountryCode)">CountryCode</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.Longitude)">Longitude</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.Latitude)">Latitude</MudTableSortLabel></MudTh>
+        @*<MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.CountryCode)">CountryCode</MudTableSortLabel></MudTh>*@
+        @*<MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.Longitude)">Longitude</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.Latitude)">Latitude</MudTableSortLabel></MudTh>*@
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.Email)">Email</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.PhonePrimary)">Phone</MudTableSortLabel></MudTh>        
         <MudTh></MudTh>
@@ -42,15 +42,15 @@
         <MudTd DataLabel="PostalCode">
             @context.PostalCode
         </MudTd>
-        <MudTd DataLabel="CountryCode">
+      @*  <MudTd DataLabel="CountryCode">
             @context.CountryCode
-        </MudTd>
-        <MudTd DataLabel="Longitude">
+        </MudTd>*@
+       @* <MudTd DataLabel="Longitude">
             @context.Longitude
         </MudTd>
          <MudTd DataLabel="Latitude">
             @context.Latitude
-        </MudTd>
+        </MudTd>*@
         <MudTd DataLabel="Email">
             @context.Email
         </MudTd>
@@ -120,7 +120,7 @@
                 CorporateId=store.CorporateId,
                 CompanyId=store.CompanyId,
                 StoreNumber=store.StoreNumber,
-                CountryCode=store.CountryCode,
+                //CountryCode=store.CountryCode,
                 IsActive=store.IsActive
                
             };

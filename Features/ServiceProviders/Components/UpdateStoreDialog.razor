@@ -48,16 +48,16 @@
                 <MudTextField class="my-6" @bind-Value="Store.City" Label="City" Required="true" RequiredError="" For="@(() => @Store.City)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField class="my-6" @bind-Value="Store.State" Label="State" Required="true" RequiredError="" For="@(() => @Store.State)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField class="my-6" @bind-Value="Store.PostalCode" Label="Zip Code" Required="true" RequiredError="" For="@(() => @Store.PostalCode)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Store.CountryCode" Label="Country Code" Required="true" RequiredError="" For="@(() => @Store.CountryCode)" Variant="Variant.Text"></MudTextField>
+                @*<MudTextField class="my-6" @bind-Value="Store.CountryCode" Label="Country Code" Required="true" RequiredError="" For="@(() => @Store.CountryCode)" Variant="Variant.Text"></MudTextField>*@
                 @*<MudTextField class="my-6" @bind-Value="Store.Latitude" Label="Latitude" Required="true" RequiredError="" For="@(() => @Store.Latitude)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Store.Longitude" Label="Longitude" Required="true" RequiredError="" For="@(() => @Store.Longitude)" Variant="Variant.Text"></MudTextField>*@
                 @if(Store.IsActive==true)
                 {
-                    <MudSwitch class="my-6" @bind-Checked="@Store.IsActive" Label="Store is Active" Color="Color.Primary" />
+                    <MudSwitch class="my-6" @bind-Checked="@Store.IsActive" Label="Activate" Color="Color.Primary" />
                 }
                 else
                 {
-                    <MudSwitch class="my-6" @bind-Checked="@Store.IsActive" Label="Store is Suspended" Color="Color.Default" />
+                    <MudSwitch class="my-6" @bind-Checked="@Store.IsActive" Label="Deactivate" Color="Color.Default" />
                 }
                 <div class="d-flex">
                     <MudButton OnClick="Cancel">Cancel</MudButton>

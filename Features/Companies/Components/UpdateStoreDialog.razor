@@ -32,7 +32,7 @@
                 <MudTextField class="my-6" @bind-Value="Store.City" Label="City" Required="true" RequiredError="" For="@(() => @Store.City)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Store.State" Label="State" Required="true" RequiredError="" For="@(() => @Store.State)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Store.PostalCode" Label="Zip Code" Required="true" RequiredError="" For="@(() => @Store.PostalCode)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Store.CountryCode" Label="Country Code" Required="true" RequiredError=" " For="@(() => @Store.CountryCode)" Variant="Variant.Text"></MudTextField>
+                @*<MudTextField class="my-6" @bind-Value="Store.CountryCode" Label="Country Code" Required="true" RequiredError=" " For="@(() => @Store.CountryCode)" Variant="Variant.Text"></MudTextField>*@
                 <MudSwitch @bind-Checked="Store.IsActive"  Label=@(Store.IsActive? "Activate":"Deactivate") Color="Color.Primary" For="@(() => @Store.IsActive)" />
 
                 <div class="d-flex">
