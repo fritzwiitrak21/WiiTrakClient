@@ -2,30 +2,30 @@
 @using WiiTrakClient.Cores
 @using WiiTrakClient.Features.Companies.Components
 
-<UserAuthentication/>
+<UserAuthentication />
 <div class="my-8">
-<MudGrid class="my-8">
-    <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="DriverDto" Label="Select Driver" ValueChanged="(value) => HandleDriverSelected(value)"
-            AnchorOrigin="Origin.BottomCenter">
-            @foreach (var driver in Drivers)
-            {
-                <MudSelectItem T="DriverDto" Value="@driver">@driver.FirstName @driver.LastName</MudSelectItem>
-            }
-        </MudSelect>
-    </MudItem>
-   @*  <MudItem xs="6" md="2">
-            <MudSelect T="string" Label="Stores" Dense="true" ValueChanged="(value) => GetStoreDetails(value)">
-                <MudSelectItem T="string" Value="@("All")" />
-                <MudSelectItem T="string" Value="@("Assigned")" />
-                <MudSelectItem T="string" Value="@("Unassigned")" />
+    <MudGrid class="my-8">
+        <MudItem xs="12" sm="6" md="4">
+            <MudSelect T="DriverDto" Label="Select Driver" ValueChanged="(value) => HandleDriverSelected(value)"
+                       AnchorOrigin="Origin.BottomCenter">
+                @foreach (var driver in Drivers)
+                {
+                    <MudSelectItem T="DriverDto" Value="@driver">@driver.FirstName @driver.LastName</MudSelectItem>
+                }
             </MudSelect>
-        </MudItem>*@
-</MudGrid>
+        </MudItem>
+        @*  <MudItem xs="6" md="2">
+            <MudSelect T="string" Label="Stores" Dense="true" ValueChanged="(value) => GetStoreDetails(value)">
+            <MudSelectItem T="string" Value="@("All")" />
+            <MudSelectItem T="string" Value="@("Assigned")" />
+            <MudSelectItem T="string" Value="@("Unassigned")" />
+            </MudSelect>
+            </MudItem>*@
+    </MudGrid>
 </div>
-@if (driverstore.Count>0)
+@if (driverstore.Count > 0)
 {
-    <DriverStoreList driverstore ="driverstore"/>
+    <DriverStoreList driverstore="driverstore" />
 }
 else
 {
@@ -34,7 +34,7 @@ else
 
 @code {
 
-    public List<DriverDto> Drivers { get; set; }=new();
+    public List<DriverDto> Drivers { get; set; } = new();
 
     public List<DriverStoreDetailsDto> driverstore { get; set; } = new();
     public List<DriverStoreDetailsDto> alldriverstore { get; set; } = new();
@@ -45,11 +45,20 @@ else
 
     [Inject]
     public IDriverHttpRepository DriverRepository { get; set; }
-   
+     [Inject] IJSRuntime JsRuntime { get; set; }
+     private IJSObjectReference JsModule;
+
     protected override async Task OnInitializedAsync()
     {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+
+        }
         Drivers = await DriverRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
-    } 
+    }
     private async Task HandleDriverSelected(DriverDto Driver)
     {
         alldriverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId, Driver.Id);

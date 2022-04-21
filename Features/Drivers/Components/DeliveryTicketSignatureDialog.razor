@@ -6,34 +6,36 @@
 
 <style>
     .validation-message {
-    font-size:0;
-    display:none;
-    font-display:block;
-    
-    color: red;
-}
-.mud-input-helper-text.mud-input-error {
-    font-size: 0;
-}
-.mud-input-helper-text {
-    color: var(--mud-palette-text-secondary);
-    margin: 0;
-    font-size: 0;
-}      
-.mud-form img{
-height: 140px !important;
-}
+        font-size: 0;
+        display: none;
+        font-display: block;
+        color: red;
+    }
+
+    .mud-input-helper-text.mud-input-error {
+        font-size: 0;
+    }
+
+    .mud-input-helper-text {
+        color: var(--mud-palette-text-secondary);
+        margin: 0;
+        font-size: 0;
+    }
+
+    .mud-form img {
+        height: 140px !important;
+    }
 </style>
 
 <MudDialog>
     <DialogContent>
         <div style="width: 400px;height:450px;overflow: auto;">
             <MudForm Model="@editDeliveryTicket" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
-           @* <MudText Class="my-4" Typo="Typo.h5">Store: @StoreName</MudText>
-            <MudText Class="my-4" Typo="Typo.h5">Number of Carts: @deliveryTicketDto.NumberOfCarts </MudText>*@
-            <MudTextField @bind-Value="@editDeliveryTicket.Signee" Label="Signee Name" Required="true" RequiredError="" For="@(() => @editDeliveryTicket.Signee)" Variant="Variant.Text"></MudTextField>  
-            @*@if(deliveryTicketSummary != null)
-                {
+                @* <MudText Class="my-4" Typo="Typo.h5">Store: @StoreName</MudText>
+                    <MudText Class="my-4" Typo="Typo.h5">Number of Carts: @deliveryTicketDto.NumberOfCarts </MudText>*@
+                <MudTextField @bind-Value="@editDeliveryTicket.Signee" Label="Signee Name" Required="true" RequiredError="" For="@(() => @editDeliveryTicket.Signee)" Variant="Variant.Text"></MudTextField>
+                @*@if(deliveryTicketSummary != null)
+                    {
 
                     <MudText Class="" Typo="Typo.h6">Delivered: @deliveryTicketSummary.Delivered</MudText>
 
@@ -43,54 +45,52 @@ height: 140px !important;
 
                     <MudText Class="" Typo="Typo.h6">Trashed: @deliveryTicketSummary.Trashed</MudText>
 
-                }*@
-           @* @if(cartsTable != null)
+                    }*@
+                @* @if(cartsTable != null)
+                    {
+                    <CartsTable Carts="@cartsTable"></CartsTable>
+                    }*@
+                @if (!string.IsNullOrWhiteSpace(_picUrl))
                 {
-               <CartsTable Carts="@cartsTable"></CartsTable>
-                }*@
-            @if (!string.IsNullOrWhiteSpace(_picUrl))
-                {
-                        <div class="d-flex justify-center mt-6 popupitemimage">
-                            <img src="@_picUrl" width="270" height="270" />
-                        </div>
+                    <div class="d-flex justify-center mt-6 popupitemimage">
+                        <img src="@_picUrl" width="270" height="270" />
+                    </div>
                 }
                 @if (!string.IsNullOrWhiteSpace(_fileUrl))
                 {
                     <MudText Class="" Typo="Typo.h5">Signature:</MudText>
-                        <div class="d-flex justify-center mt-6 popupitemimage">
-                            <img src="@_fileUrl" width="150" height="150" />
-                        </div>
+                    <div class="d-flex justify-center mt-6 popupitemimage">
+                        <img src="@_fileUrl" width="150" height="150" />
+                    </div>
                 }
                 else
                 {
                     @if (!_isSigned)
                     {
-                                <div id="divResize" class="">
-                                    <SSignature SignObject="ctlSignature"
-                                    RefreshImage="/images/clear.png"
-                                    PenCursor="/images/pen.cur"
-                                    SignWidth="450"
-                                    SignHeight="75"
-                                    PenColor="blue"
-                                    RequiredPoints="50">
-                                    </SSignature>
-                                </div>
-                        @*<div class="col-lg-6 col-sm-12">
-                            <img src="/images/spacer.png" id="pngImg"/>
-                            </div>*@
+                        <div id="divResize" class="">
+                            <SSignature SignObject="ctlSignature"
+                                RefreshImage="/images/clear.png"
+                                PenCursor="/images/pen.cur"
+                                SignWidth="450"
+                                SignHeight="75"
+                                PenColor="blue"
+                                RequiredPoints="50">
+                            </SSignature>
+                        </div>
                         
                     }
                 }
                 @if (!_isSigned)
                 {
-                      <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)"
-                    OnClick="SaveSignature">Sign  
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)"
+                           OnClick="SaveSignature">
+                        Sign
                     </MudButton>
-
                 }
                 else
                 {
                     <MudText Typo="Typo.h5" Class="text-success">Signature Complete</MudText>
+
                 }
 
 
@@ -99,9 +99,9 @@ height: 140px !important;
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" 
-                OnClick="Submit" 
-                Disabled="@(!IsSigned)">Save</MudButton>
+        <MudButton Color="Color.Primary"
+                   OnClick="Submit"
+                   Disabled="@(!IsSigned)">Save</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -145,7 +145,7 @@ height: 140px !important;
 
     protected override async Task OnInitializedAsync()
     {
-       await SetCanvasHeight();
+        await SetCanvasHeight();
     }
     protected override Task OnParametersSetAsync()
     {
@@ -159,20 +159,12 @@ height: 140px !important;
         var dotNetObjectRef = DotNetObjectReference.Create(this);
         await _js.InvokeAsync<string>("saveSignatureAsync", dotNetObjectRef);
         IsSigned = true;
-
+        StateHasChanged();
     }
     private async Task SetCanvasHeight()
     {
-        try
-        {
-            JsModule = await _js.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-         
-            await JsModule.InvokeVoidAsync("updateCanvas");
-        }
-        catch(Exception ex)
-        {
-            
-        }
+        JsModule = await _js.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        await JsModule.InvokeVoidAsync("updateCanvas");
     }
     [JSInvokable]
     public async Task SaveSignatureAsync(string imageData)
@@ -191,7 +183,7 @@ height: 140px !important;
         _fileUrl = await PicUploadHttpRepository.UploadSignature(content);
         editDeliveryTicket.SignaturePicUrl = _fileUrl;
         editDeliveryTicket.ApprovedByStore = true;
-         editDeliveryTicket.SignOffRequired = true;
+        editDeliveryTicket.SignOffRequired = true;
         success = true;
         _isSigned = true;
         StateHasChanged();

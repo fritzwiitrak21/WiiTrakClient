@@ -43,12 +43,20 @@ else
 
 @code {
     List<StoreDto> _stores = new ();
-
+    private IJSObjectReference JsModule;
     StoreCreationDto _newStore = new();
     bool LoaderVisibility = false;
     protected override async Task OnInitializedAsync()
     {
-        LoaderVisibility = true;
+         LoaderVisibility = true;
+
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
+
         _stores = await StoreHttpRepository.GetStoresByCompanyId(CurrentUser.UserId);
         LoaderVisibility = false;
     }  
