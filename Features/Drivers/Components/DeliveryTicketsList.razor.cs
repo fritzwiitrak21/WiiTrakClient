@@ -100,6 +100,7 @@ namespace WiiTrakClient.Features.Drivers.Components
 
                 await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId,deliveryTicketUpdate);
                 DeliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByDriverIdAsync(CurrentUser.UserId);
+                StateHasChanged();
                 // update status of carts to delivered and update cart hitory
                 var carts = _carts.Where(x => x.StoreId == _editDeliveryTicket.StoreId).ToList();
                 foreach (var cart in carts)
