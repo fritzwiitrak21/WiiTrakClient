@@ -2,26 +2,22 @@
 @using WiiTrakClient.Shared.Components
 
 <style>
-.mud-dialog .mud-dialog-title
-{
-color: #fff !important;
-background-color: #214162;
-}
+    .mud-dialog .mud-dialog-title {
+        color: #fff !important;
+        background-color: #214162;
+    }
 
-.mud-dialog .mud-dialog-content
-{
-    background-color: #f1f7f7;
-}
+    .mud-dialog .mud-dialog-content {
+        background-color: #f1f7f7;
+    }
 
-.mud-dialog .mud-dialog-actions
-{
-     background-color: #f1f7f7;
-}
+    .mud-dialog .mud-dialog-actions {
+        background-color: #f1f7f7;
+    }
 
-.mud-icon-button-label
-{
-    color:#fff;
-}
+    .mud-icon-button-label {
+        color: #fff;
+    }
 </style>
 
 
@@ -29,16 +25,16 @@ background-color: #214162;
     <DialogContent>
         <div style="width: 320px;height:100px;overflow: auto;">
             <MudForm Model="@DisplayMessage">
-               @if (IsSuccessNotification)
+                @if (IsSuccessNotification)
                 {
                     <span style="color:green">
-                    <MudText  Class="my-4" Typo="Typo.h6">@DisplayMessage</MudText>
+                        <MudText Class="my-4" Typo="Typo.h6">@DisplayMessage</MudText>
                     </span>
                 }
                 else
                 {
                     <span style="color:red">
-                    <MudText  Class="my-4" Typo="Typo.h6">@DisplayMessage</MudText>
+                        <MudText Class="my-4" Typo="Typo.h6">@DisplayMessage</MudText>
                     </span>
                 }
             </MudForm>
@@ -47,12 +43,12 @@ background-color: #214162;
     <DialogActions>
         @if (CancelVisibility)
         {
-                 <MudButton OnClick="Cancel">@CancelButtonText</MudButton>
+            <MudButton OnClick="Cancel">@CancelButtonText</MudButton>
         }
         @if (Visibility)
         {
-                <MudButton Color="Color.Primary" OnClick="Submit">@OkButtonText</MudButton>
-        }   
+            <MudButton Color="Color.Primary" OnClick="Submit">@OkButtonText</MudButton>
+        }
     </DialogActions>
 </MudDialog>
 
@@ -88,9 +84,9 @@ background-color: #214162;
         else if (FromWindow.ToLower().Contains("forgot"))
         {
             OkButtonText = "Ok";
-               if (IsSuccessNotification)
+            if (IsSuccessNotification)
             {
-                 Visibility = true;
+                Visibility = true;
             }
             else
             {
@@ -103,19 +99,25 @@ background-color: #214162;
             OkButtonText = "Login";
             Visibility = true;
         }
-
-        if(FromWindow.ToLower().Contains("change"))
+        else if (FromWindow.ToLower().Contains("deliveryicketlist"))
         {
-               OkButtonText = "Ok";
-               if (IsSuccessNotification)
+            OkButtonText = "Yes";
+            Visibility = true;
+            CancelVisibility = true;
+            CancelButtonText = "No";
+        }
+        if (FromWindow.ToLower().Contains("change"))
+        {
+            OkButtonText = "Ok";
+            if (IsSuccessNotification)
             {
-                 Visibility = true;
+                Visibility = true;
             }
             else
             {
                 CancelVisibility = true;
                 CancelButtonText = "Try Again";
-            }  
+            }
         }
     }
 

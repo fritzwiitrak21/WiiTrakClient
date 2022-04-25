@@ -28,6 +28,7 @@ else if (driverstore.Count > 0)
         </MudTh>
         <MudTh>
             <MudTableSortLabel  
+                InitialDirection="SortDirection.Ascending" 
                 SortBy="new Func<StoreDto, object>(x=>x.StoreNumber)">
                     Store Number
             </MudTableSortLabel>
@@ -51,9 +52,7 @@ else if (driverstore.Count > 0)
                     PostalCode
             </MudTableSortLabel>
         </MudTh>
-        @*<MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.Latitude)">Latitude</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.Longitude)">Longitude</MudTableSortLabel></MudTh>*@
-        <MudTh>Email</MudTh>
+        
         <MudTh>Phone</MudTh>               
     </HeaderContent>
     <RowTemplate>
@@ -74,15 +73,6 @@ else if (driverstore.Count > 0)
         </MudTd>
         <MudTd DataLabel="PostalCode">
             @context.PostalCode
-        </MudTd>
-         @*<MudTd DataLabel="Latitude">
-            @context.Latitude
-        </MudTd>
-        <MudTd DataLabel="Longitude">
-            @context.Longitude
-        </MudTd>*@
-        <MudTd DataLabel="Email">
-            @context.Email
         </MudTd>
          <MudTd DataLabel="Phone">
             @context.PhonePrimary

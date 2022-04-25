@@ -6,22 +6,21 @@
 
 @namespace WiiTrakClient.Features.Companies.Components
 
-<MudTable Items=@driverstore   Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@_listIsLoading"
-    LoadingProgressColor="Color.Primary">
+<MudTable Items=@driverstore Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@_listIsLoading"
+          LoadingProgressColor="Color.Primary">
     <HeaderContent>
+
         <MudTh>
-            <MudTableSortLabel InitialDirection="SortDirection.Ascending" 
-                SortBy="new Func<DriverStoreDetailsDto, object>(x=>x.StoreNumber)">Store Number
+            <MudTableSortLabel InitialDirection="SortDirection.Ascending"
+                               SortBy="new Func<DriverStoreDetailsDto, object>(x=>x.StoreName)">
+                Store Name
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-           Store Name
-        </MudTh>
-        <MudTh>
-            Email
-        </MudTh>
-        <MudTh>
-            Phone
+            <MudTableSortLabel InitialDirection="SortDirection.Ascending"
+                               SortBy="new Func<DriverStoreDetailsDto, object>(x=>x.StoreNumber)">
+                Store Number
+            </MudTableSortLabel>
         </MudTh>
         <MudTh>
             Street Address 1
@@ -30,52 +29,59 @@
             Street Address 2
         </MudTh>
         <MudTh>
-            <MudTableSortLabel
-                SortBy="new Func<DriverStoreDetailsDto, object>(x=>x.City)">City
+            <MudTableSortLabel SortBy="new Func<DriverStoreDetailsDto, object>(x=>x.City)">
+                City
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel 
-                SortBy="new Func<DriverStoreDetailsDto, object>(x=>x.State)">State
+            <MudTableSortLabel SortBy="new Func<DriverStoreDetailsDto, object>(x=>x.State)">
+                State
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel 
-                SortBy="new Func<DriverStoreDetailsDto, object>(x=>x.PostalCode)">Postal Code
+            <MudTableSortLabel SortBy="new Func<DriverStoreDetailsDto, object>(x=>x.PostalCode)">
+                Postal Code
             </MudTableSortLabel>
         </MudTh>
-       
+
         <MudTh></MudTh>
     </HeaderContent>
 
     <RowTemplate>
-        <MudTd DataLabel="Store Number">@context.StoreNumber</MudTd>
         <MudTd DataLabel="Store Name">@context.StoreName</MudTd>
-        <MudTd DataLabel="Email">@context.Email</MudTd>
-        <MudTd DataLabel="Phone">@context.PhonePrimary</MudTd>
+        <MudTd DataLabel="Store Number">@context.StoreNumber</MudTd>
         <MudTd DataLabel="Street Address 1">@context.StreetAddress1</MudTd>
         <MudTd DataLabel="Street Address 2">@context.StreetAddress2</MudTd>
         <MudTd DataLabel="City">@context.City</MudTd>
         <MudTd DataLabel="State">@context.State</MudTd>
-        <MudTd DataLabel="Postal Code">@context.PostalCode</MudTd> 
-     
+        <MudTd DataLabel="Postal Code">@context.PostalCode</MudTd>
+
         <MudTd DataLabel="">
             @if (!context.DriverStoresIsActive)
             {
-                    <MudButton Variant="Variant.Filled" 
-                    StartIcon="@Icons.Material.Filled.Send"
-                    OnClick="((e) => Assign(context))"
-                    Color="Color.Primary">Assign
+                if (context.AssignedDriver.Length == 0)
+                {
+                    <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.Send"
+                       OnClick="((e) => Assign(context))"
+                       Color="Color.Primary">
+                        Assign
                     </MudButton>
+                }
+                else
+                {
+                    <MudText>Already assigned to<br />@context.AssignedDriver</MudText>
+                }
             }
             else
             {
-                    <MudButton Variant="Variant.Filled" 
-                    EndIcon="@Icons.Material.Filled.Send" 
-                    OnClick="((e) => UnAssign(context))"
-                    Color="Color.Default">UnAssign
-                    </MudButton>
-            } 
+                <MudButton Variant="Variant.Filled"
+                       EndIcon="@Icons.Material.Filled.Send"
+                       OnClick="((e) => UnAssign(context))"
+                       Color="Color.Default">
+                    UnAssign
+                </MudButton>
+            }
         </MudTd>
     </RowTemplate>
     <PagerContent>
@@ -88,27 +94,27 @@
     public List<DriverStoreDetailsDto>? driverstore { get; set; } = null;
 
     public bool _listIsLoading = false;
-    
-    
+
+
     public DriverDto _selectedDriver = new();
 
     [Inject]
     public IDriverStoresHttpRepository DriverStoreRepository { get; set; }
 
-   
+
     protected override async Task OnInitializedAsync()
     {
 
-       
+
     }
     private async Task Assign(DriverStoreDetailsDto DriverStore)
     {
         DriverStore.DriverStoresIsActive = true;
-        await DriverStoreRepository.UpdateDriverStoresAsync( Core.SelectedDriverId,DriverStore);
+        await DriverStoreRepository.UpdateDriverStoresAsync(Core.SelectedDriverId, DriverStore);
     }
     private async Task UnAssign(DriverStoreDetailsDto DriverStore)
     {
         DriverStore.DriverStoresIsActive = false;
-        await DriverStoreRepository.UpdateDriverStoresAsync( Core.SelectedDriverId,DriverStore);
+        await DriverStoreRepository.UpdateDriverStoresAsync(Core.SelectedDriverId, DriverStore);
     }
 }

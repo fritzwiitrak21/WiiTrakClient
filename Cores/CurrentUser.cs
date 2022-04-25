@@ -2,6 +2,7 @@
 using System.Data;
 using System.Reflection;
 
+
 namespace WiiTrakClient.Cores
 {
     public static class CurrentUser
