@@ -127,11 +127,9 @@ namespace WiiTrakClient.Features.Stores.Components
                 };
 
                 await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);
-
-                // update Delivery Ticket List
-              
             }
             DeliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(CurrentUser.UserId);
+            StateHasChanged();
         }
 
         public async Task OpenUpdateDeliveryTicketDialog(DeliveryTicketDto deliveryTicket)

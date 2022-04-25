@@ -126,7 +126,7 @@ namespace WiiTrakClient.Features.Companies.Components
                 #endregion
             }
             _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
-
+            StateHasChanged();
             //var cartPreUpdate = cart;
 
             //Console.WriteLine("cart id: " + cart.Id);
