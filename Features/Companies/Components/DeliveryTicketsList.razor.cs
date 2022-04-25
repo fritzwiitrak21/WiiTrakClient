@@ -245,7 +245,7 @@ namespace WiiTrakClient.Features.Companies.Components
         //    }
 
         //    #endregion
-        }
+        //}
 
 
 

@@ -57,7 +57,7 @@ else
     [Inject] IJSRuntime JsRuntime { get; set; }
     private IJSObjectReference JsModule;
 
-    public string SelectedOption { get; set; }
+   
     protected override async Task OnInitializedAsync()
     {
         if (CurrentUser.UserId == Guid.Empty)
