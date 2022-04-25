@@ -14,13 +14,21 @@
                 }
             </MudSelect>
         </MudItem>
-        @*  <MudItem xs="6" md="2">
-            <MudSelect T="string" Label="Stores" Dense="true" ValueChanged="(value) => GetStoreDetails(value)">
-            <MudSelectItem T="string" Value="@("All")" />
-            <MudSelectItem T="string" Value="@("Assigned")" />
-            <MudSelectItem T="string" Value="@("Unassigned")" />
-            </MudSelect>
-            </MudItem>*@
+        <MudItem xs="12" sm="6" md="4">
+            <div style="padding-top:6px">
+                <MudForm>
+                    <MudRadioGroup @bind-SelectedOption="@SelectedOption">
+                        <MudRadio Option="@("All")" Color="Color.Primary">All</MudRadio>
+                        <MudRadio Option="@("Assigned")" Color="Color.Primary">Assigned</MudRadio>
+                        <MudRadio Option="@("Unassigned")" Color="Color.Primary">Unassigned</MudRadio>
+                    </MudRadioGroup>
+                </MudForm>
+            </div>
+        </MudItem>
+        @{
+            GetStoreDetails();
+        }
+
     </MudGrid>
 </div>
 @if (driverstore.Count > 0)
@@ -33,7 +41,8 @@ else
 }
 
 @code {
-
+    public string SelectedOption { get; set; } = "";
+    public string TempSelectedOption { get; set; } = "";
     public List<DriverDto> Drivers { get; set; } = new();
 
     public List<DriverStoreDetailsDto> driverstore { get; set; } = new();
@@ -45,8 +54,8 @@ else
 
     [Inject]
     public IDriverHttpRepository DriverRepository { get; set; }
-     [Inject] IJSRuntime JsRuntime { get; set; }
-     private IJSObjectReference JsModule;
+    [Inject] IJSRuntime JsRuntime { get; set; }
+    private IJSObjectReference JsModule;
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,27 +67,44 @@ else
 
         }
         Drivers = await DriverRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
+
     }
     private async Task HandleDriverSelected(DriverDto Driver)
     {
         alldriverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId, Driver.Id);
-        driverstore = alldriverstore;
-        Core.SelectedDriverId = Driver.Id;
-    }
-    //  public void GetStoreDetails(string value)
-    //{
-    //    if (value == "All")
-    //    {
-    //        driverstore = alldriverstore;
-    //    }
-    //    else if(value=="Assigned")
-    //    {
-    //        driverstore = alldriverstore.Where(x => x.DriverStoresIsActive == true).ToList();
-    //    }
-    //    else if(value=="Unassigned")
-    //    {
-    //       driverstore = alldriverstore.Where(x => x.DriverStoresIsActive == false).ToList();
-    //    }
 
-    //}
+        driverstore = alldriverstore;
+        StateHasChanged();
+        Core.SelectedDriverId = Driver.Id;
+        SelectedOption = null;
+        GetStoreDetails();
+        StateHasChanged();
+
+    }
+    public async Task GetStoreDetails()
+    {
+        if (TempSelectedOption != SelectedOption)
+        {
+            var value = SelectedOption;
+            TempSelectedOption = SelectedOption;
+            if (value == "All")
+            {
+                alldriverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId, Core.SelectedDriverId);
+                driverstore = alldriverstore;
+                StateHasChanged();
+            }
+            else if (value == "Assigned")
+            {
+                alldriverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId, Core.SelectedDriverId);
+                driverstore = alldriverstore.Where(x => x.DriverStoresIsActive == true).ToList();
+                StateHasChanged();
+            }
+            else if (value == "Unassigned")
+            {
+                alldriverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId, Core.SelectedDriverId);
+                driverstore = alldriverstore.Where(x => x.DriverStoresIsActive == false).ToList();
+                StateHasChanged();
+            }
+        }
+    }
 }

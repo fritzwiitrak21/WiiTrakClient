@@ -27,5 +27,7 @@ namespace WiiTrakClient.DTOs
         [StringLength(25, ErrorMessage = " ")]
         [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = " ")]
         public string Signee { get; set; } = string.Empty;
+        //public bool IsActive { get; set; }
+        //public Guid UpdatedBy { get; set; }
     }
 }
