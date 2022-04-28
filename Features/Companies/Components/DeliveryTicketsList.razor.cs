@@ -191,61 +191,61 @@ namespace WiiTrakClient.Features.Companies.Components
 
             var dialog = DialogService.Show<DeliveryTicketDetailsDialog>("Delivery Ticket Summary", parameters);
         }
-        //public async Task GetConfirmation(DeliveryTicketDto deliveryTicket)
-        //{
-        //    selectedDriver = await DriverRepository.GetDriverByIdAsync(deliveryTicket.DriverId);
-        //    _stores = await StoreHttpRepository.GetStoresByDriverId(deliveryTicket.DriverId);
-        //    _carts = await CartHttpRepository.GetCartsByDriverIdAsync(deliveryTicket.DriverId);
-        //    _editDeliveryTicket.StoreId = deliveryTicket.StoreId;
-        //    _editDeliveryTicket.PicUrl = deliveryTicket.PicUrl;
-        //    _editDeliveryTicket.DriverId = deliveryTicket.DriverId;
-        //    _editDeliveryTicket.NumberOfCarts = deliveryTicket.NumberOfCarts;
-        //    _editDeliveryTicket.ServiceProviderId = deliveryTicket.ServiceProviderId;
-        //    _editDeliveryTicket.DeliveryTicketNumber = deliveryTicket.DeliveryTicketNumber;
-        //    deliveryTicketId = deliveryTicket.Id;
-        //    #region Show Message Dialog
-        //    var parameters = new DialogParameters();
-        //    ErrorMessage = "";
-        //    SuccessMessage = "Are you sure do you want to delete this ticket " + deliveryTicket.DeliveryTicketNumber + "?";
-        //    parameters.Add("DisplayMessage", deliveryTicket == null ? ErrorMessage : SuccessMessage);
-        //    parameters.Add("FromWindow", "deliveryicketlist");
-        //    parameters.Add("IsSuccessNotification", deliveryTicket == null ? false : true);
+        public async Task GetConfirmation(DeliveryTicketDto deliveryTicket)
+        {
+            selectedDriver = await DriverRepository.GetDriverByIdAsync(deliveryTicket.DriverId);
+            _stores = await StoreHttpRepository.GetStoresByDriverId(deliveryTicket.DriverId);
+            _carts = await CartHttpRepository.GetCartsByDriverIdAsync(deliveryTicket.DriverId);
+            _editDeliveryTicket.StoreId = deliveryTicket.StoreId;
+            _editDeliveryTicket.PicUrl = deliveryTicket.PicUrl;
+            _editDeliveryTicket.DriverId = deliveryTicket.DriverId;
+            _editDeliveryTicket.NumberOfCarts = deliveryTicket.NumberOfCarts;
+            _editDeliveryTicket.ServiceProviderId = deliveryTicket.ServiceProviderId;
+            _editDeliveryTicket.DeliveryTicketNumber = deliveryTicket.DeliveryTicketNumber;
+            deliveryTicketId = deliveryTicket.Id;
+            #region Show Message Dialog
+            var parameters = new DialogParameters();
+            ErrorMessage = "";
+            SuccessMessage = "Are you sure do you want to delete this ticket " + deliveryTicket.DeliveryTicketNumber + "?";
+            parameters.Add("DisplayMessage", deliveryTicket == null ? ErrorMessage : SuccessMessage);
+            parameters.Add("FromWindow", "deliveryicketlist");
+            parameters.Add("IsSuccessNotification", deliveryTicket != null ? false : true);
 
-        //    DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+            DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
-        //    var dialog = DialogService.Show<ShowMessageDialog>("Confirmation Message", parameters);
-        //    var result = await dialog.Result;
+            var dialog = DialogService.Show<ShowMessageDialog>("Confirmation Message", parameters);
+            var result = await dialog.Result;
 
-        //    if (!result.Cancelled)
-        //    {
-        //        try
-        //        {
-        //            var deliveryTicketUpdate = new DeliveryTicketUpdateDto
-        //            {
-        //                NumberOfCarts = _editDeliveryTicket.NumberOfCarts,
-        //                PicUrl = _editDeliveryTicket.PicUrl,
-        //                DeliveredAt = _editDeliveryTicket.DeliveredAt,
-        //                StoreId = _editDeliveryTicket.StoreId,
-        //                ServiceProviderId = _editDeliveryTicket.ServiceProviderId,
-        //                DriverId = _editDeliveryTicket.DriverId,
-        //                DeliveryTicketNumber = _editDeliveryTicket.DeliveryTicketNumber,
-        //                SignOffRequired = _stores.FirstOrDefault(x => x.Id == _editDeliveryTicket.StoreId).IsSignatureRequired,
-        //                IsActive = false,
-        //                UpdatedBy = CurrentUser.UserId
-        //            };
+            if (!result.Cancelled)
+            {
+                try
+                {
+                    var deliveryTicketUpdate = new DeliveryTicketUpdateDto
+                    {
+                        NumberOfCarts = _editDeliveryTicket.NumberOfCarts,
+                        PicUrl = _editDeliveryTicket.PicUrl,
+                        DeliveredAt = _editDeliveryTicket.DeliveredAt,
+                        StoreId = _editDeliveryTicket.StoreId,
+                        ServiceProviderId = _editDeliveryTicket.ServiceProviderId,
+                        DriverId = _editDeliveryTicket.DriverId,
+                        DeliveryTicketNumber = _editDeliveryTicket.DeliveryTicketNumber,
+                        SignOffRequired = _stores.FirstOrDefault(x => x.Id == _editDeliveryTicket.StoreId).IsSignatureRequired,
+                        IsActive = false,
+                        UpdatedBy = CurrentUser.UserId
+                    };
 
-        //            await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);
-        //            _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+                    await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);
+                    _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+                }
+                catch (Exception ex)
+                {
 
-        //        }
-        //        catch (Exception ex)
-        //        {
-
-        //        }
-        //    }
-
-        //    #endregion
-        //}
+                }
+            }
+_deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+            StateHasChanged();
+            #endregion
+        }
 
 
 
