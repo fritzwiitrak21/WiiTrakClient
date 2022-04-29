@@ -52,6 +52,7 @@ namespace WiiTrakClient.Features.Corporates
                 {
                     _deliveryTickets = deliveryTickets;
                 }
+                StateHasChanged();
             }
             catch (Exception ex)
             {

@@ -82,7 +82,3 @@ export function getCoord() {
 export function ClearCoord() {
     localStorage.removeItem("Coord");
 }
-
-
-
-

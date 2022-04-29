@@ -37,9 +37,9 @@ namespace WiiTrakClient.HttpRepository
             }
             return response.Response;
         }
-        public async Task UpdateDriverStoresAsync(Guid DriverId,DriverStoreDetailsDto _DriverStoreDto)
+        public async Task UpdateDriverStoresAsync(DriverStoreDetailsDto DriverStoreDto)
         {
-            var response = await _httpService.Put($"{ _apiUrl }/{ DriverId }", _DriverStoreDto);
+            var response = await _httpService.Put($"{ _apiUrl }", DriverStoreDto);
             if (!response.Success)
             {
                 // throw new ApplicationException(await response.GetBody());

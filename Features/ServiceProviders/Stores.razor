@@ -21,7 +21,7 @@
 @*Need to fix in future phase*@
 
 <div class="my-8">
-    @if (LoaderVisibility)
+   @* @if (LoaderVisibility)
     {
         <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
     }
@@ -35,6 +35,18 @@
         {
             <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
         }
+    }*@
+    @if (StoreList == null)
+    {
+        <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+    }
+    else if (_stores.Count > 0)
+    {
+        <StoreList Stores="@_stores" />
+    }
+    else
+    {
+        <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
     }
 
 </div>
@@ -43,6 +55,7 @@
 
 @code {
     List<StoreDto> _stores = new();
+    List<StoreDto> StoreList = new();
 
     StoreCreationDto _newStore = new();
     bool LoaderVisibility = false;
@@ -50,8 +63,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        LoaderVisibility = true;
-
         if (CurrentUser.UserId == Guid.Empty)
         {
             JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
@@ -59,8 +70,12 @@
             CurrentUser.UserId = new Guid(Id);
         }
 
-        _stores = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);
-        LoaderVisibility = false;
+        StoreList = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);
+        if (StoreList is not null)
+        {
+            _stores = StoreList;
+        }
+        StateHasChanged();
     }
 
     private async Task OpenDialog()

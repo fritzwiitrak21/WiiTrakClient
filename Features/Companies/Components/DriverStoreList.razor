@@ -101,20 +101,20 @@
     [Inject]
     public IDriverStoresHttpRepository DriverStoreRepository { get; set; }
 
-
-    protected override async Task OnInitializedAsync()
-    {
-
-
-    }
     private async Task Assign(DriverStoreDetailsDto DriverStore)
     {
-        DriverStore.DriverStoresIsActive = true;
-        await DriverStoreRepository.UpdateDriverStoresAsync(Core.SelectedDriverId, DriverStore);
+        await AssignUnAssign(DriverStore);
     }
     private async Task UnAssign(DriverStoreDetailsDto DriverStore)
     {
-        DriverStore.DriverStoresIsActive = false;
-        await DriverStoreRepository.UpdateDriverStoresAsync(Core.SelectedDriverId, DriverStore);
+        await AssignUnAssign(DriverStore, false);
+    }
+    private async Task AssignUnAssign(DriverStoreDetailsDto DriverStore, bool Assign = true)
+    {
+        DriverStore.DriverStoresIsActive = Assign;
+        DriverStore.DriverId = Core.SelectedDriverId;
+        DriverStore.AssignedBy = CurrentUser.UserId;
+        await DriverStoreRepository.UpdateDriverStoresAsync(DriverStore);
+        StateHasChanged();
     }
 }

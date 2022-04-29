@@ -1,32 +1,16 @@
 ﻿@inherits LayoutComponentBase
+@using WiiTrakClient.Cores
+@using WiiTrakClient.Shared.Components
+@inject INotificationHttpRepository NotifyHttpRepository
 
 <MudThemeProvider Theme="_themeManager.Theme" />
-<MudDialogProvider
-    FullWidth="false" 
-    MaxWidth="MaxWidth.ExtraLarge"   
-    CloseButton="true"    
-    DisableBackdropClick="true"   
-    NoHeader="false"   
-    Position="DialogPosition.Center" 
-/>
+<MudDialogProvider FullWidth="false"
+                   MaxWidth="MaxWidth.ExtraLarge"
+                   CloseButton="true"
+                   DisableBackdropClick="true"
+                   NoHeader="false"
+                   Position="DialogPosition.Center" />
 <MudSnackbarProvider />
- 
-@*<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>*@
-
 
 <MudLayout>
     <MudAppBar Elevation="_themeManager.AppBarElevation">
@@ -44,15 +28,35 @@
             <MudText Typo="Typo.subtitle2">WiiTrak</MudText>
         </MudHidden>
         <MudSpacer />
-        @*<MudMenu Icon="@Icons.Material.Outlined.Translate" Color="Color.Inherit" Direction="Direction.Bottom" OffsetY="true" Dense="true">
-            <MudMenuItem>English</MudMenuItem>
-            <MudMenuItem>Swedish</MudMenuItem>
-            <MudMenuItem>Old Norse</MudMenuItem>
-        </MudMenu>*@
-       @* <MudMenu Icon="@Icons.Material.Outlined.Widgets" Color="Color.Inherit" Direction="Direction.Bottom" OffsetY="true" Dense="true">
+        @if (CurrentUser.UserRoleId == 5)//Driver
+        {
+            if (Core.NotificationCount > 0)
+            {
+                <MudBadge Content="@Core.NotificationCount" Overlap="true" Color="Color.Error" Class="mx-6 my-4">
+                    <MudIconButton Icon="@Icons.Filled.Notifications" Class="p-0" OnClick="Notification" Color="Color.Primary" Link="/notify" />
+                </MudBadge>
+            }
+            else
+            {
+                <MudBadge Content="@Core.NotificationCount" Overlap="true" Color="Color.Error" Class="mx-6 my-4 Count0">
+                    <MudIconButton Icon="@Icons.Filled.Notifications" OnClick="Notification" Class="p-0" Color="Color.Primary" Link="/notify" />
+                </MudBadge>
+            }
+            {
+                var startTimeSpan = TimeSpan.FromSeconds(59);
+                var periodTimeSpan = TimeSpan.FromSeconds(59);
+                var timer = new System.Threading.Timer((e) =>
+                {
+                    Notification();
+                }, null, startTimeSpan, periodTimeSpan);
+            }
+        }
+
+        @* <MudMenu Icon="@Icons.Material.Outlined.Widgets" Color="Color.Inherit" Direction="Direction.Bottom" OffsetY="true" Dense="true">
             <MudMenuItem Link="https://mudblazor.com/">MudBlazor</MudMenuItem>
             <MudMenuItem Link="https://github.com/Garderoben/MudBlazor.Templates">Source Code</MudMenuItem>
-        </MudMenu>*@ 
+            </MudMenu>*@
+
         <MudMenu Direction="Direction.Left" OffsetX="true" Dense="true" Class="mt-1">
             <ActivatorContent>
                 <PersonCard Style="background-color: transparent;" />
@@ -63,23 +67,23 @@
                 <MudListItem Text="Account" Icon="@Icons.Material.Outlined.Person" Href="/profile-info" />
                 @*<MudListItem Text="Change Password" Icon="@Icons.Material.Outlined.Password" Href="/change-password" />*@
                 <MudListItem Text="Logout" Icon="@Icons.Material.Outlined.Logout" Href="/logout" />
-                @*<MudListItem Text="Logout" Icon="@Icons.Material.Outlined.Login" Href="/pages/authentication/login" />*@
+
             </ChildContent>
         </MudMenu>
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" Elevation="_themeManager.DrawerElevation" ClipMode="_themeManager.DrawerClipMode">
         <div class="sidebarbrand">
-        <img src="/images/WiiTrak-logo.png" width="96" height="" />
-        <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="ml-3" />
-</div>
+            <img src="/images/WiiTrak-logo.png" width="96" height="" />
+            <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="ml-3" />
+        </div>
         <NavMenu />
     </MudDrawer>
     <MudMainContent>
         <MudHidden Breakpoint="Breakpoint.SmAndDown">
             <MudToolBar DisableGutters="true">
-        @* <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="ml-3" />*@
+                @* <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="ml-3" />*@
                 @*<MudBreadcrumbs Items="_items"></MudBreadcrumbs>*@
-                <MudSpacer />  
+                <MudSpacer />
             </MudToolBar>
         </MudHidden>
         <MudContainer MaxWidth="MaxWidth.False" Class="mt-4">
@@ -87,20 +91,31 @@
         </MudContainer>
     </MudMainContent>
     @*<MudThemeManagerButton OnClick="@((e) => OpenThemeManager(true))" />
-    <MudThemeManager Open="_themeManagerOpen" OpenChanged="OpenThemeManager" Theme="_themeManager" ThemeChanged="UpdateTheme" />*@
+        <MudThemeManager Open="_themeManagerOpen" OpenChanged="OpenThemeManager" Theme="_themeManager" ThemeChanged="UpdateTheme" />*@
 </MudLayout>
 
 @code
 {
-    private ThemeManagerTheme _themeManager = new ThemeManagerTheme
+    protected override async Task OnInitializedAsync()
     {
-        Theme = new MudBlazorAdminDashboard(),
-        DrawerClipMode = DrawerClipMode.Always,
-        FontFamily = "Montserrat",
-        DefaultBorderRadius = 6,
-        AppBarElevation = 1,
-        DrawerElevation = 1
-    };
+        await Notification();
+    }
+    private async Task Notification()
+    {
+        if (CurrentUser.UserRoleId != 5) return;
+        Core.NotificationsList = await NotifyHttpRepository.GetNotificationIdAsync(CurrentUser.UserId);
+        Core.NotificationCount = Core.NotificationsList.Where(x => x.IsNotified == false).Count();
+        StateHasChanged();
+    }
+    private ThemeManagerTheme _themeManager = new ThemeManagerTheme
+        {
+            Theme = new MudBlazorAdminDashboard(),
+            DrawerClipMode = DrawerClipMode.Always,
+            FontFamily = "Montserrat",
+            DefaultBorderRadius = 6,
+            AppBarElevation = 1,
+            DrawerElevation = 1
+        };
 
     public bool _drawerOpen = true;
     public bool _themeManagerOpen = false;

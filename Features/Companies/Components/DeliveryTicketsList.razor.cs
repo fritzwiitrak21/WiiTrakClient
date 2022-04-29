@@ -27,6 +27,8 @@ namespace WiiTrakClient.Features.Companies.Components
         [Parameter]
         public EventCallback DeliveryTicketUpdatedEventCallback { get; set; }
 
+        
+
         [Inject]
         IDialogService? DialogService { get; set; }
 
@@ -44,11 +46,14 @@ namespace WiiTrakClient.Features.Companies.Components
         private string ErrorMessage { get; set; } = "";
         private string SuccessMessage { get; set; } = "";
 
+        private IJSObjectReference JsModule;
+
         protected override void OnParametersSet()
         {
             _listIsLoading = false;
         }
 
+        #region Update Dialog
         public async Task OpenUpdateDeliveryTicketDialog(DeliveryTicketDto deliveryTicket)
         {
             Console.WriteLine("OpenUpdateDeliveryTickerDialog()");
@@ -176,7 +181,9 @@ namespace WiiTrakClient.Features.Companies.Components
             //    await CartUpdatedEventCallback.InvokeAsync(cartChange);
             //}
         }
+        #endregion
 
+        #region Details Dialog
         public async Task OpenDeliveryTicketDialog(DeliveryTicketDto deliveryTicket)
         {
             var parameters = new DialogParameters();
@@ -191,11 +198,14 @@ namespace WiiTrakClient.Features.Companies.Components
 
             var dialog = DialogService.Show<DeliveryTicketDetailsDialog>("Delivery Ticket Summary", parameters);
         }
+        #endregion
+
+        #region Delete Dialog
         public async Task GetConfirmation(DeliveryTicketDto deliveryTicket)
         {
-            selectedDriver = await DriverRepository.GetDriverByIdAsync(deliveryTicket.DriverId);
-            _stores = await StoreHttpRepository.GetStoresByDriverId(deliveryTicket.DriverId);
-            _carts = await CartHttpRepository.GetCartsByDriverIdAsync(deliveryTicket.DriverId);
+            //selectedDriver = await DriverRepository.GetDriverByIdAsync(deliveryTicket.DriverId);
+            //_stores = await StoreHttpRepository.GetStoresByDriverId(deliveryTicket.DriverId);
+            //_carts = await CartHttpRepository.GetCartsByDriverIdAsync(deliveryTicket.DriverId);
             _editDeliveryTicket.StoreId = deliveryTicket.StoreId;
             _editDeliveryTicket.PicUrl = deliveryTicket.PicUrl;
             _editDeliveryTicket.DriverId = deliveryTicket.DriverId;
@@ -203,6 +213,7 @@ namespace WiiTrakClient.Features.Companies.Components
             _editDeliveryTicket.ServiceProviderId = deliveryTicket.ServiceProviderId;
             _editDeliveryTicket.DeliveryTicketNumber = deliveryTicket.DeliveryTicketNumber;
             deliveryTicketId = deliveryTicket.Id;
+
             #region Show Message Dialog
             var parameters = new DialogParameters();
             ErrorMessage = "";
@@ -229,26 +240,25 @@ namespace WiiTrakClient.Features.Companies.Components
                         ServiceProviderId = _editDeliveryTicket.ServiceProviderId,
                         DriverId = _editDeliveryTicket.DriverId,
                         DeliveryTicketNumber = _editDeliveryTicket.DeliveryTicketNumber,
-                        SignOffRequired = _stores.FirstOrDefault(x => x.Id == _editDeliveryTicket.StoreId).IsSignatureRequired,
+                        SignOffRequired = deliveryTicket.SignOffRequired,// _stores.FirstOrDefault(x => x.Id == _editDeliveryTicket.StoreId).IsSignatureRequired,
                         IsActive = false,
                         UpdatedBy = CurrentUser.UserId
                     };
-
+                    //var a = _stores.FirstOrDefault(x => x.Id == _editDeliveryTicket.StoreId).IsSignatureRequired;
                     await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);
-                    _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+                    DeliveryTickets.RemoveAll(x=>x.Id== deliveryTicketId);
+                    DeliveryTickets = DeliveryTickets.OrderByDescending(y => y.DeliveryTicketNumber).ToList();
+                    StateHasChanged();
+                    //_deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
                 }
                 catch (Exception ex)
                 {
 
                 }
             }
-_deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
-            StateHasChanged();
+
             #endregion
         }
-
-
-
-
+        #endregion
     }
 }

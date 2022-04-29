@@ -33,6 +33,9 @@ namespace WiiTrakClient.DTOs
         [RegularExpression(@"^\d{5}(-\d{4})?$", ErrorMessage = "Invalid Zip")]
         public string PostalCode { get; set; } = string.Empty;
 
+        public Guid DriverId { get; set; }
+        public Guid AssignedBy { get; set; }
+
         public string AssignedDriver { get; set; } = string.Empty;
     }
 }

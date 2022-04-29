@@ -1,7 +1,5 @@
 ﻿@using WiiTrakClient.Cores
 @inject IJSRuntime JSRuntime
-@inject NavigationManager NavManager
-
 
 <MudCard Elevation="0" Square="true" Class="@Class" Style="@Style">
     <MudCardHeader>
@@ -23,7 +21,7 @@
     private string UserRole { get; set; }="Role";
 
 
-     private IJSObjectReference JsModule;
+    private IJSObjectReference JsModule;
 
     protected override async Task OnInitializedAsync()
     {
@@ -41,7 +39,7 @@
             UserName = "User";
             UserRole = "Role";
         }
-
+       
 
     }
 

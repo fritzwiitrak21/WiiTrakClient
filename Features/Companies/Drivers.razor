@@ -22,27 +22,39 @@
 </div>
 
 <div class="my-8">
-    @if (LoaderVisibility)
-{
-    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
-}
-else
-{
-    if (_drivers.Count > 0)
+    @*    @if (LoaderVisibility)
+        {
+        <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
+        }
+        else
+        {
+        if (_drivers.Count > 0)
+        {
+        <DriverList Drivers="@_drivers" />
+        }
+        else
+        {
+        <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+        }*@
+    @if (DriversList == null)
+    {
+        <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+    }
+    else if (_drivers.Count > 0)
     {
         <DriverList Drivers="@_drivers" />
     }
     else
     {
-        <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+        <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
     }
-}
 </div>
 
 
 
 @code {
     List<DriverDto> _drivers = new();
+    List<DriverDto> DriversList = new();
 
     DriverCreationDto _newDriver = new();
     private IJSObjectReference JsModule;
@@ -50,17 +62,19 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        LoaderVisibility = true;
-
         if (CurrentUser.UserId == Guid.Empty)
         {
             JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
             var Id = await JsModule.InvokeAsync<string>("getUserId");
             CurrentUser.UserId = new Guid(Id);
-           
         }
-        _drivers = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
-        LoaderVisibility = false;
+
+        DriversList = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
+        if (DriversList is not null)
+        {
+            _drivers = DriversList;
+        }
+        StateHasChanged();
     }
 
     private async Task OpenDialog()

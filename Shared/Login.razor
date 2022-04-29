@@ -269,7 +269,6 @@
          JsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
     }
 
-
     private async void OnSubmit()
     {
         try
@@ -282,38 +281,32 @@
 
             if (UserDetails != null)
             {
-
                 CurrentUser.UserId = UserDetails.Id;
                 CurrentUser.UserRoleId = UserDetails.AssignedRole;
                 CurrentUser.UserRole = Enum.GetName(typeof(Role), CurrentUser.UserRoleId);
                 CurrentUser.UserName = Core.ToPascalCase(string.Concat(UserDetails.FirstName, " ", UserDetails.LastName));
                 CurrentUser.IsFirstLogin = Convert.ToBoolean(UserDetails.IsFirstLogin);
                 CurrentUser.PasswordLastUpdatedAt = UserDetails.PasswordLastUpdatedAt;
-
                
                 await JsModule.InvokeVoidAsync("saveUserId",CurrentUser.UserId);
                 await JsModule.InvokeVoidAsync("saveUserName",CurrentUser.UserName);
                 await JsModule.InvokeVoidAsync("saveUserRole",CurrentUser.UserRole);
                 await JsModule.InvokeVoidAsync("saveUserRoleId",CurrentUser.UserRoleId);
 
-
                 if (CurrentUser.IsFirstLogin)
                 {
-                    // TODO : Navigate to password update page
                     //Key - Email , Key1 - UserId
                     NavManager.NavigateTo("/reset-password?Key=" + Core.Base64Encrypt(UserDetails.Email) + "&Key1=" + CurrentUser.UserId);
                 }
                 else
                 {
-                    //<MudAlert Severity="Severity.Success" Variant="Variant.Filled">Successfully LoggedIn</MudAlert>
                     NavManager.NavigateTo("/index");
                 }
             }
             else
             {
                 ErrorMessage = "Invalid or Inactive Credentials";
-                // TODO : Invalid or Inactive Credentials
-
+                
                 #region Show Message Dialog
                 var parameters = new DialogParameters();
                 parameters.Add("DisplayMessage", ErrorMessage);

@@ -21,5 +21,6 @@
             var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
             CurrentUser.UserRoleId = Convert.ToInt32(roleid);
         }
+        StateHasChanged();
     }
 }
