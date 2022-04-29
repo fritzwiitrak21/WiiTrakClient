@@ -49,9 +49,9 @@
                 {
                     Notification();
                 }, null, startTimeSpan, periodTimeSpan);
-                
 
-                
+
+
 
             }
         }
@@ -100,20 +100,30 @@
 
 @code
 {
-    
+    [Inject] IJSRuntime JsRuntime { get; set; }
+    private IJSObjectReference JsModule;
     protected override async Task OnInitializedAsync()
     {
         await Notification();
-       
+
     }
     private async Task Notification()
     {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+            var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
+            CurrentUser.UserRoleId = Convert.ToInt32(roleid);
+        }
+
         if (CurrentUser.UserRoleId != 5) return;
         Core.NotificationsList = await NotifyHttpRepository.GetNotificationIdAsync(CurrentUser.UserId);
         Core.NotificationCount = Core.NotificationsList.Where(x => x.IsNotified == false).Count();
         StateHasChanged();
     }
-    
+
     private ThemeManagerTheme _themeManager = new ThemeManagerTheme
         {
             Theme = new MudBlazorAdminDashboard(),

@@ -49,12 +49,12 @@
                 <MudTextField class="my-6" @bind-Value="Store.State" Label="State" Required="true" RequiredError="" For="@(() => @Store.State)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField class="my-6" @bind-Value="Store.PostalCode" Label="Zip Code" Required="true" RequiredError="" For="@(() => @Store.PostalCode)" Variant="Variant.Text"></MudTextField>
                 @*<MudTextField class="my-6" @bind-Value="Store.CountryCode" Label="Country Code" Required="true" RequiredError="" For="@(() => @Store.CountryCode)" Variant="Variant.Text"></MudTextField>*@
-               <MudItem>
+               <MudItem Class="my-6">
                     <MudAutocomplete T="string" Label="County Code"  ValueChanged="(value) => HandleCountyCode(value)" Value="@SelectedCounty" SearchFunc="@Search1" Required=true RequiredError=" "
                                      ResetValueOnEmptyText="true"
                                      CoerceText="true" CoerceValue="true" />
                 </MudItem>
-                <MudItem>
+                <MudItem Class="my-6">
                     <MudSelect T="String" ValueChanged="(value) => HandleServiceFrequency(value)" Value="@SelectedService" Label="Select Service Frequency" Required=true RequiredError=" "
                                AnchorOrigin="Origin.BottomCenter">
 
@@ -68,7 +68,7 @@
                     </MudSelect>
 
                 </MudItem>
-                <MudDatePicker Label="" Editable="true" MinDate="MinDate" @bind-Date="Store.StartDate"  Placeholder="Select Start Date" Required=true RequiredError=" " For="@(() => @Store.StartDate)" />
+                <MudDatePicker Label="" Class="my-6" Editable="true" MinDate="MinDate" @bind-Date="Store.StartDate"  Placeholder="Select Start Date" Required=true RequiredError=" " For="@(() => @Store.StartDate)" />
                 
                 @*<MudTextField class="my-6" @bind-Value="Store.Latitude" Label="Latitude" Required="true" RequiredError="" For="@(() => @Store.Latitude)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Store.Longitude" Label="Longitude" Required="true" RequiredError="" For="@(() => @Store.Longitude)" Variant="Variant.Text"></MudTextField>*@

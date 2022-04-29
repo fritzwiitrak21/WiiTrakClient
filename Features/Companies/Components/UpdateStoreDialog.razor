@@ -3,7 +3,7 @@
 @using WiiTrakClient.Cores
 
 <MudDialog Class="dialogstyle">
-    <DialogContent >
+    <DialogContent>
         <div style="width: 400px;height:550px;">
             <MudForm Model="@Store" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudSelect T="CorporateDto" Label="Select Corporate" @bind-Value="@_selectedCorporate" Required=true RequiredError=" "
@@ -28,17 +28,17 @@
                 <MudTextField class="my-6" @bind-Value="Store.PhonePrimary" Label="Phone Primary" Required="true" RequiredError="" For="@(() => @Store.PhonePrimary)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Store.PhoneSecondary" Label="Phone Secondary" For="@(() => @Store.PhoneSecondary)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Store.StreetAddress1" Label="Street Address 1" Required="true" RequiredError="" For="@(() => @Store.StreetAddress1)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Store.StreetAddress2" Label="Street Address 2"  For="@(() => @Store.StreetAddress2)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.StreetAddress2" Label="Street Address 2" For="@(() => @Store.StreetAddress2)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Store.City" Label="City" Required="true" RequiredError="" For="@(() => @Store.City)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Store.State" Label="State" Required="true" RequiredError="" For="@(() => @Store.State)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Store.PostalCode" Label="Zip Code" Required="true" RequiredError="" For="@(() => @Store.PostalCode)" Variant="Variant.Text"></MudTextField>
                 @*<MudTextField class="my-6" @bind-Value="Store.CountryCode" Label="Country Code" Required="true" RequiredError=" " For="@(() => @Store.CountryCode)" Variant="Variant.Text"></MudTextField>*@
-                <MudItem>
-                    <MudAutocomplete T="string" Label="County Code"  ValueChanged="(value) => HandleCountyCode(value)" Value="@SelectedCounty" SearchFunc="@Search1" Required=true RequiredError=" "
+                <MudItem Class="my-6">
+                    <MudAutocomplete T="string" Label="County Code" ValueChanged="(value) => HandleCountyCode(value)" Value="@SelectedCounty" SearchFunc="@Search1" Required=true RequiredError=" "
                                      ResetValueOnEmptyText="true"
                                      CoerceText="true" CoerceValue="true" />
                 </MudItem>
-                <MudItem>
+                <MudItem Class="my-6">
                     <MudSelect T="String" ValueChanged="(value) => HandleServiceFrequency(value)" Value="@SelectedService" Label="Select Service Frequency" Required=true RequiredError=" "
                                AnchorOrigin="Origin.BottomCenter">
 
@@ -52,7 +52,7 @@
                     </MudSelect>
 
                 </MudItem>
-                <MudDatePicker Label="" Editable="true" MinDate="MinDate" @bind-Date="Store.StartDate"  Placeholder="Select Start Date" Required=true RequiredError=" " For="@(() => @Store.StartDate)" />
+                <MudDatePicker Label="" Editable="true" Class="my-6" MinDate="MinDate" @bind-Date="SelectedDate" Placeholder="Select Start Date" Required=true RequiredError=" " For="@(() => @Store.StartDate)" />
                 @*<MudDatePicker Label="Start Date" Editable="true" MaxDate="MinDate" @bind-Date="SelectedDate" Placeholder="Select Start Date" />*@
                 <MudSwitch @bind-Checked="Store.IsActive" Label=@(Store.IsActive? "Activate":"Deactivate") Color="Color.Primary" For="@(() => @Store.IsActive)" />
 
@@ -87,7 +87,7 @@
     string[] County;
     string SelectedCounty = "";
     string SelectedService = "";
-    DateTime? MinDate { get; set; } =  Convert.ToDateTime("12/01/2021");
+    DateTime? MinDate { get; set; } = Convert.ToDateTime("12/01/2021");
     DateTime? SelectedDate { get; set; } = DateTime.Today;
     protected override void OnParametersSet()
     {

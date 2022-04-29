@@ -48,12 +48,12 @@
                 <MudTextField class="my-6" @bind-Value="NewStore.Longitude" Label="Longitude" Required="true" RequiredError=" " For="@(() => @NewStore.Longitude)" Variant="Variant.Text"></MudTextField>*@
                 @*<MudTextField class="my-6" @bind-Value="NewStore.CountryCode" Label="Country Code" Required="true" RequiredError=" " For="@(() => @NewStore.CountryCode)" Variant="Variant.Text"></MudTextField>*@
                
-                 <MudItem>
+                 <MudItem Class="my-6">
                     <MudAutocomplete T="string" Label="County Code" ValueChanged="(value) => HandleCountyCode(value)" SearchFunc="@Search1" Required=true RequiredError=" "
                                      ResetValueOnEmptyText="true"
                                      CoerceText="true" CoerceValue="true" />
                 </MudItem>
-                <MudItem>
+                <MudItem Class="my-6">
                     <MudSelect T="String" ValueChanged="(value) => HandleServiceFrequency(value)" Label="Select Service Frequency" Required=true RequiredError=" "
                                AnchorOrigin="Origin.BottomCenter">
 
@@ -67,7 +67,7 @@
                     </MudSelect>
 
                 </MudItem>
-                <MudDatePicker Label="" Editable="false" MinDate="MinDate" @bind-Date="NewStore.StartDate" Placeholder="Select Start Date" Required=true RequiredError=" "  For="@(() => @NewStore.StartDate)" />
+                <MudDatePicker Class="my-6" Label="" Editable="false" MinDate="MinDate" @bind-Date="NewStore.StartDate" Placeholder="Select Start Date" Required=true RequiredError=" "  For="@(() => @NewStore.StartDate)" />
                
                 <MudCheckBox @bind-Checked="NewStore.IsSignatureRequired" Label="Signature Reqired For Deliveries" Color="Color.Primary"></MudCheckBox> 
                 <div class="d-flex SubmitGrp">

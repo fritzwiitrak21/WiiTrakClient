@@ -150,7 +150,9 @@ else
             dt.Columns.Remove("StoreId");
             dt.Columns.Remove("DriverId");
             dt.Columns.Remove("PicUrl");
-            dt.Columns.Remove("DriverNumber");
+            dt.Columns.Remove("DriverNumber"); 
+            dt.Columns.Remove("IsActive"); 
+            dt.Columns.Remove("UpdatedBy");
 
             dt.Columns["DriverName"].SetOrdinal(0);
             dt.Columns["DeliveryTicketNumber"].SetOrdinal(1);

@@ -9,8 +9,18 @@
 <h2>Welcome to WiiTrak</h2>
 
 @code {
+    [Inject] IJSRuntime JsRuntime { get; set; }
+    private IJSObjectReference JsModule;
     protected override async Task OnInitializedAsync()
     {
+         if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+            var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
+            CurrentUser.UserRoleId = Convert.ToInt32(roleid);
+        }
         Core.NotificationsList = await NotifyHttpRepository.GetNotificationIdAsync(CurrentUser.UserId);
         Core.NotificationCount = Core.NotificationsList.Where(x => x.IsNotified == false).Count();
         StateHasChanged();

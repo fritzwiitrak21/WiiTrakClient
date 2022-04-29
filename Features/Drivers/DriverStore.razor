@@ -47,8 +47,9 @@
                         PostalCode
                     </MudTableSortLabel>
                 </MudTh>
-
+                <MudTh>Service Level</MudTh>
                 <MudTh>Phone</MudTh>
+                
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Store Name">
@@ -68,6 +69,9 @@
                 </MudTd>
                 <MudTd DataLabel="PostalCode">
                     @context.PostalCode
+                </MudTd>
+                <MudTd DataLabel="Service Level">
+                    @context.ServiceFrequency
                 </MudTd>
                 <MudTd DataLabel="Phone">
                     @context.PhonePrimary

@@ -41,6 +41,11 @@
                 Postal Code
             </MudTableSortLabel>
         </MudTh>
+          <MudTh>
+            <MudTableSortLabel SortBy="new Func<DriverStoreDetailsDto, object>(x=>x.CountyCode)">
+                County Code
+            </MudTableSortLabel>
+        </MudTh>
 
         <MudTh></MudTh>
     </HeaderContent>
@@ -53,7 +58,7 @@
         <MudTd DataLabel="City">@context.City</MudTd>
         <MudTd DataLabel="State">@context.State</MudTd>
         <MudTd DataLabel="Postal Code">@context.PostalCode</MudTd>
-
+        <MudTd DataLabel="County Code">@context.CountyCode</MudTd>
         <MudTd DataLabel="">
             @if (!context.DriverStoresIsActive)
             {

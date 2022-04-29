@@ -31,6 +31,12 @@
                         <MudText Class="my-4" Typo="Typo.h6">@DisplayMessage</MudText>
                     </span>
                 }
+                else if ((!IsSuccessNotification) && (FromWindow.ToLower().Contains("deliveryicketlist")))
+                {
+                    <span style="color:black;" >
+                        <MudText Class="my-4" Style="font-size:medium" Typo="Typo.h6">@DisplayMessage</MudText>
+                    </span>
+                }
                 else
                 {
                     <span style="color:red">
