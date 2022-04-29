@@ -13,7 +13,7 @@
     private IJSObjectReference JsModule;
     protected override async Task OnInitializedAsync()
     {
-         if (CurrentUser.UserId == Guid.Empty)
+        if (CurrentUser.UserId == Guid.Empty)
         {
             JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
             var Id = await JsModule.InvokeAsync<string>("getUserId");
