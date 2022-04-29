@@ -40,9 +40,7 @@ namespace WiiTrakClient.DTOs
         public double Latitude { get; set; }
 
         public Guid ServiceProviderId { get; set; }
-        public string CountyCode { get; set; } = string.Empty;
-        public string ServiceFrequency { get; set; } = string.Empty;
-        public DateTime? StartDate { get; set; }
+        
         public bool IsSignatureRequired { get; set; }
 
         public Guid CompanyId { get; set; }
