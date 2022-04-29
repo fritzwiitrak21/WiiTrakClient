@@ -188,16 +188,7 @@ namespace WiiTrakClient.Features.SystemOwner.Components
 
         public async Task GetConfirmation(DeliveryTicketDto deliveryTicket)
         {
-            selectedDriver = await DriverRepository.GetDriverByIdAsync(deliveryTicket.DriverId);
-            _stores = await StoreHttpRepository.GetStoresByDriverId(deliveryTicket.DriverId);
-            _carts = await CartHttpRepository.GetCartsByDriverIdAsync(deliveryTicket.DriverId);
-            _editDeliveryTicket.StoreId = deliveryTicket.StoreId;
-            _editDeliveryTicket.PicUrl = deliveryTicket.PicUrl;
-            _editDeliveryTicket.DriverId = deliveryTicket.DriverId;
-            _editDeliveryTicket.NumberOfCarts = deliveryTicket.NumberOfCarts;
-            _editDeliveryTicket.ServiceProviderId = deliveryTicket.ServiceProviderId;
-            _editDeliveryTicket.DeliveryTicketNumber = deliveryTicket.DeliveryTicketNumber;
-            deliveryTicketId = deliveryTicket.Id;
+          
             #region Show Message Dialog
             var parameters = new DialogParameters();
             ErrorMessage = "";
@@ -215,6 +206,13 @@ namespace WiiTrakClient.Features.SystemOwner.Components
             {
                 try
                 {
+                    _editDeliveryTicket.StoreId = deliveryTicket.StoreId;
+                    _editDeliveryTicket.PicUrl = deliveryTicket.PicUrl;
+                    _editDeliveryTicket.DriverId = deliveryTicket.DriverId;
+                    _editDeliveryTicket.NumberOfCarts = deliveryTicket.NumberOfCarts;
+                    _editDeliveryTicket.ServiceProviderId = deliveryTicket.ServiceProviderId;
+                    _editDeliveryTicket.DeliveryTicketNumber = deliveryTicket.DeliveryTicketNumber;
+                    deliveryTicketId = deliveryTicket.Id;
                     var deliveryTicketUpdate = new DeliveryTicketUpdateDto
                     {
                         NumberOfCarts = _editDeliveryTicket.NumberOfCarts,
@@ -224,13 +222,15 @@ namespace WiiTrakClient.Features.SystemOwner.Components
                         ServiceProviderId = _editDeliveryTicket.ServiceProviderId,
                         DriverId = _editDeliveryTicket.DriverId,
                         DeliveryTicketNumber = _editDeliveryTicket.DeliveryTicketNumber,
-                        SignOffRequired = _stores.FirstOrDefault(x => x.Id == _editDeliveryTicket.StoreId).IsSignatureRequired,
+                        SignOffRequired =_editDeliveryTicket.SignOffRequired,// _stores.FirstOrDefault(x => x.Id == _editDeliveryTicket.StoreId).IsSignatureRequired,
                         IsActive = false,
                         UpdatedBy = CurrentUser.UserId
                     };
 
                     await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);
-                   
+                    DeliveryTickets.RemoveAll(x => x.Id == deliveryTicketId);
+                    DeliveryTickets = DeliveryTickets.OrderByDescending(y => y.DeliveryTicketNumber).ToList();
+                    StateHasChanged();
                 }
                 catch (Exception ex)
                 {

@@ -51,5 +51,11 @@ namespace WiiTrakClient.DTOs
 
         public bool IsActive { get; set; }
 
+        [Required]
+        public string CountyCode { get; set; } = string.Empty;
+        [Required]
+        public string ServiceFrequency { get; set; }=string.Empty;
+        [Required]
+        public DateTime? StartDate { get; set; }
     }
 }

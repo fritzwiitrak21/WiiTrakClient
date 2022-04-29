@@ -41,7 +41,7 @@ else
 }
 
 @code {
-    public string SelectedOption { get; set; } = "";
+    public string SelectedOption { get; set; } = "All";
     public string TempSelectedOption { get; set; } = "";
     public List<DriverDto> Drivers { get; set; } = new();
 
@@ -76,7 +76,7 @@ else
         driverstore = alldriverstore;
         StateHasChanged();
         Core.SelectedDriverId = Driver.Id;
-        SelectedOption = null;
+        SelectedOption = "All";
         GetStoreDetails();
         StateHasChanged();
 

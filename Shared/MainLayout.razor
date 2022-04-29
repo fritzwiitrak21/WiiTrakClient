@@ -43,12 +43,16 @@
                 </MudBadge>
             }
             {
-                var startTimeSpan = TimeSpan.FromSeconds(59);
+                var startTimeSpan = TimeSpan.FromSeconds(50);
                 var periodTimeSpan = TimeSpan.FromSeconds(59);
                 var timer = new System.Threading.Timer((e) =>
                 {
                     Notification();
                 }, null, startTimeSpan, periodTimeSpan);
+                
+
+                
+
             }
         }
 
@@ -96,9 +100,11 @@
 
 @code
 {
+    
     protected override async Task OnInitializedAsync()
     {
         await Notification();
+       
     }
     private async Task Notification()
     {
@@ -107,6 +113,7 @@
         Core.NotificationCount = Core.NotificationsList.Where(x => x.IsNotified == false).Count();
         StateHasChanged();
     }
+    
     private ThemeManagerTheme _themeManager = new ThemeManagerTheme
         {
             Theme = new MudBlazorAdminDashboard(),

@@ -7,6 +7,12 @@
 <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
+        .containerscroll {
+            max-height: Calc(100vh - 246px);
+            height: 100%;
+            overflow: auto;
+        }
+
         .store-details {
             font-weight: bold;
             font-size: 1.1em;
@@ -27,7 +33,7 @@
         }
     </style>
 </head>
-<body>
+<body style="height:auto">
 
     @if (Core.NotificationCount > 0)
     {
@@ -41,7 +47,7 @@
             <p style="font-size:22px">Notifications <MudIcon Icon="@Icons.Filled.Notifications" /></p>
         </MudBadge>
     }
-    <div class="container">
+    <div class="container containerscroll">
 
         <div>
             @if (Core.NotificationsList.Count > 0)

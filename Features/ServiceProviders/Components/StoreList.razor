@@ -1,8 +1,7 @@
 @using WiiTrakClient.Features.SystemOwner.Components
 @inject IDialogService DialogService
-@inject ICompanyHttpRepository CompanyRepository
+
 @inject IStoreHttpRepository StoreHttpRepository
-@using WiiTrakClient.Cores
 
 
    <MudTable Items="@Stores" Hover="true" SortLabel="Sort By">
@@ -13,8 +12,8 @@
         <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.City)">City</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.State)">State</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.PostalCode)">PostalCode</MudTableSortLabel></MudTh>
-        @*<MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.Latitude)">Latitude</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.Longitude)">Longitude</MudTableSortLabel></MudTh>*@
+        <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.Longitude)">Longitude</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.Latitude)">Longitude</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.Email)">Email</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.PhonePrimary)">Phone</MudTableSortLabel></MudTh>        
         <MudTh></MudTh>
@@ -39,16 +38,15 @@
         <MudTd DataLabel="PostalCode">
             @context.PostalCode
         </MudTd>
-        @* <MudTd DataLabel="Latitude">
-            @context.Latitude
-        </MudTd>
         <MudTd DataLabel="Longitude">
             @context.Longitude
-        </MudTd>*@
-
+        </MudTd>
+         <MudTd DataLabel="Latitude">
+            @context.Latitude
+        </MudTd>
         <MudTd DataLabel="Email">
             @context.Email
-        </MudTd> 
+        </MudTd>
          <MudTd DataLabel="Phone">
             @context.PhonePrimary
         </MudTd>
@@ -71,53 +69,37 @@
     [Parameter]
     public List<StoreDto>? Stores {get; set;} = null;
     private bool _enabled = true;
-    public List<CompanyDto> Companys { get; set; } = new();
-    //StoreUpdateDto _editStore = new();
-    //List<CompanyDto> _companies = new();
-    //CompanyDto _selectedCompany = new();
-    //[Inject]
-    //public ICompanyHttpRepository CompanyRepository { get; set; }
-
-
     public async Task OpenDialog(StoreDto store) {
 
-        // TODO Update for store 
-
+         // TODO Update for store 
+ 
         Console.WriteLine("store id: " + store.Id);
-        Companys = await CompanyRepository.GetCompaniesByCorporateIdAsync(CurrentUser.UserId);
+
         var parameters = new DialogParameters();
-        parameters.Add("Store", store);
-        parameters.Add("Companys", Companys);
-        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+                parameters.Add("Store", store);   
+
+         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
 
          var dialog  = DialogService.Show<UpdateStoreDialog>("Update Store", parameters);
         var result = await dialog.Result; 
 
         if (!result.Cancelled) 
         {
-            // save updated store to backend 
+            // save updated store to backend
             var storeUpdate = new StoreUpdateDto {
-                CompanyId=store.CompanyId, 
                 StoreName = store.StoreName,
-                StoreNumber=store.StoreNumber,
                 StreetAddress1 = store.StreetAddress1,
                 StreetAddress2 = store.StreetAddress2,
                 City = store.City,
                 State = store.State,
                 PostalCode = store.PostalCode,
-                //Latitude=store.Latitude,
-                //Longitude=store.Longitude,
                 ProfilePicUrl = store.ProfilePicUrl,
                 Email = store.Email,
                 PhonePrimary = store.PhonePrimary,
                 PhoneSecondary = store.PhoneSecondary,
-                //CountryCode=store.CountryCode,
-                CorporateId=CurrentUser.UserId,
-                ServiceProviderId = Guid.Empty,
-                IsActive=store.IsActive
+                ServiceProviderId = store.ServiceProviderId
             };
            await StoreHttpRepository.UpdateStoreAsync(store.Id, storeUpdate);
-        } 
-        Stores = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId); 
+        }  
     }
 }

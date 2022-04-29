@@ -1,0 +1,105 @@
+@page "/corporate-stores"
+
+
+@using WiiTrakClient.Features.Corporates.Components
+@using WiiTrakClient.Cores
+
+@inject IJSRuntime JsRuntime
+@inject IDialogService DialogService
+@inject IStoreHttpRepository StoreHttpRepository
+
+<UserAuthentication />
+<h1>Stores</h1>
+
+<div class="d-flex justify-end">
+    <MudButton Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Add"
+               IconColor="Color.Secondary"
+               Size="Size.Large"
+               OnClick="OpenDialog">Add</MudButton>
+</div>
+@*Need to fix in future phase*@
+
+<div class="my-8">
+    @if (LoaderVisibility)
+    {
+        <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
+    }
+    else
+    {
+        if (_stores.Count > 0)
+        {
+            <StoreList Stores="@_stores" />
+        }
+        else
+        {
+            <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+        }
+    }
+
+</div>
+
+
+
+@code {
+    List<StoreDto> _stores = new();
+
+    StoreCreationDto _newStore = new();
+    bool LoaderVisibility = false;
+    private IJSObjectReference JsModule;
+    protected override async Task OnInitializedAsync()
+    {
+        LoaderVisibility = true;
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
+        _stores = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);
+        LoaderVisibility = false;
+    }
+
+    private async Task OpenDialog()
+    {
+        var parameters = new DialogParameters();
+        _newStore = new StoreCreationDto();
+        parameters.Add("NewStore", _newStore);
+
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+
+        var dialog = DialogService.Show<AddStoreDialog>("Add Store", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            // add new store to backend
+            var storeCreation = new StoreCreationDto
+                {
+                    CompanyId = _newStore.CompanyId,
+                    StoreName = _newStore.StoreName,
+                    StoreNumber = _newStore.StoreNumber,
+                    Email = _newStore.Email,
+                    PhonePrimary = _newStore.PhonePrimary,
+                    PhoneSecondary = _newStore.PhoneSecondary,
+                    StreetAddress1 = _newStore.StreetAddress1,
+                    StreetAddress2 = _newStore.StreetAddress2,
+                    City = _newStore.City,
+                    State = _newStore.State,
+                    PostalCode = _newStore.PostalCode,
+                    //Latitude=_newStore.Latitude,
+                    //Longitude=_newStore.Longitude,
+                    CountryCode = _newStore.CountryCode,
+                    CorporateId = CurrentUser.UserId,
+                    ServiceProviderId = Guid.Empty,
+                    IsSignatureRequired = _newStore.IsSignatureRequired,
+                    IsActive = true,
+                    CountyCode = _newStore.CountyCode,
+                    ServiceFrequency = _newStore.ServiceFrequency,
+                    StartDate = _newStore.StartDate
+                };
+            await StoreHttpRepository.CreateStoreAsync(storeCreation);
+            _stores = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);
+        }
+    }
+}

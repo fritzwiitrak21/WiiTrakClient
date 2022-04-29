@@ -105,7 +105,10 @@ else
                     CorporateId = _newStore.CorporateId,
                     ServiceProviderId = Guid.Empty,
                     IsSignatureRequired = _newStore.IsSignatureRequired,
-                    IsActive=true
+                    IsActive=true,
+                    CountyCode=_newStore.CountyCode,
+                    ServiceFrequency=_newStore.ServiceFrequency,
+                    StartDate=_newStore.StartDate
                     
         };
            await StoreHttpRepository.CreateStoreAsync(storeCreation);

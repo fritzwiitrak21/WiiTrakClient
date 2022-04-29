@@ -1,6 +1,4 @@
 @using WiiTrakClient.Shared.Report
-
-
 @namespace WiiTrakClient.Shared.Report
 
 <MudTable Items="@_ReportDeliveryTicketsList" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@listIsLoading"
@@ -40,11 +38,6 @@
         <MudTh>
             Photo
         </MudTh>
-       
-       
-          
-       
-
     </HeaderContent>
 
     <RowTemplate>
@@ -62,4 +55,3 @@
         <MudTablePager PageSizeOptions="new int[]{10, 50, 100}" />
     </PagerContent>
 </MudTable>
-

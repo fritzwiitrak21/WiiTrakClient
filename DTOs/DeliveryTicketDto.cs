@@ -38,11 +38,16 @@ namespace WiiTrakClient.DTOs
         public Guid StoreId { get; set; } = Guid.Empty;
 
         public Guid DriverId { get; set; } = Guid.Empty;
-        [Required]
-        [StringLength(25, ErrorMessage = " ")]
-        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = " ")]
+        
         public string Signee { get;set; } = string.Empty;
         public int DriverNumber { get; set; }
+        public string StreetAddress1 { get; set; }
+        public string StreetAddress2 { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string PostalCode { get; set; }
+        //public bool IsActive { get; set; }
+        //public Guid UpdatedBy { get; set; }
         public bool IsActive { get; set; }
         public Guid? UpdatedBy { get; set; }
     }
