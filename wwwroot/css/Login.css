@@ -180,3 +180,7 @@
     position: relative;
     margin: 0px auto;
 }
+
+.mud-popover-overflow-flip-onopen {
+    z-index: 999999 !important;
+}

@@ -149,15 +149,24 @@ else
             dt.Columns.Remove("ServiceProviderId");
             dt.Columns.Remove("StoreId");
             dt.Columns.Remove("DriverId");
+            dt.Columns.Remove("PicUrl");
+            dt.Columns.Remove("DriverNumber"); 
+            dt.Columns.Remove("IsActive"); 
+            dt.Columns.Remove("UpdatedBy");
 
             dt.Columns["DriverName"].SetOrdinal(0);
-            dt.Columns["DriverNumber"].SetOrdinal(1);
+            dt.Columns["DeliveryTicketNumber"].SetOrdinal(1);
             dt.Columns["DeliveredAt"].SetOrdinal(2);
             dt.Columns["StoreName"].SetOrdinal(3);
             dt.Columns["StoreNumber"].SetOrdinal(4);
             dt.Columns["NumberOfCarts"].SetOrdinal(5);
             dt.Columns["Signee"].SetOrdinal(6);
-            dt.Columns["PicUrl"].SetOrdinal(7);
+            dt.Columns["StreetAddress1"].SetOrdinal(7);
+            dt.Columns["StreetAddress2"].SetOrdinal(8);
+            dt.Columns["City"].SetOrdinal(9);
+            dt.Columns["State"].SetOrdinal(10);
+            dt.Columns["PostalCode"].SetOrdinal(11);
+
 
             ms = excelservice.CreateExcel(dt);
             await FileUtils.SaveAs(JS, "DeliveryReports.xlsx", ms.ToArray());

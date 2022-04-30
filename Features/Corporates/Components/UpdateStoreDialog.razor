@@ -1,0 +1,178 @@
+@namespace WiiTrakClient.Features.Corporates.Components
+@using System.ComponentModel.DataAnnotations
+@using WiiTrakClient.Cores
+
+<style>
+    .validation-message {
+    font-size:0;
+    display:none;
+    font-display:block;
+    
+    color: red;
+}
+.mud-input-helper-text.mud-input-error {
+    font-size: 0;
+}
+.mud-input-helper-text {
+    color: var(--mud-palette-text-secondary);
+    margin: 0;
+    font-size: 0;
+    text-align: start;
+    font-weight: 400;
+    line-height: 1.66;
+    letter-spacing: .03333em;
+}
+        </style>
+
+<MudDialog Class="dialogstyle">
+    <DialogContent>              
+        <div style="width: 400px;height:550px;"> 
+            <MudForm Model="@Store" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
+                <MudItem>
+                    <MudSelect T="CompanyDto" Label="Select Company" Required=true RequiredError=" "
+                        Value="@_selectedCompany"
+                        AnchorOrigin="Origin.BottomCenter">
+                        @foreach (var company in Companys)
+                        {
+                            <MudSelectItem T="CompanyDto" Value="@company">@company.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudTextField class="my-6" @bind-Value="Store.StoreName" Label="Store Name" Required="true" RequiredError="" For="@(() => @Store.StoreName)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Store.StoreNumber" Label="Store Number" Required="true" RequiredError="" For="@(() => @Store.StoreNumber)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Store.Email" Label="Email" Required="true" RequiredError="" For="@(() => @Store.Email)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Store.PhonePrimary" Label="Phone Primary" Required="true" RequiredError="" For="@(() => @Store.PhonePrimary)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Store.PhoneSecondary" Label="Phone Secondary"  For="@(() => @Store.PhoneSecondary)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Store.StreetAddress1" Label="Street Address 1" Required="true" RequiredError="" For="@(() => @Store.StreetAddress1)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Store.StreetAddress2" Label="Street Address 2"  For="@(() => @Store.StreetAddress2)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Store.City" Label="City" Required="true" RequiredError="" For="@(() => @Store.City)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Store.State" Label="State" Required="true" RequiredError="" For="@(() => @Store.State)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Store.PostalCode" Label="Zip Code" Required="true" RequiredError="" For="@(() => @Store.PostalCode)" Variant="Variant.Text"></MudTextField>
+                @*<MudTextField class="my-6" @bind-Value="Store.CountryCode" Label="Country Code" Required="true" RequiredError="" For="@(() => @Store.CountryCode)" Variant="Variant.Text"></MudTextField>*@
+               <MudItem Class="my-6">
+                    <MudAutocomplete T="string" Label="County Code"  ValueChanged="(value) => HandleCountyCode(value)" Value="@SelectedCounty" SearchFunc="@Search1" Required=true RequiredError=" "
+                                     ResetValueOnEmptyText="true"
+                                     CoerceText="true" CoerceValue="true" />
+                </MudItem>
+                <MudItem Class="my-6">
+                    <MudSelect T="String" ValueChanged="(value) => HandleServiceFrequency(value)" Value="@SelectedService" Label="Select Service Frequency" Required=true RequiredError=" "
+                               AnchorOrigin="Origin.BottomCenter">
+
+                        <MudSelectItem T="String" Value=@("1 time a week")>1 time a week</MudSelectItem>
+                        <MudSelectItem T="String" Value=@("2 times a week")>2 times a week</MudSelectItem>
+                        <MudSelectItem T="String" Value=@("3 times a week")>3 times a week</MudSelectItem>
+                        <MudSelectItem T="String" Value=@("4 times a week")>4 times a week</MudSelectItem>
+                        <MudSelectItem T="String" Value=@("5 times a week")>5 times a week</MudSelectItem>
+                        <MudSelectItem T="String" Value=@("6 times a week")>6 times a week</MudSelectItem>
+                        <MudSelectItem T="String" Value=@("7 times a week")>7 times a week</MudSelectItem>
+                    </MudSelect>
+
+                </MudItem>
+                <MudDatePicker Label="" Class="my-6" Editable="true" MinDate="MinDate" @bind-Date="Store.StartDate"  Placeholder="Select Start Date" Required=true RequiredError=" " For="@(() => @Store.StartDate)" />
+                
+                @*<MudTextField class="my-6" @bind-Value="Store.Latitude" Label="Latitude" Required="true" RequiredError="" For="@(() => @Store.Latitude)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.Longitude" Label="Longitude" Required="true" RequiredError="" For="@(() => @Store.Longitude)" Variant="Variant.Text"></MudTextField>*@
+                @if(Store.IsActive==true)
+                {
+                    <MudSwitch class="my-6" @bind-Checked="@Store.IsActive" Label="Store is Active" Color="Color.Primary" />
+                }
+                else
+                {
+                    <MudSwitch class="my-6" @bind-Checked="@Store.IsActive" Label="Store is Suspended" Color="Color.Default" />
+                }
+                <div class="d-flex SubmitGrp">
+                    <MudButton OnClick="Cancel">Cancel</MudButton>
+@*                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
+*@                  <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                </div>
+            </MudForm>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+
+@code {
+    [Parameter]
+    public StoreDto? Store {get; set;}
+    [Parameter]
+    public List<CompanyDto>? Companys { get; set; }
+    [Parameter]
+    public List<CountyCodeDTO>? CountyCodeList { get; set; } = new();
+
+    public CompanyDto _selectedCompany = new();
+    public CountyCodeDTO _selectedCountyCode = new();
+    [Inject]
+    public ICompanyHttpRepository CompanyRepository { get; set; }
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    bool success;
+    string[] errors = { };
+    string[] County;
+    string SelectedCounty = "";
+    string SelectedService = "";
+    DateTime? MinDate { get; set; } = Convert.ToDateTime("12/01/2021");
+    DateTime? SelectedDate { get; set; } = DateTime.Today;
+    
+    MudForm form;
+    
+    protected override async Task OnInitializedAsync()
+    { 
+        //Companys = await CompanyRepository.GetCompaniesByCorporateIdAsync(CurrentUser.UserId);
+        //if (Companys.Count > 0)
+        //{
+        //    _selectedCompany = Companys[0];
+        //    Store.CompanyId = _selectedCompany.Id;
+        //}
+    } 
+
+    protected override void OnParametersSet()
+    {   
+       if (Companys != null && Companys.Count > 0)
+        {
+            _selectedCompany = Companys.Where(x => x.Id == Store.CompanyId).FirstOrDefault();
+        }
+         SelectedService = Store.ServiceFrequency;
+        SelectedDate = Store.StartDate;
+        if (CountyCodeList.Count > 0)
+        {
+            SelectedCounty = Store.CountyCode;
+            try
+            {
+                string[] C = new string[CountyCodeList.Count];
+                for (int i = 0; i < CountyCodeList.Count; i++)
+                {
+                    _selectedCountyCode = CountyCodeList[i];
+                    C[i] = _selectedCountyCode.CountyCode;
+                }
+                County = (string[])C.Clone();
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+       
+    }
+      public async Task HandleServiceFrequency(string value)
+    {
+        SelectedService = value;
+        Store.ServiceFrequency = value;
+    }
+    public async Task HandleCountyCode(string value)
+    {
+        SelectedCounty = value;
+        Store.CountyCode = value;
+    }
+    private async Task<IEnumerable<string>> Search1(string value)
+    {
+
+        if (string.IsNullOrEmpty(value))
+            return County;
+        return County.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+    void Submit() 
+    { 
+        MudDialog.Close(DialogResult.Ok(true)); 
+    }
+    void Cancel() => MudDialog.Cancel();
+}

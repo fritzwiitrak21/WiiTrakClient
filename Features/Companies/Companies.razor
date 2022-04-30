@@ -19,20 +19,17 @@
 </div>
 
 <div class="my-8">
-    @if (LoaderVisibility)
+    @if (CompaniesList == null)
     {
-        <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
+        <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+    }
+    else if (_companies.Count > 0)
+    {
+        <CompanyList Companies="@_companies" />
     }
     else
     {
-        if (_companies.Count > 0)
-        {
-            <CompanyList Companies="@_companies" />
-        }
-        else
-        {
-            <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
-        }
+        <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
     }
 </div>
 
@@ -40,14 +37,13 @@
 
 @code {
     private IJSObjectReference JsModule;
+    List<CompanyDto> CompaniesList = new();
     List<CompanyDto> _companies = new();
 
     CompanyCreationDto _newCompany = new();
-    bool LoaderVisibility = false;
+ 
     protected override async Task OnInitializedAsync()
     {
-        LoaderVisibility = true;
-
         if (CurrentUser.UserId == Guid.Empty)
         {
             JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
@@ -55,8 +51,12 @@
             CurrentUser.UserId = new Guid(Id);
         }
 
-        _companies = await CompanyRepository.GetChildCompaniesAsync(CurrentUser.UserId);
-        LoaderVisibility = false;
+        CompaniesList = await CompanyRepository.GetChildCompaniesAsync(CurrentUser.UserId);
+        if (CompaniesList is not null)
+        {
+            _companies = CompaniesList;
+        }
+        StateHasChanged();
     }
 
     private async Task OpenDialog()
@@ -88,8 +88,8 @@
                     ParentId = CurrentUser.UserId,
                 };
             await CompanyRepository.CreateCompanyAsync(customerCreation);
-             
+
         }
         _companies = await CompanyRepository.GetChildCompaniesAsync(CurrentUser.UserId);
-    } 
+    }
 }

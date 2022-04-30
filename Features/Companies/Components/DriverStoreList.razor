@@ -13,13 +13,13 @@
         <MudTh>
             <MudTableSortLabel InitialDirection="SortDirection.Ascending"
                                SortBy="new Func<DriverStoreDetailsDto, object>(x=>x.StoreName)">
-                Store Name
+                Store Number
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
             <MudTableSortLabel InitialDirection="SortDirection.Ascending"
                                SortBy="new Func<DriverStoreDetailsDto, object>(x=>x.StoreNumber)">
-                Store Number
+                Store Name
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
@@ -43,7 +43,11 @@
                 Postal Code
             </MudTableSortLabel>
         </MudTh>
-
+         <MudTh>
+            <MudTableSortLabel SortBy="new Func<DriverStoreDetailsDto, object>(x=>x.CountyCode)">
+                County Code
+            </MudTableSortLabel>
+        </MudTh>
         <MudTh></MudTh>
     </HeaderContent>
 
@@ -55,7 +59,7 @@
         <MudTd DataLabel="City">@context.City</MudTd>
         <MudTd DataLabel="State">@context.State</MudTd>
         <MudTd DataLabel="Postal Code">@context.PostalCode</MudTd>
-
+        <MudTd DataLabel="County Code">@context.CountyCode</MudTd>
         <MudTd DataLabel="">
             @if (!context.DriverStoresIsActive)
             {
@@ -101,20 +105,20 @@
     [Inject]
     public IDriverStoresHttpRepository DriverStoreRepository { get; set; }
 
-
-    protected override async Task OnInitializedAsync()
-    {
-
-
-    }
     private async Task Assign(DriverStoreDetailsDto DriverStore)
     {
-        DriverStore.DriverStoresIsActive = true;
-        await DriverStoreRepository.UpdateDriverStoresAsync(Core.SelectedDriverId, DriverStore);
+        await AssignUnAssign(DriverStore);
     }
     private async Task UnAssign(DriverStoreDetailsDto DriverStore)
     {
-        DriverStore.DriverStoresIsActive = false;
-        await DriverStoreRepository.UpdateDriverStoresAsync(Core.SelectedDriverId, DriverStore);
+        await AssignUnAssign(DriverStore, false);
+    }
+    private async Task AssignUnAssign(DriverStoreDetailsDto DriverStore, bool Assign = true)
+    {
+        DriverStore.DriverStoresIsActive = Assign;
+        DriverStore.DriverId = Core.SelectedDriverId;
+        DriverStore.AssignedBy = CurrentUser.UserId;
+        await DriverStoreRepository.UpdateDriverStoresAsync(DriverStore);
+        StateHasChanged();
     }
 }

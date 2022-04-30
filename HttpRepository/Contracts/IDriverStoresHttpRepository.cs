@@ -6,6 +6,6 @@ namespace WiiTrakClient.HttpRepository.Contracts
     {
         Task<List<DriverStoreDetailsDto>> GetDriverStoresByCompanyIdAsync(Guid CompanyId, Guid DriverId);
         Task<List<DriverStoreDetailsDto>> GetDriverStoresBySystemownerIdAsync(Guid SystemOwnerId, Guid DriverId);
-        Task UpdateDriverStoresAsync(Guid DriverId, DriverStoreDetailsDto _DriverStoreDto);
+        Task UpdateDriverStoresAsync(DriverStoreDetailsDto DriverStoreDto);
     }
 }

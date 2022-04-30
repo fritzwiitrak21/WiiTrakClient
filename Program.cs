@@ -51,7 +51,8 @@ builder.Services.AddScoped<ILoginHttpRepository, LoginHttpRepository>();
 builder.Services.AddScoped<IEmailHttpRepository, EmailHttpRepository>();
 builder.Services.AddSingleton<ExcelService>();
 builder.Services.AddScoped<IDriverStoresHttpRepository, DriverStoresHttpRepository>();
-
+builder.Services.AddScoped<ICountyCodeHttpRepository, CountyCodeHttpRepository>();
+builder.Services.AddScoped<INotificationHttpRepository, NotificationHttpRepository>();
 
 
 

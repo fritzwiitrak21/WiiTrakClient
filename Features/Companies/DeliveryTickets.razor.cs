@@ -22,8 +22,6 @@ namespace WiiTrakClient.Features.Companies
 
         [Inject] IJSRuntime JsRuntime { get; set; }
 
-        //[Inject] IDriverHttpRepository DriverRepository { get; set; }
-
         [Inject] public IDeliveryTicketHttpRepository DeliveryTicketHttpRepository { get; set; }
 
         private IJSObjectReference JsModule;
@@ -31,32 +29,23 @@ namespace WiiTrakClient.Features.Companies
 
         List<DeliveryTicketDto> deliveryTickets = new();
         List<DeliveryTicketDto> _deliveryTickets = new();
-       
+
 
         protected override async Task OnInitializedAsync()
         {
-
-            try
+            if (CurrentUser.UserId == Guid.Empty)
             {
-                if (CurrentUser.UserId == Guid.Empty)
-                {
-                    JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-                    var Id = await JsModule.InvokeAsync<string>("getUserId");
-                    CurrentUser.UserId = new Guid(Id);
-                    var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
-                    CurrentUser.UserRoleId = Convert.ToInt32(roleid);
-                }
-
-                deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
-                if (deliveryTickets is not null)
-                {
-                    _deliveryTickets = deliveryTickets;
-                }
+                JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+                var Id = await JsModule.InvokeAsync<string>("getUserId");
+                CurrentUser.UserId = new Guid(Id);
+                var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
+                CurrentUser.UserRoleId = Convert.ToInt32(roleid);
             }
-            catch (Exception ex)
+
+            deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+            if (deliveryTickets is not null)
             {
-
-
+                _deliveryTickets = deliveryTickets;
             }
         }
     }

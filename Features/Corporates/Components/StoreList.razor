@@ -1,9 +1,7 @@
-﻿@using WiiTrakClient.Features.Companies.Components
+@using WiiTrakClient.Features.SystemOwner.Components
 @inject IDialogService DialogService
-
-@inject IStoreHttpRepository StoreHttpRepository
-@inject ICorporateHttpRepository CorporateRepository
 @inject ICompanyHttpRepository CompanyRepository
+@inject IStoreHttpRepository StoreHttpRepository
 @inject ICountyCodeHttpRepository CountyCodeRepository
 @using WiiTrakClient.Cores
 
@@ -11,12 +9,14 @@
 <MudTable Items="@Stores" Hover="true" SortLabel="Sort By">
     <HeaderContent>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<StoreDto, object>(x=>x.StoreName)">Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<StoreDto, object>(x=>x.StoreNumber)">Store Number</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.StoreNumber)">Store Number</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.StreetAddress1)">Street Address</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.City)">City</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.State)">State</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.PostalCode)">PostalCode</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.CountyCode)">County Code</MudTableSortLabel></MudTh>
+        @*<MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.Latitude)">Latitude</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.Longitude)">Longitude</MudTableSortLabel></MudTh>*@
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.Email)">Email</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.PhonePrimary)">Phone</MudTableSortLabel></MudTh>
         <MudTh></MudTh>
@@ -41,9 +41,16 @@
         <MudTd DataLabel="PostalCode">
             @context.PostalCode
         </MudTd>
-        <MudTd DataLabel="PostalCode">
+          <MudTd DataLabel="PostalCode">
             @context.CountyCode
         </MudTd>
+        @*<MudTd DataLabel="Latitude">
+            @context.Latitude
+            </MudTd>
+            <MudTd DataLabel="Longitude">
+            @context.Longitude
+            </MudTd>*@
+
         <MudTd DataLabel="Email">
             @context.Email
         </MudTd>
@@ -69,30 +76,19 @@
     [Parameter]
     public List<StoreDto>? Stores { get; set; } = null;
     private bool _enabled = true;
-    public CompanyDto Company { get; set; }
-    public List<CorporateDto> Corporate { get; set; } = new();
+    public List<CompanyDto> Companys { get; set; } = new();
     public List<CountyCodeDTO> CountyCode { get; set; } = new();
     public async Task OpenDialog(StoreDto store)
     {
 
         // TODO Update for store
 
-        if (CurrentUser.UserRole == "PrimeCompany")
-        {
-            Corporate = await CorporateRepository.GetCorporatesByCompanyId(CurrentUser.UserId);
-
-        }
-        else if (CurrentUser.UserRole == "SubContractor")
-        {
-            Company = await CompanyRepository.GetParentCompanyAsync(CurrentUser.UserId);
-            Corporate = await CorporateRepository.GetCorporatesByCompanyId((Guid)Company.ParentId);
-        }
         Console.WriteLine("store id: " + store.Id);
+        Companys = await CompanyRepository.GetCompaniesByCorporateIdAsync(CurrentUser.UserId);
         CountyCode=await CountyCodeRepository.GetCountyListAsync();
-
         var parameters = new DialogParameters();
         parameters.Add("Store", store);
-        parameters.Add("Corporate", Corporate);
+        parameters.Add("Companys", Companys);
         parameters.Add("CountyCodeList", CountyCode);
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
@@ -104,29 +100,30 @@
             // save updated store to backend
             var storeUpdate = new StoreUpdateDto
                 {
+                    CompanyId = store.CompanyId,
                     StoreName = store.StoreName,
+                    StoreNumber = store.StoreNumber,
                     StreetAddress1 = store.StreetAddress1,
                     StreetAddress2 = store.StreetAddress2,
                     City = store.City,
                     State = store.State,
                     PostalCode = store.PostalCode,
+                    //Latitude=store.Latitude,
+                    //Longitude=store.Longitude,
                     ProfilePicUrl = store.ProfilePicUrl,
                     Email = store.Email,
                     PhonePrimary = store.PhonePrimary,
                     PhoneSecondary = store.PhoneSecondary,
+                    CountryCode = store.CountryCode,
+                    CorporateId = CurrentUser.UserId,
                     ServiceProviderId = Guid.Empty,
-                    CorporateId = store.CorporateId,
-                    CompanyId = store.CompanyId,
-                    StoreNumber = store.StoreNumber,
-                    //CountryCode=store.CountryCode,
                     IsActive = store.IsActive,
                     CountyCode = store.CountyCode,
                     ServiceFrequency = store.ServiceFrequency,
                     StartDate = store.StartDate
-
                 };
             await StoreHttpRepository.UpdateStoreAsync(store.Id, storeUpdate);
         }
-        Stores = await StoreHttpRepository.GetStoresByCompanyId(CurrentUser.UserId);
+        Stores = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);
     }
 }

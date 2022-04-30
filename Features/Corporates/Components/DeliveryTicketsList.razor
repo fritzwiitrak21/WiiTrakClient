@@ -7,7 +7,9 @@
     LoadingProgressColor="Color.Primary">
     <HeaderContent>
         <MudTh>
-            Photo
+        <MudTableSortLabel 
+                SortBy="new Func<DeliveryTicketDto, object>(x=>x.DriverName)">Driver Name
+            </MudTableSortLabel>
         </MudTh>
         <MudTh>
             <MudTableSortLabel 
@@ -21,25 +23,29 @@
         </MudTh>
         <MudTh>
             <MudTableSortLabel 
-                SortBy="new Func<DeliveryTicketDto, object>(x=>x.NumberOfCarts)">Number of Carts
-            </MudTableSortLabel>
-        </MudTh>
-          <MudTh>
-            <MudTableSortLabel 
                 SortBy="new Func<DeliveryTicketDto, object>(x=>x.StoreName)">Store
             </MudTableSortLabel>
         </MudTh>
+        <MudTh>
+            <MudTableSortLabel 
+                SortBy="new Func<DeliveryTicketDto, object>(x=>x.NumberOfCarts)">Number of Carts
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            Photo
+        </MudTh> 
         <MudTh></MudTh>
     </HeaderContent>
 
     <RowTemplate>
-        <MudTd DataLabel="Photo">
-            <img src="@context.PicUrl" width="48" height="48" />
-        </MudTd>
+        <MudTd DataLabel="Driver Name">@context.DriverName</MudTd> 
         <MudTd DataLabel="Ticket Number">@context.DeliveryTicketNumber</MudTd>
         <MudTd DataLabel="Delivery Date">@($"{context.DeliveredAt.ToShortDateString()}")</MudTd>
+        <MudTd DataLabel="Store">@($"{context.StoreNumber} - {context.StoreName}")</MudTd> 
         <MudTd DataLabel="Number Of Carts">@context.NumberOfCarts</MudTd>
-        <MudTd DataLabel="Store">@($"{context.StoreNumber} - {context.StoreName}")</MudTd>        
+        <MudTd DataLabel="Photo">
+            <img src="@context.PicUrl" width="48" height="48" />
+        </MudTd>    
         <MudTd DataLabel="">
            
                 <MudButton StartIcon="@Icons.Material.Filled.Details" Variant="Variant.Filled" Color="Color.Primary"

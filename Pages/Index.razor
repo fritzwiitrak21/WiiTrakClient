@@ -1,30 +1,33 @@
 ﻿@page "/index"
 @using WiiTrakClient.Services
 @using WiiTrakClient.Cores
+@using WiiTrakClient.Shared.Components
+@inject INotificationHttpRepository NotifyHttpRepository
 
-<UserAuthentication/>
+<UserAuthentication />
 <PageTitle>WiiTrak</PageTitle>
 <h2>Welcome to WiiTrak</h2>
-@*<MudGrid class="my-8">
-    <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="string" Label="Select User View" Value=@_selectedUserView ValueChanged="(value) => HandleStoreSelected(value)" AnchorOrigin="Origin.BottomCenter">
-            <MudSelectItem Value="@("All")" />
-            <MudSelectItem Value="@("WiiTrak")" />
-            <MudSelectItem Value="@("Corporate")" />
-            <MudSelectItem Value="@("PrimeCompany")" />
-            <MudSelectItem Value="@("SubContractor")" />
-            <MudSelectItem Value="@("Driver")" />
-            <MudSelectItem Value="@("Store")" />
-            <MudSelectItem Value="@("ServiceProvider")" />
-            <MudSelectItem Value="@("Technician")" />
-        </MudSelect>
-    </MudItem>
-</MudGrid>
-*@
 
-
-
-@code{
-   
+@code {
+    [Inject] IJSRuntime JsRuntime { get; set; }
+    private IJSObjectReference JsModule;
+    protected override async Task OnInitializedAsync()
+    {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+            var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
+            CurrentUser.UserRoleId = Convert.ToInt32(roleid);
+        }
+        Core.NotificationsList = await NotifyHttpRepository.GetNotificationIdAsync(CurrentUser.UserId);
+        Core.NotificationCount = Core.NotificationsList.Where(x => x.IsNotified == false).Count();
+        StateHasChanged();
+    }
+}
+@if (Core.NotificationsList.Count > 0 && CurrentUser.UserRoleId == 5)
+{
+    <NotificationPanel />
 }
 
