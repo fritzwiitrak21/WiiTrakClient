@@ -80,6 +80,6 @@ namespace WiiTrakClient.DTOs
         [Required]
         public string ServiceFrequency { get; set; } = string.Empty;
         [Required]
-        public DateTime? StartDate { get; set; }
+        public DateTime? StartDate { get; set; } 
     }
 }

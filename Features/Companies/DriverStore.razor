@@ -72,7 +72,7 @@ else
     private async Task HandleDriverSelected(DriverDto Driver)
     {
         alldriverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId, Driver.Id);
-
+         
         driverstore = alldriverstore;
         StateHasChanged();
         Core.SelectedDriverId = Driver.Id;

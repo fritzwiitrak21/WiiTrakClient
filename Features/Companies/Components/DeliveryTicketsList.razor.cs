@@ -246,7 +246,6 @@ namespace WiiTrakClient.Features.Companies.Components
                         IsActive = false,
                         UpdatedBy = _editDeliveryTicket.UpdatedBy
                     };
-                    //var a = _stores.FirstOrDefault(x => x.Id == _editDeliveryTicket.StoreId).IsSignatureRequired;
                     await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);
                     DeliveryTickets.RemoveAll(x => x.Id == deliveryTicketId);
                     DeliveryTickets = DeliveryTickets.OrderByDescending(y => y.DeliveryTicketNumber).ToList();

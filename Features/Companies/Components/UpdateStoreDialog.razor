@@ -52,7 +52,7 @@
                     </MudSelect>
 
                 </MudItem>
-                <MudDatePicker Label="" Editable="true" Class="my-6" MinDate="MinDate" @bind-Date="SelectedDate" Placeholder="Select Start Date" Required=true RequiredError=" " For="@(() => @Store.StartDate)" />
+                <MudDatePicker Label="" Editable="true" Class="my-6" MinDate="MinDate" @bind-Date="Store.StartDate" Placeholder="Select Start Date" Required=true RequiredError=" " For="@(() => @Store.StartDate)" />
                 @*<MudDatePicker Label="Start Date" Editable="true" MaxDate="MinDate" @bind-Date="SelectedDate" Placeholder="Select Start Date" />*@
                 <MudSwitch @bind-Checked="Store.IsActive" Label=@(Store.IsActive? "Activate":"Deactivate") Color="Color.Primary" For="@(() => @Store.IsActive)" />
 
