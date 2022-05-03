@@ -79,7 +79,7 @@ namespace WiiTrakClient.Features.Drivers
             {
                 _deliveryTickets = deliveryTickets;
             }
-           
+           StateHasChanged();
         }
         private async Task OpenDialog()
         {
