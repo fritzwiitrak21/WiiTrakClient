@@ -25,17 +25,10 @@
     <DialogContent>              
         <div style="width: 400px;height:450px;overflow: auto;">
             <MudForm Model="@NewDriver" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">   
-                @*<MudSelect T="CompanyDto" Label="Select Company" Required=true @bind-Value="@_selectedCompany" 
-                    AnchorOrigin="Origin.BottomCenter">
-                    @foreach (var Company in Companys) 
-                    {
-                        <MudSelectItem T="CompanyDto" Value="@Company">@Company.Name</MudSelectItem> 
-                    }
-               </MudSelect> *@  
                <MudItem>
                     <MudSelect T="CompanyDto" Label="Select Company" Required=true RequiredError=" "
                         AnchorOrigin="Origin.BottomCenter">
-                        @foreach (var company in Companys)
+                        @foreach (var company in companies)
                         {
                             <MudSelectItem T="CompanyDto" Value="@company">@company.Name</MudSelectItem>
                         }
@@ -66,7 +59,7 @@
     [Parameter]
     public DriverCreationDto? NewDriver {get; set;}
     
-    public List<CompanyDto> Companys { get; set; } = new();
+    public List<CompanyDto> companies { get; set; } = new();
 
     public CompanyDto _selectedCompany = new();
     [Inject]
@@ -79,11 +72,11 @@
 
     protected override async Task OnInitializedAsync()
     { 
-        Companys = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
+        companies = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
 
-        if (Companys.Count > 0)
+        if (companies.Count > 0)
         {
-            _selectedCompany = Companys[0];
+            _selectedCompany = companies[0];
             NewDriver.CompanyId = _selectedCompany.Id;
         } 
     } 

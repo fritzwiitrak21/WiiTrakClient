@@ -35,8 +35,7 @@
                 <MudCheckBox @bind-Checked="Company.CannotHaveChildren" Label="Do Not Allow Sub Companies" Color="Color.Primary"></MudCheckBox> 
                 <div class="d-flex">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
-@*                  <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
-*@                  <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Update</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Update</MudButton>
                     </div>
             </MudForm>
         </div> 
@@ -51,7 +50,6 @@
     [Parameter]
     public CompanyDto? Company {get; set;}
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-    //private bool formInvalid = false;
     bool success;
     string[] errors = { };
     MudForm form;
@@ -62,7 +60,6 @@
 
     void Submit() 
     {
-        //formInvalid = false;
         MudDialog.Close(DialogResult.Ok(true)); 
     }
     void Cancel() => MudDialog.Cancel();

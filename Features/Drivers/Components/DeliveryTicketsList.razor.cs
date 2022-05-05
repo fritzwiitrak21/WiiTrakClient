@@ -74,9 +74,15 @@ namespace WiiTrakClient.Features.Drivers.Components
             parameters.Add("Driver", selectedDriver);
             parameters.Add("Carts", _carts);
             parameters.Add("Stores", _stores);
-            
+            bool SignOffRequired=false;
             deliveryTicketId = deliveryTicket.Id;
-            var SignOffRequired = _stores.FirstOrDefault(x => x.Id == _editDeliveryTicket.StoreId).IsSignatureRequired;
+            try
+            {
+                SignOffRequired = _stores.FirstOrDefault(x => x.Id == _editDeliveryTicket.StoreId).IsSignatureRequired;
+            }
+            catch (Exception ex)
+            { 
+            }
             DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
             var dialog = DialogService.Show<UpdateDeliveryTicketDialog>("Edit Delivery Ticket", parameters);

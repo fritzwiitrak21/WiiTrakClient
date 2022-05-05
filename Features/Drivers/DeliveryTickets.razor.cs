@@ -42,21 +42,30 @@ namespace WiiTrakClient.Features.Drivers
         List<StoreDto> _stores = new();
         DeliveryTicketCreationDto _newDeliveryTicket = new();
         private IJSObjectReference JsModule;
+        private double Latitude;
+        private double Longitude;
 
         protected override async Task OnInitializedAsync()
         {
            
             try
             {
+                JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
                 if (CurrentUser.UserId == Guid.Empty)
                 {
-                    JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+                   
                     var Id = await JsModule.InvokeAsync<string>("getUserId");
                     CurrentUser.UserId = new Guid(Id);
                    
                 }
+                
+
                 await GetDeliveryTicketsByDriverId(CurrentUser.UserId);
                 _selectedDriver = await DriverRepository.GetDriverByIdAsync(CurrentUser.UserId);
+                CurrentUser.Coord = await JsModule.InvokeAsync<string>("getCoord");
+                
+
+                
             }
             catch (Exception ex)
             {
@@ -64,12 +73,20 @@ namespace WiiTrakClient.Features.Drivers
                 
             }
            await HandleDriverSelected();
+            await JsModule.InvokeVoidAsync("ClearCoord");
         }
 
         private async Task HandleDriverSelected()
         {
             _stores = await StoreHttpRepository.GetStoresByDriverId(CurrentUser.UserId);
             _carts = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
+            var lat = CurrentUser.Coord.Split("##")[0];
+            var Lon = CurrentUser.Coord.Split("##")[1];
+            Latitude = Core.ToDouble(lat);
+            Longitude = Core.ToDouble(Lon);
+           
+
+           
         }
 
         private async Task GetDeliveryTicketsByDriverId(Guid id)
@@ -83,6 +100,12 @@ namespace WiiTrakClient.Features.Drivers
         }
         private async Task OpenDialog()
         {
+            foreach (var item in _stores)
+            {
+                var distance = Getdistance(item.Latitude, item.Longitude);
+                item.Distance = Convert.ToInt32(Math.Ceiling(distance));
+            }
+            _stores = _stores.OrderBy(x => x.Distance).Where(x => x.Distance < 5).ToList();
             var parameters = new DialogParameters();
             _newDeliveryTicket = new DeliveryTicketCreationDto();
             //_selectedDriver = new DriverDto();
@@ -92,6 +115,8 @@ namespace WiiTrakClient.Features.Drivers
             parameters.Add("Driver", _selectedDriver);
             parameters.Add("Carts", _carts);
             parameters.Add("Stores", _stores);
+            parameters.Add("Latitude", Latitude);
+            parameters.Add("Longitude", Longitude);
 
             DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
@@ -115,6 +140,7 @@ namespace WiiTrakClient.Features.Drivers
 
                 var deliveryTicketResponse = await DeliveryTicketHttpRepository.CreateDeliveryTicketAsync(deliveryTicketCreation);
                 await GetDeliveryTicketsByDriverId(CurrentUser.UserId);//Refreshing the data in the grid once new ticket added
+                
                 // update status of carts to delivered and update cart hitory
                 var carts = _carts.Where(x => x.StoreId == _newDeliveryTicket.StoreId).ToList();
                 foreach(var cart in carts) 
@@ -169,6 +195,47 @@ namespace WiiTrakClient.Features.Drivers
             }
         }
 
-      
+        #region Get Distance
+
+
+        private double Getdistance(double lat2, double lon2, char unit = 'K')
+        {
+            double lat1 = Latitude;
+            double lon1 = Longitude;
+
+            if ((lat1 == lat2) && (lon1 == lon2))
+            {
+                return 0;
+            }
+            else
+            {
+                double theta = lon1 - lon2;
+                double dist = Math.Sin(deg2rad(lat1)) * Math.Sin(deg2rad(lat2)) + Math.Cos(deg2rad(lat1)) * Math.Cos(deg2rad(lat2)) * Math.Cos(deg2rad(theta));
+                dist = Math.Acos(dist);
+                dist = rad2deg(dist);
+                dist = dist * 60 * 1.1515;
+                if (unit == 'K')
+                {
+                    dist = dist * 1.609344;
+                }
+                else if (unit == 'N')
+                {
+                    dist = dist * 0.8684;
+                }
+                return (dist);
+            }
+        }
+
+        private double deg2rad(double deg)
+        {
+            return (deg * Math.PI / 180.0);
+        }
+
+        private double rad2deg(double rad)
+        {
+            return (rad / Math.PI * 180.0);
+        }
+        #endregion
+
     }
 }

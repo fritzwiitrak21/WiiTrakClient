@@ -5,6 +5,9 @@
 
 @inject IJSRuntime JsRuntime
 @inject IStoreHttpRepository StoreRepository
+@inject IDialogService DialogService
+@using WiiTrakClient.Shared;
+@using WiiTrakClient.Shared.Components;
 
 <UserAuthentication />
 <br />
@@ -49,7 +52,8 @@
                 </MudTh>
                 <MudTh>Service Level</MudTh>
                 <MudTh>Phone</MudTh>
-                
+                <MudTh></MudTh>
+
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Store Name">
@@ -76,6 +80,15 @@
                 <MudTd DataLabel="Phone">
                     @context.PhonePrimary
                 </MudTd>
+                <MudTd>
+                    <MudIconButton Icon="@Icons.Outlined.Map"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               Size="Size.Large"
+                               OnClick="() => DisplayMaps(context)"
+                               Class="Datebutton" />
+
+                </MudTd>
             </RowTemplate>
             <PagerContent>
                 <MudTablePager PageSizeOptions="new int[]{10, 50, 100}" />
@@ -96,6 +109,26 @@
     List<StoreDto> driverstorelist = new();
 
     public string Name = CurrentUser.UserName;
+    private IJSObjectReference JsModule;
+    public string CurrentCoord { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            if (firstRender)
+            {
+                JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+                CurrentCoord = await JsModule.InvokeAsync<string>("getCoord");
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+    }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -105,6 +138,49 @@
             driverstore = driverstorelist;
         }
         StateHasChanged();
+      
+    }
 
+    private async Task DisplayMaps(StoreDto store)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(CurrentCoord))
+            {
+                JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+                CurrentCoord = await JsModule.InvokeAsync<string>("getCoord");
+            }
+
+            double Driverlatitude, Driverlongitude;
+            if (!string.IsNullOrEmpty(CurrentCoord))
+            {
+                Driverlatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
+                Driverlongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
+            }
+            else
+            {
+                CurrentCoord = await JsModule.InvokeAsync<string>("getCoord");
+                Driverlatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
+                Driverlongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
+            }
+
+            var address = string.Concat(store.StreetAddress1, store.StreetAddress2.Length > 0 ? store.StreetAddress2 + "," : "", store.City, ",", store.State, ",", store.PostalCode);
+            var parameters = new DialogParameters();
+            parameters.Add("Address", address);
+            parameters.Add("StoreLatitude", store.Latitude);
+            parameters.Add("StoreLongitude", store.Longitude);
+            parameters.Add("DriverLatitude", Driverlatitude);
+            parameters.Add("DriverLongitude", Driverlongitude);
+
+            DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+
+            var dialog = DialogService.Show<DisplayMap>("Map to " + store.StoreName + " - " + store.StoreNumber, parameters);
+            var result = await dialog.Result;
+            await JsModule.InvokeVoidAsync("ClearCoord");
+        }
+        catch (Exception ex)
+        {
+
+        }
     }
 }

@@ -59,7 +59,7 @@ export function updateCanvas() {
     canvas.height = 130;
 }
 
-export function  getLocation() {
+function  getLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);
         
@@ -82,3 +82,8 @@ export function getCoord() {
 export function ClearCoord() {
     localStorage.removeItem("Coord");
 }
+
+export function GetSignatureStatus() {
+    return $('#ctlSignature_status').text();
+}
+

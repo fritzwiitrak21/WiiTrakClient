@@ -28,7 +28,7 @@
                     <MudSelect T="CompanyDto" Label="Select Company" Required=true RequiredError=" "
                     ValueChanged="(value) => HandleCompanySelected(value)"
                         AnchorOrigin="Origin.BottomCenter">
-                        @foreach (var company in Companys)
+                        @foreach (var company in companies)
                         {
                             <MudSelectItem T="CompanyDto" Value="@company">@company.Name</MudSelectItem>
                         }
@@ -83,7 +83,7 @@
 @code {
     [Parameter]
     public StoreCreationDto? NewStore {get; set;}
-    public List<CompanyDto> Companys { get; set; } = new();
+    public List<CompanyDto> companies { get; set; } = new();
     public List<CountyCodeDTO> CountyCodeList { get; set; } = new();
     public CompanyDto _selectedCompany = new();
     public CountyCodeDTO _selectedCountyCode = new();
@@ -101,10 +101,10 @@
     protected override async Task OnInitializedAsync()
     { 
         NewStore.StartDate = SelectedDate;
-        Companys = await CompanyRepository.GetCompaniesByCorporateIdAsync(CurrentUser.UserId);
-        if (Companys.Count > 0)
+        companies = await CompanyRepository.GetCompaniesByCorporateIdAsync(CurrentUser.UserId);
+        if (companies.Count > 0)
         {
-            _selectedCompany = Companys[0];
+            _selectedCompany = companies[0];
         }
         CountyCodeList = await CountyCodeRepository.GetCountyListAsync();
         if (CountyCodeList.Count > 0)

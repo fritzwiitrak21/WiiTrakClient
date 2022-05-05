@@ -42,5 +42,7 @@ namespace WiiTrakClient.DTOs
         public string PhoneSecondary { get; set; } = string.Empty;
 
         public Guid CompanyId { get; set; }
+        public Guid SystemOwnerId { get; set; }
+
     }
 }

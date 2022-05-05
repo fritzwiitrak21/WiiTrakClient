@@ -77,14 +77,14 @@
                                 RequiredPoints="50">
                             </SSignature>
                         </div>
-                        
+                       
                     }
                 }
                 @if (!_isSigned)
                 {
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)"
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary"
                            OnClick="SaveSignature">
-                        Sign
+                        Accept Signature
                     </MudButton>
                 }
                 else
@@ -100,8 +100,7 @@
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
         <MudButton Color="Color.Primary"
-                   OnClick="Submit"
-                   Disabled="@(!IsSigned)">Save</MudButton>
+                   OnClick="Submit">Save</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -140,6 +139,7 @@
     private string _imageData = "";
     bool IsSigned = false;
     bool _isSigned = false;
+    string SignatureStatus = string.Empty;
 
     private IJSObjectReference JsModule;
 
@@ -156,6 +156,17 @@
 
     private async Task SaveSignature()
     {
+        await GetSignatureStatus();
+        if (!SignatureStatus.ToLower().Contains("done"))
+        {
+            await _js.InvokeVoidAsync("alert", "Valid Signature Required.");
+            return;
+        }
+        if (editDeliveryTicket.Signee == "")
+        {
+            await _js.InvokeVoidAsync("alert", "Valid Signee Name Required.");
+            return;
+        }
         var dotNetObjectRef = DotNetObjectReference.Create(this);
         await _js.InvokeAsync<string>("saveSignatureAsync", dotNetObjectRef);
         IsSigned = true;
@@ -189,8 +200,31 @@
         StateHasChanged();
     }
 
+    private async Task GetSignatureStatus()
+    {
+        try
+        {
+            if (!SignatureStatus.ToLower().Contains("done"))
+            {
+                JsModule = await _js.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+                var status = await JsModule.InvokeAsync<string>("GetSignatureStatus");
+                if (status.ToLower().Contains("done") && !_isSigned)
+                {
+                    SignatureStatus = status;
+                    StateHasChanged();
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+    }
     void Submit()
     {
+        SaveSignature();
         MudDialog.Close(DialogResult.Ok(true));
     }
 
