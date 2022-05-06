@@ -59,9 +59,9 @@ export function updateCanvas() {
     canvas.height = 130;
 }
 
-export function  getLocation() {
+function  getLocation() {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
+        navigator.geolocation.getCurrentPosition(showPosition,showError);
         
     } 
 }
@@ -74,11 +74,33 @@ function saveCoord(Coord) {
     localStorage.setItem("Coord", Coord);
 }
 
-export function getCoord() {
-    getLocation();
-    return localStorage.getItem("Coord");
+var ShowError = false;
+
+export function getCoord(ShowErrorMessage) {
+    ShowError = false;
+    ShowError = ShowErrorMessage;
+    
+getLocation();
+return localStorage.getItem("Coord");
+
+}
+function showError(error) {
+    if (ShowError) {
+        alert("Grant permission to access the location");
+    }
+  
 }
 
 export function ClearCoord() {
     localStorage.removeItem("Coord");
 }
+
+export function GetSignatureStatus() {
+    return $('#ctlSignature_status').text();
+}
+
+export function getSignCompleteStatus() {
+    
+    return $('#SuccessMessage').text();;
+}
+

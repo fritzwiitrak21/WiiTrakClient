@@ -1,6 +1,8 @@
 @namespace WiiTrakClient.Features.Drivers.Components
 @using System.ComponentModel.DataAnnotations
 @using WiiTrakClient.Shared.Components
+@using WiiTrakClient.Cores
+
 
 <style>
     .validation-message {
@@ -112,6 +114,10 @@
 
     [Parameter]
     public List<StoreDto>? Stores { get; set; } = new();
+    [Parameter]
+    public double Latitude { get; set; }
+    [Parameter]
+    public double Longitude { get; set; }
 
 
     [Inject] IJSRuntime JsRuntime { get; set; }
@@ -133,26 +139,93 @@
     private string StoreName = "";
     private IJSObjectReference JsModule;
 
+
+
     protected override async Task OnInitializedAsync()
     {
         JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        var coord =
+        CurrentUser.Coord = await JsModule.InvokeAsync<string>("getCoord", false);
+        await JsModule.InvokeVoidAsync("ClearCoord");
+        var lat = coord.Split("##")[0];
+        var Lon = coord.Split("##")[1];
+        Latitude = Core.ToDouble(lat);
+        Longitude = Core.ToDouble(Lon);
     }
 
+    #region Get Distance
+
+
+    private double Getdistance(double lat2, double lon2, char unit = 'K')
+    {
+        double lat1 = Latitude;
+        double lon1 = Longitude;
+
+        if ((lat1 == lat2) && (lon1 == lon2))
+        {
+            return 0;
+        }
+        else
+        {
+            double theta = lon1 - lon2;
+            double dist = Math.Sin(deg2rad(lat1)) * Math.Sin(deg2rad(lat2)) + Math.Cos(deg2rad(lat1)) * Math.Cos(deg2rad(lat2)) * Math.Cos(deg2rad(theta));
+            dist = Math.Acos(dist);
+            dist = rad2deg(dist);
+            dist = dist * 60 * 1.1515;
+            if (unit == 'K')
+            {
+                dist = dist * 1.609344;
+            }
+            else if (unit == 'N')
+            {
+                dist = dist * 0.8684;
+            }
+            return (dist);
+        }
+    }
+
+    private double deg2rad(double deg)
+    {
+        return (deg * Math.PI / 180.0);
+    }
+
+    private double rad2deg(double rad)
+    {
+        return (rad / Math.PI * 180.0);
+    }
+    #endregion
 
     protected override void OnParametersSet()
     {
         if (Stores != null && Stores.Count() >= 1)
         {
+            foreach (var item in Stores)
+            {
+                var distance = Getdistance(item.Latitude, item.Longitude);
+                item.Distance = Convert.ToInt32(Math.Ceiling(distance));
+            }
+            TempStores = Stores;
+            FilterStore();
+        }
+        if (Stores != null && Stores.Count() >= 1)
+        {
+            FilterStore();
             Stores = Stores.OrderBy(o => o.StoreName).ThenBy(p => p.StoreNumber).ToList();
             _selectedStore = Stores[0];
-            //NewDeliveryTicket.StoreId = _selectedStore.Id;
+
         }
 
         NewDeliveryTicket.DriverId = Driver.Id;
-        //NoOfCarts = 1;
-        //NewDeliveryTicket.NumberOfCarts=NoOfCarts;
-    }
 
+    }
+    private void FilterStore()
+    {
+        Stores = Stores.Where(x => x.Distance < 5).ToList();
+        if (Stores.Count == 0)
+        {
+            Stores = TempStores;
+        }
+    }
     private void UpdateNumberOfCarts()
     {
         NoOfCartsToPickUp = Carts.Count(x => x.StoreId == _selectedStore.Id && x.Status == CartStatus.PickedUp);
@@ -167,14 +240,12 @@
 
     private void PicUploadStart()
     {
-        //success = false;
         picupload = false;
     }
 
     private void PicUploadComplete(string url)
     {
         _fileUrl = url;
-        //success = true;
         picupload = true;
         NewDeliveryTicket.PicUrl = _fileUrl;
         StateHasChanged();

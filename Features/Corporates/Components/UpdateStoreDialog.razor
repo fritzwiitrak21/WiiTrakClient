@@ -32,7 +32,7 @@
                     <MudSelect T="CompanyDto" Label="Select Company" Required=true RequiredError=" "
                         Value="@_selectedCompany"
                         AnchorOrigin="Origin.BottomCenter">
-                        @foreach (var company in Companys)
+                        @foreach (var company in companies)
                         {
                             <MudSelectItem T="CompanyDto" Value="@company">@company.Name</MudSelectItem>
                         }
@@ -48,8 +48,7 @@
                 <MudTextField class="my-6" @bind-Value="Store.City" Label="City" Required="true" RequiredError="" For="@(() => @Store.City)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField class="my-6" @bind-Value="Store.State" Label="State" Required="true" RequiredError="" For="@(() => @Store.State)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField class="my-6" @bind-Value="Store.PostalCode" Label="Zip Code" Required="true" RequiredError="" For="@(() => @Store.PostalCode)" Variant="Variant.Text"></MudTextField>
-                @*<MudTextField class="my-6" @bind-Value="Store.CountryCode" Label="Country Code" Required="true" RequiredError="" For="@(() => @Store.CountryCode)" Variant="Variant.Text"></MudTextField>*@
-               <MudItem Class="my-6">
+                <MudItem Class="my-6">
                     <MudAutocomplete T="string" Label="County Code"  ValueChanged="(value) => HandleCountyCode(value)" Value="@SelectedCounty" SearchFunc="@Search1" Required=true RequiredError=" "
                                      ResetValueOnEmptyText="true"
                                      CoerceText="true" CoerceValue="true" />
@@ -82,8 +81,7 @@
                 }
                 <div class="d-flex SubmitGrp">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
-@*                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
-*@                  <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
                 </div>
             </MudForm>
         </div>
@@ -95,7 +93,7 @@
     [Parameter]
     public StoreDto? Store {get; set;}
     [Parameter]
-    public List<CompanyDto>? Companys { get; set; }
+    public List<CompanyDto>? companies { get; set; }
     [Parameter]
     public List<CountyCodeDTO>? CountyCodeList { get; set; } = new();
 
@@ -116,19 +114,14 @@
     
     protected override async Task OnInitializedAsync()
     { 
-        //Companys = await CompanyRepository.GetCompaniesByCorporateIdAsync(CurrentUser.UserId);
-        //if (Companys.Count > 0)
-        //{
-        //    _selectedCompany = Companys[0];
-        //    Store.CompanyId = _selectedCompany.Id;
-        //}
+        
     } 
 
     protected override void OnParametersSet()
     {   
-       if (Companys != null && Companys.Count > 0)
+       if (companies != null && companies.Count > 0)
         {
-            _selectedCompany = Companys.Where(x => x.Id == Store.CompanyId).FirstOrDefault();
+            _selectedCompany = companies.Where(x => x.Id == Store.CompanyId).FirstOrDefault();
         }
          SelectedService = Store.ServiceFrequency;
         SelectedDate = Store.StartDate;

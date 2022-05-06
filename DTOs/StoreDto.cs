@@ -39,24 +39,27 @@ namespace WiiTrakClient.DTOs
 
         public double Latitude { get; set; }
 
-        public Guid ServiceProviderId { get; set; }
-        
+        public Guid ServiceProviderId { get; set; } = Guid.Empty;
+
         public bool IsSignatureRequired { get; set; }
 
         public Guid CompanyId { get; set; }
 
         public Guid CorporateId { get; set; }
-        
 
-         public List<CartDto>? Carts { get; set; }
+
+        public List<CartDto>? Carts { get; set; }
 
         public bool IsActive { get; set; }
 
         [Required]
         public string CountyCode { get; set; } = string.Empty;
         [Required]
-        public string ServiceFrequency { get; set; }=string.Empty;
+        public string ServiceFrequency { get; set; } = string.Empty;
         [Required]
         public DateTime? StartDate { get; set; }
+
+        public int Distance { get; set; }
+        public bool DriverStoresIsActive { get; set; }
     }
 }

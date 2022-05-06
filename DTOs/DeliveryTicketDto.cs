@@ -50,5 +50,7 @@ namespace WiiTrakClient.DTOs
         //public Guid UpdatedBy { get; set; }
         public bool IsActive { get; set; }
         public Guid? UpdatedBy { get; set; }
+        public bool DriverStoresIsActive { get; set; }
+        public bool StoresIsActive { get; set; }
     }
 }

@@ -12,6 +12,7 @@ namespace WiiTrakClient.Cores
         public static bool IsFirstLogin { get; set; }
         public static DateTime PasswordLastUpdatedAt { get; set; }
         public static int UserRoleId { get; set; }
+        public static string Coord { get; set; } = string.Empty;
     }
 
     public static class Core
@@ -19,6 +20,11 @@ namespace WiiTrakClient.Cores
         public static Guid SelectedDriverId { get; set; }
         public static int NotificationCount { get; set; } = 0;
         public static List<NotificationDto> NotificationsList { get; set; } = new();
+
+        public static double ToDouble(string Value)
+        {
+            return double.Parse(Value, System.Globalization.CultureInfo.InvariantCulture);
+        }
 
 
         public static string ToPascalCase(string Text)

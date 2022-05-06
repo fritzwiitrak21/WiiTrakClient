@@ -69,8 +69,8 @@
                 PostalCode = company.PostalCode,
                 ProfilePicUrl = company.ProfilePicUrl,
                 Email = company.Email,
-                PhonePrimary = company.PhonePrimary,
-                PhoneSecondary = company.PhoneSecondary,
+                PhonePrimary = company.PhonePrimary, 
+                ParentId=CurrentUser.UserId
             };
            await CompanyHttpRepository.UpdateCompanyAsync(company.Id, companyUpdate);
         }

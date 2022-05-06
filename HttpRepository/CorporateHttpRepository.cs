@@ -78,9 +78,9 @@ namespace WiiTrakClient.HttpRepository
             return response.Response;
         }
 
-        public async Task CreateCorporateAsync(CorporateCreationDto corporate)
+        public async Task CreateCorporateAsync(Guid CompanyId, int RoleId, CorporateCreationDto corporate)
         {
-            var response = await _httpService.Post(_apiUrl, corporate);
+            var response = await _httpService.Post($"{_apiUrl}/{CompanyId}/{RoleId}",corporate);
             if (!response.Success)
             {
                 // throw new ApplicationException(await response.GetBody());

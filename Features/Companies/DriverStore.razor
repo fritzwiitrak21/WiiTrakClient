@@ -74,6 +74,11 @@ else
         alldriverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId, Driver.Id);
          
         driverstore = alldriverstore;
+        foreach (var item in driverstore)
+        {
+            var county = item.CountyCode;
+            var a = 1;
+        }
         StateHasChanged();
         Core.SelectedDriverId = Driver.Id;
         SelectedOption = "All";

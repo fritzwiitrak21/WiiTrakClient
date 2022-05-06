@@ -76,7 +76,7 @@
     [Parameter]
     public List<StoreDto>? Stores { get; set; } = null;
     private bool _enabled = true;
-    public List<CompanyDto> Companys { get; set; } = new();
+    public List<CompanyDto> companies { get; set; } = new();
     public List<CountyCodeDTO> CountyCode { get; set; } = new();
     public async Task OpenDialog(StoreDto store)
     {
@@ -84,11 +84,11 @@
         // TODO Update for store
 
         Console.WriteLine("store id: " + store.Id);
-        Companys = await CompanyRepository.GetCompaniesByCorporateIdAsync(CurrentUser.UserId);
+        companies = await CompanyRepository.GetCompaniesByCorporateIdAsync(CurrentUser.UserId);
         CountyCode=await CountyCodeRepository.GetCountyListAsync();
         var parameters = new DialogParameters();
         parameters.Add("Store", store);
-        parameters.Add("Companys", Companys);
+        parameters.Add("companies", companies);
         parameters.Add("CountyCodeList", CountyCode);
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
