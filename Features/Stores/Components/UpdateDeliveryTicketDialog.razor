@@ -1,4 +1,4 @@
-﻿@namespace WiiTrakClient.Features.Drivers.Components
+﻿@namespace WiiTrakClient.Features.Stores.Components
 @using System.ComponentModel.DataAnnotations
 @using WiiTrakClient.Shared.Components
 
@@ -25,14 +25,14 @@
     <DialogContent>
         <div style="width: 400px;height:450px;overflow: auto;">
             <MudForm Model="@editDeliveryTicket" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudSelect Class="my-6" T="StoreDto" Label="Store" AnchorOrigin="Origin.BottomCenter"
+             @*   <MudSelect Class="my-6" T="StoreDto" Label="Store" AnchorOrigin="Origin.BottomCenter"
                            HelperText="Select a Store" @bind-Value="@_selectedStore" Required="true"
                            AdornmentColor="Color.Primary">
                     @foreach (var store in Stores)
                     {
                         <MudSelectItem T="StoreDto" Value="@store">@store.StoreNumber - @store.StoreName</MudSelectItem>
                     }
-                </MudSelect>
+                </MudSelect>*@
 
                 @{
                     //UpdateNumberOfCarts();
@@ -106,28 +106,21 @@
 
     private void UpdateNumberOfCarts()
     {
+        editDeliveryTicket.NumberOfCarts = Carts.Count(x => x.StoreId == _selectedStore.Id && x.Status == CartStatus.PickedUp);
+    }
+
+    private void UpdateStoreAndServiceProviderIds()
+    {
         try
         {
-            editDeliveryTicket.NumberOfCarts = Carts.Count(x => x.StoreId == _selectedStore.Id && x.Status == CartStatus.PickedUp);
+            editDeliveryTicket.StoreId = _selectedStore.Id;
+            var store = Stores.First(x => x.Id == _selectedStore.Id);
+            editDeliveryTicket.ServiceProviderId = store.ServiceProviderId;
         }
         catch (Exception ex)
         {
 
         }
-    }
-
-    private void UpdateStoreAndServiceProviderIds()
-    {
-        //try
-        //{
-        //    editDeliveryTicket.StoreId = _selectedStore.Id;
-        //    var store = Stores.First(x => x.Id == _selectedStore.Id);
-        //    editDeliveryTicket.ServiceProviderId = store.ServiceProviderId;
-        //}
-        //catch (Exception ex)
-        //{
-
-        //}
     }
 
     private void PicUploadStart()

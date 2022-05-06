@@ -39,7 +39,7 @@ namespace WiiTrakClient.DTOs
 
         public double Latitude { get; set; }
 
-        public Guid ServiceProviderId { get; set; }
+        public Guid ServiceProviderId { get; set; } = Guid.Empty;
 
         public bool IsSignatureRequired { get; set; }
 

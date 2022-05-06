@@ -114,20 +114,21 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            if (firstRender)
+            {
+                JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
             CurrentCoord = await JsModule.InvokeAsync<string>("getCoord", false);
+            }
         }
-    }
 
-    protected override async Task OnInitializedAsync()
+   protected override async Task OnInitializedAsync()
     {
         if (CurrentUser.UserId == Guid.Empty)
         {
             JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
             var Id = await JsModule.InvokeAsync<string>("getUserId");
-            CurrentUser.UserId = new Guid(Id);
+            CurrentUser.UserId = new Guid(Id)
+;
             CurrentUser.UserName=await JsModule.InvokeAsync<string>("getUserName");
 
         }
@@ -135,7 +136,7 @@
         
         if (driverstorelist is not null)
         {
-            driverstore = driverstorelist;
+            driverstore = driverstorelist.Where(x=>x.IsActive==true && x.DriverStoresIsActive==true).ToList();
         }
         StateHasChanged();
 
