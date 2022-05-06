@@ -62,7 +62,7 @@ namespace WiiTrakClient.Features.Drivers.Components
         public async Task OpenUpdateDeliveryTicketDialog(DeliveryTicketDto deliveryTicket) 
         {
             Console.WriteLine("OpenUpdateDeliveryTickerDialog()");
-            
+            _stores = _stores.Where(x => x.DriverStoresIsActive == true && x.IsActive == true).ToList();
             _editDeliveryTicket.StoreId = deliveryTicket.StoreId;
             _editDeliveryTicket.PicUrl = deliveryTicket.PicUrl;
             _editDeliveryTicket.DriverId = deliveryTicket.DriverId;

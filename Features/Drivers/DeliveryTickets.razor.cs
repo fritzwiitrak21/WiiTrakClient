@@ -80,19 +80,14 @@ namespace WiiTrakClient.Features.Drivers
         private async Task HandleDriverSelected()
         {
             _stores = await StoreHttpRepository.GetStoresByDriverId(CurrentUser.UserId);
-            //_stores = _stores.Where(x => x.DriverStoresIsActive == true && x.IsActive == true).ToList();
+            
             _carts = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
             var lat = CurrentUser.Coord.Split("##")[0];
             var Lon = CurrentUser.Coord.Split("##")[1];
             Latitude = Core.ToDouble(lat);
             Longitude = Core.ToDouble(Lon);
 
-
-            foreach (var item in _stores)
-            {
-                var distance = Getdistance(item.Latitude, item.Longitude);
-                item.Distance = Convert.ToInt32(Math.Ceiling(distance));
-            }
+            FindDistance();
         }
 
         private async Task GetDeliveryTicketsByDriverId(Guid id)
@@ -104,14 +99,10 @@ namespace WiiTrakClient.Features.Drivers
             }
             StateHasChanged();
         }
+       
         private async Task OpenDialog()
         {
-            foreach (var item in _stores)
-            {
-                var distance = Getdistance(item.Latitude, item.Longitude);
-                item.Distance = Convert.ToInt32(Math.Ceiling(distance));
-            }
-
+            FindDistance();
             var parameters = new DialogParameters();
             _newDeliveryTicket = new DeliveryTicketCreationDto();
 
@@ -140,7 +131,6 @@ namespace WiiTrakClient.Features.Drivers
                     DriverId = _newDeliveryTicket.DriverId,
                     SignOffRequired = _stores.FirstOrDefault(x => x.Id == _newDeliveryTicket.StoreId).IsSignatureRequired
                 };
-
 
                 var deliveryTicketResponse = await DeliveryTicketHttpRepository.CreateDeliveryTicketAsync(deliveryTicketCreation);
                 await GetDeliveryTicketsByDriverId(CurrentUser.UserId);//Refreshing the data in the grid once new ticket added
@@ -242,6 +232,15 @@ namespace WiiTrakClient.Features.Drivers
             return (rad / Math.PI * 180.0);
         }
         #endregion
+        private void FindDistance()
+        {
+            _stores = _stores.Where(x => x.DriverStoresIsActive == true && x.IsActive == true).ToList();
+            foreach (var item in _stores)
+            {
+                var distance = Getdistance(item.Latitude, item.Longitude);
+                item.Distance = Convert.ToInt32(Math.Ceiling(distance));
+            }
+        }
 
     }
 }
