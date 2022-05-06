@@ -60,5 +60,6 @@ namespace WiiTrakClient.DTOs
         public DateTime? StartDate { get; set; }
 
         public int Distance { get; set; }
+        public bool DriverStoresIsActive { get; set; }
     }
 }

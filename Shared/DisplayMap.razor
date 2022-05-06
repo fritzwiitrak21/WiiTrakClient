@@ -5,10 +5,10 @@
 
 <MudDialog>
     <DialogContent>
-        <div style="width:1000px;height:650px;overflow: auto;">
+        <div style="width:1000px;height:600px;overflow: auto;">
             <h6>Address:</h6>
             @Address<br />
-            @StoreLatitude,@StoreLongitude
+
             @*<div id="map" style="height:500px;width:100%;">
                 </div>*@
             <div id="container">
@@ -38,46 +38,30 @@
 
     protected override async Task OnInitializedAsync()
     {
-        try
+
+        JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        var CurrentCoord = await JsModule.InvokeAsync<string>("getCoord", false);
+
+        if (!string.IsNullOrEmpty(CurrentCoord))
         {
-            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-            var CurrentCoord = await JsModule.InvokeAsync<string>("getCoord");
-
-
-            if (!string.IsNullOrEmpty(CurrentCoord))
-            {
-                DriverLatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
-                DriverLongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
-            }
-            else
-            {
-                CurrentCoord = await JsModule.InvokeAsync<string>("getCoord");
-                DriverLatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
-                DriverLongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
-            }
-
-
+            DriverLatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
+            DriverLongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
         }
-        catch (Exception ex)
+        else
         {
-
+            CurrentCoord = await JsModule.InvokeAsync<string>("getCoord", false);
+            DriverLatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
+            DriverLongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
         }
+
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        try
+        if (firstRender)
         {
-            if (firstRender)
-            {
-                JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/GoogleMaps.js");
-                await JsModule.InvokeVoidAsync("initMap", StoreLatitude, StoreLongitude, DriverLatitude, DriverLongitude);
-                //await JsModule.InvokeVoidAsync("initMap", StoreLatitude, StoreLongitude, StoreLatitude - 0.02, StoreLongitude - 0.02);
-            }
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/GoogleMaps.js");
+            await JsModule.InvokeVoidAsync("initMap", StoreLatitude, StoreLongitude, DriverLatitude, DriverLongitude);
+            //await JsModule.InvokeVoidAsync("initMap", StoreLatitude, StoreLongitude, StoreLatitude - 0.02, StoreLongitude - 0.02);
         }
-        catch (Exception ex)
-        {
-
-        }
-
     }
 }

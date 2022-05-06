@@ -143,16 +143,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-        //var coord = CurrentUser.Coord;
-        //CurrentUser.Coord = await JsModule.InvokeAsync<string>("getCoord");
-        //await JsModule.InvokeVoidAsync("ClearCoord");
-        //var lat = coord.Split("##")[0];
-        //var Lon = coord.Split("##")[1];
-        //Latitude = Core.ToDouble(lat);
-        //Longitude = Core.ToDouble(Lon);
-
-
+        JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        var coord =
+        CurrentUser.Coord = await JsModule.InvokeAsync<string>("getCoord", false);
+        await JsModule.InvokeVoidAsync("ClearCoord");
+        var lat = coord.Split("##")[0];
+        var Lon = coord.Split("##")[1];
+        Latitude = Core.ToDouble(lat);
+        Longitude = Core.ToDouble(Lon);
     }
 
     #region Get Distance
@@ -206,20 +204,28 @@
                 var distance = Getdistance(item.Latitude, item.Longitude);
                 item.Distance = Convert.ToInt32(Math.Ceiling(distance));
             }
-            Stores = Stores.OrderBy(x => x.Distance).Where(x => x.Distance < 5).ToList();
+            TempStores = Stores;
+            FilterStore();
         }
         if (Stores != null && Stores.Count() >= 1)
         {
+            FilterStore();
             Stores = Stores.OrderBy(o => o.StoreName).ThenBy(p => p.StoreNumber).ToList();
             _selectedStore = Stores[0];
-            //NewDeliveryTicket.StoreId = _selectedStore.Id;
+
         }
 
         NewDeliveryTicket.DriverId = Driver.Id;
-        //NoOfCarts = 1;
-        //NewDeliveryTicket.NumberOfCarts=NoOfCarts;
-    }
 
+    }
+    private void FilterStore()
+    {
+        Stores = Stores.Where(x => x.Distance < 5).ToList();
+        if (Stores.Count == 0)
+        {
+            Stores = TempStores;
+        }
+    }
     private void UpdateNumberOfCarts()
     {
         NoOfCartsToPickUp = Carts.Count(x => x.StoreId == _selectedStore.Id && x.Status == CartStatus.PickedUp);
@@ -234,14 +240,12 @@
 
     private void PicUploadStart()
     {
-        //success = false;
         picupload = false;
     }
 
     private void PicUploadComplete(string url)
     {
         _fileUrl = url;
-        //success = true;
         picupload = true;
         NewDeliveryTicket.PicUrl = _fileUrl;
         StateHasChanged();

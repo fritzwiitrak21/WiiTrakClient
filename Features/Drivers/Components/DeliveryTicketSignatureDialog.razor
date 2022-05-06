@@ -77,19 +77,20 @@
                                 RequiredPoints="50">
                             </SSignature>
                         </div>
-                       
+                        GetSignatureStatus();
                     }
                 }
                 @if (!_isSigned)
                 {
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                   @* <MudButton Variant="Variant.Filled" Color="Color.Primary"
                            OnClick="SaveSignature">
                         Accept Signature
-                    </MudButton>
+                    </MudButton>*@
                 }
                 else
                 {
-                    <MudText Typo="Typo.h5" Class="text-success">Signature Complete</MudText>
+                    @*<MudText Typo="Typo.h5" Class="text-success">Signature Complete</MudText>*@
+                  <div Id="SuccessMessage" Class="text-success"><h5>Signature Complete</h5></div>
 
                 }
 
@@ -222,10 +223,25 @@
         }
 
     }
-    void Submit()
+    async Task Submit()
     {
         SaveSignature();
-        MudDialog.Close(DialogResult.Ok(true));
+        var SignCompleteStatus = "";
+        do
+        {
+            JsModule = await _js.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            SignCompleteStatus = await JsModule.InvokeAsync<string>("getSignCompleteStatus");
+        } while (!SignCompleteStatus.ToLower().Contains("complete"));
+
+        if (SignCompleteStatus.ToLower().Contains("complete"))
+        {
+            System.Threading.Thread.Sleep(500);
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+
+        //MudDialog.Close(DialogResult.Ok(true));
+
+
     }
 
     void Cancel() => MudDialog.Cancel();
