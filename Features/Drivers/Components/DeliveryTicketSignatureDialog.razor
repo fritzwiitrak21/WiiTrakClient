@@ -165,7 +165,7 @@
         }
         if (editDeliveryTicket.Signee == "")
         {
-            await _js.InvokeVoidAsync("alert", "Valid Signee Name Required.");
+            //await _js.InvokeVoidAsync("alert", "Valid Signee Name Required.");
             return;
         }
         var dotNetObjectRef = DotNetObjectReference.Create(this);

@@ -5,14 +5,14 @@
 
 <MudDialog>
     <DialogContent>
-        <div style="width:1000px;height:550px;overflow: auto;">
+        <div style="width:1000px;height:470px;overflow: auto;">
             <h6>Address:</h6>
             @Address<br />
 
             @*<div id="map" style="height:500px;width:100%;">
                 </div>*@
             <div id="container">
-                <div id="map" style="height:500px;width:100%;"></div>
+                <div id="map" style="height:400px;width:100%;"></div>
             </div>
         </div>
     </DialogContent>
@@ -40,7 +40,9 @@
     {
 
         JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-        var CurrentCoord = await JsModule.InvokeAsync<string>("getCoord", false);
+        await JsModule.InvokeVoidAsync("getCoord", false);
+        var CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
+
 
         if (!string.IsNullOrEmpty(CurrentCoord))
         {
@@ -49,11 +51,13 @@
         }
         else
         {
-            CurrentCoord = await JsModule.InvokeAsync<string>("getCoord", false);
+            await JsModule.InvokeVoidAsync("getCoord", false);
+            CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
+
             DriverLatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
             DriverLongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
         }
-
+        await JsModule.InvokeVoidAsync("ClearCoord");
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

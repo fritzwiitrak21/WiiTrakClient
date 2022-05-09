@@ -35,6 +35,7 @@ namespace WiiTrakClient.Features.Drivers.Components
         List<DeliveryTicketDto> _deliveryTickets = new();
         List<CartDto> _carts = new();
         List<StoreDto> _stores = new();
+        List<StoreDto> TempStoreList = new();
         DeliveryTicketUpdateDto _editDeliveryTicket = new();
         Guid deliveryTicketId = Guid.Empty;
         List<CartDto>? cartsTable { get; set; } = new();
@@ -50,7 +51,7 @@ namespace WiiTrakClient.Features.Drivers.Components
             await _js.InvokeVoidAsync("loadJs", targetUrl, "ssUiFile");
 
             selectedDriver = await DriverRepository.GetDriverByIdAsync(CurrentUser.UserId);
-            _stores = await StoreHttpRepository.GetStoresByDriverId(CurrentUser.UserId);
+            TempStoreList = _stores = await StoreHttpRepository.GetStoresByDriverId(CurrentUser.UserId);
             _carts = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
 
         }
@@ -59,9 +60,10 @@ namespace WiiTrakClient.Features.Drivers.Components
             _listIsLoading = false;
         }
 
-        public async Task OpenUpdateDeliveryTicketDialog(DeliveryTicketDto deliveryTicket) 
+        public async Task OpenUpdateDeliveryTicketDialog(DeliveryTicketDto deliveryTicket)
         {
             Console.WriteLine("OpenUpdateDeliveryTickerDialog()");
+
             _stores = _stores.Where(x => x.DriverStoresIsActive == true && x.IsActive == true).ToList();
             _editDeliveryTicket.StoreId = deliveryTicket.StoreId;
             _editDeliveryTicket.PicUrl = deliveryTicket.PicUrl;
@@ -74,16 +76,10 @@ namespace WiiTrakClient.Features.Drivers.Components
             parameters.Add("Driver", selectedDriver);
             parameters.Add("Carts", _carts);
             parameters.Add("Stores", _stores);
-            bool SignOffRequired=false;
+            bool SignOffRequired = false;
             deliveryTicketId = deliveryTicket.Id;
             SignOffRequired = deliveryTicket.SignOffRequired;
-            //try
-            //{
-            //    SignOffRequired = _stores.FirstOrDefault(x => x.Id == _editDeliveryTicket.StoreId).IsSignatureRequired;
-            //}
-            //catch (Exception ex)
-            //{ 
-            //}
+
             DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
             var dialog = DialogService.Show<UpdateDeliveryTicketDialog>("Edit Delivery Ticket", parameters);
@@ -101,11 +97,12 @@ namespace WiiTrakClient.Features.Drivers.Components
                     ServiceProviderId = _editDeliveryTicket.ServiceProviderId,
                     DriverId = _editDeliveryTicket.DriverId,
                     DeliveryTicketNumber = _editDeliveryTicket.DeliveryTicketNumber,
-                    SignOffRequired= SignOffRequired
+                    SignOffRequired = SignOffRequired
 
                 };
 
-                await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId,deliveryTicketUpdate);
+                await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);
+
                 await Refreshdeliveryticket();
                 StateHasChanged();
                 // update status of carts to delivered and update cart hitory
@@ -268,7 +265,7 @@ namespace WiiTrakClient.Features.Drivers.Components
                     ApprovedByStore = _editDeliveryTicket.ApprovedByStore,
                     SignOffRequired = _editDeliveryTicket.SignOffRequired,
                     SignaturePicUrl = _editDeliveryTicket.SignaturePicUrl,
-                    Signee=_editDeliveryTicket.Signee 
+                    Signee = _editDeliveryTicket.Signee
                 };
 
                 await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);
@@ -289,6 +286,8 @@ namespace WiiTrakClient.Features.Drivers.Components
             }
             StateHasChanged();
         }
+
+        #region Refreshdeliveryticket
         async Task Refreshdeliveryticket()
         {
             var deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByDriverIdAsync(CurrentUser.UserId);
@@ -296,11 +295,20 @@ namespace WiiTrakClient.Features.Drivers.Components
             {
                 foreach (var item in deliveryTickets)
                 {
-                    item.DriverStoresIsActive = _stores.FirstOrDefault(x => x.Id == item.StoreId).DriverStoresIsActive;
-                    item.StoresIsActive = _stores.FirstOrDefault(x => x.Id == item.StoreId).IsActive;
+                    try
+                    {
+                        item.DriverStoresIsActive = TempStoreList.FirstOrDefault(x => x.Id == item.StoreId).DriverStoresIsActive;
+                        item.StoresIsActive = TempStoreList.FirstOrDefault(x => x.Id == item.StoreId).IsActive;
+                    }
+                    catch (Exception ex)
+                    {
+                        //Exception
+                    }
                 }
                 DeliveryTickets = deliveryTickets;
             }
+            StateHasChanged();
         }
-    }    
+        #endregion
+    }
 }

@@ -38,10 +38,11 @@
 
         JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
 
-        var coord = await JsModule.InvokeAsync<string>("getCoord", true);
+        await JsModule.InvokeVoidAsync("getCoord", true);
+        var coords = await JsModule.InvokeAsync<string>("getCoordinates");
         await JsModule.InvokeVoidAsync("ClearCoord");
-        var Latitude = coord.Split("##")[0];
-        var Longitude = coord.Split("##")[1];
+        var Latitude = coords.Split("##")[0];
+        var Longitude = coords.Split("##")[1];
 
         _imageFile = e.File;
 
