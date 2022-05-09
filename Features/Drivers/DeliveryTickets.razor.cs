@@ -53,19 +53,26 @@ namespace WiiTrakClient.Features.Drivers
             {
                 JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
                 await JsModule.InvokeVoidAsync("getCoord", false);
-                var coords = await JsModule.InvokeAsync<string>("getCoordinates");
-                var lat = coords.Split("##")[0];
-                var Lon = coords.Split("##")[1];
-                Latitude = Core.ToDouble(lat);
-                Longitude = Core.ToDouble(Lon);
                 if (CurrentUser.UserId == Guid.Empty)
                 {
                     var Id = await JsModule.InvokeAsync<string>("getUserId");
                     CurrentUser.UserId = new Guid(Id);
                 }
+                try
+                {
+                    var coords = await JsModule.InvokeAsync<string>("getCoordinates");
+                    var lat = coords.Split("##")[0];
+                    var Lon = coords.Split("##")[1];
+                    Latitude = Core.ToDouble(lat);
+                    Longitude = Core.ToDouble(Lon);
+                }
+                finally
+                {
+                    await JsModule.InvokeVoidAsync("ClearCoord");
+                }
                 TempStores = _stores = await StoreHttpRepository.GetStoresByDriverId(CurrentUser.UserId);
                 await GetDeliveryTicketsByDriverId(CurrentUser.UserId);
-                await JsModule.InvokeVoidAsync("ClearCoord");
+            
                 _selectedDriver = await DriverRepository.GetDriverByIdAsync(CurrentUser.UserId);
             }
             catch (Exception ex)
@@ -124,12 +131,10 @@ namespace WiiTrakClient.Features.Drivers
                 var Lon = Coords.Split("##")[1];
                 Latitude = Core.ToDouble(lat);
                 Longitude = Core.ToDouble(Lon);
-                await JsModule.InvokeVoidAsync("ClearCoord");
             }
-            catch (Exception ex)
+            finally
             {
-
-
+                await JsModule.InvokeVoidAsync("ClearCoord");
             }
 
             FindDistance();
