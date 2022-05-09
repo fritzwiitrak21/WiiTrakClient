@@ -65,8 +65,9 @@ namespace WiiTrakClient.Features.Drivers
                     var Lon = coords.Split("##")[1];
                     Latitude = Core.ToDouble(lat);
                     Longitude = Core.ToDouble(Lon);
+                    await JsModule.InvokeVoidAsync("ClearCoord");
                 }
-                finally
+                catch(Exception ex)
                 {
                     await JsModule.InvokeVoidAsync("ClearCoord");
                 }
@@ -79,7 +80,7 @@ namespace WiiTrakClient.Features.Drivers
             {
             }
             await HandleDriverSelected();
-            await JsModule.InvokeVoidAsync("ClearCoord");
+           
         }
 
         private async Task HandleDriverSelected()
@@ -131,8 +132,9 @@ namespace WiiTrakClient.Features.Drivers
                 var Lon = Coords.Split("##")[1];
                 Latitude = Core.ToDouble(lat);
                 Longitude = Core.ToDouble(Lon);
+                await JsModule.InvokeVoidAsync("ClearCoord");
             }
-            finally
+            catch (Exception ex)
             {
                 await JsModule.InvokeVoidAsync("ClearCoord");
             }
