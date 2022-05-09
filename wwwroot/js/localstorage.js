@@ -80,10 +80,13 @@ export function getCoord(ShowErrorMessage) {
     ShowError = false;
     ShowError = ShowErrorMessage;
     
-getLocation();
-return localStorage.getItem("Coord");
-
+    getLocation();
+  
 }
+export function getCoordinates() {
+    return localStorage.getItem("Coord");
+}
+
 function showError(error) {
     if (ShowError) {
         alert("Grant permission to access the location");

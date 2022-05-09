@@ -144,18 +144,42 @@
     protected override async Task OnInitializedAsync()
     {
         JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-        var coord =
-        CurrentUser.Coord = await JsModule.InvokeAsync<string>("getCoord", false);
-        await JsModule.InvokeVoidAsync("ClearCoord");
-        var lat = coord.Split("##")[0];
-        var Lon = coord.Split("##")[1];
-        Latitude = Core.ToDouble(lat);
-        Longitude = Core.ToDouble(Lon);
+        try
+        {
+            await JsModule.InvokeVoidAsync("getCoord", false);
+            var coords = await JsModule.InvokeAsync<string>("getCoordinates");
+            var lat = coords.Split("##")[0];
+            var Lon = coords.Split("##")[1];
+            Latitude = Core.ToDouble(lat);
+            Longitude = Core.ToDouble(Lon);
+            await JsModule.InvokeVoidAsync("ClearCoord");
+        }
+        catch (Exception ex)
+        {
+            await JsModule.InvokeVoidAsync("ClearCoord");
+        }
+        if (Stores != null && Stores.Count() >= 1)
+        {
+            foreach (var item in Stores)
+            {
+                var distance = Getdistance(item.Latitude, item.Longitude);
+                item.Distance = Convert.ToInt32(Math.Ceiling(distance));
+            }
+            TempStores = Stores;
+            FilterStore();
+        }
+        if (Stores != null && Stores.Count() >= 1)
+        {
+            FilterStore();
+            Stores = Stores.OrderBy(o => o.StoreName).ThenBy(p => p.StoreNumber).ToList();
+            _selectedStore = Stores[0];
+
+        }
+
+        NewDeliveryTicket.DriverId = Driver.Id;
     }
 
     #region Get Distance
-
-
     private double Getdistance(double lat2, double lon2, char unit = 'K')
     {
         double lat1 = Latitude;
@@ -197,25 +221,7 @@
 
     protected override void OnParametersSet()
     {
-        if (Stores != null && Stores.Count() >= 1)
-        {
-            foreach (var item in Stores)
-            {
-                var distance = Getdistance(item.Latitude, item.Longitude);
-                item.Distance = Convert.ToInt32(Math.Ceiling(distance));
-            }
-            TempStores = Stores;
-            FilterStore();
-        }
-        if (Stores != null && Stores.Count() >= 1)
-        {
-            FilterStore();
-            Stores = Stores.OrderBy(o => o.StoreName).ThenBy(p => p.StoreNumber).ToList();
-            _selectedStore = Stores[0];
 
-        }
-
-        NewDeliveryTicket.DriverId = Driver.Id;
 
     }
     private void FilterStore()

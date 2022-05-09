@@ -108,35 +108,37 @@
     List<StoreDto> driverstore = new();
     List<StoreDto> driverstorelist = new();
 
-    
+
     private IJSObjectReference JsModule;
     public string CurrentCoord { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-            if (firstRender)
-            {
-                JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-            CurrentCoord = await JsModule.InvokeAsync<string>("getCoord", false);
-            }
+        if (firstRender)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            await JsModule.InvokeVoidAsync("getCoord", false);
+            CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
+            await JsModule.InvokeVoidAsync("ClearCoord");
         }
+    }
 
-   protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         if (CurrentUser.UserId == Guid.Empty)
         {
             JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
             var Id = await JsModule.InvokeAsync<string>("getUserId");
             CurrentUser.UserId = new Guid(Id)
-;
-            CurrentUser.UserName=await JsModule.InvokeAsync<string>("getUserName");
+    ;
+            CurrentUser.UserName = await JsModule.InvokeAsync<string>("getUserName");
 
         }
         driverstorelist = await StoreRepository.GetStoresByDriverId(CurrentUser.UserId);
-        
+
         if (driverstorelist is not null)
         {
-            driverstore = driverstorelist.Where(x=>x.IsActive==true && x.DriverStoresIsActive==true).ToList();
+            driverstore = driverstorelist.Where(x => x.IsActive == true && x.DriverStoresIsActive == true).ToList();
         }
         StateHasChanged();
 
@@ -149,7 +151,9 @@
             if (string.IsNullOrEmpty(CurrentCoord))
             {
                 JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-                CurrentCoord = await JsModule.InvokeAsync<string>("getCoord", false);
+                await JsModule.InvokeVoidAsync("getCoord", false);
+                CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
+                await JsModule.InvokeVoidAsync("ClearCoord");
             }
 
             double Driverlatitude, Driverlongitude;
@@ -160,7 +164,9 @@
             }
             else
             {
-                CurrentCoord = await JsModule.InvokeAsync<string>("getCoord", true);
+                await JsModule.InvokeVoidAsync("getCoord", true);
+                CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
+                await JsModule.InvokeVoidAsync("ClearCoord");
                 Driverlatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
                 Driverlongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
             }

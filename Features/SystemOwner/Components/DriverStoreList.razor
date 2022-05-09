@@ -11,13 +11,13 @@
         <MudTh>
             <MudTableSortLabel InitialDirection="SortDirection.Ascending"
                                SortBy="new Func<DriverStoreDetailsDto, object>(x=>x.StoreName)">
-                Store Number
+                Store Name
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
             <MudTableSortLabel InitialDirection="SortDirection.Ascending"
                                SortBy="new Func<DriverStoreDetailsDto, object>(x=>x.StoreNumber)">
-                Store Name
+                Store Number
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
@@ -51,8 +51,8 @@
     </HeaderContent>
 
     <RowTemplate>
-        <MudTd DataLabel="Store Number">@context.StoreNumber</MudTd>
-        <MudTd DataLabel="Store Name">@context.StoreName</MudTd>
+        <MudTd DataLabel="Store Number">@context.StoreName</MudTd>
+        <MudTd DataLabel="Store Name">@context.StoreNumber</MudTd>
         <MudTd DataLabel="Street Address 1">@context.StreetAddress1</MudTd>
         <MudTd DataLabel="Street Address 2">@context.StreetAddress2</MudTd>
         <MudTd DataLabel="City">@context.City</MudTd>
