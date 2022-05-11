@@ -29,7 +29,6 @@ namespace WiiTrakClient.DTOs
         public string State { get; set; } = string.Empty;
 
         public string CountryCode { get; set; } = string.Empty;
-        [Required]
         
         public string PostalCode { get; set; } = string.Empty;
 

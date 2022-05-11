@@ -69,8 +69,17 @@ namespace WiiTrakClient.HttpRepository
             }
             return response.Response;
         }
-
-         public async Task<List<StoreDto>> GetStoresByDriverId(Guid driverId)
+        public async Task<List<StoreDto>> GetStoresBySystemOwnerId(Guid SystemownerId)
+        {
+            string url = $"{_apiUrl}/Systemowner/{SystemownerId}";
+            var response = await _httpService.Get<List<StoreDto>>(url);
+            if (!response.Success)
+            {
+                // throw new ApplicationException(await response.GetBody());
+            }
+            return response.Response;
+        }
+        public async Task<List<StoreDto>> GetStoresByDriverId(Guid driverId)
         {
             string url = $"{_apiUrl}/Driver/{driverId}";
             var response = await _httpService.Get<List<StoreDto>>(url);

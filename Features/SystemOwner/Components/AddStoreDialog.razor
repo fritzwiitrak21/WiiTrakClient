@@ -1,4 +1,4 @@
-﻿@namespace WiiTrakClient.Features.Companies.Components
+﻿@namespace WiiTrakClient.Features.SystemOwner.Components
 @using System.ComponentModel.DataAnnotations
 @using WiiTrakClient.Cores
 
@@ -30,24 +30,37 @@
     <DialogContent>
         <div style="width: 400px;height:550px;">
             <MudForm Model="@NewStore" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudItem>
-                    <MudSelect T="CorporateDto" Label="Select Corporate" Required=true RequiredError=" "
+                <MudItem Class="my-6">
+                    <MudSelect T="CompanyDto" Label="Select Company" Required=true RequiredError=" " ValueChanged="(value) => HandleCompany(value)"
                                AnchorOrigin="Origin.BottomCenter">
-                        @foreach (var corporate in Corporate)
+                        @foreach (var company in Company)
                         {
-                            <MudSelectItem T="CorporateDto" Value="@corporate">@corporate.Name</MudSelectItem>
+                            <MudSelectItem T="CompanyDto" Value="@company">@company.Name</MudSelectItem>
                         }
                     </MudSelect>
                 </MudItem>
-                @* <MudItem>
-                    <MudSelect T="ServiceProviderDto" Label="Select Service Provider" Required=true RequiredError=" "
-                    AnchorOrigin="Origin.BottomCenter">
-                    @foreach (var provider in ServiceProviders)
+                <MudItem Class="my-6">
+                    @if (IshasCorporateDetails)
                     {
-                    <MudSelectItem T="ServiceProviderDto" Value="@provider">@provider.ServiceProviderName</MudSelectItem>
+                        <MudSelect T="CorporateDto" Label="Select Corporate" Required=true RequiredError=" " Value="@SelectedCorporate" ValueChanged="(value) => HandleCorporate(value)"
+                               AnchorOrigin="Origin.BottomCenter">
+                            @foreach (var corporate in Corporate)
+                            {
+                                <MudSelectItem T="CorporateDto" Value="@corporate">@corporate.Name</MudSelectItem>
+                            }
+                        </MudSelect>
                     }
-                    </MudSelect>
-                    </MudItem>*@
+                    else
+                    {
+                         <MudSelect T="CorporateDto" Label="Select Corporate" Required=true RequiredError=" "  ValueChanged="(value) => HandleCorporate(value)"
+                               AnchorOrigin="Origin.BottomCenter">
+                            @foreach (var corporate in Corporate)
+                            {
+                                <MudSelectItem T="CorporateDto" Value="@corporate">@corporate.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
+                </MudItem>
                 <MudTextField class="my-6" @bind-Value="NewStore.StoreName" Label="Store Name" Required="true" RequiredError=" " For="@(() => @NewStore.StoreName)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="NewStore.StoreNumber" Label="Store Number" Required="true" RequiredError=" " For="@(() => @NewStore.StoreNumber)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="NewStore.Email" Label="Email" Required="true" RequiredError=" " For="@(() => @NewStore.Email)" Variant="Variant.Text"></MudTextField>
@@ -102,8 +115,9 @@
     [Parameter]
     public StoreCreationDto? NewStore { get; set; }
     public List<CorporateDto> Corporate { get; set; } = new();
+    public List<CompanyDto> Company { get; set; } = new();
     public List<CountyCodeDTO> CountyCodeList { get; set; } = new();
-    public CorporateDto _selectedCorporate = new();
+    public CorporateDto SelectedCorporate = new();
     public CountyCodeDTO _selectedCountyCode = new();
     [Inject]
     public ICorporateHttpRepository CorporateRepository { get; set; }
@@ -117,13 +131,15 @@
     public ICountyCodeHttpRepository CountyCodeRepository { get; set; }
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     bool success;
+    bool IshasCorporateDetails;
     string[] errors = { };
     string[] County;
     MudForm form;
     public string SelectedService = "";
     [Inject] IJSRuntime JsRuntime { get; set; }
     private IJSObjectReference JsModule;
-    public CompanyDto Company { get; set; }
+    //public CompanyDto Company { get; set; }
+    //public CorporateDto Corporate { get; set; }
     DateTime? MinDate { get; set; } = DateTime.Today;
     DateTime SelectedDate { get; set; } = DateTime.Today;
     public string SelectedCounty = "";
@@ -132,22 +148,9 @@
 
 
         NewStore.StartDate = SelectedDate;
-        if (CurrentUser.UserRole == "PrimeCompany")
-        {
-            Corporate = await CorporateRepository.GetCorporatesByCompanyId(CurrentUser.UserId);
 
-        }
-        else if (CurrentUser.UserRole == "SubContractor")
-        {
-            Company = await CompanyRepository.GetParentCompanyAsync(CurrentUser.UserId);
-            Corporate = await CorporateRepository.GetCorporatesByCompanyId((Guid)Company.ParentId);
-        }
-        if (Corporate.Count > 0)
-        {
-            _selectedCorporate = Corporate[0];
-            NewStore.CorporateId = _selectedCorporate.Id;
-        }
-
+        Corporate = await CorporateRepository.GetAllCorporatesAsync();
+        Company = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
         CountyCodeList = await CountyCodeRepository.GetCountyListAsync();
         if (CountyCodeList.Count > 0)
         {
@@ -209,11 +212,11 @@
                 SelectedCounty = e.ToString();
                 if (success)
                 {
-                    success = true; // Enable the Save button when other fields are valid 
+                    success = true; // Enable the Save button when other fields are valid
                 }
                 else
                 {
-                    success = false;// Disable the Save button when other fields are valid 
+                    success = false;// Disable the Save button when other fields are valid
                 }
                 StateHasChanged();
             }
@@ -229,6 +232,41 @@
         {
         }
     }
+
+    public async Task HandleCompany(CompanyDto company)
+    {
+        NewStore.CompanyId = company.Id;
+        try
+        {
+
+            if (company.ParentId == null)
+            {
+                Corporate = await CorporateRepository.GetCorporatesByCompanyId(company.Id);
+            }
+            else if (company.ParentId != null)
+            {
+                Corporate = await CorporateRepository.GetCorporatesByCompanyId((Guid)company.ParentId);
+            }
+            if (Corporate != null)
+            {
+                SelectedCorporate = Corporate[0];
+                IshasCorporateDetails = true;
+            }
+            else
+            {
+                IshasCorporateDetails = false;
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+    public async Task HandleCorporate(CorporateDto corporate)
+    {
+        NewStore.CorporateId = corporate.Id;
+    }
+
     void Submit()
     {
         MudDialog.Close(DialogResult.Ok(true));

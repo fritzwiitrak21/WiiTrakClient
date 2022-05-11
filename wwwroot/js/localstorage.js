@@ -106,4 +106,14 @@ export function getSignCompleteStatus() {
     
     return $('#SuccessMessage').text();;
 }
+export function addValidationCountycodeClass() {
+    $('input[type="text"].inputselect').addClass("mud-input-error");
+    $('input[type="text"].inputselect').addClass("countycode");
+    $('#targetlabel').addClass("mud-input-error");
+}
+export function removeValidationCountycodeClass() {
+    $('input[type="text"].inputselect').removeClass("mud-input-error");
+    $('input[type="text"].inputselect').removeClass("countycode");
+    $('#targetlabel').removeClass("mud-input-error");
+}
 

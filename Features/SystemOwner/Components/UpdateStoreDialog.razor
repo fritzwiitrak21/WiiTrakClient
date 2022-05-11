@@ -1,4 +1,4 @@
-﻿@namespace WiiTrakClient.Features.Companies.Components
+﻿@namespace WiiTrakClient.Features.SystemOwner.Components
 @using System.ComponentModel.DataAnnotations
 @using WiiTrakClient.Cores
 <style>
@@ -12,22 +12,37 @@
     <DialogContent>
         <div style="width: 400px;height:550px;">
             <MudForm Model="@Store" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudSelect T="CorporateDto" Label="Select Corporate" @bind-Value="@_selectedCorporate" Required=true RequiredError=" "
-                           AnchorOrigin="Origin.BottomCenter">
-                    @foreach (var corporate in Corporate)
-                    {
-                        <MudSelectItem T="CorporateDto" Value="@corporate">@corporate.Name</MudSelectItem>
-                    }
-                </MudSelect>
-                @* <MudItem>
-                    <MudSelect T="ServiceProviderDto" Label="Select Service Provider" @bind-Value="@_selectedServiceProvider" Required=true RequiredError=" "
-                    AnchorOrigin="Origin.BottomCenter">
-                    @foreach (var provider in ServiceProviders)
-                    {
-                    <MudSelectItem T="ServiceProviderDto" Value="@provider">@provider.ServiceProviderName</MudSelectItem>
-                    }
+                <MudItem Class="my-6">
+                    <MudSelect T="CompanyDto" Label="Select Company" Required=true RequiredError=" " Value="@SelectedCompany" ValueChanged="(value) => HandleCompany(value)"
+                               AnchorOrigin="Origin.BottomCenter">
+                        @foreach (var company in Companies)
+                        {
+                            <MudSelectItem T="CompanyDto" Value="@company">@company.Name</MudSelectItem>
+                        }
                     </MudSelect>
-                    </MudItem>*@
+                </MudItem>
+                <MudItem Class="my-6">
+                     @if (IshasCorporateDetails)
+                    {
+                        <MudSelect T="CorporateDto" Label="Select Corporate" Required=true RequiredError=" " Value="@SelectedCorporate" ValueChanged="(value) => HandleCorporate(value)"
+                               AnchorOrigin="Origin.BottomCenter">
+                            @foreach (var corporate in Corporate)
+                            {
+                                <MudSelectItem T="CorporateDto" Value="@corporate">@corporate.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
+                    else
+                    {
+                         <MudSelect T="CorporateDto" Label="Select Corporate" Required=true RequiredError=" "  ValueChanged="(value) => HandleCorporate(value)"
+                               AnchorOrigin="Origin.BottomCenter">
+                            @foreach (var corporate in Corporate)
+                            {
+                                <MudSelectItem T="CorporateDto" Value="@corporate">@corporate.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
+                </MudItem>
                 <MudTextField class="my-6" @bind-Value="Store.StoreName" Label="Store Name" Required="true" RequiredError="" For="@(() => @Store.StoreName)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Store.StoreNumber" Label="Store Number" Required="true" RequiredError="" For="@(() => @Store.StoreNumber)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Store.Email" Label="Email" Required="true" RequiredError="" For="@(() => @Store.Email)" Variant="Variant.Text"></MudTextField>
@@ -38,7 +53,7 @@
                 <MudTextField class="my-6" @bind-Value="Store.City" Label="City" Required="true" RequiredError="" For="@(() => @Store.City)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Store.State" Label="State" Required="true" RequiredError="" For="@(() => @Store.State)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Store.PostalCode" Label="Zip Code" Required="true" RequiredError="" For="@(() => @Store.PostalCode)" Variant="Variant.Text"></MudTextField>
-                <div Class="Mudsearchselect mt-10">
+                <div Class="Mudsearchselect my-6">
                     @if (SelectedCounty != "")
                     {
                         <label id="targetlabel">County Code*</label>
@@ -88,15 +103,23 @@
 
     [Parameter]
     public List<CorporateDto>? Corporate { get; set; } = new();
+
+
+    [Parameter]
+    public List<CompanyDto>? Companies { get; set; } = new();
+
     [Parameter]
     public List<CountyCodeDTO>? CountyCodeList { get; set; } = new();
 
-    CorporateDto _selectedCorporate = new();
+    CorporateDto SelectedCorporate = new();
+    CompanyDto SelectedCompany = new();
     public CountyCodeDTO _selectedCountyCode = new();
     bool StoreStatus = false;
-
+    [Inject]
+    public ICorporateHttpRepository CorporateRepository { get; set; }
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     bool success;
+    bool IshasCorporateDetails;
     string[] errors = { };
     string[] County;
     string SelectedCounty = "";
@@ -109,7 +132,12 @@
     {
         if (Corporate != null && Corporate.Count > 0)
         {
-            _selectedCorporate = Corporate.Where(x => x.Id == Store.CorporateId).FirstOrDefault();
+            SelectedCorporate = Corporate.Where(x => x.Id == Store.CorporateId).FirstOrDefault();
+            IshasCorporateDetails = true;
+        }
+        if (Companies != null && Companies.Count > 0)
+        {
+            SelectedCompany = Companies.Where(x => x.Id == Store.CompanyId).FirstOrDefault();
         }
         if (Store.ServiceFrequency != null && Store.ServiceFrequency != "")
         {
@@ -182,11 +210,11 @@
                 SelectedCounty = e.ToString();
                 if (success)
                 {
-                    success = true; // Enable the Save button when other fields are valid 
+                    success = true; // Enable the Save button when other fields are valid
                 }
                 else
                 {
-                    success = false;// Disable the Save button when other fields are valid 
+                    success = false;// Disable the Save button when other fields are valid
                 }
             }
             else
@@ -199,6 +227,42 @@
         catch (Exception ex)
         {
         }
+    }
+    public async Task HandleCompany(CompanyDto company)
+    {
+        Store.CompanyId = company.Id;
+        SelectedCompany = company;
+        try
+        {
+
+            if (company.ParentId == null)
+            {
+                Corporate = await CorporateRepository.GetCorporatesByCompanyId(company.Id);
+            }
+            else if (company.ParentId != null)
+            {
+                Corporate = await CorporateRepository.GetCorporatesByCompanyId((Guid)company.ParentId);
+            }
+            if (Corporate != null)
+            {
+                SelectedCorporate = Corporate[0];
+                IshasCorporateDetails=true;
+            }
+            else
+            {
+                IshasCorporateDetails=false;
+                success = false;
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+    public async Task HandleCorporate(CorporateDto corporate)
+    {
+        Store.CorporateId = corporate.Id;
+        SelectedCorporate = corporate;
     }
 
     void Submit()
