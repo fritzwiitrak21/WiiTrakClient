@@ -14,6 +14,10 @@ export function saveUserRoleId(UserRoleId) {
     localStorage.setItem("UserRoleId", UserRoleId);
 }
 
+export function saveUserPassword(Password) {
+    localStorage.setItem("Password", Password);
+}
+
 export function getUserId() {
     return localStorage.getItem("UserId");
 }
@@ -28,6 +32,10 @@ export function getUserRole() {
 
 export function getUserRoleId() {
     return localStorage.getItem("UserRoleId");
+}
+
+export function getUserPassword() {
+    return localStorage.getItem("Password");
 }
 
 export function clearSession(){

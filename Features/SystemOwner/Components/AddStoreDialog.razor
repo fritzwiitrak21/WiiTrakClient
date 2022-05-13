@@ -183,6 +183,7 @@
     public async Task HandleServiceFrequency(string value)
     {
         NewStore.ServiceFrequency = value;
+        SelectedService = value;
     }
     private async Task OnClick()
     {
@@ -250,6 +251,7 @@
             if (Corporate != null)
             {
                 SelectedCorporate = Corporate[0];
+                NewStore.CorporateId = SelectedCorporate.Id;
                 IshasCorporateDetails = true;
             }
             else

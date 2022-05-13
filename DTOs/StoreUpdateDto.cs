@@ -32,7 +32,7 @@ namespace WiiTrakClient.DTOs
 
 
         [Required(ErrorMessage = " ")]
-        [StringLength(25, ErrorMessage = " ")]
+        [StringLength(50, ErrorMessage = " ")]
         public string StreetAddress1 { get; set; } = string.Empty;
 
 

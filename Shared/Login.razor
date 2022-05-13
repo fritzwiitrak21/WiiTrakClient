@@ -266,7 +266,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-         JsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        JsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
     }
 
     private async void OnSubmit()
@@ -287,12 +287,13 @@
                 CurrentUser.UserName = Core.ToPascalCase(string.Concat(UserDetails.FirstName, " ", UserDetails.LastName));
                 CurrentUser.IsFirstLogin = Convert.ToBoolean(UserDetails.IsFirstLogin);
                 CurrentUser.PasswordLastUpdatedAt = UserDetails.PasswordLastUpdatedAt;
-               
+                CurrentUser.Password = loginWithBse64.Password;
+
                 await JsModule.InvokeVoidAsync("saveUserId",CurrentUser.UserId);
                 await JsModule.InvokeVoidAsync("saveUserName",CurrentUser.UserName);
                 await JsModule.InvokeVoidAsync("saveUserRole",CurrentUser.UserRole);
                 await JsModule.InvokeVoidAsync("saveUserRoleId",CurrentUser.UserRoleId);
-
+                await JsModule.InvokeVoidAsync("saveUserPassword", CurrentUser.Password);
                 if (CurrentUser.IsFirstLogin)
                 {
                     //Key - Email , Key1 - UserId

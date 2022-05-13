@@ -11,6 +11,7 @@ namespace WiiTrakClient.DTOs
 
         [Required]
         public string Password { get; set; }
+
     }
 
     public class ForgotPasswordDto
@@ -34,12 +35,9 @@ namespace WiiTrakClient.DTOs
         [Required]
         public string Password { get; set; }
         [Required]
-        [Compare("Password")]
-        [NotMapped]
-        
         public string NewPassword { get; set; }
         [Required]
         [Compare("NewPassword")]
-        public string ConfirmPassword { get; set; }
+        public string ConfirmNewPassword { get; set; }
     }
 }

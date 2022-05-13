@@ -6,7 +6,7 @@ namespace WiiTrakClient.DTOs
     {
         [Required(ErrorMessage = " ")]
         [StringLength(25, ErrorMessage = " ")]
-        [RegularExpression(@"^[a-zA-Z]*$", ErrorMessage = " ")]
+        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = " ")]
         public string StoreName { get; set; } = string.Empty;
 
 
@@ -31,7 +31,7 @@ namespace WiiTrakClient.DTOs
 
 
         [Required(ErrorMessage = " ")]
-        [StringLength(25, ErrorMessage = " ")]
+        [StringLength(50, ErrorMessage = " ")]
         public string StreetAddress1 { get; set; } = string.Empty;
 
 
