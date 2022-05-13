@@ -4,55 +4,70 @@
 
 <style>
     .validation-message {
-    font-size:0;
-    display:none;
-    font-display:block;
-    
-    color: red;
-}
-.mud-input-helper-text.mud-input-error {
-    font-size: 0;
-}
-.mud-input-helper-text {
-    color: var(--mud-palette-text-secondary);
-    margin: 0;
-    font-size: 0;
-    text-align: start;
-    font-weight: 400;
-    line-height: 1.66;
-    letter-spacing: .03333em;
-}
-        </style>
+        font-size: 0;
+        display: none;
+        font-display: block;
+        color: red;
+    }
+
+    .mud-input-helper-text.mud-input-error {
+        font-size: 0;
+    }
+
+    .mud-input-helper-text {
+        color: var(--mud-palette-text-secondary);
+        margin: 0;
+        font-size: 0;
+        text-align: start;
+        font-weight: 400;
+        line-height: 1.66;
+        letter-spacing: .03333em;
+    }
+
+    .countycode::placeholder {
+        color: red;
+        opacity: 1;
+    }
+</style>
 
 <MudDialog Class="dialogstyle">
-    <DialogContent>              
-        <div style="width: 400px;height:550px;"> 
+    <DialogContent>
+        <div style="width: 400px;height:550px;">
             <MudForm Model="@Store" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudItem>
                     <MudSelect T="CompanyDto" Label="Select Company" Required=true RequiredError=" "
-                        Value="@_selectedCompany"
-                        AnchorOrigin="Origin.BottomCenter">
+                               Value="@_selectedCompany" ValueChanged="(value) => HandleCompany(value)"
+                               AnchorOrigin="Origin.BottomCenter">
                         @foreach (var company in companies)
                         {
                             <MudSelectItem T="CompanyDto" Value="@company">@company.Name</MudSelectItem>
                         }
                     </MudSelect>
                 </MudItem>
-                <MudTextField class="my-6" @bind-Value="Store.StoreName" Label="Store Name" Required="true" RequiredError="" For="@(() => @Store.StoreName)" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="Store.StoreNumber" Label="Store Number" Required="true" RequiredError="" For="@(() => @Store.StoreNumber)" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="Store.Email" Label="Email" Required="true" RequiredError="" For="@(() => @Store.Email)" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="Store.PhonePrimary" Label="Phone Primary" Required="true" RequiredError="" For="@(() => @Store.PhonePrimary)" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="Store.PhoneSecondary" Label="Phone Secondary"  For="@(() => @Store.PhoneSecondary)" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="Store.StreetAddress1" Label="Street Address 1" Required="true" RequiredError="" For="@(() => @Store.StreetAddress1)" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="Store.StreetAddress2" Label="Street Address 2"  For="@(() => @Store.StreetAddress2)" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="Store.City" Label="City" Required="true" RequiredError="" For="@(() => @Store.City)" Variant="Variant.Text"></MudTextField>  
-                <MudTextField class="my-6" @bind-Value="Store.State" Label="State" Required="true" RequiredError="" For="@(() => @Store.State)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField class="my-6" @bind-Value="Store.StoreName" Label="Store Name" Required="true" RequiredError="" For="@(() => @Store.StoreName)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.StoreNumber" Label="Store Number" Required="true" RequiredError="" For="@(() => @Store.StoreNumber)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.Email" Label="Email" Required="true" RequiredError="" For="@(() => @Store.Email)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.PhonePrimary" Label="Phone Primary" Required="true" RequiredError="" For="@(() => @Store.PhonePrimary)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.PhoneSecondary" Label="Phone Secondary" For="@(() => @Store.PhoneSecondary)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.StreetAddress1" Label="Street Address 1" Required="true" RequiredError="" For="@(() => @Store.StreetAddress1)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.StreetAddress2" Label="Street Address 2" For="@(() => @Store.StreetAddress2)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.City" Label="City" Required="true" RequiredError="" For="@(() => @Store.City)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.State" Label="State" Required="true" RequiredError="" For="@(() => @Store.State)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Store.PostalCode" Label="Zip Code" Required="true" RequiredError="" For="@(() => @Store.PostalCode)" Variant="Variant.Text"></MudTextField>
-                <MudItem Class="my-6">
-                    <MudAutocomplete T="string" Label="County Code"  ValueChanged="(value) => HandleCountyCode(value)" Value="@SelectedCounty" SearchFunc="@Search1" Required=true RequiredError=" "
-                                     ResetValueOnEmptyText="true"
-                                     CoerceText="true" CoerceValue="true" />
-                </MudItem>
+                <div Class="Mudsearchselect my-6">
+                    @if (SelectedCounty != "")
+                    {
+                        <label id="targetlabel">County Code*</label>
+                    }
+                    <input type="text" list="textsearch" Class="inputselect" placeholder="County Code*" value="@SelectedCounty" @onkeyup="OnClick" @onchange="eventArgs => { OnSelect(eventArgs.Value); }" />
+
+                    <datalist id="textsearch">
+                        @foreach (var county in County)
+                        {
+                            <option value="@county" />
+                        }
+                    </datalist>
+                </div>
                 <MudItem Class="my-6">
                     <MudSelect T="String" ValueChanged="(value) => HandleServiceFrequency(value)" Value="@SelectedService" Label="Select Service Frequency" Required=true RequiredError=" "
                                AnchorOrigin="Origin.BottomCenter">
@@ -67,11 +82,9 @@
                     </MudSelect>
 
                 </MudItem>
-                <MudDatePicker Label="" Class="my-6" Editable="true" MinDate="MinDate" @bind-Date="Store.StartDate"  Placeholder="Select Start Date" Required=true RequiredError=" " For="@(() => @Store.StartDate)" />
-                
-                @*<MudTextField class="my-6" @bind-Value="Store.Latitude" Label="Latitude" Required="true" RequiredError="" For="@(() => @Store.Latitude)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Store.Longitude" Label="Longitude" Required="true" RequiredError="" For="@(() => @Store.Longitude)" Variant="Variant.Text"></MudTextField>*@
-                @if(Store.IsActive==true)
+                <MudDatePicker Label="" Class="my-6" Editable="true" MinDate="MinDate" @bind-Date="Store.StartDate" Placeholder="Select Start Date" Required=true RequiredError=" " For="@(() => @Store.StartDate)" />
+
+                @if (Store.IsActive == true)
                 {
                     <MudSwitch class="my-6" @bind-Checked="@Store.IsActive" Label="Store is Active" Color="Color.Primary" />
                 }
@@ -91,7 +104,7 @@
 
 @code {
     [Parameter]
-    public StoreDto? Store {get; set;}
+    public StoreDto? Store { get; set; }
     [Parameter]
     public List<CompanyDto>? companies { get; set; }
     [Parameter]
@@ -109,22 +122,34 @@
     string SelectedService = "";
     DateTime? MinDate { get; set; } = Convert.ToDateTime("12/01/2021");
     DateTime? SelectedDate { get; set; } = DateTime.Today;
-    
+    [Inject] IJSRuntime JsRuntime { get; set; }
+    private IJSObjectReference JsModule;
     MudForm form;
-    
+
     protected override async Task OnInitializedAsync()
-    { 
-        
-    } 
+    {
+
+    }
 
     protected override void OnParametersSet()
-    {   
-       if (companies != null && companies.Count > 0)
+    {
+        if (companies != null && companies.Count > 0)
         {
             _selectedCompany = companies.Where(x => x.Id == Store.CompanyId).FirstOrDefault();
         }
-         SelectedService = Store.ServiceFrequency;
-        SelectedDate = Store.StartDate;
+        if (Store.ServiceFrequency != null && Store.ServiceFrequency != "")
+        {
+            SelectedService = Store.ServiceFrequency;
+        }
+        else
+        {
+            SelectedService = "1 time a week";
+        }
+        if (Store.StartDate == null)
+        {
+            Store.StartDate = MinDate;
+        }
+
         if (CountyCodeList.Count > 0)
         {
             SelectedCounty = Store.CountyCode;
@@ -134,7 +159,10 @@
                 for (int i = 0; i < CountyCodeList.Count; i++)
                 {
                     _selectedCountyCode = CountyCodeList[i];
-                    C[i] = _selectedCountyCode.CountyCode;
+                    if (!(C.Contains(_selectedCountyCode.CountyCode)))
+                    {
+                        C[i] = _selectedCountyCode.CountyCode;
+                    }
                 }
                 County = (string[])C.Clone();
 
@@ -144,28 +172,70 @@
 
             }
         }
-       
+
     }
-      public async Task HandleServiceFrequency(string value)
+    public async Task HandleServiceFrequency(string value)
     {
         SelectedService = value;
         Store.ServiceFrequency = value;
     }
-    public async Task HandleCountyCode(string value)
+    public async Task HandleCompany(CompanyDto company)
     {
-        SelectedCounty = value;
-        Store.CountyCode = value;
+        _selectedCompany = company;
+        Store.CompanyId = company.Id;
     }
-    private async Task<IEnumerable<string>> Search1(string value)
+    private async Task OnClick()
     {
+        JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
 
-        if (string.IsNullOrEmpty(value))
-            return County;
-        return County.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        var inputtext = await JsModule.InvokeAsync<string>("getTextBoxValue");
+        if (inputtext == "")
+        {
+            await JsModule.InvokeVoidAsync("addValidationCountycodeClass");
+            StateHasChanged();
+        }
+        else
+        {
+            await JsModule.InvokeVoidAsync("removeValidationCountycodeClass");
+            StateHasChanged();
+        }
     }
-    void Submit() 
-    { 
-        MudDialog.Close(DialogResult.Ok(true)); 
+    private async Task OnSelect(object e)
+    {
+        try
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            if (County.Contains(e))
+            {
+
+                Store.CountyCode = e.ToString();
+                SelectedCounty = e.ToString();
+                if (success)
+                {
+                    success = true; // Enable the Save button when other fields are valid 
+                }
+                else
+                {
+                    success = false;// Disable the Save button when other fields are valid 
+                }
+            }
+            else
+            {
+                SelectedCounty = e.ToString();
+                success = false;
+                await JsModule.InvokeVoidAsync("addValidationCountycodeClass");
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+        }
+    }
+
+
+    void Submit()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
     }
     void Cancel() => MudDialog.Cancel();
 }

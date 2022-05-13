@@ -548,3 +548,7 @@ h5 {
 .Count0 .mud-badge {
     opacity: 0;
 }
+.Pagingstyle {
+    display:flex;
+    flex-direction:column-reverse;
+}

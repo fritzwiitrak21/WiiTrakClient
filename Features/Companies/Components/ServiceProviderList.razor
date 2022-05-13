@@ -5,7 +5,7 @@
 @inject IDialogService DialogService
 @inject IServiceProviderHttpRepository ServiceProviderHttpRepository
 
-   <MudTable Items="@ServiceProviders" Hover="true" SortLabel="Sort By">
+   <MudTable Items="@ServiceProviders" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
     <HeaderContent>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ServiceProviderDto, object>(x=>x.ServiceProviderName)">Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<ServiceProviderDto, object>(x=>x.Email)">Email</MudTableSortLabel></MudTh>

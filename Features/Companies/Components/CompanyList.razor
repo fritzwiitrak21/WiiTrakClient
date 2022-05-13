@@ -4,7 +4,7 @@
 @inject ICompanyHttpRepository CompanyHttpRepository
 @using WiiTrakClient.Cores
 
-   <MudTable Items="@Companies" Hover="true" SortLabel="Sort By">
+   <MudTable Items="@Companies" Hover="true" Class="Pagingstyle" SortLabel="Sort By">
     <HeaderContent>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<CompanyDto, object>(x=>x.Name)">Company Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<CompanyDto, object>(x=>x.StreetAddress1)">Address</MudTableSortLabel></MudTh>

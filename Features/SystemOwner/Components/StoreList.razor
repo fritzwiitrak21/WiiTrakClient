@@ -1,4 +1,4 @@
-﻿@using WiiTrakClient.Features.Companies.Components
+﻿@using WiiTrakClient.Features.SystemOwner.Components
 @inject IDialogService DialogService
 
 @inject IStoreHttpRepository StoreHttpRepository
@@ -8,7 +8,8 @@
 @using WiiTrakClient.Cores
 
 
-<MudTable Items="@Stores" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
+
+<MudTable Items="@Stores" Hover="true" Class="Pagingstyle" SortLabel="Sort By">
     <HeaderContent>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<StoreDto, object>(x=>x.StoreName)">Store Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<StoreDto, object>(x=>x.StoreNumber)">Store Number</MudTableSortLabel></MudTh>
@@ -21,7 +22,9 @@
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.PhonePrimary)">Phone</MudTableSortLabel></MudTh>
         <MudTh></MudTh>
     </HeaderContent>
+
     <RowTemplate>
+
         <MudTd DataLabel="Name">
             @context.StoreName
         </MudTd>
@@ -71,28 +74,32 @@
     private bool _enabled = true;
     public CompanyDto Company { get; set; }
     public List<CorporateDto> Corporate { get; set; } = new();
+    public List<CompanyDto> Companies { get; set; } = new();
     public List<CountyCodeDTO> CountyCode { get; set; } = new();
     public async Task OpenDialog(StoreDto store)
     {
 
         // TODO Update for store
 
-        if (CurrentUser.UserRole == "PrimeCompany")
-        {
-            Corporate = await CorporateRepository.GetCorporatesByCompanyId(CurrentUser.UserId);
+        //if (CurrentUser.UserRole == "PrimeCompany")
+        //{
+        //    Corporate = await CorporateRepository.GetCorporatesByCompanyId(CurrentUser.UserId);
 
-        }
-        else if (CurrentUser.UserRole == "SubContractor")
-        {
-            Company = await CompanyRepository.GetParentCompanyAsync(CurrentUser.UserId);
-            Corporate = await CorporateRepository.GetCorporatesByCompanyId((Guid)Company.ParentId);
-        }
+        //}
+        //else if (CurrentUser.UserRole == "SubContractor")
+        //{
+        //    Company = await CompanyRepository.GetParentCompanyAsync(CurrentUser.UserId);
+        //    Corporate = await CorporateRepository.GetCorporatesByCompanyId((Guid)Company.ParentId);
+        //}
+        Companies = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
+        Corporate = await CorporateRepository.GetCorporatesByCompanyId(store.CompanyId);
         Console.WriteLine("store id: " + store.Id);
-        CountyCode=await CountyCodeRepository.GetCountyListAsync();
+        CountyCode = await CountyCodeRepository.GetCountyListAsync();
 
         var parameters = new DialogParameters();
         parameters.Add("Store", store);
         parameters.Add("Corporate", Corporate);
+        parameters.Add("Companies", Companies);
         parameters.Add("CountyCodeList", CountyCode);
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
@@ -127,6 +134,7 @@
                 };
             await StoreHttpRepository.UpdateStoreAsync(store.Id, storeUpdate);
         }
-        Stores = await StoreHttpRepository.GetStoresByCompanyId(CurrentUser.UserId);
+        Stores = await StoreHttpRepository.GetStoresBySystemOwnerId(CurrentUser.UserId);
+        StateHasChanged();
     }
 }

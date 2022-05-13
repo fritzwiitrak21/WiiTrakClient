@@ -4,7 +4,7 @@
 @inject IStoreHttpRepository StoreHttpRepository
 
 
-   <MudTable Items="@Stores" Hover="true" SortLabel="Sort By">
+   <MudTable Items="@Stores" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
     <HeaderContent>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<StoreDto, object>(x=>x.StoreName)">Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.StoreNumber)">Store Number</MudTableSortLabel></MudTh>

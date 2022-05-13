@@ -28,7 +28,7 @@
                 @if (IsSuccessNotification)
                 {
                     <span style="color:green">
-                        <MudText Class="my-4" Typo="Typo.h6">@DisplayMessage</MudText>
+                        <MudText Class="my-4" Style="font-size:medium" Typo="Typo.h6">@DisplayMessage</MudText>
                     </span>
                 }
                 else if ((!IsSuccessNotification) && (FromWindow.ToLower().Contains("deliveryicketlist")))
@@ -40,7 +40,7 @@
                 else
                 {
                     <span style="color:red">
-                        <MudText Class="my-4" Typo="Typo.h6">@DisplayMessage</MudText>
+                        <MudText Class="my-4" Style="font-size:medium" Typo="Typo.h6">@DisplayMessage</MudText>
                     </span>
                 }
 
@@ -81,49 +81,54 @@
 
 
 
-    protected override void OnParametersSet()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (FromWindow.ToLower().Contains("login"))
+        if (firstRender)
         {
-            OkButtonText = "Try Again";
-            Visibility = true;
-        }
-        else if (FromWindow.ToLower().Contains("forgot"))
-        {
-            OkButtonText = "Ok";
-            if (IsSuccessNotification)
+
+
+            if (FromWindow.ToLower().Contains("login"))
             {
+                OkButtonText = "Try Again";
                 Visibility = true;
             }
-            else
+            else if (FromWindow.ToLower().Contains("forgot"))
             {
-                CancelVisibility = true;
-                CancelButtonText = "Try Again";
+                OkButtonText = "Ok";
+                if (IsSuccessNotification)
+                {
+                    Visibility = true;
+                }
+                else
+                {
+                    CancelVisibility = true;
+                    CancelButtonText = "Try Again";
+                }
             }
-        }
-        else if (FromWindow.ToLower().Contains("reset"))
-        {
-            OkButtonText = "Login";
-            Visibility = true;
-        }
-        else if (FromWindow.ToLower().Contains("deliveryicketlist"))
-        {
-            OkButtonText = "Yes";
-            Visibility = true;
-            CancelVisibility = true;
-            CancelButtonText = "No";
-        }
-        if (FromWindow.ToLower().Contains("change"))
-        {
-            OkButtonText = "Ok";
-            if (IsSuccessNotification)
+            else if (FromWindow.ToLower().Contains("reset"))
             {
+                OkButtonText = "Login";
                 Visibility = true;
             }
-            else
+            else if (FromWindow.ToLower().Contains("deliveryicketlist"))
             {
+                OkButtonText = "Yes";
+                Visibility = true;
                 CancelVisibility = true;
-                CancelButtonText = "Try Again";
+                CancelButtonText = "No";
+            }
+            else if (FromWindow.ToLower().Contains("change"))
+            {
+                OkButtonText = "Ok";
+                if (IsSuccessNotification)
+                {
+                    Visibility = true;
+                }
+                else
+                {
+                    CancelVisibility = true;
+                    CancelButtonText = "Try Again";
+                }
             }
         }
     }

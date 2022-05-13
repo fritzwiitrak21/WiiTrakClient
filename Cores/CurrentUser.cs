@@ -13,6 +13,7 @@ namespace WiiTrakClient.Cores
         public static DateTime PasswordLastUpdatedAt { get; set; }
         public static int UserRoleId { get; set; }
         public static string Coord { get; set; } = string.Empty;
+        public static string Password { get;set; } = string.Empty;
     }
 
     public static class Core

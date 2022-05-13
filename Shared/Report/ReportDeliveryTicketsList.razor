@@ -1,7 +1,7 @@
 @using WiiTrakClient.Shared.Report
 @namespace WiiTrakClient.Shared.Report
 
-<MudTable Items="@_ReportDeliveryTicketsList" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@listIsLoading"
+<MudTable Items="@_ReportDeliveryTicketsList" Class="Pagingstyle" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@listIsLoading"
     LoadingProgressColor="Color.Primary">
     <HeaderContent>
         <MudTh>

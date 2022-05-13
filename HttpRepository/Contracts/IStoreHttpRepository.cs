@@ -13,6 +13,7 @@ namespace WiiTrakClient.HttpRepository.Contracts
         Task<List<StoreDto>> GetStoresByCorporateId(Guid corporateId);
 
         Task<List<StoreDto>> GetStoresByCompanyId(Guid companyId);
+        Task<List<StoreDto>> GetStoresBySystemOwnerId(Guid SystemownerId);
 
         Task<List<StoreDto>> GetStoresByDriverId(Guid driverId);
 

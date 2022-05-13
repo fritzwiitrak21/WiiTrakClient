@@ -4,7 +4,7 @@
 @inject IDialogService DialogService
 
 
-<MudTable Items="@Corporate" Hover="true" SortLabel="Sort By">
+<MudTable Items="@Corporate" Hover="true" Class="Pagingstyle" SortLabel="Sort By">
     <HeaderContent>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<CorporateDto, object>(x=>x.Name)">Corporate Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<CorporateDto, object>(x=>x.StreetAddress1)">Address</MudTableSortLabel></MudTh>

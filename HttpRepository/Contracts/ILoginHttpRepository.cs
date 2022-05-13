@@ -13,6 +13,5 @@ namespace WiiTrakClient.HttpRepository.Contracts
         Task<UserDto> GetUsersDetailsByUserNameAsync(ForgotPasswordDto forgot);
 
         Task UpdatePasswordAsync(Guid id, ResetPasswordDto reset);
-        Task ChangeUserPasswordAsync(Guid id, ChangePasswordDto change);
     }
 }

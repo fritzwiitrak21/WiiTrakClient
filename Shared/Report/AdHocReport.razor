@@ -1,9 +1,9 @@
 ﻿@page "/report"
 
 @using WiiTrakClient.Services;
-@inject WiiTrakClient.Services.ExcelService excelservice
 @inject Microsoft.JSInterop.IJSRuntime JS
 @using WiiTrakClient.Cores;
+@using ClosedXML.Excel;
 @inject IDeliveryTicketHttpRepository DeliveryTicketHttpRepository
 
 <UserAuthentication />
@@ -89,7 +89,6 @@ else
     List<DeliveryTicketDto> _deliveryTickets = new();
     private MemoryStream ms;
     private IJSObjectReference JsModule;
-
     bool LoaderVisibility { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
@@ -112,6 +111,7 @@ else
                 CurrentUser.UserRoleId = Convert.ToInt32(roleid);
             }
 
+            
             var deliveryTickets = CurrentUser.UserRoleId <= 4 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId) :
                                   // For the role of System Owner - 1, Corporate - 2, Prime Company -3, Sub Company - 4
                                   CurrentUser.UserRoleId == 5 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByDriverIdAsync(CurrentUser.UserId) :
@@ -150,9 +150,11 @@ else
             dt.Columns.Remove("StoreId");
             dt.Columns.Remove("DriverId");
             dt.Columns.Remove("PicUrl");
-            dt.Columns.Remove("DriverNumber"); 
-            dt.Columns.Remove("IsActive"); 
+            dt.Columns.Remove("DriverNumber");
+            dt.Columns.Remove("IsActive");
             dt.Columns.Remove("UpdatedBy");
+            dt.Columns.Remove("DriverStoresIsActive");
+            dt.Columns.Remove("StoresIsActive");
 
             dt.Columns["DriverName"].SetOrdinal(0);
             dt.Columns["DeliveryTicketNumber"].SetOrdinal(1);
@@ -168,13 +170,54 @@ else
             dt.Columns["PostalCode"].SetOrdinal(11);
 
 
-            ms = excelservice.CreateExcel(dt);
-            await FileUtils.SaveAs(JS, "DeliveryReports.xlsx", ms.ToArray());
+            var wb = new XLWorkbook();
+            var ws = wb.Worksheets.Add("DeliveryReport");
+            ws.Cell(1, 1).Value = "Driver Name";
+            ws.Cell(1, 2).Value = "Delivery Ticket Number";
+            ws.Cell(1, 3).Value = "DeliveredAt";
+            ws.Cell(1, 4).Value = "Store Name";
+            ws.Cell(1, 5).Value = "Store Number";
+            ws.Cell(1, 6).Value = "NumberOfCarts";
+            ws.Cell(1, 7).Value = "Signee";
+            ws.Cell(1, 8).Value = "Street Address1";
+            ws.Cell(1, 9).Value = "Street Address2";
+            ws.Cell(1, 10).Value = "City";
+            ws.Cell(1, 11).Value = "State";
+            ws.Cell(1, 12).Value = "PostalCode";
+
+
+            for (int row = 1; row <= dt.Rows.Count; row++)
+            {
+
+                ws.Cell(row + 1, 1).Value = dt.Rows[row - 1]["DriverName"].ToString();
+                ws.Cell(row + 1, 2).Value = dt.Rows[row - 1]["DeliveryTicketNumber"].ToString();
+                ws.Cell(row + 1, 3).Value = dt.Rows[row - 1]["DeliveredAt"].ToString();
+                ws.Cell(row + 1, 4).Value = dt.Rows[row - 1]["StoreName"].ToString();
+                string StoreNumber = dt.Rows[row - 1]["StoreNumber"].ToString();
+                ws.Cell(row + 1, 5).SetValue<string>(Convert.ToString(StoreNumber));
+                // ws.Cell(row + 1, 5).Value = dt.Rows[row-1]["StoreNumber"].ToString();
+                ws.Cell(row + 1, 6).Value = dt.Rows[row - 1]["NumberOfCarts"].ToString();
+                ws.Cell(row + 1, 7).Value = dt.Rows[row - 1]["Signee"].ToString();
+                ws.Cell(row + 1, 8).Value = dt.Rows[row - 1]["StreetAddress1"].ToString();
+                ws.Cell(row + 1, 9).Value = dt.Rows[row - 1]["StreetAddress2"].ToString();
+                ws.Cell(row + 1, 10).Value = dt.Rows[row - 1]["City"].ToString();
+                ws.Cell(row + 1, 11).Value = dt.Rows[row - 1]["State"].ToString();
+                ws.Cell(row + 1, 12).Value = dt.Rows[row - 1]["PostalCode"].ToString();
+
+            }
+
+            JsModule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            MemoryStream XLSStream = new();
+            wb.SaveAs(XLSStream);
+            var XLS = XLSStream.ToArray();
+            string filename = "DeliveryReport.xlsx";
+            await JsModule.InvokeVoidAsync("BlazorDownloadFile", filename, XLS);
         }
         catch (Exception ex)
         {
             throw ex;
         }
     }
+
 }
 

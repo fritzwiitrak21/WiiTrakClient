@@ -4,7 +4,7 @@
 
 @inject ITechnicianHttpRepository TechnicianRepository
 
-   <MudTable Items="@Technicians" Hover="true" SortLabel="Sort By">
+   <MudTable Items="@Technicians" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
     <HeaderContent>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<TechnicianDto, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel  SortBy="new Func<TechnicianDto, object>(x=>x.LastName)">LastName</MudTableSortLabel></MudTh>

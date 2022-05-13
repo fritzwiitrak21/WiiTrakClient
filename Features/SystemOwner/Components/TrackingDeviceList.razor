@@ -4,7 +4,7 @@
 @inject ITrackingDeviceHttpRepository TrackingDeviceRepository
 
 
-   <MudTable Items="@Devices" Hover="true" SortLabel="Sort By">
+   <MudTable Items="@Devices" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
     <HeaderContent>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<TrackingDeviceDto, object>(x=>x.Name)">Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel  SortBy="new Func<TrackingDeviceDto, object>(x=>x.Manufactor)">Manufactor</MudTableSortLabel></MudTh>
