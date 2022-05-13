@@ -28,7 +28,7 @@
                 @if (IsSuccessNotification)
                 {
                     <span style="color:green">
-                        <MudText Class="my-4" Typo="Typo.h6">@DisplayMessage</MudText>
+                        <MudText Class="my-4" Style="font-size:medium" Typo="Typo.h6">@DisplayMessage</MudText>
                     </span>
                 }
                 else if ((!IsSuccessNotification) && (FromWindow.ToLower().Contains("deliveryicketlist")))
@@ -40,7 +40,7 @@
                 else
                 {
                     <span style="color:red">
-                        <MudText Class="my-4" Typo="Typo.h6">@DisplayMessage</MudText>
+                        <MudText Class="my-4" Style="font-size:medium" Typo="Typo.h6">@DisplayMessage</MudText>
                     </span>
                 }
 
