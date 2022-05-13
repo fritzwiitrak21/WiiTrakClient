@@ -112,7 +112,7 @@ export function GetSignatureStatus() {
 
 export function getSignCompleteStatus() {
     
-    return $('#SuccessMessage').text();;
+    return $('#SuccessMessage').text();
 }
 export function addValidationCountycodeClass() {
     $('input[type="text"].inputselect').addClass("mud-input-error");
@@ -124,4 +124,14 @@ export function removeValidationCountycodeClass() {
     $('input[type="text"].inputselect').removeClass("countycode");
     $('#targetlabel').removeClass("mud-input-error");
 }
-
+export function BlazorDownloadFile(filename, content) {
+    const file = new File([content], filename, { type: "application/octet-stream" });
+    const exportUrl = URL.createObjectURL(file);
+    const a = document.createElement("a");
+    document.body.appendChild(a);
+    a.href = exportUrl;
+    a.download = filename;
+    a.target = "_self";
+    a.click();
+    URL.revokeObjectURL(exportUrl);
+}

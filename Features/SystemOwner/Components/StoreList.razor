@@ -8,7 +8,8 @@
 @using WiiTrakClient.Cores
 
 
-<MudTable Items="@Stores" Hover="true" SortLabel="Sort By">
+
+<MudTable Items="@Stores" Hover="true" Class="Pagingstyle" SortLabel="Sort By">
     <HeaderContent>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<StoreDto, object>(x=>x.StoreName)">Store Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<StoreDto, object>(x=>x.StoreNumber)">Store Number</MudTableSortLabel></MudTh>
@@ -21,7 +22,9 @@
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.PhonePrimary)">Phone</MudTableSortLabel></MudTh>
         <MudTh></MudTh>
     </HeaderContent>
+
     <RowTemplate>
+
         <MudTd DataLabel="Name">
             @context.StoreName
         </MudTd>
@@ -91,7 +94,7 @@
         Companies = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
         Corporate = await CorporateRepository.GetCorporatesByCompanyId(store.CompanyId);
         Console.WriteLine("store id: " + store.Id);
-        CountyCode=await CountyCodeRepository.GetCountyListAsync();
+        CountyCode = await CountyCodeRepository.GetCountyListAsync();
 
         var parameters = new DialogParameters();
         parameters.Add("Store", store);

@@ -8,7 +8,7 @@
 @inject ISystemOwnerHttpRepository SystemOwnerHttpRepository
 @inject IDriverHttpRepository DriverHttpRepository
 
-   <MudTable Items="@Driver" Hover="true" SortLabel="Sort By">
+   <MudTable Items="@Driver" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
     <HeaderContent>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<DriverDto, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel  SortBy="new Func<DriverDto, object>(x=>x.LastName)">LastName</MudTableSortLabel></MudTh>
