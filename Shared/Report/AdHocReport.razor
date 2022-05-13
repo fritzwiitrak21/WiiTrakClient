@@ -111,6 +111,7 @@ else
                 CurrentUser.UserRoleId = Convert.ToInt32(roleid);
             }
 
+            
             var deliveryTickets = CurrentUser.UserRoleId <= 4 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId) :
                                   // For the role of System Owner - 1, Corporate - 2, Prime Company -3, Sub Company - 4
                                   CurrentUser.UserRoleId == 5 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByDriverIdAsync(CurrentUser.UserId) :
@@ -152,6 +153,8 @@ else
             dt.Columns.Remove("DriverNumber");
             dt.Columns.Remove("IsActive");
             dt.Columns.Remove("UpdatedBy");
+            dt.Columns.Remove("DriverStoresIsActive");
+            dt.Columns.Remove("StoresIsActive");
 
             dt.Columns["DriverName"].SetOrdinal(0);
             dt.Columns["DeliveryTicketNumber"].SetOrdinal(1);
