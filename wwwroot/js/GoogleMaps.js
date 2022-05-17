@@ -49,8 +49,8 @@ export function initMap(latitude, longitude, dlat, dlon) {
     marker = new google.maps.Marker({
         position: point ,
         map,
-        title: "Current Position",
-        icon: "/Images/NavigationLogo.png"
+        title: "Current Position"
+        
     });
 
     directionsRenderer.setMap(map);
