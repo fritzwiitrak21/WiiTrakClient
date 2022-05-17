@@ -12,7 +12,6 @@ namespace WiiTrakClient.DTOs
         [Required]
         [StringLength(50)]
         public string StreetAddress1 { get; set; } = string.Empty;
-        [Required]
         [StringLength(50)]
         public string StreetAddress2 { get; set; } = string.Empty;
         [Required]
@@ -35,10 +34,9 @@ namespace WiiTrakClient.DTOs
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
         [Required]
-        [Phone]
+        [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$")]
         public string PhonePrimary { get; set; } = string.Empty;
-        [Required]
-        [Phone]
+        [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$")]
         public string PhoneSecondary { get; set; } = string.Empty;
 
         public Guid CompanyId { get; set; }

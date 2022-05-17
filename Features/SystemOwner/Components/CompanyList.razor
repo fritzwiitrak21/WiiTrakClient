@@ -16,8 +16,8 @@
         <MudTd DataLabel="Company Name">
             @context.Name
         </MudTd>
-        <MudTd DataLabel="Address">
-            <p>@context.StreetAddress1 @context.StreetAddress2</p>
+        <MudTd DataLabel="Street Address 1">
+            <p>@context.StreetAddress1</p>
              <p>@context.City, @context.State @context.PostalCode</p>
         </MudTd>
         <MudTd DataLabel="Email">
@@ -70,6 +70,7 @@
                 Email = company.Email,
                 PhonePrimary = company.PhonePrimary,
                 PhoneSecondary = company.PhoneSecondary,
+                SystemOwnerId = CurrentUser.UserId,
             };
             await CompanyHttpRepository.UpdateCompanyAsync(company.Id, companyUpdate);
         }

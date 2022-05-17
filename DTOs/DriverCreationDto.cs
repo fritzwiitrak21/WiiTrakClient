@@ -22,12 +22,10 @@ namespace WiiTrakClient.DTOs
         [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$", ErrorMessage = " ")]
         public string Phone { get; set; } = string.Empty;
         [Required(ErrorMessage = " ")]
-        [StringLength(25, ErrorMessage = " ")]
+        [StringLength(50, ErrorMessage = " ")]
         public string StreetAddress1 { get; set; } = string.Empty;
 
-
-        [Required(ErrorMessage = " ")]
-        [StringLength(25, ErrorMessage = " ")]
+        [StringLength(50, ErrorMessage = " ")]
         public string StreetAddress2 { get; set; } = string.Empty;
         [Required(ErrorMessage = " ")]
         [StringLength(15, ErrorMessage = " ")]

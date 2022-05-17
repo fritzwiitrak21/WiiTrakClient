@@ -13,22 +13,21 @@
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.StreetAddress1)">Street Address</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.City)">City</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.State)">State</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.PostalCode)">PostalCode</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.PostalCode)">Postal Code</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.CountyCode)">County Code</MudTableSortLabel></MudTh>
-        @*<MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.Latitude)">Latitude</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel  SortBy="new Func<StoreDto, object>(x=>x.Longitude)">Longitude</MudTableSortLabel></MudTh>*@
+        <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.ServiceFrequency)">Service Frequency</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.Email)">Email</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.PhonePrimary)">Phone</MudTableSortLabel></MudTh>
         <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Name">
+        <MudTd DataLabel="Store Name">
             @context.StoreName
         </MudTd>
-        <MudTd DataLabel="StoreNumber">
+        <MudTd DataLabel="Store Number">
             @context.StoreNumber
         </MudTd>
-        <MudTd DataLabel="StreetAddress1">
+        <MudTd DataLabel="Street Address 1">
             @context.StreetAddress1
         </MudTd>
         <MudTd DataLabel="City">
@@ -38,26 +37,21 @@
             @context.State
         </MudTd>
 
-        <MudTd DataLabel="PostalCode">
+        <MudTd DataLabel="Postal Code">
             @context.PostalCode
         </MudTd>
-          <MudTd DataLabel="PostalCode">
+          <MudTd DataLabel="County Code">
             @context.CountyCode
         </MudTd>
-        @*<MudTd DataLabel="Latitude">
-            @context.Latitude
-            </MudTd>
-            <MudTd DataLabel="Longitude">
-            @context.Longitude
-            </MudTd>*@
-
+         <MudTd DataLabel="ServiceFrequency">
+            @context.ServiceFrequency
+        </MudTd>
         <MudTd DataLabel="Email">
             @context.Email
         </MudTd>
         <MudTd DataLabel="Phone">
             @context.PhonePrimary
         </MudTd>
-
         <MudTd DataLabel="Action">
             <MudButton Variant="Variant.Filled"
                        Color="Color.Primary"
@@ -108,8 +102,6 @@
                     City = store.City,
                     State = store.State,
                     PostalCode = store.PostalCode,
-                    //Latitude=store.Latitude,
-                    //Longitude=store.Longitude,
                     ProfilePicUrl = store.ProfilePicUrl,
                     Email = store.Email,
                     PhonePrimary = store.PhonePrimary,

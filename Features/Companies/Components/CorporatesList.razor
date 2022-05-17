@@ -16,14 +16,14 @@
         <MudTd DataLabel="Corporate Name">
             @context.Name
         </MudTd>
-        <MudTd DataLabel="Address">
-            <p>@context.StreetAddress1 @context.StreetAddress2</p>
+        <MudTd DataLabel="Street Address 1">
+            <p>@context.StreetAddress1</p>
              <p>@context.City, @context.State @context.PostalCode</p>
         </MudTd>
-        <MudTd DataLabel="Email">
+        <MudTd DataLabel="Email Id">
             @context.Email
         </MudTd>
-         <MudTd DataLabel="Phone">
+         <MudTd DataLabel="Phone Number">
             @context.PhonePrimary
         </MudTd>
      
@@ -71,7 +71,8 @@
                 ProfilePicUrl = corporate.ProfilePicUrl,
                 Email = corporate.Email,
                 PhonePrimary = corporate.PhonePrimary,
-                
+                PhoneSecondary=corporate.PhoneSecondary,
+                CompanyId = CurrentUser.UserId,
             };
            await CorporateRepository.UpdateCorporateAsync(corporate.Id, CorporateUpdate);
         }

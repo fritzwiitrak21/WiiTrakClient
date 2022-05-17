@@ -118,7 +118,7 @@
     public List<CompanyDto> Company { get; set; } = new();
     public List<CountyCodeDTO> CountyCodeList { get; set; } = new();
     public CorporateDto SelectedCorporate = new();
-    public CountyCodeDTO _selectedCountyCode = new();
+    public CountyCodeDTO SelectedCountyCode = new();
     [Inject]
     public ICorporateHttpRepository CorporateRepository { get; set; }
     [Inject]
@@ -154,17 +154,17 @@
         CountyCodeList = await CountyCodeRepository.GetCountyListAsync();
         if (CountyCodeList.Count > 0)
         {
-            _selectedCountyCode = CountyCodeList[0];
-            NewStore.CountyCode = _selectedCountyCode.CountyCode;
+            SelectedCountyCode = CountyCodeList[0];
+            NewStore.CountyCode = SelectedCountyCode.CountyCode;
             try
             {
                 string[] C = new string[CountyCodeList.Count];
                 for (int i = 0; i < CountyCodeList.Count; i++)
                 {
-                    _selectedCountyCode = CountyCodeList[i];
-                    if (!(C.Contains(_selectedCountyCode.CountyCode)))
+                    SelectedCountyCode = CountyCodeList[i];
+                    if (!(C.Contains(SelectedCountyCode.CountyCode)))
                     {
-                        C[i] = _selectedCountyCode.CountyCode;
+                        C[i] = SelectedCountyCode.CountyCode;
                     }
                 }
                 County = (string[])C.Clone();

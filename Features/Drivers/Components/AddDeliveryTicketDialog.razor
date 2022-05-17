@@ -22,7 +22,7 @@
         font-size: 0;
     }
 </style>
-
+<UserAuthentication />
 <MudDialog>
     <DialogContent>
         <div style="width: 400px;height:450px;overflow: auto;">
@@ -42,7 +42,7 @@
 
 
                 @* <MudSelect Class="my-6" T="StoreDto" Label="Store" AnchorOrigin="Origin.BottomCenter"
-                    HelperText="Select a Store" @bind-Value="@_selectedStore" Required="true"
+                    HelperText="Select a Store" @bind-Value="@SelectedStore" Required="true"
                     AdornmentColor="Color.Primary">
 
 
@@ -131,7 +131,7 @@
     MudForm form;
 
     public List<StoreDto>? TempStores { get; set; } = new();
-    StoreDto _selectedStore = new();
+    StoreDto SelectedStore = new();
     StoreDto selectedStore = new();
 
     private string _fileUrl = "";
@@ -172,7 +172,7 @@
         {
             FilterStore();
             Stores = Stores.OrderBy(o => o.StoreName).ThenBy(p => p.StoreNumber).ToList();
-            _selectedStore = Stores[0];
+            SelectedStore = Stores[0];
 
         }
 
@@ -234,13 +234,13 @@
     }
     private void UpdateNumberOfCarts()
     {
-        NoOfCartsToPickUp = Carts.Count(x => x.StoreId == _selectedStore.Id && x.Status == CartStatus.PickedUp);
+        NoOfCartsToPickUp = Carts.Count(x => x.StoreId == SelectedStore.Id && x.Status == CartStatus.PickedUp);
     }
 
     private void UpdateStoreAndServiceProviderIds()
     {
-        NewDeliveryTicket.StoreId = _selectedStore.Id;
-        var store = Stores.First(x => x.Id == _selectedStore.Id);
+        NewDeliveryTicket.StoreId = SelectedStore.Id;
+        var store = Stores.First(x => x.Id == SelectedStore.Id);
         NewDeliveryTicket.ServiceProviderId = store.ServiceProviderId;
     }
 
@@ -288,8 +288,8 @@
 
             var Id = await JsModule.InvokeAsync<string>("getStoreId", e.ToString());
             NewDeliveryTicket.StoreId = new Guid(Id);
-            _selectedStore = Stores.AsEnumerable().FirstOrDefault(x => x.Id == NewDeliveryTicket.StoreId);
-            StoreName = _selectedStore.StoreName;
+            SelectedStore = Stores.AsEnumerable().FirstOrDefault(x => x.Id == NewDeliveryTicket.StoreId);
+            StoreName = SelectedStore.StoreName;
             IsStoreSelected = true;
         }
         catch (Exception ex)

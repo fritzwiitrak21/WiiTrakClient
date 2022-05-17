@@ -24,7 +24,7 @@ namespace WiiTrakClient.Features.Stores
         [Inject] IDialogService DialogService { get; set; }
 
         
-        StoreDto _selectedStore = new();
+        StoreDto SelectedStore = new();
         List<DeliveryTicketDto> _deliveryTickets = new();
         List<DeliveryTicketDto> deliveryTickets = new();
 
@@ -42,8 +42,8 @@ namespace WiiTrakClient.Features.Stores
                 CurrentUser.UserId = new Guid(Id);
             }
 
-            _selectedStore =  await StoreHttpRepository.GetStoreByIdAsync(CurrentUser.UserId);
-            await HandleStoreSelected(_selectedStore);
+            SelectedStore =  await StoreHttpRepository.GetStoreByIdAsync(CurrentUser.UserId);
+            await HandleStoreSelected(SelectedStore);
         }
 
         private async Task HandleStoreSelected(StoreDto store)

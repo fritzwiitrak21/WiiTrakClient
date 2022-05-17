@@ -12,7 +12,7 @@
     <DialogContent>
         <div style="width: 400px;height:550px;">
             <MudForm Model="@Store" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudSelect T="CorporateDto" Label="Select Corporate" @bind-Value="@_selectedCorporate" Required=true RequiredError=" "
+                <MudSelect T="CorporateDto" Label="Select Corporate" @bind-Value="@SelectedCorporate" Required=true RequiredError=" "
                            AnchorOrigin="Origin.BottomCenter">
                     @foreach (var corporate in Corporate)
                     {
@@ -73,8 +73,7 @@
 
                 <div class="d-flex SubmitGrp">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
-                    @*                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
-                    *@                  <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
                 </div>
             </MudForm>
         </div>
@@ -91,8 +90,8 @@
     [Parameter]
     public List<CountyCodeDTO>? CountyCodeList { get; set; } = new();
 
-    CorporateDto _selectedCorporate = new();
-    public CountyCodeDTO _selectedCountyCode = new();
+    CorporateDto SelectedCorporate = new();
+    public CountyCodeDTO SelectedCountyCode = new();
     bool StoreStatus = false;
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
@@ -109,7 +108,7 @@
     {
         if (Corporate != null && Corporate.Count > 0)
         {
-            _selectedCorporate = Corporate.Where(x => x.Id == Store.CorporateId).FirstOrDefault();
+            SelectedCorporate = Corporate.Where(x => x.Id == Store.CorporateId).FirstOrDefault();
         }
         if (Store.ServiceFrequency != null && Store.ServiceFrequency != "")
         {
@@ -132,10 +131,10 @@
                 string[] C = new string[CountyCodeList.Count];
                 for (int i = 0; i < CountyCodeList.Count; i++)
                 {
-                    _selectedCountyCode = CountyCodeList[i];
-                    if (!(C.Contains(_selectedCountyCode.CountyCode)))
+                    SelectedCountyCode = CountyCodeList[i];
+                    if (!(C.Contains(SelectedCountyCode.CountyCode)))
                     {
-                        C[i] = _selectedCountyCode.CountyCode;
+                        C[i] = SelectedCountyCode.CountyCode;
                     }
                 }
                 County = (string[])C.Clone();

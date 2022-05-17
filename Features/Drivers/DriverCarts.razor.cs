@@ -31,7 +31,7 @@ namespace WiiTrakClient.Features.Drivers
 
         [Inject] IStoreHttpRepository StoreRepository { get; set; }
 
-        DriverDto _selectedDriver = new();
+        DriverDto SelectedDriver = new();
         List<DriverDto> _drivers = new();
         List<CartDto> _carts = new();
         List<CartDto> _filteredCarts = new();
@@ -66,7 +66,7 @@ namespace WiiTrakClient.Features.Drivers
 
         protected override async Task OnInitializedAsync()
         {
-            _selectedDriver =  await DriverRepository.GetDriverByIdAsync(CurrentUser.UserId);
+            SelectedDriver =  await DriverRepository.GetDriverByIdAsync(CurrentUser.UserId);
             await GetCartsByDriverId(CurrentUser.UserId);
 
 
@@ -83,7 +83,7 @@ namespace WiiTrakClient.Features.Drivers
         //{
         //    System.Console.WriteLine(driver.Id);
         //    await GetCartsByDriverId(driver.Id);
-        //    _selectedDriver = driver;
+        //    SelectedDriver = driver;
         //}
 
         private async Task GetCartsByDriverId(Guid id)

@@ -25,12 +25,13 @@
             <MudForm Model="@Corporate" @ref=form @bind-IsValid="@success" @bind-Errors="@errors"> 
                 <MudTextField Class="my-6" @bind-Value="Corporate.Name"  Label="Corporate Name" Required="true" RequiredError=" " For="@(() => @Corporate.Name)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField Class="my-6" @bind-Value="Corporate.StreetAddress1" Label="Street Address 1" Required="true" RequiredError=" " For="@(() => @Corporate.StreetAddress1)" Variant="Variant.Text"></MudTextField>  
-                <MudTextField Class="my-6" @bind-Value="Corporate.StreetAddress2" Label="Street Address 2" Required="true" RequiredError=" " For="@(() => @Corporate.StreetAddress2)" Variant="Variant.Text"></MudTextField>  
+                <MudTextField Class="my-6" @bind-Value="Corporate.StreetAddress2" Label="Street Address 2" For="@(() => @Corporate.StreetAddress2)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField Class="my-6" @bind-Value="Corporate.City" Label="City" Required="true" RequiredError=" " For="@(() => @Corporate.City)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField Class="my-6" @bind-Value="Corporate.State" Label="State" Required="true" RequiredError=" " For="@(() => @Corporate.State)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField Class="my-6" @bind-Value="Corporate.PostalCode" Label="Zip Code" Required="true" RequiredError=" " For="@(() => @Corporate.PostalCode)"  Variant="Variant.Text"></MudTextField>  
                 <MudTextField Class="my-6" @bind-Value="Corporate.Email" Label="Email" Required="true" RequiredError=" " For="@(() => @Corporate.Email)"  Variant="Variant.Text"></MudTextField>  
-                <MudTextField Class="my-6" @bind-Value="Corporate.PhonePrimary" Label="Phone" Required="true" RequiredError=" " For="@(() => @Corporate.PhonePrimary)"  Variant="Variant.Text"></MudTextField>
+                <MudTextField Class="my-6" @bind-Value="Corporate.PhonePrimary" Label="Phone Primary" Required="true" RequiredError=" " For="@(() => @Corporate.PhonePrimary)"  Variant="Variant.Text"></MudTextField>
+                <MudTextField Class="my-6" @bind-Value="Corporate.PhoneSecondary" Label="Phone Secondary" For="@(() => @Corporate.PhoneSecondary)"  Variant="Variant.Text"></MudTextField>
                 <div class="d-flex">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Update</MudButton>

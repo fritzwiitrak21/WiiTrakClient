@@ -47,7 +47,7 @@ else
 
     public List<DriverStoreDetailsDto> driverstore { get; set; } = new();
     public List<DriverStoreDetailsDto> alldriverstore { get; set; } = new();
-    public DriverDto _selectedDriver = new();
+    public DriverDto SelectedDriver = new();
 
     [Inject]
     public IDriverStoresHttpRepository DriverStoreRepository { get; set; }

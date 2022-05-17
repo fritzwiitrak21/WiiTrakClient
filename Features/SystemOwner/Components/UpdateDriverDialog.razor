@@ -39,17 +39,15 @@
                 <MudTextField class="my-6" @bind-Value="Driver.Email" Label="Email" Required="true" RequiredError="" For="@(() => @Driver.Email)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField class="my-6" @bind-Value="Driver.Phone" Label="Phone" Required="true" RequiredError="" For="@(() => @Driver.Phone)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Driver.StreetAddress1" Label="Street Address 1" Required="true" RequiredError="" For="@(() => @Driver.StreetAddress1)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Driver.StreetAddress2" Label="Street Address 2" Required="true" RequiredError="" For="@(() => @Driver.StreetAddress2)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Driver.StreetAddress2" Label="Street Address 2" For="@(() => @Driver.StreetAddress2)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Driver.City" Label=City Required="true" RequiredError="" For="@(() => @Driver.City)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Driver.State" Required="true" RequiredError=""  Label="State" For="@(() => @Driver.State)" Variant="Variant.Text"></MudTextField>
-                @*<MudTextField class="my-6" @bind-Value="Driver.CountryCode"  Label="Country Code" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>*@
                 <MudTextField class="my-6" @bind-Value="Driver.PostalCode" Label="Zip Code" Required="true" RequiredError="" For="@(() => @Driver.PostalCode)" Variant="Variant.Text"></MudTextField>
                 <MudCheckBox class="my-6"  @bind-Checked="@Driver.IsSuspended" Label="Suspend" Color="Color.Primary"></MudCheckBox>  
                 <MudCheckBox class="my-6" @bind-Checked="@Driver.IsTerminated" Label="Terminate" Color="Color.Primary"></MudCheckBox> 
                 <div class="d-flex">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
-@*                  <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
-*@                  <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Update</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Update</MudButton>
                 </div>
             </MudForm>
         </div>
@@ -62,7 +60,7 @@
     public DriverDto? Driver {get; set;}
     //public List<CompanyDto>? Companys { get; set; } = new();
 
-    //public CompanyDto _selectedCompany = new();
+    //public CompanyDto SelectedCompany = new();
     //[Inject]
     //public ICompanyHttpRepository CompanyRepository { get; set; }
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
@@ -75,8 +73,8 @@
 
     //    if (Companys.Count > 0)
     //    {
-    //        _selectedCompany = Companys[0];
-    //        Driver.CompanyId = _selectedCompany.Id;
+    //        SelectedCompany = Companys[0];
+    //        Driver.CompanyId = SelectedCompany.Id;
     //    }
         
         
@@ -84,7 +82,7 @@
     protected override void OnParametersSet() {
         //if (Companys != null && Companys.Count() >= 1) 
         //{
-        //    _selectedCompany = Companys.Where(x => x.Id == Driver.CompanyId).FirstOrDefault();
+        //    SelectedCompany = Companys.Where(x => x.Id == Driver.CompanyId).FirstOrDefault();
         //}
             
     }
