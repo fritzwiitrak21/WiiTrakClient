@@ -8,9 +8,6 @@
         <div style="width:1000px;height:470px;overflow: auto;">
             <h6>Address:</h6>
             @Address<br />
-
-            @*<div id="map" style="height:500px;width:100%;">
-                </div>*@
             <div id="container">
                 <div id="map" style="height:400px;width:100%;"></div>
             </div>
@@ -63,8 +60,8 @@
     {
         if (firstRender)
         {
-            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/GoogleMaps.js");
-            await JsModule.InvokeVoidAsync("initMap", StoreLatitude, StoreLongitude, DriverLatitude, DriverLongitude);
+            JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/GoogleMaps.js");
+            await JsModule1.InvokeVoidAsync("initMap", StoreLatitude, StoreLongitude, DriverLatitude, DriverLongitude);
             //await JsModule.InvokeVoidAsync("initMap", StoreLatitude, StoreLongitude, StoreLatitude - 0.02, StoreLongitude - 0.02);
         }
     }

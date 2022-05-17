@@ -150,7 +150,10 @@
         {
             if (string.IsNullOrEmpty(CurrentCoord))
             {
-                JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+                if (JsModule is null)
+                {
+                    JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+                }
                 await JsModule.InvokeVoidAsync("getCoord", false);
                 CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
                 await JsModule.InvokeVoidAsync("ClearCoord");

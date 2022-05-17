@@ -25,7 +25,7 @@ namespace WiiTrakClient.Features.Companies
         [Inject] public IDeliveryTicketHttpRepository DeliveryTicketHttpRepository { get; set; }
 
         private IJSObjectReference JsModule;
-        [Inject] IDialogService DialogService { get; set; }
+      
 
         List<DeliveryTicketDto> deliveryTickets = new();
         List<DeliveryTicketDto> _deliveryTickets = new();

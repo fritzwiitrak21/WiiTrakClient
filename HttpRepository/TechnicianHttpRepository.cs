@@ -8,7 +8,7 @@ namespace WiiTrakClient.HttpRepository
     {
         private readonly IHttpService _httpService;
         private const string ControllerName = "technicians";
-        private readonly string _apiUrl = "";
+        private readonly string _apiUrl;
 
         public TechnicianHttpRepository(IHttpService httpService)
         {

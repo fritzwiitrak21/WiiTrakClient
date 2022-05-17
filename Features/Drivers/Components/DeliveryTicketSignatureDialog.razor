@@ -82,15 +82,15 @@
                 }
                 @if (!_isSigned)
                 {
-                   @* <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                           OnClick="SaveSignature">
+                    @* <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                        OnClick="SaveSignature">
                         Accept Signature
-                    </MudButton>*@
+                        </MudButton>*@
                 }
                 else
                 {
                     @*<MudText Typo="Typo.h5" Class="text-success">Signature Complete</MudText>*@
-                  <div Id="SuccessMessage" Class="text-success"><h5>Signature Complete</h5></div>
+                    <div Id="SuccessMessage" Class="text-success"><h5>Signature Complete</h5></div>
 
                 }
 
@@ -130,11 +130,8 @@
     [Inject]
     protected IPicUploadHttpRepository PicUploadHttpRepository { get; set; }
     [Inject]
-    IJSRuntime _js
-    {
-        get;
-        set;
-    }
+    IJSRuntime JsRuntime { get; set; }
+
     private string _fileUrl = "";
     private string _picUrl = "";
     private string _imageData = "";
@@ -160,7 +157,7 @@
         await GetSignatureStatus();
         if (!SignatureStatus.ToLower().Contains("done"))
         {
-            await _js.InvokeVoidAsync("alert", "Valid Signature Required.");
+            await JsRuntime.InvokeVoidAsync("alert", "Valid Signature Required.");
             return;
         }
         if (editDeliveryTicket.Signee == "")
@@ -169,13 +166,16 @@
             return;
         }
         var dotNetObjectRef = DotNetObjectReference.Create(this);
-        await _js.InvokeAsync<string>("saveSignatureAsync", dotNetObjectRef);
+        await JsRuntime.InvokeAsync<string>("saveSignatureAsync", dotNetObjectRef);
         IsSigned = true;
         StateHasChanged();
     }
     private async Task SetCanvasHeight()
     {
-        JsModule = await _js.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        if (JsModule is null)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
         await JsModule.InvokeVoidAsync("updateCanvas");
     }
     [JSInvokable]
@@ -203,33 +203,25 @@
 
     private async Task GetSignatureStatus()
     {
-        try
+        if (!SignatureStatus.ToLower().Contains("done"))
         {
-            if (!SignatureStatus.ToLower().Contains("done"))
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var status = await JsModule.InvokeAsync<string>("GetSignatureStatus");
+            if (status.ToLower().Contains("done") && !_isSigned)
             {
-                JsModule = await _js.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-                var status = await JsModule.InvokeAsync<string>("GetSignatureStatus");
-                if (status.ToLower().Contains("done") && !_isSigned)
-                {
-                    SignatureStatus = status;
-                    StateHasChanged();
-                }
+                SignatureStatus = status;
+                StateHasChanged();
             }
-
-        }
-        catch (Exception ex)
-        {
-
         }
 
     }
     async Task Submit()
     {
-        SaveSignature();
+        await SaveSignature();
         var SignCompleteStatus = "";
         do
         {
-            JsModule = await _js.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
             SignCompleteStatus = await JsModule.InvokeAsync<string>("getSignCompleteStatus");
         } while (!SignCompleteStatus.ToLower().Contains("complete"));
 
@@ -238,12 +230,7 @@
             System.Threading.Thread.Sleep(500);
             MudDialog.Close(DialogResult.Ok(true));
         }
-
-        //MudDialog.Close(DialogResult.Ok(true));
-
-
     }
 
     void Cancel() => MudDialog.Cancel();
-
 }

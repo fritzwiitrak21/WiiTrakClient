@@ -101,7 +101,7 @@ else
             else if (value == "Assigned")
             {
                 alldriverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId, Core.SelectedDriverId);
-                driverstore = alldriverstore.Where(x => x.DriverStoresIsActive == true).ToList();
+                driverstore = alldriverstore.Where(x => x.DriverStoresIsActive).ToList();
                 StateHasChanged();
             }
             else if (value == "Unassigned")

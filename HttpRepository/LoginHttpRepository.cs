@@ -12,7 +12,7 @@ namespace WiiTrakClient.HttpRepository
     {
         private readonly IHttpService _httpService;
         private const string ControllerName = "login"; 
-        private readonly string _apiUrl = "";
+        private readonly string _apiUrl;
        
 
         public LoginHttpRepository(IHttpService httpService)

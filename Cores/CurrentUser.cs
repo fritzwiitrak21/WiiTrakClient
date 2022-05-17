@@ -12,7 +12,6 @@ namespace WiiTrakClient.Cores
         public static bool IsFirstLogin { get; set; }
         public static DateTime PasswordLastUpdatedAt { get; set; }
         public static int UserRoleId { get; set; }
-        public static string Coord { get; set; } = string.Empty;
         public static string Password { get;set; } = string.Empty;
     }
 
@@ -108,7 +107,7 @@ namespace WiiTrakClient.Cores
                 //put a breakpoint here and check datatable
                 return dataTable;
             }
-            catch (Exception ex)
+            catch 
             {
 
                 return null;

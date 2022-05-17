@@ -107,6 +107,8 @@ export function ClearCoord() {
     localStorage.removeItem("Coord");
 }
 
+
+
 export function GetSignatureStatus() {
     return $('#ctlSignature_status').text();
 }

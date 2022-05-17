@@ -19,7 +19,7 @@ namespace WiiTrakClient.Features.Drivers
 {
     public partial class DeliveryTickets : ComponentBase
     {
-        [Inject] NavigationManager NavManager { get; set; }
+        
         [Inject] IJSRuntime JsRuntime { get; set; }
 
         [Inject] IDriverHttpRepository DriverRepository { get; set; }
@@ -67,7 +67,7 @@ namespace WiiTrakClient.Features.Drivers
                     Longitude = Core.ToDouble(Lon);
                     await JsModule.InvokeVoidAsync("ClearCoord");
                 }
-                catch(Exception ex)
+                catch
                 {
                     await JsModule.InvokeVoidAsync("ClearCoord");
                 }
@@ -76,8 +76,9 @@ namespace WiiTrakClient.Features.Drivers
             
                 SelectedDriver = await DriverRepository.GetDriverByIdAsync(CurrentUser.UserId);
             }
-            catch (Exception ex)
+            catch 
             {
+                //Exsception
             }
             await HandleDriverSelected();
            
@@ -86,11 +87,6 @@ namespace WiiTrakClient.Features.Drivers
         private async Task HandleDriverSelected()
         {
             _carts = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
-            //var lat = CurrentUser.Coord.Split("##")[0];
-            //var Lon = CurrentUser.Coord.Split("##")[1];
-            //Latitude = Core.ToDouble(lat);
-            //Longitude = Core.ToDouble(Lon);
-
             FindDistance();
         }
 
@@ -108,7 +104,7 @@ namespace WiiTrakClient.Features.Drivers
                         item.DriverStoresIsActive = TempStores.FirstOrDefault(x => x.Id == item.StoreId).DriverStoresIsActive;
                         item.StoresIsActive = TempStores.FirstOrDefault(x => x.Id == item.StoreId).IsActive;
                     }
-                    catch (Exception ex)
+                    catch 
                     {
                         //Exception
                     }
@@ -125,7 +121,10 @@ namespace WiiTrakClient.Features.Drivers
         {
             try
             {
-                JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+                if (JsModule is null)
+                {
+                    JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+                }
                 await JsModule.InvokeVoidAsync("getCoord", false);
                 var Coords = await JsModule.InvokeAsync<string>("getCoordinates");
                 var lat = Coords.Split("##")[0];
@@ -134,7 +133,7 @@ namespace WiiTrakClient.Features.Drivers
                 Longitude = Core.ToDouble(Lon);
                 await JsModule.InvokeVoidAsync("ClearCoord");
             }
-            catch (Exception ex)
+            catch 
             {
                 await JsModule.InvokeVoidAsync("ClearCoord");
             }
@@ -230,8 +229,6 @@ namespace WiiTrakClient.Features.Drivers
         #endregion
 
         #region Get Distance
-
-
         private double Getdistance(double lat2, double lon2, char unit = 'K')
         {
             double lat1 = Latitude;
@@ -270,15 +267,17 @@ namespace WiiTrakClient.Features.Drivers
             return (rad / Math.PI * 180.0);
         }
         #endregion
+
+        #region Find Region
         private void FindDistance()
         {
-            _stores = _stores.Where(x => x.DriverStoresIsActive == true && x.IsActive == true).ToList();
+            _stores = _stores.Where(x => x.DriverStoresIsActive && x.IsActive).ToList();
             foreach (var item in _stores)
             {
                 var distance = Getdistance(item.Latitude, item.Longitude);
                 item.Distance = Convert.ToInt32(Math.Ceiling(distance));
             }
         }
-
+        #endregion
     }
 }

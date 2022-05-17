@@ -155,7 +155,10 @@
     }
     private async Task OnClick()
     {
-        JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        if (JsModule is null)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
 
         var inputtext = await JsModule.InvokeAsync<string>("getTextBoxValue");
         if (inputtext == "")
@@ -173,7 +176,10 @@
     {
         try
         {
-            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            if (JsModule is null)
+            {
+                JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            }
             if (County.Contains(e))
             {
 
@@ -181,11 +187,11 @@
                 SelectedCounty = e.ToString();
                 if (success)
                 {
-                    success = true; // Enable the Save button when other fields are valid 
+                    success = true; // Enable the Save button when other fields are valid
                 }
                 else
                 {
-                    success = false;// Disable the Save button when other fields are valid 
+                    success = false;// Disable the Save button when other fields are valid
                 }
             }
             else

@@ -6,35 +6,37 @@
 
 <style>
     .validation-message {
-    font-size:0;
-    display:none;
-    font-display:block;
+        font-size: 0;
+        display: none;
+        font-display: block;
+        color: red;
+    }
 
-    color: red;
-}
-.mud-input-helper-text.mud-input-error {
-    font-size: 0;
-}
-.mud-input-helper-text {
-    color: var(--mud-palette-text-secondary);
-    margin: 0;
-    font-size: 0;
-}      
-.mud-form img{
-height: 112px !important;
-}
+    .mud-input-helper-text.mud-input-error {
+        font-size: 0;
+    }
+
+    .mud-input-helper-text {
+        color: var(--mud-palette-text-secondary);
+        margin: 0;
+        font-size: 0;
+    }
+
+    .mud-form img {
+        height: 112px !important;
+    }
 </style>
 
 <MudDialog>
     <DialogContent>
         <div style="width: 400px;height:450px;overflow: auto;">
             <MudForm Model="@editDeliveryTicket" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
-            @*<MudText Class="my-4" Typo="Typo.h5">Store: @StoreName</MudText>*@
-            <MudText Class="my-4" Typo="Typo.h5">Driver: @deliveryTicketDto.DriverName</MudText>
-            @*<MudText Class="my-4" Typo="Typo.h5">Number of Carts: @deliveryTicketDto.NumberOfCarts</MudText>*@
-            <MudTextField @bind-Value="@editDeliveryTicket.Signee" Label="Signee Name" Required="true" RequiredError="" For="@(() => @editDeliveryTicket.Signee)" Variant="Variant.Text"></MudTextField> 
-            @*@if(deliveryTicketSummary != null)
-                {
+                @*<MudText Class="my-4" Typo="Typo.h5">Store: @StoreName</MudText>*@
+                <MudText Class="my-4" Typo="Typo.h5">Driver: @deliveryTicketDto.DriverName</MudText>
+                @*<MudText Class="my-4" Typo="Typo.h5">Number of Carts: @deliveryTicketDto.NumberOfCarts</MudText>*@
+                <MudTextField @bind-Value="@editDeliveryTicket.Signee" Label="Signee Name" Required="true" RequiredError="" For="@(() => @editDeliveryTicket.Signee)" Variant="Variant.Text"></MudTextField>
+                @*@if(deliveryTicketSummary != null)
+                    {
 
                     <MudText Class="" Typo="Typo.h6">Delivered: @deliveryTicketSummary.Delivered</MudText>
 
@@ -44,23 +46,23 @@ height: 112px !important;
 
                     <MudText Class="" Typo="Typo.h6">Trashed: @deliveryTicketSummary.Trashed</MudText>
 
-                }*@
-           @* @if(cartsTable != null)
+                    }*@
+                @* @if(cartsTable != null)
+                    {
+                    <CartsTable Carts="@cartsTable"></CartsTable>
+                    }*@
+                @if (!string.IsNullOrWhiteSpace(_picUrl))
                 {
-               <CartsTable Carts="@cartsTable"></CartsTable>
-                }*@
-            @if (!string.IsNullOrWhiteSpace(_picUrl))
-                {
-                        <div class="d-flex justify-center mt-6 popupitemimage">
-                            <img src="@_picUrl" width="270" height="270" />
-                        </div>
+                    <div class="d-flex justify-center mt-6 popupitemimage">
+                        <img src="@_picUrl" width="270" height="270" />
+                    </div>
                 }
                 @if (!string.IsNullOrWhiteSpace(_fileUrl))
                 {
                     <MudText Class="" Typo="Typo.h5">Signature:</MudText>
-                        <div class="d-flex justify-center mt-6 popupitemimage">
-                            <img src="@_fileUrl" width="150" height="150" />
-                        </div>
+                    <div class="d-flex justify-center mt-6 popupitemimage">
+                        <img src="@_fileUrl" width="150" height="150" />
+                    </div>
                 }
                 else
                 {
@@ -68,33 +70,33 @@ height: 112px !important;
                     {
                         <div id="divResize" class="">
                             <SSignature SignObject="ctlSignature"
-                        RefreshImage="/images/clear.png"
-                        PenCursor="/images/pen.cur"
-                        SignWidth="450"
-                        SignHeight="75"
-                        PenColor="blue"
-                        RequiredPoints="50">
+                                RefreshImage="/images/clear.png"
+                                PenCursor="/images/pen.cur"
+                                SignWidth="450"
+                                SignHeight="75"
+                                PenColor="blue"
+                                RequiredPoints="50">
                             </SSignature>
-                          
+
                         </div>
-                      GetSignatureStatus();
+                        GetSignatureStatus();
                     }
                 }
                 @if (!_isSigned)
                 {
-                   @* <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                           OnClick="SaveSignature">
+                    @* <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                        OnClick="SaveSignature">
                         Accept Signature
-                    </MudButton>*@
+                        </MudButton>*@
                 }
                 else
                 {
                     @*<MudText Typo="Typo.h5" Class="text-success">Signature Complete</MudText>*@
-                  <div Id="SuccessMessage" Class="text-success"><h5>Signature Complete</h5></div>
+                    <div Id="SuccessMessage" Class="text-success"><h5>Signature Complete</h5></div>
 
-            }
-              
-                
+                }
+
+
             </MudForm>
         </div>
     </DialogContent>
@@ -108,13 +110,13 @@ height: 112px !important;
 @code {
 
     [Parameter]
-    public DeliveryTicketDto? deliveryTicketDto{ get; set; }
+    public DeliveryTicketDto? deliveryTicketDto { get; set; }
 
     [Parameter]
     public string StoreName { get; set; }
 
     [Parameter]
-    public DeliveryTicketSummaryDto? deliveryTicketSummary{ get; set; }
+    public DeliveryTicketSummaryDto? deliveryTicketSummary { get; set; }
 
     [Parameter]
     public DeliveryTicketUpdateDto? editDeliveryTicket { get; set; }
@@ -127,11 +129,9 @@ height: 112px !important;
     string[] errors = { };
     MudForm form;
     [Inject]
-    protected IPicUploadHttpRepository PicUploadHttpRepository {get; set;}
-    [Inject] IJSRuntime _js {
-        get;
-        set;
-    }
+    protected IPicUploadHttpRepository PicUploadHttpRepository { get; set; }
+    [Inject]
+    IJSRuntime JsRuntime { get; set; }
     private string _fileUrl = "";
     private string _picUrl = "";
     private string _imageData = "";
@@ -143,7 +143,7 @@ height: 112px !important;
 
     protected override async Task OnInitializedAsync()
     {
-       await SetCanvasHeight();
+        await SetCanvasHeight();
     }
     protected override Task OnParametersSetAsync()
     {
@@ -152,12 +152,12 @@ height: 112px !important;
         return base.OnParametersSetAsync();
     }
 
-    private async Task SaveSignature() 
+    private async Task SaveSignature()
     {
         await GetSignatureStatus();
         if (!SignatureStatus.ToLower().Contains("done"))
         {
-            await _js.InvokeVoidAsync("alert", "Valid Signature Required.");
+            await JsRuntime.InvokeVoidAsync("alert", "Valid Signature Required.");
             return;
         }
         if (editDeliveryTicket.Signee == "")
@@ -166,14 +166,17 @@ height: 112px !important;
             return;
         }
         var dotNetObjectRef = DotNetObjectReference.Create(this);
-        await _js.InvokeAsync<string>("saveSignatureAsync", dotNetObjectRef);
+        await JsRuntime.InvokeAsync<string>("saveSignatureAsync", dotNetObjectRef);
         IsSigned = true;
-            StateHasChanged();
+        StateHasChanged();
     }
     private async Task SetCanvasHeight()
     {
-            JsModule = await _js.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-            await JsModule.InvokeVoidAsync("updateCanvas");
+        if (JsModule is null)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
+        await JsModule.InvokeVoidAsync("updateCanvas");
     }
     [JSInvokable]
     public async Task SaveSignatureAsync(string imageData)
@@ -193,40 +196,34 @@ height: 112px !important;
         editDeliveryTicket.SignaturePicUrl = _fileUrl;
         editDeliveryTicket.ApprovedByStore = true;
         editDeliveryTicket.SignOffRequired = true;
-        success=true;
+        success = true;
         _isSigned = true;
-         StateHasChanged();
-     }
+        StateHasChanged();
+    }
 
     private async Task GetSignatureStatus()
     {
-        try
+        if (!SignatureStatus.ToLower().Contains("done"))
         {
-            if (!SignatureStatus.ToLower().Contains("done"))
+
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+
+            var status = await JsModule.InvokeAsync<string>("GetSignatureStatus");
+            if (status.ToLower().Contains("done") && !_isSigned)
             {
-                JsModule = await _js.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-                var status = await JsModule.InvokeAsync<string>("GetSignatureStatus");
-                if (status.ToLower().Contains("done") && !_isSigned)
-                {
-                    SignatureStatus = status;
-                    StateHasChanged();
-                }
+                SignatureStatus = status;
+                StateHasChanged();
             }
-
         }
-        catch (Exception ex)
-        {
-
-        }
-
     }
+
     async Task Submit()
     {
-        SaveSignature();
+        await SaveSignature();
         var SignCompleteStatus = "";
         do
         {
-            JsModule = await _js.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
             SignCompleteStatus = await JsModule.InvokeAsync<string>("getSignCompleteStatus");
         } while (!SignCompleteStatus.ToLower().Contains("complete"));
 
