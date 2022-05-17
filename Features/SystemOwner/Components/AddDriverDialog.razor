@@ -39,15 +39,13 @@
                 <MudTextField class="my-6" @bind-Value="NewDriver.Email" Label="Email" Required="true" RequiredError="" For="@(() => @NewDriver.Email)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField class="my-6" @bind-Value="NewDriver.Phone" Label="Phone" Required="true" RequiredError="" For="@(() => @NewDriver.Phone)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField class="my-6" @bind-Value="NewDriver.StreetAddress1" Required="true" RequiredError="" Label="Street Address 1" For="@(() => @NewDriver.StreetAddress1)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewDriver.StreetAddress2" Required="true" RequiredError="" Label="Street Address 2" For="@(() => @NewDriver.StreetAddress2)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="NewDriver.StreetAddress2" Label="Street Address 2" For="@(() => @NewDriver.StreetAddress2)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="NewDriver.City" Label="City" Required="true" RequiredError="" For="@(() => @NewDriver.City)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="NewDriver.State" Label="State" Required="true" RequiredError="" For="@(() => @NewDriver.State)" Variant="Variant.Text"></MudTextField>
-                @*<MudTextField class="my-6" @bind-Value="NewDriver.CountryCode" Label="Country Code" Required="true" RequiredError="" Variant="Variant.Text"></MudTextField>*@
                 <MudTextField class="my-6" @bind-Value="NewDriver.PostalCode" Label="Zip Code" Required="true" RequiredError="" For="@(() => @NewDriver.PostalCode)" Variant="Variant.Text"></MudTextField>
                 <div class="d-flex">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
-@*                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
-*@                  <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
                     </div>
             </MudForm> 
         </div>
@@ -61,7 +59,7 @@
     
     public List<CompanyDto> companies { get; set; } = new();
 
-    public CompanyDto _selectedCompany = new();
+    public CompanyDto SelectedCompany = new();
     [Inject]
     public ICompanyHttpRepository CompanyRepository { get; set; }
 
@@ -76,8 +74,8 @@
 
         if (companies.Count > 0)
         {
-            _selectedCompany = companies[0];
-            NewDriver.CompanyId = _selectedCompany.Id;
+            SelectedCompany = companies[0];
+            NewDriver.CompanyId = SelectedCompany.Id;
         } 
     } 
     protected override void OnParametersSet() {

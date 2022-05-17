@@ -34,7 +34,7 @@ namespace WiiTrakClient.Features.Drivers
 
         [Inject] IWorkOrderHttpRepository WorkOrderHttpRepository { get; set; }
 
-        DriverDto _selectedDriver = new();
+        DriverDto SelectedDriver = new();
 
         List<DeliveryTicketDto> _deliveryTickets = new();
         List<DeliveryTicketDto> deliveryTickets = new();
@@ -74,7 +74,7 @@ namespace WiiTrakClient.Features.Drivers
                 TempStores = _stores = await StoreHttpRepository.GetStoresByDriverId(CurrentUser.UserId);
                 await GetDeliveryTicketsByDriverId(CurrentUser.UserId);
             
-                _selectedDriver = await DriverRepository.GetDriverByIdAsync(CurrentUser.UserId);
+                SelectedDriver = await DriverRepository.GetDriverByIdAsync(CurrentUser.UserId);
             }
             catch (Exception ex)
             {
@@ -144,7 +144,7 @@ namespace WiiTrakClient.Features.Drivers
             _newDeliveryTicket = new DeliveryTicketCreationDto();
 
             parameters.Add("NewDeliveryTicket", _newDeliveryTicket);
-            parameters.Add("Driver", _selectedDriver);
+            parameters.Add("Driver", SelectedDriver);
             parameters.Add("Carts", _carts);
             parameters.Add("Stores", _stores);
             parameters.Add("Latitude", Latitude);

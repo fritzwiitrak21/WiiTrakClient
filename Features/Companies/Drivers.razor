@@ -40,9 +40,9 @@
     {
         <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
     }
-    else if (_drivers.Count > 0)
+    else if (drivers.Count > 0)
     {
-        <DriverList Drivers="@_drivers" />
+        <DriverList Drivers="@drivers" />
     }
     else
     {
@@ -53,10 +53,10 @@
 
 
 @code {
-    List<DriverDto> _drivers = new();
+    List<DriverDto> drivers = new();
     List<DriverDto> DriversList = new();
 
-    DriverCreationDto _newDriver = new();
+    DriverCreationDto AddDriver = new();
     private IJSObjectReference JsModule;
     bool LoaderVisibility { get; set; } = false;
 
@@ -72,7 +72,7 @@
         DriversList = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
         if (DriversList is not null)
         {
-            _drivers = DriversList;
+            drivers = DriversList;
         }
         StateHasChanged();
     }
@@ -80,8 +80,8 @@
     private async Task OpenDialog()
     {
         var parameters = new DialogParameters();
-        _newDriver = new DriverCreationDto();
-        parameters.Add("NewDriver", _newDriver);
+        AddDriver = new DriverCreationDto();
+        parameters.Add("NewDriver", AddDriver);
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
@@ -93,22 +93,22 @@
             // add new driver to backend
             var driverCreation = new DriverCreationDto
                 {
-                    FirstName = _newDriver.FirstName,
-                    LastName = _newDriver.LastName,
-                    Email = _newDriver.Email,
-                    Phone = _newDriver.Phone,
-                    StreetAddress1 = _newDriver.StreetAddress1,
-                    StreetAddress2 = _newDriver.StreetAddress2,
-                    City = _newDriver.City,
-                    State = _newDriver.State,
-                    CountryCode = _newDriver.CountryCode,
-                    PostalCode = _newDriver.PostalCode,
+                    FirstName = AddDriver.FirstName,
+                    LastName = AddDriver.LastName,
+                    Email = AddDriver.Email,
+                    Phone = AddDriver.Phone,
+                    StreetAddress1 = AddDriver.StreetAddress1,
+                    StreetAddress2 = AddDriver.StreetAddress2,
+                    City = AddDriver.City,
+                    State = AddDriver.State,
+                    CountryCode = AddDriver.CountryCode,
+                    PostalCode = AddDriver.PostalCode,
                     CompanyId = CurrentUser.UserId,
                     IsActive = true,
                     IsSuspended = false
                 };
             await DriverHttpRepository.CreateDriverAsync(driverCreation);
-            _drivers = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
+            drivers = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
 
             #region Send Login details to User
             MailRequest request = new MailRequest();

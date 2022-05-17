@@ -16,8 +16,8 @@
         <MudTd DataLabel="Corporate Name">
             @context.Name
         </MudTd>
-        <MudTd DataLabel="Address">
-            <p>@context.StreetAddress1 @context.StreetAddress2</p>
+        <MudTd DataLabel="Street Address 1">
+            <p>@context.StreetAddress1</p>
              <p>@context.City, @context.State @context.PostalCode</p>
         </MudTd>
         <MudTd DataLabel="Email">
@@ -26,7 +26,6 @@
          <MudTd DataLabel="Phone">
             @context.PhonePrimary
         </MudTd>
-     
         <MudTd DataLabel="Action">           
             <MudButton 
                 Variant="Variant.Filled" 
@@ -70,6 +69,7 @@
                 Email = corporate.Email,
                 PhonePrimary = corporate.PhonePrimary,
                 PhoneSecondary = corporate.PhoneSecondary,
+                SystemOwnerId = CurrentUser.UserId,
             };
             await CorporateHttpRepository.UpdateCorporateAsync(corporate.Id, corporateUpdate);
         }

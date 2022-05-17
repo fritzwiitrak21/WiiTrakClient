@@ -90,8 +90,7 @@
                 <MudCheckBox @bind-Checked="NewStore.IsSignatureRequired" Label="Signature Reqired For Deliveries" Color="Color.Primary"></MudCheckBox>
                 <div class="d-flex SubmitGrp">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
-                    @*                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
-                    *@                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
                 </div>
             </MudForm>
         </div>
@@ -103,8 +102,8 @@
     public StoreCreationDto? NewStore { get; set; }
     public List<CorporateDto> Corporate { get; set; } = new();
     public List<CountyCodeDTO> CountyCodeList { get; set; } = new();
-    public CorporateDto _selectedCorporate = new();
-    public CountyCodeDTO _selectedCountyCode = new();
+    public CorporateDto SelectedCorporate = new();
+    public CountyCodeDTO SelectedCountyCode = new();
     [Inject]
     public ICorporateHttpRepository CorporateRepository { get; set; }
     [Inject]
@@ -144,24 +143,24 @@
         }
         if (Corporate.Count > 0)
         {
-            _selectedCorporate = Corporate[0];
-            NewStore.CorporateId = _selectedCorporate.Id;
+            SelectedCorporate = Corporate[0];
+            NewStore.CorporateId = SelectedCorporate.Id;
         }
 
         CountyCodeList = await CountyCodeRepository.GetCountyListAsync();
         if (CountyCodeList.Count > 0)
         {
-            _selectedCountyCode = CountyCodeList[0];
-            NewStore.CountyCode = _selectedCountyCode.CountyCode;
+            SelectedCountyCode = CountyCodeList[0];
+            NewStore.CountyCode = SelectedCountyCode.CountyCode;
             try
             {
                 string[] C = new string[CountyCodeList.Count];
                 for (int i = 0; i < CountyCodeList.Count; i++)
                 {
-                    _selectedCountyCode = CountyCodeList[i];
-                    if (!(C.Contains(_selectedCountyCode.CountyCode)))
+                    SelectedCountyCode = CountyCodeList[i];
+                    if (!(C.Contains(SelectedCountyCode.CountyCode)))
                     {
-                        C[i] = _selectedCountyCode.CountyCode;
+                        C[i] = SelectedCountyCode.CountyCode;
                     }
                 }
                 County = (string[])C.Clone();
@@ -169,7 +168,7 @@
             }
             catch (Exception ex)
             {
-
+                //Exception
             }
         }
     }
@@ -227,6 +226,7 @@
         }
         catch (Exception ex)
         {
+            //Exception
         }
     }
     void Submit()

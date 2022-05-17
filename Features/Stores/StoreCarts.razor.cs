@@ -15,7 +15,7 @@ namespace WiiTrakClient.Features.Stores
         List<CartDto> _carts = new();
         List<StoreDto> _stores = new();
         List<StoreDto> _mapStores = new();
-        StoreDto _selectedStore;
+        StoreDto SelectedStore;
         List<CartDto> _filteredCarts = new();
         StoreReportDto _storeReport;
 
@@ -35,9 +35,9 @@ namespace WiiTrakClient.Features.Stores
         protected override async Task OnInitializedAsync()
         {
             _stores = await StoreRepository.GetAllStoresAsync();
-            _selectedStore = _stores[0];
-            await GetCartsByStoreId(_selectedStore);
-            await UpdateStoreReport(_selectedStore.Id);
+            SelectedStore = _stores[0];
+            await GetCartsByStoreId(SelectedStore);
+            await UpdateStoreReport(SelectedStore.Id);
             StateHasChanged();
         }
 
@@ -47,8 +47,8 @@ namespace WiiTrakClient.Features.Stores
 
             System.Console.WriteLine(store.Id);
             await GetCartsByStoreId(store);
-            _selectedStore = store;
-            //await UpdateReport(_selectedCorporate.Id);
+            SelectedStore = store;
+            //await UpdateReport(SelectedCorporate.Id);
             await UpdateStoreReport(store.Id);
             StateHasChanged();
         }

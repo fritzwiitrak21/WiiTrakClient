@@ -21,11 +21,11 @@ namespace WiiTrakClient.Features.Companies
         [Inject] ICompanyHttpRepository CompanyRepository { get; set; }
         [Inject] IStoreHttpRepository StoreRepository { get; set; }
         List<CompanyDto> _companies = new();
-        CompanyDto _selectedCompany;
+        CompanyDto SelectedCompany;
         List<CartDto> _carts = new();
         List<StoreDto> _stores = new();
         List<StoreDto> _mapStores = new();
-        StoreDto _selectedStore;
+        StoreDto SelectedStore;
         List<CartDto> _filteredCarts = new();
         List<RepairIssueDto> _repairIssues = new();
         CompanyReportDto _report;
@@ -47,9 +47,9 @@ namespace WiiTrakClient.Features.Companies
         protected override async Task OnInitializedAsync()
         {
             _companies = await CompanyRepository.GetAllCompaniesAsync();
-            _selectedCompany = _companies[0];
-            await GetCartsByCompanyId(_selectedCompany.Id);
-            await UpdateReport(_selectedCompany.Id);
+            SelectedCompany = _companies[0];
+            await GetCartsByCompanyId(SelectedCompany.Id);
+            await UpdateReport(SelectedCompany.Id);
             await GetStoreListByCompanyId();
             StateHasChanged();
         }
@@ -62,7 +62,7 @@ namespace WiiTrakClient.Features.Companies
         private async Task HandleCompanySelected(CompanyDto company)
         {
             System.Console.WriteLine("company id: " + company.Id);
-             _selectedCompany = company;
+             SelectedCompany = company;
             await GetCartsByCompanyId(company.Id);
             await UpdateReport(company.Id);
             await GetStoreListByCompanyId();
@@ -76,13 +76,13 @@ namespace WiiTrakClient.Features.Companies
             System.Console.WriteLine(store.Id);
             if (store.Id == Guid.Empty)
             {
-                await GetAllStoreCartsByCompanyId(_selectedCompany.Id);
+                await GetAllStoreCartsByCompanyId(SelectedCompany.Id);
             }
             else
             {
                 await GetCartsByStoreId(store);
             }
-            _selectedStore = store;
+            SelectedStore = store;
             await UpdateStoreReport(store.Id);
             StateHasChanged();
         }
@@ -90,7 +90,7 @@ namespace WiiTrakClient.Features.Companies
         private async Task GetStoreListByCompanyId()
         {
             _stores = new List<StoreDto>();
-            var storelist = await StoreRepository.GetStoresByCompanyId(_selectedCompany.Id);
+            var storelist = await StoreRepository.GetStoresByCompanyId(SelectedCompany.Id);
             var AllStore = new StoreDto()
             {
                 Id = Guid.Empty,
@@ -103,9 +103,9 @@ namespace WiiTrakClient.Features.Companies
             }
             if (_stores != null)
             {
-                _selectedStore = _stores.Where(x => x.Id == Guid.Empty).FirstOrDefault();
+                SelectedStore = _stores.Where(x => x.Id == Guid.Empty).FirstOrDefault();
             }
-            await UpdateStoreReport(_selectedStore.Id);
+            await UpdateStoreReport(SelectedStore.Id);
         }
         private async Task GetAllStoreCartsByCompanyId(Guid id)
         {
@@ -155,7 +155,7 @@ namespace WiiTrakClient.Features.Companies
             else
             {
                 _storeReport = new StoreReportDto();
-                _storeReport = await StoreRepository.GetAllStoreReportByCompanyAsync(_selectedCompany.Id);
+                _storeReport = await StoreRepository.GetAllStoreReportByCompanyAsync(SelectedCompany.Id);
             }
         }
 

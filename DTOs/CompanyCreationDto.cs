@@ -10,12 +10,11 @@ namespace WiiTrakClient.DTOs
 
 
         [Required(ErrorMessage = " ")]
-        [StringLength(25, ErrorMessage = " ")]
+        [StringLength(50, ErrorMessage = " ")]
         public string StreetAddress1 { get; set; } = string.Empty;
 
 
-        [Required(ErrorMessage = " ")]
-        [StringLength(25, ErrorMessage = " ")]
+        [StringLength(50, ErrorMessage = " ")]
         public string StreetAddress2 { get; set; } = string.Empty;
 
 
@@ -55,7 +54,6 @@ namespace WiiTrakClient.DTOs
         public string PhonePrimary { get; set; } = string.Empty;
 
 
-        [Required(ErrorMessage = " ")]
         [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$", ErrorMessage = " ")]
         public string PhoneSecondary { get; set; } = string.Empty;
 
@@ -67,7 +65,7 @@ namespace WiiTrakClient.DTOs
 
         public Guid SystemOwnerId { get; set; }
 
-        public Guid CorparateId { get; set; }
+        public Guid CorporateId { get; set; }
 
         public List<ServiceProviderDto>? ServiceProviders { get; set; }
 

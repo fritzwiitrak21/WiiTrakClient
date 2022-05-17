@@ -20,13 +20,13 @@
         font-size: 0;
     }
 </style>
-
+<UserAuthentication />
 <MudDialog>
     <DialogContent>
         <div style="width: 400px;height:450px;overflow: auto;">
             <MudForm Model="@editDeliveryTicket" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudSelect Class="my-6" T="StoreDto" Label="Store" AnchorOrigin="Origin.BottomCenter"
-                           HelperText="Select a Store" @bind-Value="@_selectedStore" Required="true"
+                           HelperText="Select a Store" @bind-Value="@SelectedStore" Required="true"
                            AdornmentColor="Color.Primary">
                     @foreach (var store in Stores)
                     {
@@ -80,14 +80,12 @@
     string[] errors = { };
     MudForm form;
 
-    StoreDto _selectedStore = new();
+    StoreDto SelectedStore = new();
     private string _fileUrl = "";
 
 
     protected override void OnParametersSet()
     {
-        try
-        {
             if (editDeliveryTicket != null)
             {
                 _fileUrl = editDeliveryTicket.PicUrl;
@@ -95,33 +93,21 @@
 
             if (Stores != null && Stores.Count() >= 1)
             {
-                _selectedStore = Stores.Where(x => x.Id == editDeliveryTicket.StoreId).FirstOrDefault();
+                SelectedStore = Stores.Where(x => x.Id == editDeliveryTicket.StoreId).FirstOrDefault();
             }
-        }
-        catch (Exception ex)
-        {
-
-        }
     }
 
     private void UpdateNumberOfCarts()
     {
-        try
-        {
-            editDeliveryTicket.NumberOfCarts = Carts.Count(x => x.StoreId == _selectedStore.Id && x.Status == CartStatus.PickedUp);
-        }
-        catch (Exception ex)
-        {
-
-        }
+            editDeliveryTicket.NumberOfCarts = Carts.Count(x => x.StoreId == SelectedStore.Id && x.Status == CartStatus.PickedUp);
     }
 
     private void UpdateStoreAndServiceProviderIds()
     {
         //try
         //{
-        //    editDeliveryTicket.StoreId = _selectedStore.Id;
-        //    var store = Stores.First(x => x.Id == _selectedStore.Id);
+        //    editDeliveryTicket.StoreId = SelectedStore.Id;
+        //    var store = Stores.First(x => x.Id == SelectedStore.Id);
         //    editDeliveryTicket.ServiceProviderId = store.ServiceProviderId;
         //}
         //catch (Exception ex)

@@ -11,22 +11,21 @@
    <MudTable Items="@Driver" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
     <HeaderContent>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<DriverDto, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel  SortBy="new Func<DriverDto, object>(x=>x.LastName)">LastName</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel  SortBy="new Func<DriverDto, object>(x=>x.LastName)">Last Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.Email)">Email</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.Phone)">Phone</MudTableSortLabel></MudTh> 
         <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.StreetAddress1)">Street Address 1</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.StreetAddress2)">Street Address 2</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.City)">City</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.State)">State</MudTableSortLabel></MudTh> 
-        @*<MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.CountryCode)">Country Code</MudTableSortLabel></MudTh>*@
         <MudTh><MudTableSortLabel SortBy="new Func<DriverDto, object>(x=>x.PostalCode)">Postal Code</MudTableSortLabel></MudTh> 
         <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="FirstName">
+        <MudTd DataLabel="First Name">
             @context.FirstName
         </MudTd>
-        <MudTd DataLabel="LastName">
+        <MudTd DataLabel="Last Name">
             @context.LastName
         </MudTd>
         <MudTd DataLabel="Email">
@@ -47,9 +46,6 @@
         <MudTd DataLabel="State">
             @context.State
         </MudTd>
-       @* <MudTd DataLabel="Country Code">
-            @context.CountryCode 
-        </MudTd>*@
         <MudTd DataLabel="Postal Code">
             @context.PostalCode
         </MudTd>
@@ -100,6 +96,7 @@
                 CountryCode=driver.CountryCode,
                 PostalCode=driver.PostalCode,
                 CompanyId = driver.CompanyId,
+                SystemOwnerId = CurrentUser.UserId,
                 IsSuspended=driver.IsSuspended,
                 IsActive=!driver.IsTerminated 
             };

@@ -23,9 +23,9 @@
     {
         <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
     }
-    else if (_companies.Count > 0)
+    else if (companies.Count > 0)
     {
-        <CompanyList Companies="@_companies" />
+        <CompanyList Companies="@companies" />
     }
     else
     {
@@ -38,9 +38,9 @@
 @code {
     private IJSObjectReference JsModule;
     List<CompanyDto> CompaniesList = new();
-    List<CompanyDto> _companies = new();
+    List<CompanyDto> companies = new();
 
-    CompanyCreationDto _newCompany = new();
+    CompanyCreationDto AddCompany = new();
  
     protected override async Task OnInitializedAsync()
     {
@@ -54,7 +54,7 @@
         CompaniesList = await CompanyRepository.GetChildCompaniesAsync(CurrentUser.UserId);
         if (CompaniesList is not null)
         {
-            _companies = CompaniesList;
+            companies = CompaniesList;
         }
         StateHasChanged();
     }
@@ -62,8 +62,8 @@
     private async Task OpenDialog()
     {
         var parameters = new DialogParameters();
-        _newCompany = new CompanyCreationDto();
-        parameters.Add("NewCompany", _newCompany);
+        AddCompany = new CompanyCreationDto();
+        parameters.Add("NewCompany", AddCompany);
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
@@ -75,20 +75,20 @@
             // add new customer to backend
             var customerCreation = new CompanyCreationDto
                 {
-                    Name = _newCompany.Name,
-                    StreetAddress1 = _newCompany.StreetAddress1,
-                    StreetAddress2 = _newCompany.StreetAddress2,
-                    City = _newCompany.City,
-                    State = _newCompany.State,
-                    PostalCode = _newCompany.PostalCode,
-                    ProfilePicUrl = _newCompany.ProfilePicUrl,
-                    Email = _newCompany.Email,
-                    PhonePrimary = _newCompany.PhonePrimary,
-                    PhoneSecondary = _newCompany.PhoneSecondary,
+                    Name = AddCompany.Name,
+                    StreetAddress1 = AddCompany.StreetAddress1,
+                    StreetAddress2 = AddCompany.StreetAddress2,
+                    City = AddCompany.City,
+                    State = AddCompany.State,
+                    PostalCode = AddCompany.PostalCode,
+                    ProfilePicUrl = AddCompany.ProfilePicUrl,
+                    Email = AddCompany.Email,
+                    PhonePrimary = AddCompany.PhonePrimary,
+                    PhoneSecondary = AddCompany.PhoneSecondary,
                     ParentId = CurrentUser.UserId,
                 };
             await CompanyRepository.CreateCompanyAsync(customerCreation);
         }
-        _companies = await CompanyRepository.GetChildCompaniesAsync(CurrentUser.UserId);
+        companies = await CompanyRepository.GetChildCompaniesAsync(CurrentUser.UserId);
     }
 }

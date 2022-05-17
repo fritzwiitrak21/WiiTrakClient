@@ -26,12 +26,10 @@ namespace WiiTrakClient.DTOs
         public string Phone { get; set; } = string.Empty;
 
         [Required(ErrorMessage = " ")]
-        [StringLength(25, ErrorMessage = " ")]
+        [StringLength(50, ErrorMessage = " ")]
         public string StreetAddress1 { get; set; } = string.Empty;
 
-
-        [Required(ErrorMessage = " ")]
-        [StringLength(25, ErrorMessage = " ")]
+        [StringLength(50, ErrorMessage = " ")]
         public string StreetAddress2 { get; set; } = string.Empty;
 
 
@@ -60,6 +58,7 @@ namespace WiiTrakClient.DTOs
         public bool IsSuspended { get; set; }
         public bool IsActive { get; set; }
         public Guid CompanyId { get; set; }
+        public Guid SystemOwnerId { get; set; }
         public int DriverNumber { get; set; }
 
     }

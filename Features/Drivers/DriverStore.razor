@@ -47,10 +47,10 @@
                 </MudTh>
                 <MudTh>
                     <MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.PostalCode)">
-                        PostalCode
+                        Posta lCode
                     </MudTableSortLabel>
                 </MudTh>
-                <MudTh>Service Level</MudTh>
+                <MudTh>Service Frequency</MudTh>
                 <MudTh>Phone</MudTh>
                 <MudTh>Map</MudTh>
 
@@ -59,10 +59,10 @@
                 <MudTd DataLabel="Store Name">
                     @context.StoreName
                 </MudTd>
-                <MudTd DataLabel="StoreNumber">
+                <MudTd DataLabel="Store Number">
                     @context.StoreNumber
                 </MudTd>
-                <MudTd DataLabel="StreetAddress1">
+                <MudTd DataLabel="Street Address 1">
                     @context.StreetAddress1, @context.StreetAddress2
                 </MudTd>
                 <MudTd DataLabel="City">
@@ -70,8 +70,8 @@
                 </MudTd>
                 <MudTd DataLabel="State">
                     @context.State
-                </MudTd>
-                <MudTd DataLabel="PostalCode">
+                </MudTd> 
+                <MudTd DataLabel="Postal Code">
                     @context.PostalCode
                 </MudTd>
                 <MudTd DataLabel="Service Level">
@@ -187,7 +187,7 @@
         }
         catch (Exception ex)
         {
-
+            // excepion
         }
     }
 }

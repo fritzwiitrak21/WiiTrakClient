@@ -36,7 +36,7 @@
             <MudForm Model="@Store" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudItem>
                     <MudSelect T="CompanyDto" Label="Select Company" Required=true RequiredError=" "
-                               Value="@_selectedCompany" ValueChanged="(value) => HandleCompany(value)"
+                               Value="@SelectedCompany" ValueChanged="(value) => HandleCompany(value)"
                                AnchorOrigin="Origin.BottomCenter">
                         @foreach (var company in companies)
                         {
@@ -110,8 +110,8 @@
     [Parameter]
     public List<CountyCodeDTO>? CountyCodeList { get; set; } = new();
 
-    public CompanyDto _selectedCompany = new();
-    public CountyCodeDTO _selectedCountyCode = new();
+    public CompanyDto SelectedCompany = new();
+    public CountyCodeDTO SelectedCountyCode = new();
     [Inject]
     public ICompanyHttpRepository CompanyRepository { get; set; }
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
@@ -135,7 +135,7 @@
     {
         if (companies != null && companies.Count > 0)
         {
-            _selectedCompany = companies.Where(x => x.Id == Store.CompanyId).FirstOrDefault();
+            SelectedCompany = companies.Where(x => x.Id == Store.CompanyId).FirstOrDefault();
         }
         if (Store.ServiceFrequency != null && Store.ServiceFrequency != "")
         {
@@ -158,10 +158,10 @@
                 string[] C = new string[CountyCodeList.Count];
                 for (int i = 0; i < CountyCodeList.Count; i++)
                 {
-                    _selectedCountyCode = CountyCodeList[i];
-                    if (!(C.Contains(_selectedCountyCode.CountyCode)))
+                    SelectedCountyCode = CountyCodeList[i];
+                    if (!(C.Contains(SelectedCountyCode.CountyCode)))
                     {
-                        C[i] = _selectedCountyCode.CountyCode;
+                        C[i] = SelectedCountyCode.CountyCode;
                     }
                 }
                 County = (string[])C.Clone();
@@ -181,7 +181,7 @@
     }
     public async Task HandleCompany(CompanyDto company)
     {
-        _selectedCompany = company;
+        SelectedCompany = company;
         Store.CompanyId = company.Id;
     }
     private async Task OnClick()

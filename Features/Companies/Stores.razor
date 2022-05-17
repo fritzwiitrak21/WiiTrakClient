@@ -40,9 +40,9 @@ else
     {
         <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
     }
-    else if (_stores.Count > 0)
+    else if (stores.Count > 0)
     {
-        <StoreList Stores="@_stores" />
+        <StoreList Stores="@stores" />
     }
     else
     {
@@ -53,10 +53,10 @@ else
 
 
 @code {
-    List<StoreDto> _stores = new ();
+    List<StoreDto> stores = new ();
     List<StoreDto> StoresList = new ();
     private IJSObjectReference JsModule;
-    StoreCreationDto _newStore = new();
+    StoreCreationDto AddStore = new();
     bool LoaderVisibility = false;
     protected override async Task OnInitializedAsync()
     {
@@ -70,7 +70,7 @@ else
         StoresList = await StoreHttpRepository.GetStoresByCompanyId(CurrentUser.UserId);
         if (StoresList is not null)
         {
-            _stores = StoresList;
+            stores = StoresList;
         }
         StateHasChanged();
     }  
@@ -78,8 +78,8 @@ else
     private async Task OpenDialog() 
     {
         var parameters = new DialogParameters();
-        _newStore = new StoreCreationDto();
-        parameters.Add("NewStore", _newStore);
+        AddStore = new StoreCreationDto();
+        parameters.Add("NewStore", AddStore);
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
 
@@ -91,29 +91,29 @@ else
             // add new store to backend
             var storeCreation = new StoreCreationDto {
                     CompanyId = CurrentUser.UserId,
-                    StoreName = _newStore.StoreName,
-                    StoreNumber = _newStore.StoreNumber,
-                    Email = _newStore.Email,
-                    PhonePrimary = _newStore.PhonePrimary,
-                    PhoneSecondary = _newStore.PhoneSecondary,
-                    StreetAddress1 = _newStore.StreetAddress1,
-                    StreetAddress2 = _newStore.StreetAddress2,
-                    City = _newStore.City,
-                    State = _newStore.State,
-                    PostalCode = _newStore.PostalCode,
-                    CountryCode = _newStore.CountryCode,
-                    CorporateId = _newStore.CorporateId,
+                    StoreName = AddStore.StoreName,
+                    StoreNumber = AddStore.StoreNumber,
+                    Email = AddStore.Email,
+                    PhonePrimary = AddStore.PhonePrimary,
+                    PhoneSecondary = AddStore.PhoneSecondary,
+                    StreetAddress1 = AddStore.StreetAddress1,
+                    StreetAddress2 = AddStore.StreetAddress2,
+                    City = AddStore.City,
+                    State = AddStore.State,
+                    PostalCode = AddStore.PostalCode,
+                    CountryCode = AddStore.CountryCode,
+                    CorporateId = AddStore.CorporateId,
                     ServiceProviderId = Guid.Empty,
-                    IsSignatureRequired = _newStore.IsSignatureRequired,
+                    IsSignatureRequired = AddStore.IsSignatureRequired,
                     IsActive=true,
-                    CountyCode=_newStore.CountyCode,
-                    ServiceFrequency=_newStore.ServiceFrequency,
-                    StartDate=_newStore.StartDate
+                    CountyCode=AddStore.CountyCode,
+                    ServiceFrequency=AddStore.ServiceFrequency,
+                    StartDate=AddStore.StartDate
                     
         };
            await StoreHttpRepository.CreateStoreAsync(storeCreation);
            
         }  
-        _stores = await StoreHttpRepository.GetStoresByCompanyId(CurrentUser.UserId);
+        stores = await StoreHttpRepository.GetStoresByCompanyId(CurrentUser.UserId);
     } 
 }

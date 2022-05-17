@@ -88,8 +88,7 @@
 
                 <div class="d-flex SubmitGrp">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
-                    @*                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
-                    *@                  <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
                 </div>
             </MudForm>
         </div>
@@ -113,7 +112,7 @@
 
     CorporateDto SelectedCorporate = new();
     CompanyDto SelectedCompany = new();
-    public CountyCodeDTO _selectedCountyCode = new();
+    public CountyCodeDTO SelectedCountyCode = new();
     bool StoreStatus = false;
     [Inject]
     public ICorporateHttpRepository CorporateRepository { get; set; }
@@ -160,10 +159,10 @@
                 string[] C = new string[CountyCodeList.Count];
                 for (int i = 0; i < CountyCodeList.Count; i++)
                 {
-                    _selectedCountyCode = CountyCodeList[i];
-                    if (!(C.Contains(_selectedCountyCode.CountyCode)))
+                    SelectedCountyCode = CountyCodeList[i];
+                    if (!(C.Contains(SelectedCountyCode.CountyCode)))
                     {
-                        C[i] = _selectedCountyCode.CountyCode;
+                        C[i] = SelectedCountyCode.CountyCode;
                     }
                 }
                 County = (string[])C.Clone();

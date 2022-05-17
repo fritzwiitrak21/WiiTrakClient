@@ -91,8 +91,7 @@
                                 Email = AddCorporate.Email,
                                 PhonePrimary = AddCorporate.PhonePrimary,
                                 PhoneSecondary = AddCorporate.PhoneSecondary,
-                                SystemOwnerId = CurrentUser.UserId  
-  
+                                SystemOwnerId = CurrentUser.UserId,  
                             };
                 await CorporateRepository.CreateCorporateAsync(CurrentUser.UserId,CurrentUser.UserRoleId, customerCreation);
             }

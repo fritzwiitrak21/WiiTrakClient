@@ -33,7 +33,7 @@ namespace WiiTrakClient.Features.Drivers
         List<WorkOrderDto> _workOrders = new();
 
 
-        DriverDto _selectedDriver = new();
+        DriverDto SelectedDriver = new();
         List<DriverDto> _drivers = new();
         List<CartDto> _carts = new();
         List<StoreDto> _stores = new();
@@ -41,18 +41,18 @@ namespace WiiTrakClient.Features.Drivers
         protected override async Task OnInitializedAsync()
         {
             _drivers = await DriverRepository.GetAllDriversAsync();
-            _selectedDriver = _drivers[0];
+            SelectedDriver = _drivers[0];
 
-           await HandleDriverSelected(_selectedDriver);
+           await HandleDriverSelected(SelectedDriver);
         }
 
         private async Task HandleDriverSelected(DriverDto driver)
         {
             System.Console.WriteLine(driver.Id);
-            _selectedDriver = driver;
-             await GetWorkOrdersByDriverId(_selectedDriver.Id);
-            //_stores = await StoreHttpRepository.GetStoresByDriverId(_selectedDriver.Id);
-            //_carts = await CartHttpRepository.GetCartsByDriverIdAsync(_selectedDriver.Id);
+            SelectedDriver = driver;
+             await GetWorkOrdersByDriverId(SelectedDriver.Id);
+            //_stores = await StoreHttpRepository.GetStoresByDriverId(SelectedDriver.Id);
+            //_carts = await CartHttpRepository.GetCartsByDriverIdAsync(SelectedDriver.Id);
         }
 
         private async Task GetWorkOrdersByDriverId(Guid id)
@@ -72,7 +72,7 @@ namespace WiiTrakClient.Features.Drivers
         // {
         //     var parameters = new DialogParameters();
         //     parameters.Add("NewDeliveryTicket", _newDeliveryTicket);
-        //     parameters.Add("Driver", _selectedDriver);
+        //     parameters.Add("Driver", SelectedDriver);
         //     parameters.Add("Carts", _carts);
         //     parameters.Add("Stores", _stores);
 
@@ -107,7 +107,7 @@ namespace WiiTrakClient.Features.Drivers
         //                 DroppedOffAt = DateTime.Now,
         //                 ServiceProviderId = cart.Store != null ? cart.Store.ServiceProviderId : null,
         //                 StoreId = cart.StoreId,
-        //                 DriverId = _selectedDriver.Id,
+        //                 DriverId = SelectedDriver.Id,
         //                 Condition = cart.Condition,
         //                 Status = CartStatus.InsideGeofence,
         //                 IsDelivered = true,
