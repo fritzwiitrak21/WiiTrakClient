@@ -48,21 +48,5 @@ namespace WiiTrakClient.HttpRepository
             PicUploadResponse picUploadResponse = JsonSerializer.Deserialize<PicUploadResponse>(jsonString);
             return picUploadResponse is not null ? picUploadResponse.FileURL : string.Empty;
         }
-
-
-        public async Task<string> UploadPicture(MultipartFormDataContent content)
-        {
-
-
-            var response = await _httpService.PostForm(_apiUrl, content);
-            string jsonString = await response.GetBody();
-            if (!response.Success)
-            {
-                throw new ApplicationException(jsonString);
-            }
-
-            PicUploadResponse picUploadResponse = JsonSerializer.Deserialize<PicUploadResponse>(jsonString);
-            return picUploadResponse is not null ? picUploadResponse.FileURL : string.Empty;
-        }
     }
 }

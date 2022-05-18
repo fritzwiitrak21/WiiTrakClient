@@ -109,7 +109,7 @@
     List<StoreDto> driverstorelist = new();
 
 
-    private IJSObjectReference JsModule;
+    private IJSObjectReference JsModule,JsModule1;
     public string CurrentCoord { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -186,6 +186,8 @@
 
             var dialog = DialogService.Show<DisplayMap>("Map to " + store.StoreName + " - " + store.StoreNumber, parameters);
             var result = await dialog.Result;
+            JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/GoogleMaps.js");
+            await JsModule1.InvokeVoidAsync("stopWatch");
             await JsModule.InvokeVoidAsync("ClearCoord");
         }
         catch (Exception ex)

@@ -2,6 +2,8 @@
 var MovingDlat;
 var MovingDlon;
 var marker;
+var Timer;
+var watchid;
 export function getGMaps(latitude, longitude, dlat, dlon) {
     var latlng = new google.maps.LatLng(latitude, longitude);
     MovingDlat = dlat;
@@ -17,13 +19,13 @@ export function getGMaps(latitude, longitude, dlat, dlon) {
 
     // create marker
     //new google.maps.Marker({ position: point, map: map, icon: "/Image/clear.png", title: "hai" });
-     marker = new google.maps.Marker({
+    marker = new google.maps.Marker({
         position: latlng,
         map,
-         title: "Store Location",
-         icon: "/Images/NavigationLogo.png"
+        title: "Store Location",
+        icon: "/Images/NavigationLogo.png"
     });
-    
+
     setInterval(function () {
         changeMarkerPosition();
     }, 2000);
@@ -47,10 +49,10 @@ export function initMap(latitude, longitude, dlat, dlon) {
 
     // create marker
     marker = new google.maps.Marker({
-        position: point ,
+        position: point,
         map,
-        title: "Current Position"
-        
+        title: "Current Position",
+        icon: "https://wiitrakstorageaccount.blob.core.windows.net/wiitrakblobcontainer/NavigationLogo.png"
     });
 
     directionsRenderer.setMap(map);
@@ -73,10 +75,15 @@ function calcRoute(directionsService, directionsRenderer, latitude, longitude, d
 
         if (status == 'OK') {
             directionsRenderer.setDirections(response);
-            setInterval(function () {
-                navigator.geolocation.watchPosition(GetCoordinates);
-                changeMarkerPosition();
-            }, 2000);
+            watchid = navigator.geolocation.watchPosition(GetCoordinates);
+            console.log(watchid);
+            //Timer = setInterval(function () {
+
+                
+
+
+            //    //    changeMarkerPosition();
+            //}, 1800);
         }
     });
 }
@@ -84,12 +91,23 @@ function calcRoute(directionsService, directionsRenderer, latitude, longitude, d
 function GetCoordinates(position) {
     MovingDlat = position.coords.latitude;
     MovingDlon = position.coords.longitude;
+    changeMarkerPosition();
 }
 
 function changeMarkerPosition() {
 
     var latlng = new google.maps.LatLng(MovingDlat, MovingDlon);
-   
+    console.log(latlng);
     marker.setPosition(latlng);
+    //stopWatch();
+}
+export function stopWatch() {
+    navigator.geolocation.clearWatch(watchid);
+    console.log("end " + watchid);
+}
+export function StopTimer() {
+    console.log(Timer);
+
+    clearTimeout(Timer);
 }
 window.initMap = initMap;

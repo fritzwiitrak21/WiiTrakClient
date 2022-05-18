@@ -156,7 +156,7 @@
             Longitude = Core.ToDouble(Lon);
             await JsModule.InvokeVoidAsync("ClearCoord");
         }
-        catch (Exception ex)
+        catch
         {
             await JsModule.InvokeVoidAsync("ClearCoord");
         }
