@@ -83,8 +83,8 @@ function calcRoute(directionsService, directionsRenderer, latitude, longitude, d
                 
 
 
-              //changeMarkerPosition();
-            }, 1800);
+              changeMarkerPosition();
+            }, 1100);
         }
     });
 }
@@ -93,18 +93,16 @@ function GetCoordinates(position) {
     MovingDlat = position.coords.latitude;
     MovingDlon = position.coords.longitude;
     changeMarkerPosition();
+    StopWatch();
 }
 
 function changeMarkerPosition() {
-
     var latlng = new google.maps.LatLng(MovingDlat, MovingDlon);
-    console.log(latlng);
     marker.setPosition(latlng);
-    StopWatch();
 }
 export function StopWatch() {
     navigator.geolocation.clearWatch(watchid);
-    console.log("end " + watchid);
+    console.log("Watch end " + watchid);
 }
 export function StopTimer() {
     console.log(Timer);
