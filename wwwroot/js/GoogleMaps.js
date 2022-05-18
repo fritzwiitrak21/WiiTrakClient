@@ -75,15 +75,16 @@ function calcRoute(directionsService, directionsRenderer, latitude, longitude, d
 
         if (status == 'OK') {
             directionsRenderer.setDirections(response);
-            watchid = navigator.geolocation.watchPosition(GetCoordinates);
+           
+            Timer = setInterval(function () {
+                watchid = navigator.geolocation.watchPosition(GetCoordinates);
             console.log(watchid);
-            //Timer = setInterval(function () {
 
                 
 
 
-            //    //    changeMarkerPosition();
-            //}, 1800);
+              //changeMarkerPosition();
+            }, 1800);
         }
     });
 }
@@ -99,9 +100,9 @@ function changeMarkerPosition() {
     var latlng = new google.maps.LatLng(MovingDlat, MovingDlon);
     console.log(latlng);
     marker.setPosition(latlng);
-    //stopWatch();
+    StopWatch();
 }
-export function stopWatch() {
+export function StopWatch() {
     navigator.geolocation.clearWatch(watchid);
     console.log("end " + watchid);
 }

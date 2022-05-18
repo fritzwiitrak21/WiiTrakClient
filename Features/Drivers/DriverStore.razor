@@ -187,7 +187,10 @@
             var dialog = DialogService.Show<DisplayMap>("Map to " + store.StoreName + " - " + store.StoreNumber, parameters);
             var result = await dialog.Result;
             JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/GoogleMaps.js");
-            await JsModule1.InvokeVoidAsync("stopWatch");
+            await JsModule1.InvokeVoidAsync("StopWatch");
+            await JsModule1.InvokeVoidAsync("StopTimer");
+
+            
             await JsModule.InvokeVoidAsync("ClearCoord");
         }
         catch (Exception ex)
