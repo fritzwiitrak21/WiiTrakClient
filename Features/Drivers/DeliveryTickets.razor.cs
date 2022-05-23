@@ -46,6 +46,8 @@ namespace WiiTrakClient.Features.Drivers
         private double Latitude;
         private double Longitude;
 
+        public int SelectedOption = 30;
+        public int TempSelectedOption = 0;
         protected override async Task OnInitializedAsync()
         {
 
@@ -93,7 +95,7 @@ namespace WiiTrakClient.Features.Drivers
         #region GetDeliveryTicketsByDriverId
         private async Task GetDeliveryTicketsByDriverId(Guid id)
         {
-            deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByDriverIdAsync(id);
+            deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(id,(Role)CurrentUser.UserRoleId, SelectedOption);
 
             if (deliveryTickets is not null)
             {
@@ -114,6 +116,21 @@ namespace WiiTrakClient.Features.Drivers
             StateHasChanged();
         }
         #endregion
+        public async Task GetDeliveryTicketDetails()
+        {
+            if (TempSelectedOption != SelectedOption)
+            {
+                var value = SelectedOption;
+                TempSelectedOption = SelectedOption;
+                deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, value);
+                if (deliveryTickets is not null)
+                {
+                    _deliveryTickets = deliveryTickets;
+                }
+                StateHasChanged();
+
+            }
+        }
 
         #region AddNewDeliveryDialog
 
@@ -161,10 +178,10 @@ namespace WiiTrakClient.Features.Drivers
                 {
                     NumberOfCarts = _newDeliveryTicket.NumberOfCarts,
                     PicUrl = _newDeliveryTicket.PicUrl,
-                    DeliveredAt = DateTime.Now,
+                    DeliveredAt = DateTime.UtcNow,
                     StoreId = _newDeliveryTicket.StoreId,
                     ServiceProviderId = _newDeliveryTicket.ServiceProviderId,
-                    DriverId = _newDeliveryTicket.DriverId,
+                    DriverId = CurrentUser.UserId,
                     SignOffRequired = _stores.FirstOrDefault(x => x.Id == _newDeliveryTicket.StoreId).IsSignatureRequired
                 };
 

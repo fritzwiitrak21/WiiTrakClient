@@ -12,6 +12,8 @@ namespace WiiTrakClient.Features.Stores.Components
     {
         [Parameter]
         public List<DeliveryTicketDto>? DeliveryTickets { get; set; }
+        [Parameter]
+        public int RecordCount { get; set; }
 
         [Parameter]
         public EventCallback DeliveryTicketUpdatedEventCallback { get; set; }
@@ -132,7 +134,7 @@ namespace WiiTrakClient.Features.Stores.Components
 
                 await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);
             }
-            DeliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(CurrentUser.UserId);
+            DeliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId,(Role)CurrentUser.UserRoleId,RecordCount);
             StateHasChanged();
         }
 

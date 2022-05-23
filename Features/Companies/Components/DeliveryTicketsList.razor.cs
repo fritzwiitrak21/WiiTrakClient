@@ -22,7 +22,8 @@ namespace WiiTrakClient.Features.Companies.Components
         [Inject] NavigationManager NavManager { get; set; }
         [Parameter]
         public List<DeliveryTicketDto>? DeliveryTickets { get; set; }
-
+        [Parameter]
+        public int RecordCount { get; set; }
 
         [Parameter]
         public EventCallback DeliveryTicketUpdatedEventCallback { get; set; }
@@ -135,7 +136,7 @@ namespace WiiTrakClient.Features.Companies.Components
                 //}
                 #endregion
             }
-            _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+            _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId,RecordCount);
             StateHasChanged();
             //var cartPreUpdate = cart;
 
@@ -244,7 +245,7 @@ namespace WiiTrakClient.Features.Companies.Components
                 DeliveryTickets = DeliveryTickets.OrderByDescending(y => y.DeliveryTicketNumber).ToList();
                 StateHasChanged();
             }
-            _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+            _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId,RecordCount);
             StateHasChanged();
             #endregion
         }

@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using WiiTrakClient.Features.Companies;
-using WiiTrakClient.Features.Companies.Components;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using WiiTrakClient.HttpRepository.Contracts;
@@ -13,7 +5,6 @@ using WiiTrakClient.DTOs;
 using WiiTrakClient.Cores;
 using MudBlazor;
 using WiiTrakClient.Enums;
-using WiiTrakClient.Helpers;
 
 namespace WiiTrakClient.Features.Companies
 {
@@ -30,7 +21,8 @@ namespace WiiTrakClient.Features.Companies
         List<DeliveryTicketDto> deliveryTickets = new();
         List<DeliveryTicketDto> _deliveryTickets = new();
 
-
+        public int SelectedOption = 30;
+        public int TempSelectedOption = 0;
         protected override async Task OnInitializedAsync()
         {
             if (CurrentUser.UserId == Guid.Empty)
@@ -42,10 +34,25 @@ namespace WiiTrakClient.Features.Companies
                 CurrentUser.UserRoleId = Convert.ToInt32(roleid);
             }
 
-            deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+            deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, SelectedOption);
             if (deliveryTickets is not null)
             {
                 _deliveryTickets = deliveryTickets;
+            }
+        }
+        public async Task GetDeliveryTicketDetails()
+        {
+            if (TempSelectedOption != SelectedOption)
+            {
+                var value = SelectedOption;
+                TempSelectedOption = SelectedOption;
+                deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, value);
+                if (deliveryTickets is not null)
+                {
+                    _deliveryTickets = deliveryTickets;
+                }
+                StateHasChanged();
+
             }
         }
     }

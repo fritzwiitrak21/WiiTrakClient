@@ -65,23 +65,21 @@ else
             JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
             var Id = await JsModule.InvokeAsync<string>("getUserId");
             CurrentUser.UserId = new Guid(Id);
-
         }
         Drivers = await DriverRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
-
     }
+
     private async Task HandleDriverSelected(DriverDto Driver)
     {
         alldriverstore = await DriverStoreRepository.GetDriverStoresBySystemownerIdAsync(CurrentUser.UserId, Driver.Id);
-      
         driverstore = alldriverstore;
         StateHasChanged();
         Core.SelectedDriverId = Driver.Id;
         SelectedOption = "All";
         GetStoreDetails();
         StateHasChanged();
-
     }
+
     public async Task GetStoreDetails()
     {
         if (TempSelectedOption != SelectedOption)

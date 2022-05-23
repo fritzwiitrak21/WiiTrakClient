@@ -6,7 +6,19 @@
 <div class="pagetitle my-8">
 <h3>Delivery Tickets</h3>
 </div>
-
+<div style="padding-top:6px">
+                <MudForm>
+                    <MudRadioGroup @bind-SelectedOption="@SelectedOption">
+                        <MudRadio Option="@(30)" Color="Color.Primary">Last 30 Days Record</MudRadio>
+                        <MudRadio Option="@(60)" Color="Color.Primary">Last 60 Days Record</MudRadio>
+                        <MudRadio Option="@(90)" Color="Color.Primary">Last 90 Days Record</MudRadio>
+                        <MudRadio Option="@(0)" Color="Color.Primary">All Record</MudRadio>
+                    </MudRadioGroup>
+                </MudForm>
+            </div>
+             @{
+            GetDeliveryTicketDetails();
+        }
 @if(deliveryTickets == null)
 {
     <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
@@ -14,7 +26,7 @@
 }
 else if (_deliveryTickets.Count > 0)
 {
-    <DeliveryTicketsList DeliveryTickets="_deliveryTickets" />
+    <DeliveryTicketsList DeliveryTickets="_deliveryTickets" RecordCount="@SelectedOption" />
 }
 else
 {

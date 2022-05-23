@@ -81,7 +81,8 @@ else
 
 
 @code {
-    DateTime? Startdate { get; set; } = DateTime.Today.AddDays(-14);
+    public static int Fourteen { get; set; } = 14;
+    DateTime? Startdate { get; set; } = DateTime.Today.AddDays(-(Fourteen));
     DateTime? Enddate { get; set; } = DateTime.Today;
 
     int TotalNoofDeliveries { get; set; } = 0;
@@ -115,21 +116,50 @@ else
             }
 
 
-            var deliveryTickets = CurrentUser.UserRoleId <= 4 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId) :
-                                  // For the role of System Owner - 1, Corporate - 2, Prime Company -3, Sub Company - 4
-                                  CurrentUser.UserRoleId == 5 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByDriverIdAsync(CurrentUser.UserId) :
-                                  // For the role of Driver
-                                  CurrentUser.UserRoleId == 6 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(CurrentUser.UserId) :
-                                  // For the role of Store
-                                  await DeliveryTicketHttpRepository.GetAllDeliveryTicketsAsync();
-            // To get all the delivery tickets
-
-            if (deliveryTickets is not null)
+            //var deliveryTickets = CurrentUser.UserRoleId <= 4 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId) :
+            //                      // For the role of System Owner - 1, Corporate - 2, Prime Company -3, Sub Company - 4
+            //                      CurrentUser.UserRoleId == 5 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByDriverIdAsync(CurrentUser.UserId) :
+            //                      // For the role of Driver
+            //                      CurrentUser.UserRoleId == 6 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(CurrentUser.UserId) :
+            //                      // For the role of Store
+            //                      await DeliveryTicketHttpRepository.GetAllDeliveryTicketsAsync();
+            //// To get all the delivery tickets
+            int RecordCount = 0;
+            var deliveryTickets = new List<DeliveryTicketDto>();
+            if (Enddate == DateTime.Today && Startdate == DateTime.Today.AddDays(-(Fourteen)))
             {
-                _deliveryTickets = deliveryTickets.Where(x => x.DeliveredAt.Date >= Startdate && x.DeliveredAt.Date <= Enddate).ToList();
-                TotalNoofDeliveries = _deliveryTickets.Count;
-                TotalNoofCarts = _deliveryTickets.Sum(x => x.NumberOfCarts);
+                RecordCount = Fourteen;
+                deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, RecordCount);
+                _deliveryTickets = deliveryTickets;
             }
+            else if (Enddate == DateTime.Today && Startdate != DateTime.Today.AddDays(-(Fourteen)))
+            {
+                TimeSpan TS = Convert.ToDateTime(Enddate) - Convert.ToDateTime(Startdate);
+                RecordCount = TS.Days;
+                deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, RecordCount);
+                if (deliveryTickets is not null)
+                {
+                    _deliveryTickets = deliveryTickets;
+                }
+            }
+            else
+            {
+                RecordCount = 0;
+                deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, RecordCount);
+                if (deliveryTickets is not null)
+                {
+                    _deliveryTickets = deliveryTickets.Where(x => x.DeliveredAt.Date >= Startdate && x.DeliveredAt.Date <= Enddate).ToList();
+                }
+            }
+
+            //DeliveryTicketInputDto inputDto= new D eliveryTicketInputDto();
+            //inputDto.Id = CurrentUser.UserId;
+            //inputDto.RoleId = CurrentUser.UserRoleId;
+            //inputDto.FromDate=Startdate.ToString();
+            //inputDto.ToDate = Enddate.ToString();
+            //var deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByIdTest(inputDto);
+            TotalNoofDeliveries = _deliveryTickets.Count;
+            TotalNoofCarts = _deliveryTickets.Sum(x => x.NumberOfCarts);
             LoaderVisibility = false;
         }
         catch
@@ -158,6 +188,9 @@ else
             dt.Columns.Remove("UpdatedBy");
             dt.Columns.Remove("DriverStoresIsActive");
             dt.Columns.Remove("StoresIsActive");
+            dt.Columns.Remove("TimezoneDiff");
+            dt.Columns.Remove("TimezoneName");
+            dt.Columns.Remove("TimezoneDateTime");
 
             dt.Columns["DriverName"].SetOrdinal(0);
             dt.Columns["DeliveryTicketNumber"].SetOrdinal(1);

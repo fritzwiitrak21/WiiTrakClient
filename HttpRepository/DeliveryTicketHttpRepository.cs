@@ -20,7 +20,7 @@ namespace WiiTrakClient.HttpRepository
             _httpService = httpService;
             _apiUrl = $"{ httpService.BaseUrl }{ ControllerName }";
         }
-        
+
         public async Task<DeliveryTicketDto> GetDeliveryTicketByIdAsync(Guid id)
         {
             string url = $"{_apiUrl}/{id}";
@@ -33,7 +33,7 @@ namespace WiiTrakClient.HttpRepository
             return response.Response;
         }
 
-          public async Task<DeliveryTicketSummaryDto> GetDeliveryTicketSummaryByIdAsync(Guid id)
+        public async Task<DeliveryTicketSummaryDto> GetDeliveryTicketSummaryByIdAsync(Guid id)
         {
             string url = $"{_apiUrl}/summary/{id}";
 
@@ -78,7 +78,7 @@ namespace WiiTrakClient.HttpRepository
             }
             return response.Response;
         }
-        public async Task<List<DeliveryTicketDto>> GetDeliveryTicketsByPrimaryIdAsync(Guid Id,Role role)
+        public async Task<List<DeliveryTicketDto>> GetDeliveryTicketsByPrimaryIdAsync(Guid Id, Role role)
         {
             string url = $"{_apiUrl}/DeliveryTickets/{Id}/{(int)role}";
 
@@ -89,8 +89,47 @@ namespace WiiTrakClient.HttpRepository
             }
             return response.Response;
         }
+        public async Task<List<DeliveryTicketDto>> GetDeliveryTicketsById(Guid Id, Role Role, int RecordCount)
+        {
+            string url = $"{_apiUrl}/DeliveryTickets/{Id}/{(int)Role}/{RecordCount} ";
 
-        public async Task<List<DeliveryTicketDto>> GetReportByDateAsync(Guid Id, Role role,DateTime Startdate,DateTime Enddate)
+            try
+            {
+                var response = await _httpService.Get<List<DeliveryTicketDto>>(url);
+                if (!response.Success)
+                {
+                    // throw new ApplicationException(await response.GetBody());
+                }
+                return response.Response;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        //public async Task<DeliveryTicketDto> GetDeliveryTicketsByIdTest(DeliveryTicketInputDto inputDto)
+        //{
+        //    //string url = $"{_apiUrl}/DeliveryTickets/{Id}/{(int)Role}/{RecordCount}/{Fromdate}/{Todate}";
+        //    string url = $"{_apiUrl}/GetDeliveryTicketsByIdTest/";
+        //    var response = await _httpService.Post<DeliveryTicketInputDto, DeliveryTicketDto>(url, inputDto);
+        //    try
+        //    {
+        //        //var response = await _httpService.Post<List<DeliveryTicketDto>>();
+
+        //        if (!response.Success)
+        //        {
+        //            // throw new ApplicationException(await response.GetBody());
+        //        }
+        //        return response.Response;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return null;
+        //    }
+
+        //}
+
+        public async Task<List<DeliveryTicketDto>> GetReportByDateAsync(Guid Id, Role role, DateTime Startdate, DateTime Enddate)
         {
             string url = $"{_apiUrl}/Report/{Id}/{(int)role}/{Startdate}/{Enddate}";
 
@@ -161,7 +200,7 @@ namespace WiiTrakClient.HttpRepository
 
         public async Task UpdateDeliveryTicketAsync(Guid id, DeliveryTicketUpdateDto deliveryTicket)
         {
-             var response = await _httpService.Put($"{ _apiUrl }/{ id }", deliveryTicket);
+            var response = await _httpService.Put($"{ _apiUrl }/{ id }", deliveryTicket);
             if (!response.Success)
             {
                 // throw new ApplicationException(await response.GetBody());

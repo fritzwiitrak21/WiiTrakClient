@@ -5,12 +5,14 @@
 
 <MudDialog>
     <DialogContent>
-        <div style="width:1000px;height:470px;overflow: auto;">
+        <div style="width:1000px;height:490px;overflow: auto;">
             <h6>Address:</h6>
             @Address<br />
-            <div id="container">
+
+            
+                <label id="distance"/>
                 <div id="map" style="height:400px;width:100%;"></div>
-            </div>
+          
         </div>
     </DialogContent>
     <DialogActions>
@@ -60,9 +62,13 @@
     {
         if (firstRender)
         {
-            JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/GoogleMaps.js");
-            await JsModule1.InvokeVoidAsync("initMap", StoreLatitude, StoreLongitude, DriverLatitude, DriverLongitude);
-            //await JsModule.InvokeVoidAsync("initMap", StoreLatitude, StoreLongitude, StoreLatitude - 0.02, StoreLongitude - 0.02);
+            await LoadMap();
         }
+    }
+    private async Task LoadMap()
+    {
+
+        JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/GoogleMaps.js");
+        await JsModule1.InvokeVoidAsync("initMap", StoreLatitude, StoreLongitude, DriverLatitude, DriverLongitude);
     }
 }

@@ -15,15 +15,12 @@ export function getGMaps(latitude, longitude, dlat, dlon) {
     };
 
     map = new google.maps.Map(document.getElementById("map"), options);
-    const point = { lat: latitude, lng: longitude };
 
-    // create marker
-    //new google.maps.Marker({ position: point, map: map, icon: "/Image/clear.png", title: "hai" });
     marker = new google.maps.Marker({
         position: latlng,
         map,
         title: "Store Location",
-        icon: "/Images/NavigationLogo.png"
+        icon: "https://wiitrakstorageaccount.blob.core.windows.net/wiitrakblobcontainer/NavigationLogo.png"
     });
 
     setInterval(function () {
@@ -56,6 +53,7 @@ export function initMap(latitude, longitude, dlat, dlon) {
     });
 
     directionsRenderer.setMap(map);
+    
     calcRoute(directionsService, directionsRenderer, latitude, longitude, dlat, dlon);
 }
 
@@ -70,23 +68,27 @@ function calcRoute(directionsService, directionsRenderer, latitude, longitude, d
         destination: end,
         travelMode: 'DRIVING'
     };
-
+    Timer = setInterval(function () {
+        
     directionsService.route(request, function (response, status) {
 
         if (status == 'OK') {
             directionsRenderer.setDirections(response);
-           
-            Timer = setInterval(function () {
-                watchid = navigator.geolocation.watchPosition(GetCoordinates);
-            console.log(watchid);
-
-                
-
-
-              changeMarkerPosition();
-            }, 1100);
+            var directionsData = response.routes[0].legs[0]; // Get data about the mapped route
+            if (directionsData) {
+                document.getElementById('distance').innerText = " Driving distance is " + directionsData.distance.text + " (" + directionsData.duration.text + ").";
+            }
+            //Timer = setInterval(function () {
+            //    watchid = navigator.geolocation.watchPosition(GetCoordinates);
+            //    changeMarkerPosition();
+            //    StopWatch();
+            //}, 1100);
         }
     });
+        watchid = navigator.geolocation.watchPosition(GetCoordinates);
+        changeMarkerPosition();
+        StopWatch();
+    }, 1100);
 }
 
 function GetCoordinates(position) {
@@ -102,11 +104,10 @@ function changeMarkerPosition() {
 }
 export function StopWatch() {
     navigator.geolocation.clearWatch(watchid);
-    console.log("Watch end " + watchid);
+    watchid = null;
 }
 export function StopTimer() {
     console.log(Timer);
-
     clearTimeout(Timer);
 }
 window.initMap = initMap;

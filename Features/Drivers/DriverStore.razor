@@ -47,7 +47,7 @@
                 </MudTh>
                 <MudTh>
                     <MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.PostalCode)">
-                        Posta lCode
+                        PostalCode
                     </MudTableSortLabel>
                 </MudTh>
                 <MudTh>Service Frequency</MudTh>
@@ -59,10 +59,10 @@
                 <MudTd DataLabel="Store Name">
                     @context.StoreName
                 </MudTd>
-                <MudTd DataLabel="Store Number">
+                <MudTd DataLabel="StoreNumber">
                     @context.StoreNumber
                 </MudTd>
-                <MudTd DataLabel="Street Address 1">
+                <MudTd DataLabel="StreetAddress1">
                     @context.StreetAddress1, @context.StreetAddress2
                 </MudTd>
                 <MudTd DataLabel="City">
@@ -70,8 +70,8 @@
                 </MudTd>
                 <MudTd DataLabel="State">
                     @context.State
-                </MudTd> 
-                <MudTd DataLabel="Postal Code">
+                </MudTd>
+                <MudTd DataLabel="PostalCode">
                     @context.PostalCode
                 </MudTd>
                 <MudTd DataLabel="Service Level">
@@ -109,7 +109,7 @@
     List<StoreDto> driverstorelist = new();
 
 
-    private IJSObjectReference JsModule,JsModule1;
+    private IJSObjectReference JsModule;
     public string CurrentCoord { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -150,10 +150,7 @@
         {
             if (string.IsNullOrEmpty(CurrentCoord))
             {
-                if (JsModule is null)
-                {
-                    JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-                }
+                JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
                 await JsModule.InvokeVoidAsync("getCoord", false);
                 CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
                 await JsModule.InvokeVoidAsync("ClearCoord");
@@ -186,11 +183,6 @@
 
             var dialog = DialogService.Show<DisplayMap>("Map to " + store.StoreName + " - " + store.StoreNumber, parameters);
             var result = await dialog.Result;
-            JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/GoogleMaps.js");
-            await JsModule1.InvokeVoidAsync("StopWatch");
-            await JsModule1.InvokeVoidAsync("StopTimer");
-
-            
             await JsModule.InvokeVoidAsync("ClearCoord");
         }
         catch (Exception ex)
