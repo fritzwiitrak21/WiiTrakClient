@@ -68,8 +68,7 @@ function calcRoute(directionsService, directionsRenderer, latitude, longitude, d
         destination: end,
         travelMode: 'DRIVING'
     };
-    Timer = setInterval(function () {
-        
+
     directionsService.route(request, function (response, status) {
 
         if (status == 'OK') {
@@ -78,17 +77,13 @@ function calcRoute(directionsService, directionsRenderer, latitude, longitude, d
             if (directionsData) {
                 document.getElementById('distance').innerText = " Driving distance is " + directionsData.distance.text + " (" + directionsData.duration.text + ").";
             }
-            //Timer = setInterval(function () {
-            //    watchid = navigator.geolocation.watchPosition(GetCoordinates);
-            //    changeMarkerPosition();
-            //    StopWatch();
-            //}, 1100);
+            Timer = setInterval(function () {
+                watchid = navigator.geolocation.watchPosition(GetCoordinates);
+                changeMarkerPosition();
+                StopWatch();
+            }, 900);
         }
     });
-        watchid = navigator.geolocation.watchPosition(GetCoordinates);
-        changeMarkerPosition();
-        StopWatch();
-    }, 1100);
 }
 
 function GetCoordinates(position) {

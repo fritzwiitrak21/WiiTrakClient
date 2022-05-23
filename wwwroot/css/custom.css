@@ -552,3 +552,7 @@ h5 {
     display:flex;
     flex-direction:column-reverse;
 }
+.RadioOpionwidth {
+    min-width: 140px !important; 
+    
+}

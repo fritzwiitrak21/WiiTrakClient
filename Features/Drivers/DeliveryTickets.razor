@@ -3,37 +3,49 @@
 @using WiiTrakClient.Features.Drivers.Components
 @using WiiTrakClient.Shared
 
-<UserAuthentication/>
+<UserAuthentication />
 <style>
-.mud-main-content {
-    padding-top: 70px;
-}
+    .mud-main-content {
+        padding-top: 70px;
+    }
+   
+    .AddButton{
+        display:flex;
+        justify-content:flex-end;
+        align-items:flex-end;
+    }
 </style>
-
-<div class="pagetitle my-8">
-<h3>Delivery Tickets</h3>
-<div style="padding-top:6px">
-                <MudForm>
-                    <MudRadioGroup @bind-SelectedOption="@SelectedOption">
-                        <MudRadio Option="@(30)" Color="Color.Primary">Last 30 Days Record</MudRadio>
-                        <MudRadio Option="@(60)" Color="Color.Primary">Last 60 Days Record</MudRadio>
-                        <MudRadio Option="@(90)" Color="Color.Primary">Last 90 Days Record</MudRadio>
-                        <MudRadio Option="@(0)" Color="Color.Primary">All Record</MudRadio>
-                    </MudRadioGroup>
-                </MudForm>
-            </div>
-             @{
-            GetDeliveryTicketDetails();
-        }
 <div>
-   <MudButton Variant="Variant.Filled" 
-        StartIcon="@Icons.Material.Filled.Add"  
-        IconColor="Color.Secondary" 
-        Size="Size.Large"
-        OnClick="AddNewDeliveryDialog">Add</MudButton> 
+    <div class="pagetitle my-8">
+        <h3>Delivery Tickets</h3>
+    </div>
+    <div class="row">
+        <div class="col-9">
+            <MudForm>
+                <MudRadioGroup @bind-SelectedOption="@SelectedOption">
+                    <MudRadio Option="@(30)" Color="Color.Primary">Last 30 Days</MudRadio>
+                    <MudRadio Option="@(60)" Color="Color.Primary">Last 60 Days</MudRadio>
+                    <MudRadio Option="@(90)" Color="Color.Primary">Last 90 Days</MudRadio>
+                    <MudRadio Option="@(0)" Class="RadioOpionwidth" Color="Color.Primary">All</MudRadio>
+                </MudRadioGroup>
+
+            </MudForm>
+        </div>
+    
+    <div class="col-3 AddButton">
+        <MudButton Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   IconColor="Color.Secondary"
+                   Size="Size.Large"
+                   OnClick="AddNewDeliveryDialog" >Add</MudButton>
+    </div>
+    </div>
+    @{
+        GetDeliveryTicketDetails();
+    }
+
 </div>
-</div>
-@if(deliveryTickets == null)
+@if (deliveryTickets == null)
 {
     <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
 
@@ -44,7 +56,7 @@ else if (_deliveryTickets.Count > 0)
 }
 else
 {
-    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7"/>
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
 }
 
 @code {
