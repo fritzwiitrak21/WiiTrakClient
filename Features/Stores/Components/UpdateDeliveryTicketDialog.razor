@@ -25,23 +25,13 @@
     <DialogContent>
         <div style="width: 400px;height:450px;overflow: auto;">
             <MudForm Model="@editDeliveryTicket" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
-             @*   <MudSelect Class="my-6" T="StoreDto" Label="Store" AnchorOrigin="Origin.BottomCenter"
-                           HelperText="Select a Store" @bind-Value="@SelectedStore" Required="true"
-                           AdornmentColor="Color.Primary">
-                    @foreach (var store in Stores)
-                    {
-                        <MudSelectItem T="StoreDto" Value="@store">@store.StoreNumber - @store.StoreName</MudSelectItem>
-                    }
-                </MudSelect>*@
 
                 @{
                     //UpdateNumberOfCarts();
                     UpdateStoreAndServiceProviderIds();
                 }
 
-                @*<MudText Class="my-4" Typo="Typo.h5">Number available carts to pickup: @editDeliveryTicket.NumberOfCarts</MudText>*@
                 <MudTextField @bind-Value="@editDeliveryTicket.NumberOfCarts" Label="No of carts" Required="true" For="@(() => @editDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
-                <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
 
                 @if (!string.IsNullOrWhiteSpace(_fileUrl))
                 {
@@ -86,21 +76,14 @@
 
     protected override void OnParametersSet()
     {
-        try
+        if (editDeliveryTicket != null)
         {
-            if (editDeliveryTicket != null)
-            {
-                _fileUrl = editDeliveryTicket.PicUrl;
-            }
-
-            if (Stores != null && Stores.Count() >= 1)
-            {
-                SelectedStore = Stores.Where(x => x.Id == editDeliveryTicket.StoreId).FirstOrDefault();
-            }
+            _fileUrl = editDeliveryTicket.PicUrl;
         }
-        catch (Exception ex)
-        {
 
+        if (Stores != null && Stores.Count() >= 1)
+        {
+            SelectedStore = Stores.Where(x => x.Id == editDeliveryTicket.StoreId).FirstOrDefault();
         }
     }
 
@@ -111,29 +94,9 @@
 
     private void UpdateStoreAndServiceProviderIds()
     {
-        try
-        {
-            editDeliveryTicket.StoreId = SelectedStore.Id;
-            var store = Stores.First(x => x.Id == SelectedStore.Id);
-            editDeliveryTicket.ServiceProviderId = store.ServiceProviderId;
-        }
-        catch (Exception ex)
-        {
-
-        }
-    }
-
-    private void PicUploadStart()
-    {
-        success = false;
-    }
-
-    private void PicUploadComplete(string url)
-    {
-        _fileUrl = url;
-        success = true;
-        editDeliveryTicket.PicUrl = _fileUrl;
-        StateHasChanged();
+        editDeliveryTicket.StoreId = SelectedStore.Id;
+        var store = Stores.First(x => x.Id == SelectedStore.Id);
+        editDeliveryTicket.ServiceProviderId = store.ServiceProviderId;
     }
 
     void Submit()

@@ -183,7 +183,10 @@
     }
     private async Task OnClick()
     {
-        JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        if (JsModule is null)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
 
         var inputtext = await JsModule.InvokeAsync<string>("getTextBoxValue");
         if (inputtext == "")
@@ -201,7 +204,10 @@
     {
         try
         {
+            if (JsModule is null)
+        {
             JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
             if (County.Contains(e))
             {
 

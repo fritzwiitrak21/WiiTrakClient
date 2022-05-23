@@ -8,7 +8,7 @@ namespace WiiTrakClient.HttpRepository
     {
         private readonly IHttpService _httpService;
         private const string ControllerName = "driverstores";
-        private readonly string _apiUrl = "";
+        private readonly string _apiUrl;
 
         public DriverStoresHttpRepository(IHttpService httpService)
         {

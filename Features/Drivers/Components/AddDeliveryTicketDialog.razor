@@ -2,7 +2,8 @@
 @using System.ComponentModel.DataAnnotations
 @using WiiTrakClient.Shared.Components
 @using WiiTrakClient.Cores
-
+@using System.Net.Http.Headers
+@inject IPicUploadHttpRepository PicUploadHttpRepository
 
 <style>
     .validation-message {
@@ -22,7 +23,6 @@
         font-size: 0;
     }
 </style>
-<UserAuthentication />
 <MudDialog>
     <DialogContent>
         <div style="width: 400px;height:450px;overflow: auto;">
@@ -40,33 +40,14 @@
                     </datalist>
                 </div>
 
-
-                @* <MudSelect Class="my-6" T="StoreDto" Label="Store" AnchorOrigin="Origin.BottomCenter"
-                    HelperText="Select a Store" @bind-Value="@SelectedStore" Required="true"
-                    AdornmentColor="Color.Primary">
-
-
-
-                    @foreach (var store in Stores)
-                    {
-                    <MudSelectItem T="StoreDto" Value="@store">@store.StoreName - @store.StoreNumber</MudSelectItem>
-                    }
-                    </MudSelect>
-                *@
-
                 @{
                     //UpdateNumberOfCarts();
                     UpdateStoreAndServiceProviderIds();
                 }
 
-                @*<MudText Class="my-4" Typo="Typo.h5">No of available carts to pickup: @NoOfCartsToPickUp</MudText>*@
                 <MudTextField @bind-Value="@NewDeliveryTicket.NumberOfCarts" Label="No of Carts" Required="true" RequiredError=" " For="@(() => @NewDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
+                <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" IBrowserContent="@SaveIBrowserFile" />
 
-                @*<ValidationMessage For="@(() => @NewDeliveryTicket.NumberOfCarts)" />*@
-                <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
-                @*                    <ValidationMessage For="@(() => @NewDeliveryTicket.PicUrl)" />
-                    @*<CaptureImage OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete"/>
-                    <ValidationMessage For="@(() => @NewDeliveryTicket.PicUrl)" />*@
                 @if (NewDeliveryTicket.NumberOfCarts >= 0)
                 {
                     success = true;
@@ -77,13 +58,12 @@
                         <img src="@_fileUrl" width="300" height="300" />
                     </div>
                 }
-                @if (success == true && picupload == true && IsStoreSelected)
+                @if (success && picupload && IsStoreSelected)
                 {
                     formvalid = true;
                 }
                 else
                 {
-                    @*<ValidationMessage For="@(() => @NewDeliveryTicket.NumberOfCarts)" />*@
                     formvalid = false;
                 }
 
@@ -99,9 +79,7 @@
     </DialogActions>
 </MudDialog>
 
-@code {
-
-    [Parameter]
+@code {    [Parameter]
     public DeliveryTicketCreationDto? NewDeliveryTicket { get; set; }
 
     public int NoOfCarts;
@@ -118,13 +96,15 @@
     public double Latitude { get; set; }
     [Parameter]
     public double Longitude { get; set; }
+    [Inject]
+    IJSRuntime JsRuntime { get; set; }
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
 
+    public IBrowserFile? UploadedBrowserFile { get; set; }
 
-    [Inject] IJSRuntime JsRuntime { get; set; }
-
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     bool success;
-    bool picupload;
+    bool picupload, Ispicuploadtoblob;
     bool formvalid;
     bool IsStoreSelected = false;
     string[] errors = { };
@@ -132,11 +112,11 @@
 
     public List<StoreDto>? TempStores { get; set; } = new();
     StoreDto SelectedStore = new();
-    StoreDto selectedStore = new();
 
     private string _fileUrl = "";
     private int NoOfCartsToPickUp = 0;
     private string StoreName = "";
+    private string StoreTimeZoneDiff = "";
     private IJSObjectReference JsModule;
 
 
@@ -154,7 +134,7 @@
             Longitude = Core.ToDouble(Lon);
             await JsModule.InvokeVoidAsync("ClearCoord");
         }
-        catch (Exception ex)
+        catch
         {
             await JsModule.InvokeVoidAsync("ClearCoord");
         }
@@ -219,11 +199,7 @@
     }
     #endregion
 
-    protected override void OnParametersSet()
-    {
 
-
-    }
     private void FilterStore()
     {
         Stores = Stores.Where(x => x.Distance < 5).ToList();
@@ -253,13 +229,19 @@
     {
         _fileUrl = url;
         picupload = true;
-        NewDeliveryTicket.PicUrl = _fileUrl;
         StateHasChanged();
+    }
+    private void SaveIBrowserFile(IBrowserFile File)
+    {
+        UploadedBrowserFile = File;
     }
 
     private async Task OnClick()
     {
-        JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        if (JsModule is null)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
 
         var inputtext = await JsModule.InvokeAsync<string>("getTextBoxValue");
         if (inputtext == "")
@@ -284,22 +266,67 @@
                 IsStoreSelected = false;
                 return;
             }
-            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+
+            if (JsModule is null)
+            {
+                JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            }
 
             var Id = await JsModule.InvokeAsync<string>("getStoreId", e.ToString());
             NewDeliveryTicket.StoreId = new Guid(Id);
             SelectedStore = Stores.AsEnumerable().FirstOrDefault(x => x.Id == NewDeliveryTicket.StoreId);
             StoreName = SelectedStore.StoreName;
+            StoreTimeZoneDiff  =  SelectedStore.TimezoneDiff;
             IsStoreSelected = true;
         }
-        catch (Exception ex)
+        catch
         {
             IsStoreSelected = false;
         }
     }
 
-    void Submit()
+    private async Task AddCoordAndTime()
     {
+        if (JsModule is null)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
+
+        await JsModule.InvokeVoidAsync("getCoord", true);
+        var coords = await JsModule.InvokeAsync<string>("getCoordinates");
+        await JsModule.InvokeVoidAsync("ClearCoord");
+        var lat = coords.Split("##")[0];
+        var Lon = coords.Split("##")[1];
+        Latitude = Core.ToDouble(lat);
+        Longitude = Core.ToDouble(Lon);
+        var StoreCurrentTime= DateTime.UtcNow.AddSeconds(Convert.ToDouble(StoreTimeZoneDiff));
+
+        using (var ms = UploadedBrowserFile.OpenReadStream(UploadedBrowserFile.Size))
+        {
+            var content = new MultipartFormDataContent();
+            content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+            content.Add(new StreamContent(ms, Convert.ToInt32(UploadedBrowserFile.Size)), "image", UploadedBrowserFile.Name);
+            content.Add(new StringContent(Latitude.ToString()), "Latitude");
+            content.Add(new StringContent(Longitude.ToString()), "Longitude");
+            content.Add(new StringContent(StoreCurrentTime.ToString("dd-MM-yyyy HH:mm:ss")), "Date");
+
+            NewDeliveryTicket.PicUrl = await PicUploadHttpRepository.UploadImage(content);
+        }
+
+        if (!string.IsNullOrEmpty(NewDeliveryTicket.PicUrl) && !string.IsNullOrWhiteSpace(NewDeliveryTicket.PicUrl) && NewDeliveryTicket.PicUrl.Length > 5)
+        {
+            Ispicuploadtoblob = true;
+        }
+
+    }
+
+    async Task Submit()
+    {
+        await AddCoordAndTime();
+        while (!Ispicuploadtoblob)
+        {
+            System.Threading.Thread.Sleep(600);
+        }
         MudDialog.Close(DialogResult.Ok(true));
     }
 

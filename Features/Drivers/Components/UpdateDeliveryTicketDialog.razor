@@ -1,6 +1,7 @@
 ﻿@namespace WiiTrakClient.Features.Drivers.Components
 @using System.ComponentModel.DataAnnotations
 @using WiiTrakClient.Shared.Components
+@using WiiTrakClient.Cores
 
 <style>
     .validation-message {
@@ -20,7 +21,6 @@
         font-size: 0;
     }
 </style>
-<UserAuthentication />
 <MudDialog>
     <DialogContent>
         <div style="width: 400px;height:450px;overflow: auto;">
@@ -39,9 +39,7 @@
                     UpdateStoreAndServiceProviderIds();
                 }
 
-                @*<MudText Class="my-4" Typo="Typo.h5">Number available carts to pickup: @editDeliveryTicket.NumberOfCarts</MudText>*@
                 <MudTextField @bind-Value="@editDeliveryTicket.NumberOfCarts" Label="No of carts" Required="true" For="@(() => @editDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
-                <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
 
                 @if (!string.IsNullOrWhiteSpace(_fileUrl))
                 {
@@ -76,30 +74,41 @@
     public List<StoreDto>? Stores { get; set; } = new();
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Inject] IJSRuntime JsRuntime { get; set; }
     bool success;
     string[] errors = { };
     MudForm form;
 
     StoreDto SelectedStore = new();
     private string _fileUrl = "";
+    public IBrowserFile? UploadedBrowserFile { get; set; }
+    bool Ispicuploadtoblob = true;
+
+    private IJSObjectReference JsModule;
+
+    public double Latitude { get; set; }
+
+    public double Longitude { get; set; }
+    private string StoreTimeZoneDiff = "";
 
 
     protected override void OnParametersSet()
     {
-            if (editDeliveryTicket != null)
-            {
-                _fileUrl = editDeliveryTicket.PicUrl;
-            }
+        if (editDeliveryTicket != null)
+        {
+            _fileUrl = editDeliveryTicket.PicUrl;
+        }
 
-            if (Stores != null && Stores.Count() >= 1)
-            {
-                SelectedStore = Stores.Where(x => x.Id == editDeliveryTicket.StoreId).FirstOrDefault();
-            }
+        if (Stores != null && Stores.Count() >= 1)
+        {
+            SelectedStore = Stores.Where(x => x.Id == editDeliveryTicket.StoreId).FirstOrDefault();
+        }
     }
 
     private void UpdateNumberOfCarts()
     {
-            editDeliveryTicket.NumberOfCarts = Carts.Count(x => x.StoreId == SelectedStore.Id && x.Status == CartStatus.PickedUp);
+        editDeliveryTicket.NumberOfCarts = Carts.Count(x => x.StoreId == SelectedStore.Id && x.Status == CartStatus.PickedUp);
     }
 
     private void UpdateStoreAndServiceProviderIds()
@@ -116,18 +125,6 @@
         //}
     }
 
-    private void PicUploadStart()
-    {
-        success = false;
-    }
-
-    private void PicUploadComplete(string url)
-    {
-        _fileUrl = url;
-        success = true;
-        editDeliveryTicket.PicUrl = _fileUrl;
-        StateHasChanged();
-    }
 
     void Submit()
     {

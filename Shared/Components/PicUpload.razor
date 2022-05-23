@@ -2,7 +2,6 @@
 
 @namespace WiiTrakClient.Shared.Components
 @using System.Net.Http.Headers
-@using WiiTrakClient.DTOs
 @using System.Drawing
 @using System.Drawing.Imaging
 
@@ -20,52 +19,33 @@
 
     [Parameter]
     public EventCallback OnPicUploadStart { get; set; }
+    [Parameter]
+    public EventCallback<IBrowserFile> IBrowserContent { get; set; }
 
     [Parameter]
     public string styleCss { get; set; } = "";
 
-    [Inject]
-    public IPicUploadHttpRepository PicUploadHttpRepository { get; set; }
-
-    [Inject] IJSRuntime JsRuntime { get; set; }
-
-    IBrowserFile? _imageFile = null;
-    private IJSObjectReference JsModule;
+    IBrowserFile? ImageFile = null;
 
     private async Task UploadFile(InputFileChangeEventArgs e)
     {
         await OnPicUploadStart.InvokeAsync();
-
-        JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-
-        await JsModule.InvokeVoidAsync("getCoord", true);
-        var coords = await JsModule.InvokeAsync<string>("getCoordinates");
-        await JsModule.InvokeVoidAsync("ClearCoord");
-        var Latitude = coords.Split("##")[0];
-        var Longitude = coords.Split("##")[1];
-
-        _imageFile = e.File;
-
-        if (_imageFile != null)
+        ImageFile = e.File;
+        if (ImageFile != null)
         {
-            var resizedFile = await _imageFile.RequestImageFileAsync("image/png", 300, 300);
-            using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
-            {
-                var content = new MultipartFormDataContent();
-                content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
-                content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", _imageFile.Name);
-                content.Add(new StringContent(Latitude), "Latitude");
-                content.Add(new StringContent(Longitude), "Longitude");
-                content.Add(new StringContent(DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")), "Date");
-
-                string imageUrl = await PicUploadHttpRepository.UploadImage(content);
-                await OnPicUploadComplete.InvokeAsync(imageUrl);
-            }
+            ImageFile = e.File;
+            var resizedFile = await ImageFile.RequestImageFileAsync("image/png", 300, 300);
+            var buffers = new byte[resizedFile.Size];
+            await resizedFile.OpenReadStream().ReadAsync(buffers);
+            string imageType = resizedFile.ContentType;
+            var ImgUrl = $"data:{imageType};base64,{Convert.ToBase64String(buffers)}";
+            await OnPicUploadComplete.InvokeAsync(ImgUrl);
+            await IBrowserContent.InvokeAsync(resizedFile);
         }
         else
         {
             await OnPicUploadComplete.InvokeAsync("");
-
+            await IBrowserContent.InvokeAsync(null);
         }
     }
 }

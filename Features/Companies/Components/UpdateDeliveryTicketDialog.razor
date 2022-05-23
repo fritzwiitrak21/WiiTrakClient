@@ -4,33 +4,34 @@
 
 <style>
     .validation-message {
-    font-size:0;
-    display:none;
-    font-display:block;
-    
-    color: red;
-}
-.mud-input-helper-text.mud-input-error {
-    font-size: 0;
-}
-.mud-input-helper-text {
-    color: var(--mud-palette-text-secondary);
-    margin: 0;
-    font-size: 0;
-    text-align: start;
-    font-weight: 400;
-    line-height: 1.66;
-    letter-spacing: .03333em;
-}
-        </style>
+        font-size: 0;
+        display: none;
+        font-display: block;
+        color: red;
+    }
+
+    .mud-input-helper-text.mud-input-error {
+        font-size: 0;
+    }
+
+    .mud-input-helper-text {
+        color: var(--mud-palette-text-secondary);
+        margin: 0;
+        font-size: 0;
+        text-align: start;
+        font-weight: 400;
+        line-height: 1.66;
+        letter-spacing: .03333em;
+    }
+</style>
 
 <MudDialog>
     <DialogContent>
         <div style="width: 400px;height:450px;overflow: auto;">
             <MudForm Model="@editDeliveryTicket" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudSelect Class="my-6" T="StoreDto" Label="Store" AnchorOrigin="Origin.BottomCenter"
-                    HelperText="Select a Store" @bind-Value="@SelectedStore" Required="true"
-                    AdornmentColor="Color.Primary">
+                           HelperText="Select a Store" @bind-Value="@SelectedStore" Required="true"
+                           AdornmentColor="Color.Primary">
                     @foreach (var store in Stores)
                     {
                         <MudSelectItem T="StoreDto" Value="@store">@store.StoreNumber - @store.StoreName</MudSelectItem>
@@ -38,28 +39,28 @@
                 </MudSelect>
 
                 @{
-                    //UpdateNumberOfCarts();                  
+                    //UpdateNumberOfCarts();
                     UpdateStoreAndServiceProviderIds();
                 }
 
-                @*<MudText Class="my-4" Typo="Typo.h5">Number available carts to pickup: @editDeliveryTicket.NumberOfCarts</MudText>*@
-                 <MudTextField @bind-Value="@editDeliveryTicket.NumberOfCarts" Label="No of carts" Required="true" For="@(() => @editDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
-                <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" />
 
-                @if (!string.IsNullOrWhiteSpace(_fileUrl)) {
+                <MudTextField @bind-Value="@editDeliveryTicket.NumberOfCarts" Label="No of carts" Required="true" For="@(() => @editDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
+
+                @if (!string.IsNullOrWhiteSpace(_fileUrl))
+                {
                     <div class="d-flex justify-center mt-6 popupitemimage">
                         <img src="@_fileUrl" width="300" height="300" />
                     </div>
                 }
-                
+
             </MudForm>
         </div>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" 
-                OnClick="Submit" 
-                Disabled="@(!success)">Save</MudButton>
+        <MudButton Color="Color.Primary"
+                   OnClick="Submit"
+                   Disabled="@(!success)">Save</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -85,21 +86,21 @@
     StoreDto SelectedStore = new();
     private string _fileUrl = "";
 
-    
+
     protected override void OnParametersSet()
-    { 
-        if(editDeliveryTicket != null)
+    {
+        if (editDeliveryTicket != null)
         {
             _fileUrl = editDeliveryTicket.PicUrl;
         }
-        
-        if (Stores != null && Stores.Count() >= 1) 
+
+        if (Stores != null && Stores.Count() >= 1)
         {
             SelectedStore = Stores.Where(x => x.Id == editDeliveryTicket.StoreId).FirstOrDefault();
         }
     }
 
-    private void UpdateNumberOfCarts() 
+    private void UpdateNumberOfCarts()
     {
         editDeliveryTicket.NumberOfCarts = Carts.Count(x => x.StoreId == SelectedStore.Id && x.Status == CartStatus.PickedUp);
     }
@@ -109,19 +110,6 @@
         editDeliveryTicket.StoreId = SelectedStore.Id;
         var store = Stores.First(x => x.Id == SelectedStore.Id);
         editDeliveryTicket.ServiceProviderId = store.ServiceProviderId;
-    }
-
-    private void PicUploadStart() 
-    {
-        success=false;
-    }
-   
-    private void PicUploadComplete(string url)
-    {
-        _fileUrl = url;
-        success=true;
-        editDeliveryTicket.PicUrl = _fileUrl;
-        StateHasChanged();
     }
 
     void Submit()

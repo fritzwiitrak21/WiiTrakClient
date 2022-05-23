@@ -27,7 +27,8 @@ namespace WiiTrakClient.HttpRepository.Contracts
         Task<List<DeliveryTicketDto>> GetDeliveryTicketsByCorporateIdAsync(Guid CorporateId);
 
         Task<DeliveryTicketSummaryDto> GetDeliveryTicketSummaryAsync(Guid id);
-
+        Task<List<DeliveryTicketDto>> GetDeliveryTicketsById(Guid Id,Role Role,int RecordCount);
+        //Task<DeliveryTicketDto> GetDeliveryTicketsByIdTest(DeliveryTicketInputDto inputDto);
         Task<DeliveryTicketDto> CreateDeliveryTicketAsync(DeliveryTicketCreationDto deliveryTicket);
 
         Task UpdateDeliveryTicketAsync(Guid id, DeliveryTicketUpdateDto deliveryTicket);

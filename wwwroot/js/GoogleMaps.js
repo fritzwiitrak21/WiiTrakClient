@@ -81,7 +81,7 @@ function calcRoute(directionsService, directionsRenderer, latitude, longitude, d
                 watchid = navigator.geolocation.watchPosition(GetCoordinates);
                 changeMarkerPosition();
                 StopWatch();
-            }, 1100);
+            }, 900);
         }
     });
 }

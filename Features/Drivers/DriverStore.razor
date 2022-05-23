@@ -2,6 +2,7 @@
 
 @using Features.Drivers.Components
 @using WiiTrakClient.Cores
+
 @inject IJSRuntime JsRuntime
 @inject IStoreHttpRepository StoreRepository
 @inject IDialogService DialogService
@@ -46,7 +47,7 @@
                 </MudTh>
                 <MudTh>
                     <MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.PostalCode)">
-                        Postal Code
+                        PostalCode
                     </MudTableSortLabel>
                 </MudTh>
                 <MudTh>Service Frequency</MudTh>
@@ -58,10 +59,10 @@
                 <MudTd DataLabel="Store Name">
                     @context.StoreName
                 </MudTd>
-                <MudTd DataLabel="Store Number">
+                <MudTd DataLabel="StoreNumber">
                     @context.StoreNumber
                 </MudTd>
-                <MudTd DataLabel="Street Address 1">
+                <MudTd DataLabel="StreetAddress1">
                     @context.StreetAddress1, @context.StreetAddress2
                 </MudTd>
                 <MudTd DataLabel="City">
@@ -70,7 +71,7 @@
                 <MudTd DataLabel="State">
                     @context.State
                 </MudTd>
-                <MudTd DataLabel="Postal Code">
+                <MudTd DataLabel="PostalCode">
                     @context.PostalCode
                 </MudTd>
                 <MudTd DataLabel="Service Level">
@@ -108,8 +109,8 @@
     List<StoreDto> driverstorelist = new();
 
 
-    private IJSObjectReference JsModule, JsModule1;
-    public string CurrentCoord { get; set; } = string.Empty;
+    private IJSObjectReference JsModule;
+    public string CurrentCoord { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -145,48 +146,48 @@
 
     private async Task DisplayMaps(StoreDto store)
     {
-        if (string.IsNullOrEmpty(CurrentCoord))
+        try
         {
-            if (JsModule is null)
+            if (string.IsNullOrEmpty(CurrentCoord))
             {
                 JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+                await JsModule.InvokeVoidAsync("getCoord", false);
+                CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
+                await JsModule.InvokeVoidAsync("ClearCoord");
             }
-            await JsModule.InvokeVoidAsync("getCoord", false);
-            CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
+
+            double Driverlatitude, Driverlongitude;
+            if (!string.IsNullOrEmpty(CurrentCoord))
+            {
+                Driverlatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
+                Driverlongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
+            }
+            else
+            {
+                await JsModule.InvokeVoidAsync("getCoord", true);
+                CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
+                await JsModule.InvokeVoidAsync("ClearCoord");
+                Driverlatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
+                Driverlongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
+            }
+
+            var address = string.Concat(store.StreetAddress1, store.StreetAddress2.Length > 0 ? store.StreetAddress2 + "," : "", store.City, ",", store.State, ",", store.PostalCode);
+            var parameters = new DialogParameters();
+            parameters.Add("Address", address);
+            parameters.Add("StoreLatitude", store.Latitude);
+            parameters.Add("StoreLongitude", store.Longitude);
+            parameters.Add("DriverLatitude", Driverlatitude);
+            parameters.Add("DriverLongitude", Driverlongitude);
+
+            DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+
+            var dialog = DialogService.Show<DisplayMap>("Map to " + store.StoreName + " - " + store.StoreNumber, parameters);
+            var result = await dialog.Result;
             await JsModule.InvokeVoidAsync("ClearCoord");
         }
-
-        double Driverlatitude, Driverlongitude;
-        if (!string.IsNullOrEmpty(CurrentCoord))
+        catch (Exception ex)
         {
-            Driverlatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
-            Driverlongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
+            // excepion
         }
-        else
-        {
-            await JsModule.InvokeVoidAsync("getCoord", true);
-            CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
-            await JsModule.InvokeVoidAsync("ClearCoord");
-            Driverlatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
-            Driverlongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
-        }
-
-        var address = string.Concat(store.StreetAddress1, store.StreetAddress2.Length > 0 ? store.StreetAddress2 + "," : "", store.City, ",", store.State, ",", store.PostalCode);
-        var parameters = new DialogParameters();
-        parameters.Add("Address", address);
-        parameters.Add("StoreLatitude", store.Latitude);
-        parameters.Add("StoreLongitude", store.Longitude);
-        parameters.Add("DriverLatitude", Driverlatitude);
-        parameters.Add("DriverLongitude", Driverlongitude);
-
-        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
-
-        var dialog = DialogService.Show<DisplayMap>("Map to " + store.StoreName + " - " + store.StoreNumber, parameters);
-        var result = await dialog.Result;
-        JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/GoogleMaps.js");
-        await JsModule1.InvokeVoidAsync("StopWatch");
-        await JsModule1.InvokeVoidAsync("StopTimer");
-        await JsModule.InvokeVoidAsync("ClearCoord");
-
     }
 }

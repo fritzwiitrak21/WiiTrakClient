@@ -60,5 +60,7 @@ namespace WiiTrakClient.DTOs
 
         public int Distance { get; set; }
         public bool DriverStoresIsActive { get; set; }
+        public string? TimezoneDiff { get; set; } = string.Empty;
+        public string? TimezoneName { get; set; } = string.Empty;
     }
 }

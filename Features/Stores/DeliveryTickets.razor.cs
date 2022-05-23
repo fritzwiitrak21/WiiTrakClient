@@ -31,6 +31,8 @@ namespace WiiTrakClient.Features.Stores
         DeliveryTicketCreationDto _newDeliveryTicket = new();
         private IJSObjectReference JsModule;
 
+        public int SelectedOption = 30;
+        public int TempSelectedOption = 0;
         protected override async Task OnInitializedAsync()
         {
             //_drivers = await DriverRepository.GetAllDriversAsync();
@@ -54,7 +56,7 @@ namespace WiiTrakClient.Features.Stores
 
         private async Task GetDeliveryTicketsByStoreId()
         {
-             deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(CurrentUser.UserId);
+             deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId,(Role)CurrentUser.UserRoleId, SelectedOption);
             if (deliveryTickets is not null)
             {
                 _deliveryTickets = deliveryTickets;
@@ -62,6 +64,21 @@ namespace WiiTrakClient.Features.Stores
             else
             {
                 _deliveryTickets = new();
+            }
+        }
+        public async Task GetDeliveryTicketDetails()
+        {
+            if (TempSelectedOption != SelectedOption)
+            {
+                var value = SelectedOption;
+                TempSelectedOption = SelectedOption;
+                deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, value);
+                if (deliveryTickets is not null)
+                {
+                    _deliveryTickets = deliveryTickets;
+                }
+                StateHasChanged();
+
             }
         }
     }

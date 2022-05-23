@@ -13,7 +13,7 @@ namespace WiiTrakClient.HttpRepository
     {
         private readonly IHttpService _httpService;
         private const string ControllerName = "upload";
-        private readonly string _apiUrl = "";
+        private readonly string _apiUrl;
 
         public PicUploadHttpRepository(IHttpService httpService)
         {
@@ -39,22 +39,6 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/signature";
 
             var response = await _httpService.PostForm(url, content);
-            string jsonString = await response.GetBody();
-            if (!response.Success)
-            {
-                throw new ApplicationException(jsonString);
-            }
-
-            PicUploadResponse picUploadResponse = JsonSerializer.Deserialize<PicUploadResponse>(jsonString);
-            return picUploadResponse is not null ? picUploadResponse.FileURL : string.Empty;
-        }
-
-
-        public async Task<string> UploadPicture(MultipartFormDataContent content)
-        {
-
-
-            var response = await _httpService.PostForm(_apiUrl, content);
             string jsonString = await response.GetBody();
             if (!response.Success)
             {

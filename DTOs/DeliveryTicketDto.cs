@@ -46,11 +46,12 @@ namespace WiiTrakClient.DTOs
         public string City { get; set; }
         public string State { get; set; }
         public string PostalCode { get; set; }
-        //public bool IsActive { get; set; }
-        //public Guid UpdatedBy { get; set; }
         public bool IsActive { get; set; }
         public Guid? UpdatedBy { get; set; }
         public bool DriverStoresIsActive { get; set; }
         public bool StoresIsActive { get; set; }
+        public string TimezoneDiff { get; set; }
+        public string TimezoneName { get; set; }
+        public DateTime? TimezoneDateTime { get; set; }
     }
 }

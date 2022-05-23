@@ -18,6 +18,8 @@ namespace WiiTrakClient.Features.Drivers.Components
         [Inject] ICartHttpRepository CartRepository { get; set; }
         [Parameter]
         public List<DeliveryTicketDto>? DeliveryTickets { get; set; }
+        [Parameter]
+        public int RecordCount { get; set; }
         [Inject]
         IJSRuntime _js { get; set; }
         IJSObjectReference? module;
@@ -290,7 +292,7 @@ namespace WiiTrakClient.Features.Drivers.Components
         #region Refreshdeliveryticket
         async Task Refreshdeliveryticket()
         {
-            var deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByDriverIdAsync(CurrentUser.UserId);
+            var deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId,(Role)CurrentUser.UserRoleId,RecordCount);
             if (deliveryTickets is not null)
             {
                 foreach (var item in deliveryTickets)
