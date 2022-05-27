@@ -109,8 +109,8 @@
     List<StoreDto> driverstorelist = new();
 
 
-    private IJSObjectReference JsModule;
-    public string CurrentCoord { get; set; }
+    private IJSObjectReference JsModule, JsModuleStore, JsModuleCart;
+    public string CurrentCoord { get; set; } = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -129,8 +129,7 @@
         {
             JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
             var Id = await JsModule.InvokeAsync<string>("getUserId");
-            CurrentUser.UserId = new Guid(Id)
-    ;
+            CurrentUser.UserId = new Guid(Id);
             CurrentUser.UserName = await JsModule.InvokeAsync<string>("getUserName");
 
         }
@@ -138,9 +137,10 @@
 
         if (driverstorelist is not null)
         {
-            driverstore = driverstorelist.Where(x => x.IsActive == true && x.DriverStoresIsActive == true).ToList();
+            driverstore = driverstorelist.Where(x => x.IsActive && x.DriverStoresIsActive).ToList();
         }
         StateHasChanged();
+       
 
     }
 
@@ -181,13 +181,32 @@
 
             DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
-            var dialog = DialogService.Show<DisplayMap>("Map to " + store.StoreName + " - " + store.StoreNumber, parameters);
+            var dialog = DialogService.Show<DisplayStoreMap>("Map to " + store.StoreName + " - " + store.StoreNumber, parameters);
             var result = await dialog.Result;
             await JsModule.InvokeVoidAsync("ClearCoord");
+
+            await StopWatchAndTimer();
+
         }
         catch (Exception ex)
         {
             // excepion
         }
+    }
+
+    private async Task StopWatchAndTimer()
+    {
+        if (JsModuleStore is null)
+        {
+            JsModuleStore = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/StoreGoogleMaps.js");
+        }
+        await JsModuleStore.InvokeVoidAsync("StopWatch");
+        await JsModuleStore.InvokeVoidAsync("StopTimer");
+        if (JsModuleCart is null)
+        {
+            JsModuleCart = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/CartGoogleMaps.js");
+        }
+        await JsModuleCart.InvokeVoidAsync("StopWatch");
+        await JsModuleCart.InvokeVoidAsync("StopTimer");
     }
 }

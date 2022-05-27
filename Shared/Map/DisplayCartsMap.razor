@@ -1,0 +1,110 @@
+﻿@page "/driver-carts-location"
+
+@inject ICartHttpRepository CartHttpRepository
+@inject IStoreHttpRepository StoreRepository
+@using WiiTrakClient.Cores
+
+<UserAuthentication />
+<h3>Carts Location</h3>
+<div style="width:100%;height:100%;overflow: auto;">
+    <label id="distance" />
+    <div id="map" style="height:80vh;width:100%;"></div>
+
+</div>
+@code { [Inject] IJSRuntime JsRuntime { get; set; }
+    private IJSObjectReference JsModuleCart, JsModuleStore, JsModule1;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (CurrentUser.UserId == Guid.Empty)
+            {
+                JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+                var Id = await JsModule1.InvokeAsync<string>("getUserId");
+                CurrentUser.UserId = new Guid(Id);
+            }
+            if (JsModule1 is null)
+            {
+                JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            }
+            await JsModule1.InvokeVoidAsync("getCoord", true);
+
+
+            var CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
+            var storelist = await StoreRepository.GetStoresByDriverId(CurrentUser.UserId);
+            storelist = storelist.Where(x => x.IsActive && x.DriverStoresIsActive).ToList();
+            List<MapDetails> CartDetailsList = new();
+            if (CartsList is not null)
+            {
+
+                MapDetails cartobj = new MapDetails();
+                foreach (var item in CartsList)
+                {
+                    var cartinfo = "Store # " + item.Store.StoreName + " - " + item.Store.StoreNumber + Environment.NewLine + "Cart # " + item.CartNumber;
+                    cartobj = new MapDetails()
+                        {
+                            Title = cartinfo,
+                            Latitude = item.TrackingDevice.Latitude,
+                            Longitude = item.TrackingDevice.Longitude
+                        };
+                    CartDetailsList.Add(cartobj);
+                }
+            }
+            List<MapDetails> StoretDetailsList = new();
+            if (StoretDetailsList is not null)
+            {
+
+                MapDetails storeobj = new MapDetails();
+                foreach (var item in storelist)
+                {
+                    var storeinfo = "Store # " + item.StoreName + " - " + item.StoreNumber;
+                    storeobj = new MapDetails()
+                        {
+                            Title = storeinfo,
+                            Latitude = item.Latitude,
+                            Longitude = item.Longitude
+
+                        };
+                    StoretDetailsList.Add(storeobj);
+                }
+            }
+
+            double Driverlatitude, Driverlongitude;
+            var CurrentCoord = await JsModule1.InvokeAsync<string>("getCoordinates");
+            await JsModule1.InvokeVoidAsync("ClearCoord");
+            if (!string.IsNullOrEmpty(CurrentCoord))
+            {
+                Driverlatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
+                Driverlongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
+            }
+            else
+            {
+                await JsModule1.InvokeVoidAsync("getCoord", true);
+                CurrentCoord = await JsModule1.InvokeAsync<string>("getCoordinates");
+                await JsModule1.InvokeVoidAsync("ClearCoord");
+                Driverlatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
+                Driverlongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
+            }
+            MapDetails driverobj = new MapDetails();
+            driverobj.Title = CurrentUser.UserName;
+            driverobj.Latitude = Driverlatitude;
+            driverobj.Longitude = Driverlongitude;
+            if (JsModuleCart is null)
+            {
+                JsModuleCart = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/CartGoogleMaps.js");
+            }
+            await JsModuleCart.InvokeVoidAsync("initMap", CartDetailsList, StoretDetailsList, driverobj);
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+
+    public class MapDetails
+    {
+        public string Title { get; set; } = string.Empty;
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+    }
+}

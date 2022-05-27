@@ -1,0 +1,128 @@
+﻿@page "/service-board"
+@using WiiTrakClient.Cores
+@inject IDeliveryTicketHttpRepository DeliveryRepository
+<UserAuthentication />
+<div>
+    <h3> Service Board</h3>
+
+</div>
+<div id="chart" style="background-color:beige;" class="container">
+</div>
+<div class="container">
+    <div>
+        <h4>Key Statistics</h4>
+    </div>
+    <table class="table table-bordered" border="1">
+        <tr>
+            <th></th>
+            @for (int i = 0; i < details.Category.Length; i++)
+            {
+                <th>
+                    @details.Category[i]
+                </th>
+            }
+            <th>Total</th>
+        </tr>
+        <tr>
+            <td>Stores</td>
+            @for (int i = 0; i < details.Stores.Length; i++)
+            {
+                <td>
+                    @details.Stores[i]
+                </td>
+                TotalStores = TotalStores + details.Stores[i];
+            }
+            <td>@(TotalStores/2)</td>
+        </tr>
+        <tr>
+            <td>Visits</td>
+            @for (int i = 0; i < details.Visits.Length; i++)
+            {
+                <td>
+                    @details.Visits[i]
+                </td>
+                TotalVisit = TotalVisit + details.Visits[i];
+            }
+            <td>@(TotalVisit/2)</td>
+        </tr>
+        <tr>
+            <td>Deliveries</td>
+            @for (int i = 0; i < details.Deliveries.Length; i++)
+            {
+                <td>
+                    @details.Deliveries[i]
+                </td>
+                TotalDelivery = TotalDelivery + details.Deliveries[i];
+            }
+            <td>@(TotalDelivery/2)</td>
+        </tr>
+        <tr>
+            <td>Carts</td>
+            @for (int i = 0; i < details.Carts.Length; i++)
+            {
+                <td>
+                    @details.Carts[i]
+                </td>
+                TotalCarts = TotalCarts + details.Carts[i];
+            }
+            <td>
+                @(
+                TotalCarts / 2
+                )
+            </td>
+        </tr>
+    </table>
+</div>
+@code {
+    [Inject] IJSRuntime JsRuntime { get; set; }
+    private IJSObjectReference JsModule;
+    public ChartDetails details = new();
+    public List<ServiceBoardDto> ServiceBoards = new();
+    public int TotalStores = 0;
+    public int TotalVisit = 0;
+    public int TotalDelivery = 0;
+    public int TotalCarts = 0;
+    protected override async Task OnInitializedAsync()
+    {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
+        TotalStores = 0;
+        TotalVisit = 0;
+        TotalDelivery = 0;
+        TotalCarts = 0;
+        ServiceBoards = await DeliveryRepository.GetServiceBoardDetailsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+
+        if (ServiceBoards != null)
+        {
+            details.Stores = new int[] { ServiceBoards[0].January, ServiceBoards[0].February, ServiceBoards[0].March, ServiceBoards[0].April, ServiceBoards[0].May, ServiceBoards[0].June, ServiceBoards[0].July, ServiceBoards[0].August, ServiceBoards[0].September, ServiceBoards[0].October, ServiceBoards[0].November, ServiceBoards[0].December };
+            details.Visits = new int[] { ServiceBoards[1].January, ServiceBoards[1].February, ServiceBoards[1].March, ServiceBoards[1].April, ServiceBoards[1].May, ServiceBoards[1].June, ServiceBoards[1].July, ServiceBoards[1].August, ServiceBoards[1].September, ServiceBoards[1].October, ServiceBoards[1].November, ServiceBoards[1].December };
+            details.Carts = new int[] { ServiceBoards[2].January, ServiceBoards[2].February, ServiceBoards[2].March, ServiceBoards[2].April, ServiceBoards[2].May, ServiceBoards[2].June, ServiceBoards[2].July, ServiceBoards[2].August, ServiceBoards[2].September, ServiceBoards[2].October, ServiceBoards[2].November, ServiceBoards[2].December };
+            details.Deliveries = new int[] { ServiceBoards[3].January, ServiceBoards[3].February, ServiceBoards[3].March, ServiceBoards[3].April, ServiceBoards[3].May, ServiceBoards[3].June, ServiceBoards[3].July, ServiceBoards[3].August, ServiceBoards[3].September, ServiceBoards[3].October, ServiceBoards[3].November, ServiceBoards[3].December };
+        }
+        details.Category = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/ServiceBoardChart.js");
+
+            await JsModule.InvokeVoidAsync("LoadChart", details);
+            this.StateHasChanged();
+        }
+    }
+    public class ChartDetails
+    {
+        public int[] Stores { get; set; }
+        public int[] Visits { get; set; }
+        public int[] Deliveries { get; set; }
+        public int[] Carts { get; set; }
+        public string[] Category { get; set; }
+
+    }
+
+}
