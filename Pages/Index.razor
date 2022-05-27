@@ -1,6 +1,7 @@
 ﻿@page "/index"
 @using WiiTrakClient.Services
 @using WiiTrakClient.Cores
+@using WiiTrakClient.Shared.Chart
 @using WiiTrakClient.Shared.Components
 @inject INotificationHttpRepository NotifyHttpRepository
 
@@ -37,4 +38,7 @@
 {
     <NotificationPanel />
 }
-
+@if (CurrentUser.UserRoleId <= 4)
+{
+    <ServiceBoardChart />
+}

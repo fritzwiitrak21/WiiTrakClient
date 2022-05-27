@@ -1,20 +1,23 @@
 ﻿@page "/logout"
 @layout CustomLayout
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JsRuntime
 @inject NavigationManager NavManager
 @using WiiTrakClient.Cores;
 <style>
     .mud-dialog-container {
         z-index: 99999 !important;
     }
+
     .mud-main-content {
         padding-left: 0px;
     }
+
     .loginbg {
         background: url("https://images.unsplash.com/photo-1525328437458-0c4d4db7cab4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80") 50% fixed;
         background-size: cover;
         height: 100%;
     }
+
     .wrapper {
         display: flex;
         align-items: center;
@@ -33,12 +36,24 @@
 </div>
 
 @code {
-    private IJSObjectReference JsModule;
+    private IJSObjectReference JsModule, JsModuleStore, JsModuleCart;
 
     protected override async Task OnInitializedAsync()
     {
-        JsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
         await JsModule.InvokeVoidAsync("clearSession");
+
+        if (CurrentUser.UserRoleId == 5)
+        {
+            JsModuleStore = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/StoreGoogleMaps.js");
+            await JsModuleStore.InvokeVoidAsync("StopWatch");
+            await JsModuleStore.InvokeVoidAsync("StopTimer");
+
+            JsModuleCart = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/CartGoogleMaps.js");
+            await JsModuleCart.InvokeVoidAsync("StopWatch");
+            await JsModuleCart.InvokeVoidAsync("StopTimer");
+        }
+
         CurrentUser.UserId = Guid.Empty;
         CurrentUser.UserName = "";
         CurrentUser.UserRole = "";

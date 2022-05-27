@@ -41,6 +41,7 @@
     <Folder Include="Features\ShoppingCarts\Components\" />
     <Folder Include="Features\Technicians\Components\" />
     <Folder Include="Features\TrackingDevices\Components\" />
+    <Folder Include="Shared\Chart\" />
   </ItemGroup>
 
   <Target Name="CollectMudBlazorStaticAssets" DependsOnTargets="ResolveStaticWebAssetsInputs" AfterTargets="Build" Condition=" '$(Configuration)' == 'Debug' ">

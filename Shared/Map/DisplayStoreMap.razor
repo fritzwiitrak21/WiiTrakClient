@@ -1,4 +1,4 @@
-﻿@page "/display-gmap"
+﻿@page "/display-store-gmap"
 @namespace WiiTrakClient.Shared.Components
 @using WiiTrakClient.Shared.Components
 @using WiiTrakClient.Cores
@@ -68,7 +68,7 @@
     private async Task LoadMap()
     {
 
-        JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/GoogleMaps.js");
+        JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/StoreGoogleMaps.js");
         await JsModule1.InvokeVoidAsync("initMap", StoreLatitude, StoreLongitude, DriverLatitude, DriverLongitude);
     }
 }

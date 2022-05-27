@@ -107,6 +107,24 @@ namespace WiiTrakClient.HttpRepository
                 return null;
             }
         }
+        public async Task<List<ServiceBoardDto>> GetServiceBoardDetailsById(Guid Id, Role Role)
+        {
+            string url = $"{_apiUrl}/ServiceBoard/{Id}/{(int)Role} ";
+
+            try
+            {
+                var response = await _httpService.Get<List<ServiceBoardDto>>(url);
+                if (!response.Success)
+                {
+                    // throw new ApplicationException(await response.GetBody());
+                }
+                return response.Response;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
         //public async Task<DeliveryTicketDto> GetDeliveryTicketsByIdTest(DeliveryTicketInputDto inputDto)
         //{
         //    //string url = $"{_apiUrl}/DeliveryTickets/{Id}/{(int)Role}/{RecordCount}/{Fromdate}/{Todate}";
