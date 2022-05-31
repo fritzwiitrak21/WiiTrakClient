@@ -8,7 +8,7 @@ namespace WiiTrakClient.HttpRepository
     {
         private readonly IHttpService HttpService;
         private const string ControllerName = "carts";
-        private readonly string _apiUrl;
+        private readonly string ApiUrl;
 
         public CartHttpRepository(IHttpService httpService)
         {
@@ -84,20 +84,20 @@ namespace WiiTrakClient.HttpRepository
 
         public async Task CreateCartAsync(CartCreationDto cart)
         {
-            await _httpService.Post(_apiUrl, cart);
+            await HttpService.Post(ApiUrl, cart);
             
         }
 
         public async Task UpdateCartAsync(Guid id, CartUpdateDto cart)
         {
 
-             await _httpService.Put($"{ _apiUrl }/{ id }", cart);
+             await HttpService.Put($"{ ApiUrl }/{ id }", cart);
 
         }
 
         public async Task DeleteCartAsync(Guid id)
         {
-             await _httpService.Delete($"{ _apiUrl }/{ id }");
+             await HttpService.Delete($"{ ApiUrl }/{ id }");
 
         }
     }

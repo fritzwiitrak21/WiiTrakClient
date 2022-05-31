@@ -12,14 +12,16 @@ namespace WiiTrakClient.Cores
         public static bool IsFirstLogin { get; set; }
         public static DateTime PasswordLastUpdatedAt { get; set; }
         public static int UserRoleId { get; set; }
-        public static string Password { get;set; } = string.Empty;
+        public static string Password { get; set; } = string.Empty;
     }
 
     public static class Core
     {
         public static Guid SelectedDriverId { get; set; }
-        public static int NotificationCount { get; set; } = 0;
+        public static int NotificationCount { get; set; }
         public static List<NotificationDto> NotificationsList { get; set; } = new();
+        public static int ServiceBoardCount { get; set; } = 0;
+        public static List<ServiceBoardDto> ServiceBoardList { get; set; } = new();
 
         public static double ToDouble(string Value)
         {
@@ -31,6 +33,10 @@ namespace WiiTrakClient.Cores
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(Text) )
+                {
+                    return Text;
+                }
                 return string.Join(" ", Text.Split(' ').Select(w => w.Trim()).Where(w => w.Length > 0)
                         .Select(w => w.Substring(0, 1).ToUpper() + w.Substring(1).ToLower()));
             }
@@ -107,7 +113,7 @@ namespace WiiTrakClient.Cores
                 //put a breakpoint here and check datatable
                 return dataTable;
             }
-            catch 
+            catch
             {
 
                 return null;
