@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WiiTrakClient.Features.Drivers.Models;
-using WiiTrakClient.Features.Drivers.Components;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.DTOs;
 using WiiTrakClient.Cores;
-using MudBlazor;
 using WiiTrakClient.Enums;
-using WiiTrakClient.Helpers;
+using MudBlazor;
+using WiiTrakClient.Features.Drivers.Components;
 
 namespace WiiTrakClient.Features.Drivers
 {
@@ -46,8 +43,8 @@ namespace WiiTrakClient.Features.Drivers
         private double Latitude;
         private double Longitude;
 
-        public int SelectedOption = 30;
-        public int TempSelectedOption = 0;
+        int SelectedOption = 30;
+        int TempSelectedOption = 0;
         protected override async Task OnInitializedAsync()
         {
 

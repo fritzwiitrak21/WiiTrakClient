@@ -109,7 +109,9 @@
     List<StoreDto> driverstorelist = new();
 
 
-    private IJSObjectReference JsModule, JsModuleStore, JsModuleCart;
+    private IJSObjectReference JsModule;
+    private IJSObjectReference JsModuleStore;
+    private IJSObjectReference JsModuleCart;
     public string CurrentCoord { get; set; } = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -140,8 +142,6 @@
             driverstore = driverstorelist.Where(x => x.IsActive && x.DriverStoresIsActive).ToList();
         }
         StateHasChanged();
-       
-
     }
 
     private async Task DisplayMaps(StoreDto store)
@@ -156,7 +156,8 @@
                 await JsModule.InvokeVoidAsync("ClearCoord");
             }
 
-            double Driverlatitude, Driverlongitude;
+            double Driverlatitude;
+            double Driverlongitude;
             if (!string.IsNullOrEmpty(CurrentCoord))
             {
                 Driverlatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
@@ -184,11 +185,9 @@
             var dialog = DialogService.Show<DisplayStoreMap>("Map to " + store.StoreName + " - " + store.StoreNumber, parameters);
             var result = await dialog.Result;
             await JsModule.InvokeVoidAsync("ClearCoord");
-
             await StopWatchAndTimer();
-
         }
-        catch (Exception ex)
+        catch
         {
             // excepion
         }

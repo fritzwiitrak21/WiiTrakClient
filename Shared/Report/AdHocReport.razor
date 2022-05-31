@@ -114,15 +114,6 @@ else
                 var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
                 CurrentUser.UserRoleId = Convert.ToInt32(roleid);
             }
-
-
-            //var deliveryTickets = CurrentUser.UserRoleId <= 4 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByPrimaryIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId) :
-            //                      // For the role of System Owner - 1, Corporate - 2, Prime Company -3, Sub Company - 4
-            //                      CurrentUser.UserRoleId == 5 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByDriverIdAsync(CurrentUser.UserId) :
-            //                      // For the role of Driver
-            //                      CurrentUser.UserRoleId == 6 ? await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(CurrentUser.UserId) :
-            //                      // For the role of Store
-            //                      await DeliveryTicketHttpRepository.GetAllDeliveryTicketsAsync();
             //// To get all the delivery tickets
             int RecordCount = 0;
             var deliveryTickets = new List<DeliveryTicketDto>();

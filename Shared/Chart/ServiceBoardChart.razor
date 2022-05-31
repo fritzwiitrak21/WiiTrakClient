@@ -2,77 +2,84 @@
 @using WiiTrakClient.Cores
 @inject IDeliveryTicketHttpRepository DeliveryRepository
 <UserAuthentication />
-<div>
-    <h3> Service Board</h3>
-
-</div>
-<div id="chart" style="background-color:beige;" class="container">
-</div>
-<div class="container">
+@if (Core.ServiceBoardList !=null && Core.ServiceBoardCount>0)
+{
     <div>
-        <h4>Key Statistics</h4>
+        <h3> Service Board</h3>
+
     </div>
-    <table class="table table-bordered" border="1">
-        <tr>
-            <th></th>
-            @for (int i = 0; i < details.Category.Length; i++)
-            {
-                <th>
-                    @details.Category[i]
-                </th>
-            }
-            <th>Total</th>
-        </tr>
-        <tr>
-            <td>Stores</td>
-            @for (int i = 0; i < details.Stores.Length; i++)
-            {
+    <div id="chart" style="background-color:beige;" class="container">
+    </div>
+    <div class="container">
+        <div>
+            <h4>Key Statistics</h4>
+        </div>
+        <table class="table table-bordered" border="1">
+            <tr>
+                <th></th>
+                @for (int i = 0; i < details.Category.Length; i++)
+                {
+                    <th>
+                        @details.Category[i]
+                    </th>
+                }
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Stores</td>
+                @for (int i = 0; i < details.Stores.Length; i++)
+                {
+                    <td>
+                        @details.Stores[i]
+                    </td>
+                    TotalStores = TotalStores + details.Stores[i];
+                }
+                <td>@(TotalStores/2)</td>
+            </tr>
+            <tr>
+                <td>Visits</td>
+                @for (int i = 0; i < details.Visits.Length; i++)
+                {
+                    <td>
+                        @details.Visits[i]
+                    </td>
+                    TotalVisit = TotalVisit + details.Visits[i];
+                }
+                <td>@(TotalVisit/2)</td>
+            </tr>
+            <tr>
+                <td>Deliveries</td>
+                @for (int i = 0; i < details.Deliveries.Length; i++)
+                {
+                    <td>
+                        @details.Deliveries[i]
+                    </td>
+                    TotalDelivery = TotalDelivery + details.Deliveries[i];
+                }
+                <td>@(TotalDelivery/2)</td>
+            </tr>
+            <tr>
+                <td>Carts</td>
+                @for (int i = 0; i < details.Carts.Length; i++)
+                {
+                    <td>
+                        @details.Carts[i]
+                    </td>
+                    TotalCarts = TotalCarts + details.Carts[i];
+                }
                 <td>
-                    @details.Stores[i]
-                </td>
-                TotalStores = TotalStores + details.Stores[i];
-            }
-            <td>@(TotalStores/2)</td>
-        </tr>
-        <tr>
-            <td>Visits</td>
-            @for (int i = 0; i < details.Visits.Length; i++)
-            {
-                <td>
-                    @details.Visits[i]
-                </td>
-                TotalVisit = TotalVisit + details.Visits[i];
-            }
-            <td>@(TotalVisit/2)</td>
-        </tr>
-        <tr>
-            <td>Deliveries</td>
-            @for (int i = 0; i < details.Deliveries.Length; i++)
-            {
-                <td>
-                    @details.Deliveries[i]
-                </td>
-                TotalDelivery = TotalDelivery + details.Deliveries[i];
-            }
-            <td>@(TotalDelivery/2)</td>
-        </tr>
-        <tr>
-            <td>Carts</td>
-            @for (int i = 0; i < details.Carts.Length; i++)
-            {
-                <td>
-                    @details.Carts[i]
-                </td>
-                TotalCarts = TotalCarts + details.Carts[i];
-            }
-            <td>
                 @(
                 TotalCarts / 2
                 )
             </td>
         </tr>
     </table>
-</div>
+    </div>
+}
+else
+{
+    <div><h3>No Services Found</h3></div>
+}
 @code {
     [Inject] IJSRuntime JsRuntime { get; set; }
     private IJSObjectReference JsModule;
@@ -89,12 +96,14 @@
             JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
             var Id = await JsModule.InvokeAsync<string>("getUserId");
             CurrentUser.UserId = new Guid(Id);
+            Core.ServiceBoardList=await DeliveryRepository.GetServiceBoardDetailsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+            Core.ServiceBoardCount = Core.ServiceBoardList.Count();
         }
         TotalStores = 0;
         TotalVisit = 0;
         TotalDelivery = 0;
         TotalCarts = 0;
-        ServiceBoards = await DeliveryRepository.GetServiceBoardDetailsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+        ServiceBoards = Core.ServiceBoardList;
 
         if (ServiceBoards != null)
         {

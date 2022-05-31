@@ -3,20 +3,114 @@
 @inject ICartHttpRepository CartHttpRepository
 @inject IStoreHttpRepository StoreRepository
 @using WiiTrakClient.Cores
-
+@using WiiTrakClient.Features.Drivers
+@using WiiTrakClient.Features.Drivers.Components
+@inject IDialogService DialogService
+@using MudBlazor
 <UserAuthentication />
-<h3>Carts Location</h3>
-<div style="width:100%;height:100%;overflow: auto;">
-    <label id="distance" />
-    <div id="map" style="height:80vh;width:100%;"></div>
+<div class="pagetitle my-8">
+    <h3>Carts Location</h3>
 
+
+
+    <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
+        <MudIconButton Icon="@Icons.Material.Filled.Map" OnClick="ShowMapView"></MudIconButton>
+        <MudIconButton Icon="@Icons.Material.Filled.List" OnClick="ShowListView"></MudIconButton>
+    </MudButtonGroup>
 </div>
-@code { [Inject] IJSRuntime JsRuntime { get; set; }
-    private IJSObjectReference JsModuleCart, JsModuleStore, JsModule1;
+@if (IsMapView)
+{
+    <div style="width:100%;height:100%;overflow: auto;">
+        <label id="distance" />
+        <div id="map" style="height:80vh;width:100%;"></div>
+
+    </div>
+}
+else
+{
+    <div>
+        <p>No of carts have to pickup @cartstopickupcount</p>
+        <div class="container">
+            <MudTable Items="@CartsList" Class="Pagingstyle" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false"
+                  LoadingProgressColor="Color.Primary">
+                <HeaderContent>
+                    <MudTh>
+                        <MudTableSortLabel SortBy="new Func<CartDto, object>(x=>x.Store.StoreName)">
+                            Store Name
+                        </MudTableSortLabel>
+                    </MudTh>
+                    <MudTh>
+                        <MudTableSortLabel SortBy="new Func<CartDto, object>(x => x.CartNumber)">
+                            Cart Number
+                        </MudTableSortLabel>
+                    </MudTh>
+                    <MudTh>
+
+                        Cart Status
+
+                    </MudTh>
+                    <MudTh></MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Store">@context.Store.StoreName - @context.Store.StoreNumber</MudTd>
+                    <MudTd DataLabel="Cart Number">@context.CartNumber</MudTd>
+                    <MudTd DataLabel="Cart Status">
+                        @switch (context.Status)
+                        {
+                            case CartStatus.InsideGeofence:
+                            <span style="background:#90ee90;padding:2px;">Delivered</span>
+                                break;
+                            case CartStatus.OutsideGeofence:
+                            <span style="background:#ffffe0;padding:2px;">Needs Pick Up</span>
+                                break;
+                            case CartStatus.PickedUp:
+                            <span style="background:#90ee90;padding:2px;">On Truck</span>
+                                break;
+                            case CartStatus.Lost:
+                            <span style="background:#ff474c;padding:2px;">Lost</span>
+                                break;
+                        }
+
+                </MudTd>
+                <MudButton StartIcon="@Icons.Material.Filled.Details" Variant="Variant.Filled" Color="Color.Primary"
+                           OnClick="((e) => UpdateCartStatusDialog(context))">
+                    Edit Status
+
+                </MudButton>
+            </RowTemplate>
+        </MudTable>
+    </div>
+</div>
+}
+@code {
+    [Inject] IJSRuntime JsRuntime { get; set; }
+    private IJSObjectReference JsModuleCart;
+    private IJSObjectReference JsModuleStore;
+    private IJSObjectReference JsModule1;
+    List<CartDto> CartsList = new();
+    List<StoreDto> storelist = new();
+    bool IsMapView = true;
+    int cartstopickupcount = 0;
+
     protected override async Task OnInitializedAsync()
+    {
+        await GetCartsList();
+        storelist = await StoreRepository.GetStoresByDriverId(CurrentUser.UserId);
+        storelist = storelist.Where(x => x.IsActive && x.DriverStoresIsActive).ToList();
+        storelist = storelist.OrderBy(x => x.StoreName).OrderBy(s => s.StoreNumber).ToList();
+        await ShowMapView();
+    }
+    private void ShowListView()
+    {
+
+        IsMapView = false;
+        StateHasChanged();
+    }
+    private async Task ShowMapView()
     {
         try
         {
+            IsMapView = true;
             if (CurrentUser.UserId == Guid.Empty)
             {
                 JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
@@ -30,9 +124,7 @@
             await JsModule1.InvokeVoidAsync("getCoord", true);
 
 
-            var CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
-            var storelist = await StoreRepository.GetStoresByDriverId(CurrentUser.UserId);
-            storelist = storelist.Where(x => x.IsActive && x.DriverStoresIsActive).ToList();
+
             List<MapDetails> CartDetailsList = new();
             if (CartsList is not null)
             {
@@ -100,7 +192,76 @@
 
         }
     }
+    public async Task UpdateCartStatusDialog(CartDto cart)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("Cart", cart);
 
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+        try
+        {
+            if (JsModule1 is null)
+            {
+                JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            }
+            await JsModule1.InvokeVoidAsync("getCoord", false);
+            var coords = await JsModule1.InvokeAsync<string>("getCoordinates");
+
+
+            var dialog = DialogService.Show<UpdateCartStatusDialog>("Cart Status", parameters);
+
+            var result = await dialog.Result;
+            if (!result.Cancelled)
+            {
+                var lat = coords.Split("##")[0];
+                var Lon = coords.Split("##")[1];
+                var Latitude = Core.ToDouble(lat);
+                var Longitude = Core.ToDouble(Lon);
+                await JsModule1.InvokeVoidAsync("ClearCoord");
+                var cartHistory = new CartHistoryUpdateDto
+                    {
+                        ServiceProviderId = cart.Store != null ? cart.Store.ServiceProviderId : null,
+                        StoreId = cart.StoreId,
+                        DriverId = CurrentUser.UserId,
+                        Condition = cart.Condition,
+                        Status = CartStatus.PickedUp,
+                        CartId = cart.Id,
+                        PickedUpAt = DateTime.UtcNow,
+                        PickupLatitude = Latitude,
+                        PickupLongitude = Longitude
+                    };
+
+                var cartUpdate = new CartUpdateDto
+                    {
+                        ManufacturerName = cart.ManufacturerName,
+                        DateManufactured = cart.DateManufactured,
+                        OrderedFrom = cart.OrderedFrom,
+                        Condition = cart.Condition,
+                        Status = CartStatus.PickedUp,
+                        PicUrl = cart.PicUrl,
+                        IsProvisioned = cart.IsProvisioned,
+                        BarCode = cart.BarCode,
+                        StoreId = cart.StoreId,
+                        CartHistory = cartHistory
+                    };
+                await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
+                await GetCartsList();
+                StateHasChanged();
+            }
+        }
+        catch (Exception Ex)
+        {
+        }
+
+
+    }
+    private async Task GetCartsList()
+    {
+        CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
+        var cartstopickup = CartsList.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
+        cartstopickupcount = cartstopickup.Count;
+
+    }
     public class MapDetails
     {
         public string Title { get; set; } = string.Empty;

@@ -14,7 +14,7 @@ namespace WiiTrakClient.DTOs
 
         public string ManufacturerName { get; set; } = string.Empty;
 
-        public DateTime DateManufactured { get; set; }
+        public DateTime? DateManufactured { get; set; }
 
         public CartOrderedFrom OrderedFrom { get; set; }
 
@@ -29,6 +29,8 @@ namespace WiiTrakClient.DTOs
         public string BarCode { get; set; } = string.Empty;
 
         public Guid StoreId { get; set; }
+        public Guid? DeviceId { get; set; }
+        public bool IsActive { get; set; }
 
         public StoreDto? Store {get; set;}
 

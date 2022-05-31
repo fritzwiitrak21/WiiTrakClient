@@ -4,7 +4,7 @@ using WiiTrakClient.Services;
 
 namespace WiiTrakClient.HttpRepository
 {
-    public class DriverHttpRepository: IDriverHttpRepository
+    public class DriverHttpRepository : IDriverHttpRepository
     {
         private readonly IHttpService _httpService;
         private const string ControllerName = "drivers";
@@ -20,20 +20,14 @@ namespace WiiTrakClient.HttpRepository
         {
             System.Console.WriteLine(_apiUrl);
             var response = await _httpService.Get<List<DriverDto>>(_apiUrl);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+
             return response.Response;
         }
         public async Task<List<DriverDto>> GetDriversByCompanyIdAsync(Guid Id)
         {
             var Url = $"{_apiUrl}/Company/{Id}";
             var response = await _httpService.Get<List<DriverDto>>(Url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+
             return response.Response;
         }
 
@@ -41,10 +35,7 @@ namespace WiiTrakClient.HttpRepository
         {
             var Url = $"{_apiUrl}/SystemOwner/{Id}";
             var response = await _httpService.Get<List<DriverDto>>(Url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+
             return response.Response;
         }
 
@@ -53,10 +44,7 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/{id}";
 
             var response = await _httpService.Get<DriverDto>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+
             return response.Response;
         }
 
@@ -65,39 +53,27 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/report/{id}";
 
             var response = await _httpService.Get<DriverReportDto>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+
             return response.Response;
         }
 
         public async Task CreateDriverAsync(DriverCreationDto driver)
         {
-            var response = await _httpService.Post(_apiUrl, driver);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await _httpService.Post(_apiUrl, driver);
+
         }
 
         public async Task UpdateDriverAsync(Guid id, DriverUpdateDto driver)
         {
 
-            var response = await _httpService.Put($"{ _apiUrl }/{ id }", driver);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await _httpService.Put($"{ _apiUrl }/{ id }", driver);
+
         }
 
         public async Task DeleteDriverAsync(Guid id)
         {
-            var response = await _httpService.Delete($"{ _apiUrl }/{ id }");
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await _httpService.Delete($"{ _apiUrl }/{ id }");
+
         }
     }
 }

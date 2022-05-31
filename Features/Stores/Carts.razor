@@ -1,0 +1,91 @@
+﻿@page "/carts"
+@using WiiTrakClient.Features.Stores.Components
+@using WiiTrakClient.Cores
+@inject IJSRuntime JsRuntime
+@inject ICartHttpRepository CartRepository
+@inject IDialogService DialogService
+
+<UserAuthentication/>
+<h3>Store Carts</h3>
+
+<div class="d-flex justify-end">
+    <MudButton Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Add"
+               IconColor="Color.Secondary"
+               Size="Size.Large"
+               OnClick="OpenDialog">Add</MudButton>
+</div>
+<br />
+@if(CartsList == null)
+{
+    <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+
+}
+else if (carts.Count > 0)
+{
+    <CartsList Carts="carts" />
+}
+else
+{
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7"/>
+}
+
+
+@code {
+    private IJSObjectReference JsModule;
+    List<CartDto> CartsList = new();
+    List<CartDto> carts = new();
+    CartCreationDto AddCart = new();
+    
+    [Inject] 
+    public ICartHttpRepository CartHttpRepository { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
+
+        CartsList = await CartRepository.GetCartsByStoreIdAsync(CurrentUser.UserId);
+        if (CartsList is not null)
+        {
+            carts = CartsList;
+        }
+        StateHasChanged();
+    }
+
+    private async Task OpenDialog()
+    {
+        var parameters = new DialogParameters();
+        AddCart = new CartCreationDto();
+        parameters.Add("NewCart", AddCart);
+
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+
+        var dialog = DialogService.Show<AddCartsDialog>("Add Cart", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            // add new cart to backend
+            var CartCreation = new CartCreationDto
+                {
+                    CartNumber = AddCart.CartNumber,
+                    ManufacturerName=AddCart.ManufacturerName,
+                    DateManufactured=AddCart.DateManufactured,
+                    OrderedFrom=AddCart.OrderedFrom,
+                    Condition=(CartCondition)0,
+                    Status=AddCart.Status,
+                    StoreId=CurrentUser.UserId,
+                    IsActive=true,
+                };
+            await CartRepository.CreateCartAsync(CartCreation);
+        }
+        carts = await CartRepository.GetCartsByStoreIdAsync(CurrentUser.UserId);
+        StateHasChanged();
+    }
+}

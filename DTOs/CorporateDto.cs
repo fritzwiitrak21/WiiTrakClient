@@ -1,8 +1,4 @@
-﻿
-
-using System.ComponentModel.DataAnnotations;
-
-namespace  WiiTrakClient.DTOs
+﻿namespace  WiiTrakClient.DTOs
 {
     public class CorporateDto
     {

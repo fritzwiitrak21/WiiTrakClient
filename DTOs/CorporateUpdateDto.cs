@@ -31,7 +31,7 @@ namespace WiiTrakClient.DTOs
         public string LogoUrl { get; set; } = string.Empty;
 
         [Required]
-        [EmailAddress]
+        [RegularExpression(@"^[a-zA-Z0-9_]+@[a-z]+\.[a-z]{2,3}$")]
         public string Email { get; set; } = string.Empty;
         [Required]
         [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$")]

@@ -20,11 +20,8 @@ namespace WiiTrakClient.HttpRepository
         public async Task SendMailAsync(MailRequest request)
         {
            
-            var response = await _httpService.Put(_apiUrl, request);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+              await _httpService.Put(_apiUrl, request);
+             
         }
        
     }

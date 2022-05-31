@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using WiiTrakClient.Enums;
-
-namespace WiiTrakClient.DTOs
+﻿namespace WiiTrakClient.DTOs
 {
     public class DeliveryTicketDto
     {

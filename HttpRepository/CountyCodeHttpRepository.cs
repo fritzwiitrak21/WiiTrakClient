@@ -20,10 +20,7 @@ namespace WiiTrakClient.HttpRepository
         public async Task<List<CountyCodeDTO>> GetCountyListAsync()
         {
             var response = await _httpService.Get<List<CountyCodeDTO>>(_apiUrl);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            
             return response.Response;
         }
     }

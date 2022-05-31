@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.DTOs;
 using WiiTrakClient.Cores;
-using MudBlazor;
 using WiiTrakClient.Enums;
 
 namespace WiiTrakClient.Features.Companies
@@ -21,8 +20,8 @@ namespace WiiTrakClient.Features.Companies
         List<DeliveryTicketDto> deliveryTickets = new();
         List<DeliveryTicketDto> _deliveryTickets = new();
 
-        public int SelectedOption = 30;
-        public int TempSelectedOption = 0;
+        int SelectedOption = 30;
+        int TempSelectedOption = 0;
         protected override async Task OnInitializedAsync()
         {
             if (CurrentUser.UserId == Guid.Empty)
@@ -52,7 +51,6 @@ namespace WiiTrakClient.Features.Companies
                     _deliveryTickets = deliveryTickets;
                 }
                 StateHasChanged();
-
             }
         }
     }

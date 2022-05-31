@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WiiTrakClient.Features.Drivers.Models;
-using WiiTrakClient.Features.Drivers.Components;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using WiiTrakClient.HttpRepository.Contracts;
@@ -71,7 +69,7 @@ namespace WiiTrakClient.Features.Drivers
 
 
             _repairIssues = await RepairIssueHttpRepository.GetAllRepairIssuesAsync();
-            //StateHasChanged();
+
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

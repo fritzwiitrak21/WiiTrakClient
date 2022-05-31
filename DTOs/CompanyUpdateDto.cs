@@ -46,7 +46,7 @@ namespace WiiTrakClient.DTOs
 
 
         [Required(ErrorMessage = " ")]
-        [RegularExpression(@"^[a-zA-Z0-9]+@[a-z]+\.[a-z]{2,3}$", ErrorMessage = " ")]
+        [RegularExpression(@"^[a-zA-Z0-9_]+@[a-z]+\.[a-z]{2,3}$", ErrorMessage = " ")]
         public string Email { get; set; } = string.Empty;
 
 

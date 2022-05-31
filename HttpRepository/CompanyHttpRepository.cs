@@ -19,10 +19,7 @@ namespace WiiTrakClient.HttpRepository
         public async Task<List<CompanyDto>> GetAllCompaniesAsync()
         {
             var response = await _httpService.Get<List<CompanyDto>>(_apiUrl);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+           
             return response.Response;
         }
 
@@ -31,10 +28,7 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/company/{id}";
 
             var response = await _httpService.Get<List<CompanyDto>>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            
             return response.Response;
         }
         public async Task<List<CompanyDto>> GetCompaniesBySystemOwnerIdAsync(Guid id)
@@ -42,10 +36,7 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/systemowner/{id}";
 
             var response = await _httpService.Get<List<CompanyDto>>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+             
             return response.Response;
         }
 
@@ -54,10 +45,7 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/Corporate/{id}";
 
             var response = await _httpService.Get<List<CompanyDto>>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+             
             return response.Response;
         }
 
@@ -68,10 +56,7 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/{id}";
 
             var response = await _httpService.Get<CompanyDto>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            
             return response.Response;
         }
         public async Task<CompanyDto> GetParentCompanyAsync(Guid subcompanyId)
@@ -79,10 +64,7 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/ParentCompany/{subcompanyId}";
 
             var response = await _httpService.Get<CompanyDto>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+             
             return response.Response;
         }
         public async Task<CompanyReportDto> GetCompanyReportAsync(Guid id)
@@ -92,39 +74,27 @@ namespace WiiTrakClient.HttpRepository
             Console.WriteLine("company report url: " + url);
 
             var response = await _httpService.Get<CompanyReportDto>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+             
             return response.Response;
         }
 
         public async Task CreateCompanyAsync(CompanyCreationDto company)
         {
-            var response = await _httpService.Post(_apiUrl, company);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+              await _httpService.Post(_apiUrl, company);
+            
         }
 
         public async Task UpdateCompanyAsync(Guid id, CompanyUpdateDto company)
         {
 
-            var response = await _httpService.Put($"{ _apiUrl }/{ id }", company);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+              await _httpService.Put($"{ _apiUrl }/{ id }", company);
+             
         }
 
         public async Task DeleteCompanyAsync(Guid id)
         {
-            var response = await _httpService.Delete($"{ _apiUrl }/{ id }");
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+              await _httpService.Delete($"{ _apiUrl }/{ id }");
+            
         }
     }
 }

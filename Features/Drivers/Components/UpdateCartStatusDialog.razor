@@ -1,0 +1,86 @@
+﻿@namespace WiiTrakClient.Features.Drivers.Components
+@using System.ComponentModel.DataAnnotations
+@using WiiTrakClient.Shared.Components
+@using WiiTrakClient.Cores
+@using WiiTrakClient.Enums
+
+<style>
+    .validation-message {
+        font-size: 0;
+        display: none;
+        font-display: block;
+        color: red;
+    }
+
+    .mud-input-helper-text.mud-input-error {
+        font-size: 0;
+    }
+
+    .mud-input-helper-text {
+        color: var(--mud-palette-text-secondary);
+        margin: 0;
+        font-size: 0;
+    }
+</style>
+<MudDialog>
+    <DialogContent>
+        <div style="width: 400px;height:450px;overflow: auto;">
+            <MudForm Model="@Cart" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
+                <MudText>Store : @Cart.Store.StoreName - @Cart.Store.StoreNumber</MudText>
+                <MudText>Cart : @Cart.CartNumber</MudText>
+                <MudSelect T="String" ValueChanged="(value) => SelectStatus(value)" Value="@SelectedStatus" Label="Select Status" Required=true RequiredError=" "
+                           AnchorOrigin="Origin.BottomCenter">
+
+                    <MudSelectItem T="String" Value=@("Picked up")>Picked Up</MudSelectItem>
+                    <MudSelectItem T="String" Value=@("Lost")>Lost</MudSelectItem>
+
+                </MudSelect>
+                <MudSelect T="String" ValueChanged="(value) => SelectCondition(value)" Value="@SelectedCondition" Label="Select Condition" Required=true RequiredError=" "
+                           AnchorOrigin="Origin.BottomCenter">
+
+                    <MudSelectItem T="String" Value=@("Good")>Good</MudSelectItem>
+                    <MudSelectItem T="String" Value=@("Damage")>Damage</MudSelectItem>
+                    <MudSelectItem T="String" Value=@("Damage Beyond Repair")>Damage Beyond Repair</MudSelectItem>
+
+                </MudSelect>
+
+            </MudForm>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary"
+                   OnClick="Submit">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [Parameter]
+    public CartDto? Cart { get; set; }
+    bool success;
+    string[] errors = { };
+    MudForm form;
+    string SelectedStatus;
+    string SelectedCondition;
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    protected override void OnParametersSet()
+    {
+        SelectedStatus = Cart.Status.ToString();
+        SelectedCondition = Cart.Condition.ToString();
+    }
+    private void SelectStatus(string value)
+    {
+        SelectedStatus = value;
+        Cart.Status = Enum.Parse<CartStatus>(value);
+    }
+    private void SelectCondition(string value)
+    {
+        SelectedCondition = value;
+        Cart.Condition = Enum.Parse<CartCondition>(value);
+    }
+    void Submit()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

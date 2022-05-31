@@ -38,7 +38,7 @@
 {
     <NotificationPanel />
 }
-@if (CurrentUser.UserRoleId <= 4)
+@if (CurrentUser.UserRoleId <= 4 && Core.ServiceBoardCount>0)
 {
     <ServiceBoardChart />
 }

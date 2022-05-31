@@ -4,7 +4,7 @@ using WiiTrakClient.Services;
 
 namespace WiiTrakClient.HttpRepository
 {
-    public class TrackingDeviceHttpRepository: ITrackingDeviceHttpRepository
+    public class TrackingDeviceHttpRepository : ITrackingDeviceHttpRepository
     {
         private readonly IHttpService _httpService;
         private const string ControllerName = "trackingdevice";
@@ -19,10 +19,7 @@ namespace WiiTrakClient.HttpRepository
         public async Task<List<TrackingDeviceDto>> GetAllTrackingDevicesAsync()
         {
             var response = await _httpService.Get<List<TrackingDeviceDto>>(_apiUrl);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+
             return response.Response;
         }
 
@@ -31,40 +28,28 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/{id}";
 
             var response = await _httpService.Get<TrackingDeviceDto>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+
             return response.Response;
         }
 
         public async Task CreateTrackingDeviceAsync(TrackingDeviceCreationDto trackingDevice)
         {
-            var response = await _httpService.Post(_apiUrl, trackingDevice);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await _httpService.Post(_apiUrl, trackingDevice);
+
         }
 
         public async Task UpdateTrackingDeviceAsync(Guid id, TrackingDeviceUpdateDto trackingDevice)
         {
 
-            var response = await _httpService.Put($"{ _apiUrl }/{ id }", trackingDevice);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await _httpService.Put($"{ _apiUrl }/{ id }", trackingDevice);
+
         }
 
         public async Task DeleteTrackingDeviceAsync(Guid id)
         {
-            var response = await _httpService.Delete($"{ _apiUrl }/{ id }");
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await _httpService.Delete($"{ _apiUrl }/{ id }");
+
         }
     }
-    
+
 }

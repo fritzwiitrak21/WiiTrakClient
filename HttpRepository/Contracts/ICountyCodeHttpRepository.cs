@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using WiiTrakClient.DTOs;
-using WiiTrakClient.HttpRepository.Contracts;
-using WiiTrakClient.Services;
+using System.Threading.Tasks;
 
 namespace WiiTrakClient.HttpRepository.Contracts
 {

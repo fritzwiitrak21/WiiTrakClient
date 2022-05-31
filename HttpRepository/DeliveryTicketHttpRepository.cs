@@ -26,10 +26,7 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/{id}";
 
             var response = await _httpService.Get<DeliveryTicketDto>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            
             return response.Response;
         }
 
@@ -38,57 +35,18 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/summary/{id}";
 
             var response = await _httpService.Get<DeliveryTicketSummaryDto>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+             
             return response.Response;
         }
 
         public async Task<List<DeliveryTicketDto>> GetAllDeliveryTicketsAsync()
         {
             var response = await _httpService.Get<List<DeliveryTicketDto>>(_apiUrl);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+             
             return response.Response;
         }
 
-        public async Task<List<DeliveryTicketDto>> GetDeliveryTicketsByDriverIdAsync(Guid driverId)
-        {
-            string url = $"{_apiUrl}/driver/{driverId}";
-
-            var response = await _httpService.Get<List<DeliveryTicketDto>>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
-            return response.Response;
-        }
-
-        public async Task<List<DeliveryTicketDto>> GetDeliveryTicketsByStoreIdAsync(Guid storeId)
-        {
-            string url = $"{_apiUrl}/store/{storeId}";
-
-            var response = await _httpService.Get<List<DeliveryTicketDto>>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
-            return response.Response;
-        }
-        public async Task<List<DeliveryTicketDto>> GetDeliveryTicketsByPrimaryIdAsync(Guid Id, Role role)
-        {
-            string url = $"{_apiUrl}/DeliveryTickets/{Id}/{(int)role}";
-
-            var response = await _httpService.Get<List<DeliveryTicketDto>>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
-            return response.Response;
-        }
+      
         public async Task<List<DeliveryTicketDto>> GetDeliveryTicketsById(Guid Id, Role Role, int RecordCount)
         {
             string url = $"{_apiUrl}/DeliveryTickets/{Id}/{(int)Role}/{RecordCount} ";
@@ -96,10 +54,7 @@ namespace WiiTrakClient.HttpRepository
             try
             {
                 var response = await _httpService.Get<List<DeliveryTicketDto>>(url);
-                if (!response.Success)
-                {
-                    // throw new ApplicationException(await response.GetBody());
-                }
+                 
                 return response.Response;
             }
             catch (Exception ex)
@@ -114,10 +69,7 @@ namespace WiiTrakClient.HttpRepository
             try
             {
                 var response = await _httpService.Get<List<ServiceBoardDto>>(url);
-                if (!response.Success)
-                {
-                    // throw new ApplicationException(await response.GetBody());
-                }
+                
                 return response.Response;
             }
             catch (Exception ex)
@@ -152,10 +104,7 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/Report/{Id}/{(int)role}/{Startdate}/{Enddate}";
 
             var response = await _httpService.Get<List<DeliveryTicketDto>>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            
             return response.Response;
         }
 
@@ -164,10 +113,7 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/Corporate/{CorporateId}";
 
             var response = await _httpService.Get<List<DeliveryTicketDto>>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+             
             return response.Response;
         }
         public async Task<List<DeliveryTicketDto>> GetDeliveryTicketsByCompanyIdAsync(Guid CompanyId)
@@ -175,10 +121,7 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/company/{CompanyId}";
 
             var response = await _httpService.Get<List<DeliveryTicketDto>>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+             
             return response.Response;
         }
         public async Task<List<DeliveryTicketDto>> GetDeliveryTicketsByServiceProviderIdAsync(Guid serviceProviderId)
@@ -186,10 +129,7 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/serviceprovider/{serviceProviderId}";
 
             var response = await _httpService.Get<List<DeliveryTicketDto>>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            
             return response.Response;
         }
 
@@ -198,40 +138,27 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/Summary/{id}";
 
             var response = await _httpService.Get<DeliveryTicketSummaryDto>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+             
             return response.Response;
         }
 
         public async Task<DeliveryTicketDto> CreateDeliveryTicketAsync(DeliveryTicketCreationDto deliveryTicket)
         {
             var response = await _httpService.Post<DeliveryTicketCreationDto, DeliveryTicketDto>(_apiUrl, deliveryTicket);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
 
             return response.Response;
         }
 
         public async Task UpdateDeliveryTicketAsync(Guid id, DeliveryTicketUpdateDto deliveryTicket)
         {
-            var response = await _httpService.Put($"{ _apiUrl }/{ id }", deliveryTicket);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
+             await _httpService.Put($"{ _apiUrl }/{ id }", deliveryTicket);
+             
             }
-        }
 
         public async Task DeleteDeliveryTicketAsync(Guid id)
         {
-            var response = await _httpService.Delete($"{ _apiUrl }/{ id }");
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
+            await _httpService.Delete($"{ _apiUrl }/{ id }");
+             
             }
         }
-    }
 }

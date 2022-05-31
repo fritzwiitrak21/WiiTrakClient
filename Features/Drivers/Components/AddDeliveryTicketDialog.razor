@@ -119,8 +119,6 @@
     private string StoreTimeZoneDiff = "";
     private IJSObjectReference JsModule;
 
-
-
     protected override async Task OnInitializedAsync()
     {
         JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
@@ -153,7 +151,6 @@
             FilterStore();
             Stores = Stores.OrderBy(o => o.StoreName).ThenBy(p => p.StoreNumber).ToList();
             SelectedStore = Stores[0];
-
         }
 
         NewDeliveryTicket.DriverId = Driver.Id;
@@ -317,7 +314,6 @@
         {
             Ispicuploadtoblob = true;
         }
-
     }
 
     async Task Submit()

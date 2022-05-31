@@ -11,8 +11,9 @@
     {
         InsideGeofence,
         OutsideGeofence,
-        PickedUp,
-        Lost
+        PickedUp, 
+        Lost, 
+        Trashed
     }
 
     public enum CartOrderedFrom

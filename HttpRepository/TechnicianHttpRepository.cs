@@ -4,7 +4,7 @@ using WiiTrakClient.Services;
 
 namespace WiiTrakClient.HttpRepository
 {
-    public class TechnicianHttpRepository: ITechnicianHttpRepository
+    public class TechnicianHttpRepository : ITechnicianHttpRepository
     {
         private readonly IHttpService _httpService;
         private const string ControllerName = "technicians";
@@ -19,10 +19,7 @@ namespace WiiTrakClient.HttpRepository
         public async Task<List<TechnicianDto>> GetAllTechniciansAsync()
         {
             var response = await _httpService.Get<List<TechnicianDto>>(_apiUrl);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+
             return response.Response;
         }
 
@@ -31,39 +28,27 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/{id}";
 
             var response = await _httpService.Get<TechnicianDto>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+
             return response.Response;
         }
 
         public async Task CreateTechnicianAsync(TechnicianCreationDto technician)
         {
-            var response = await _httpService.Post(_apiUrl, technician);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await _httpService.Post(_apiUrl, technician);
+
         }
 
         public async Task UpdateTechnicianAsync(Guid id, TechnicianUpdateDto client)
         {
 
-            var response = await _httpService.Put($"{ _apiUrl }/{ id }", client);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await _httpService.Put($"{ _apiUrl }/{ id }", client);
+
         }
 
         public async Task DeleteTechnicianAsync(Guid id)
         {
-            var response = await _httpService.Delete($"{ _apiUrl }/{ id }");
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await _httpService.Delete($"{ _apiUrl }/{ id }");
+
         }
     }
 }

@@ -2,7 +2,7 @@
 @using WiiTrakClient.Cores
 @using WiiTrakClient.Shared.Components
 @inject INotificationHttpRepository NotifyHttpRepository
-
+@inject IDeliveryTicketHttpRepository DeliveryTicketRepository
 <MudThemeProvider Theme="_themeManager.Theme" />
 <MudDialogProvider FullWidth="false"
                    MaxWidth="MaxWidth.ExtraLarge"
@@ -105,7 +105,7 @@
     protected override async Task OnInitializedAsync()
     {
         await Notification();
-
+        await ServiceBoard();
     }
     private async Task Notification()
     {
@@ -121,6 +121,22 @@
         if (CurrentUser.UserRoleId != 5) return;
         Core.NotificationsList = await NotifyHttpRepository.GetNotificationIdAsync(CurrentUser.UserId);
         Core.NotificationCount = Core.NotificationsList.Where(x => x.IsNotified == false).Count();
+        StateHasChanged();
+    }
+     private async Task ServiceBoard()
+    {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+            var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
+            CurrentUser.UserRoleId = Convert.ToInt32(roleid);
+        }
+
+        if (CurrentUser.UserRoleId > 4) return;
+        Core.ServiceBoardList = await DeliveryTicketRepository.GetServiceBoardDetailsById(CurrentUser.UserId,(Role)CurrentUser.UserRoleId);
+        Core.ServiceBoardCount =Core.ServiceBoardList.Count();
         StateHasChanged();
     }
 

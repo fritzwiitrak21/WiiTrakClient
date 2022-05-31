@@ -23,10 +23,7 @@ namespace WiiTrakClient.HttpRepository
         public async Task<List<RepairIssueDto>> GetAllRepairIssuesAsync()
         {
             var response = await _httpService.Get<List<RepairIssueDto>>(_apiUrl);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+
             return response.Response;
         }
 
@@ -34,40 +31,28 @@ namespace WiiTrakClient.HttpRepository
         public async Task<RepairIssueDto> GetRepairIssueByIdAsync(Guid Id)
         {
             var Url = $"{_apiUrl}/{Id}";
-            
+
             var response = await _httpService.Get<RepairIssueDto>(Url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+
             return response.Response;
         }
 
         public async Task CreateRepairIssueAsync(RepairIssueDto repairIssue)
         {
-            var response = await _httpService.Post(_apiUrl, repairIssue);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await _httpService.Post(_apiUrl, repairIssue);
+
         }
 
         public async Task UpdateRepairIssueAsync(Guid id, RepairIssueDto repairIssue)
         {
-            var response = await _httpService.Put($"{ _apiUrl }/{ id }", repairIssue);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await _httpService.Put($"{ _apiUrl }/{ id }", repairIssue);
+
         }
 
         public async Task DeleteRepairIssueAsync(Guid id)
         {
-            var response = await _httpService.Delete($"{ _apiUrl }/{ id }");
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await _httpService.Delete($"{ _apiUrl }/{ id }");
+
         }
     }
 }

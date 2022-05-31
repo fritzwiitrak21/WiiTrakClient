@@ -31,9 +31,9 @@ namespace WiiTrakClient.Features.SystemOwner.Components
         IDialogService? DialogService { get; set; }
 
         DriverDto selectedDriver = new();
-        StoreDto selectedStoreDto = new();
+      
         private bool _listIsLoading = true;
-        List<DriverDto> _drivers = new();
+      
         List<DeliveryTicketDto> _deliveryTickets = new();
         List<CartDto> _carts = new();
         List<StoreDto> _stores = new();

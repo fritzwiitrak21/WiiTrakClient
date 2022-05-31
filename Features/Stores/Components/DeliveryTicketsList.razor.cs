@@ -184,7 +184,7 @@ namespace WiiTrakClient.Features.Stores.Components
                     await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);
 
                 }
-                DeliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsByStoreIdAsync(CurrentUser.UserId);
+                DeliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId,(Role)CurrentUser.UserRoleId,RecordCount);
                 StateHasChanged();
             }
             catch(Exception ex)

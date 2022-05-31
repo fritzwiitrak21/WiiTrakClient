@@ -20,10 +20,7 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/company/{CompanyId}/{DriverId}";
 
             var response = await _httpService.Get<List<DriverStoreDetailsDto>>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+             
             return response.Response;
         }
         public async Task<List<DriverStoreDetailsDto>> GetDriverStoresBySystemownerIdAsync(Guid SystemOwnerId, Guid DriverId)
@@ -31,19 +28,13 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/systemowner/{SystemOwnerId}/{DriverId}";
 
             var response = await _httpService.Get<List<DriverStoreDetailsDto>>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            
             return response.Response;
         }
         public async Task UpdateDriverStoresAsync(DriverStoreDetailsDto DriverStoreDto)
         {
-            var response = await _httpService.Put($"{ _apiUrl }", DriverStoreDto);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+              await _httpService.Put($"{ _apiUrl }", DriverStoreDto);
+             
         }
     }
 } 

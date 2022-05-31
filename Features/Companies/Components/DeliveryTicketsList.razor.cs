@@ -28,15 +28,13 @@ namespace WiiTrakClient.Features.Companies.Components
         [Parameter]
         public EventCallback DeliveryTicketUpdatedEventCallback { get; set; }
 
-
-
         [Inject]
         IDialogService? DialogService { get; set; }
 
         DriverDto selectedDriver = new();
-        StoreDto selectedStoreDto = new();
+   
         private bool _listIsLoading = true;
-        List<DriverDto> _drivers = new();
+       
         List<DeliveryTicketDto> _deliveryTickets = new();
         List<CartDto> _carts = new();
         List<StoreDto> _stores = new();
@@ -47,7 +45,6 @@ namespace WiiTrakClient.Features.Companies.Components
         private string ErrorMessage { get; set; } = "";
         private string SuccessMessage { get; set; } = "";
 
-        private IJSObjectReference JsModule;
 
         protected override void OnParametersSet()
         {

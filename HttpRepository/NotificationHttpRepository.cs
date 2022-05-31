@@ -26,31 +26,22 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/{id}";
 
             var response = await _httpService.Get<List<NotificationDto>>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+
             return response.Response;
         }
 
         public async Task AddNewNotificationAsync(NotificationDto notification)
         {
-            var response = await _httpService.Post(_apiUrl, notification);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await _httpService.Post(_apiUrl, notification);
+
         }
 
         public async Task UpdateNotifiedTimeAsync()
         {
-            NotificationDto dto=new NotificationDto();
+            NotificationDto dto = new NotificationDto();
             dto.Id = CurrentUser.UserId;
-            var response = await _httpService.Put($"{ _apiUrl }",dto);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await _httpService.Put($"{ _apiUrl }", dto);
+
         }
     }
 }

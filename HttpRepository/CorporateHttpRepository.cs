@@ -23,10 +23,7 @@ namespace WiiTrakClient.HttpRepository
         public async Task<List<CorporateDto>> GetAllCorporatesAsync()
         {
             var response = await _httpService.Get<List<CorporateDto>>(_apiUrl);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+             
             return response.Response;
         }
 
@@ -35,10 +32,7 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/corporate/{id}";
 
             var response = await _httpService.Get<List<CorporateDto>>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            
             return response.Response;
         }
 
@@ -48,10 +42,7 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/{id}";
 
             var response = await _httpService.Get<CorporateDto>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            
             return response.Response;
         }
        
@@ -59,10 +50,7 @@ namespace WiiTrakClient.HttpRepository
         {
             string url = $"{_apiUrl}/company/{companyId}";
             var response = await _httpService.Get<List<CorporateDto>>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            
             return response.Response;
         }
 
@@ -71,39 +59,27 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/report/{id}";
 
             var response = await _httpService.Get<CorporateReportDto>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+             
             return response.Response;
         }
 
         public async Task CreateCorporateAsync(Guid CompanyId, int RoleId, CorporateCreationDto corporate)
         {
-            var response = await _httpService.Post($"{_apiUrl}/{CompanyId}/{RoleId}",corporate);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await _httpService.Post($"{_apiUrl}/{CompanyId}/{RoleId}",corporate);
+             
         }
 
         public async Task UpdateCorporateAsync(Guid id, CorporateUpdateDto corporate)
         {
 
-            var response = await _httpService.Put($"{ _apiUrl }/{ id }", corporate);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+             await _httpService.Put($"{ _apiUrl }/{ id }", corporate);
+            
         }
 
         public async Task DeleteCorporateAsync(Guid id)
         {
-            var response = await _httpService.Delete($"{ _apiUrl }/{ id }");
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+           await _httpService.Delete($"{ _apiUrl }/{ id }");
+             
         }
    
     }

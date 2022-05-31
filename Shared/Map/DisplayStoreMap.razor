@@ -21,7 +21,8 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [Inject] IJSRuntime JsRuntime { get; set; }
-    private IJSObjectReference JsModule, JsModule1;
+    private IJSObjectReference JsModule;
+    private IJSObjectReference JsModule1;
 
     [Parameter]
     public string Address { get; set; } = string.Empty;
@@ -37,11 +38,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-
         JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
         await JsModule.InvokeVoidAsync("getCoord", false);
         var CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
-
 
         if (!string.IsNullOrEmpty(CurrentCoord))
         {
@@ -67,7 +66,6 @@
     }
     private async Task LoadMap()
     {
-
         JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/StoreGoogleMaps.js");
         await JsModule1.InvokeVoidAsync("initMap", StoreLatitude, StoreLongitude, DriverLatitude, DriverLongitude);
     }

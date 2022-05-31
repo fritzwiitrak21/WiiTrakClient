@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor;
 using WiiTrakClient.DTOs;
-using WiiTrakClient.Enums;
 using WiiTrakClient.Shared;
 
 namespace WiiTrakClient.Features.Companies.Components

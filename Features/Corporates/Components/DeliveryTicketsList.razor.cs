@@ -26,17 +26,14 @@ namespace WiiTrakClient.Features.Corporates.Components
         [Inject]
         IDialogService? DialogService { get; set; }
 
-        DriverDto selectedDriver = new();
-        StoreDto selectedStoreDto = new();
+        List<CartDto>? cartsTable { get; set; } = new();
         private bool _listIsLoading = true;
-        List<DriverDto> _drivers = new();
-        List<DeliveryTicketDto> _deliveryTickets = new();
-        List<CartDto> _carts = new();
-        List<StoreDto> _stores = new();
+      
+      
+      
         DeliveryTicketUpdateDto _editDeliveryTicket = new();
         Guid deliveryTicketId = Guid.Empty;
-        List<CartDto>? cartsTable { get; set; } = new();
-
+      
        
         protected override void OnParametersSet()
         {
