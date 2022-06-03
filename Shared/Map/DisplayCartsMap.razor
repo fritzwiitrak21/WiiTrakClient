@@ -2,85 +2,99 @@
 
 @inject ICartHttpRepository CartHttpRepository
 @inject IStoreHttpRepository StoreRepository
+@inject IRepairIssueHttpRepository RepairIssueRepository
 @using WiiTrakClient.Cores
 @using WiiTrakClient.Features.Drivers
 @using WiiTrakClient.Features.Drivers.Components
 @inject IDialogService DialogService
 @using MudBlazor
 <UserAuthentication />
-<div class="pagetitle my-8">
+<div class="pagetitle my-8" style="margin-bottom: 0px !important;">
     <h3>Carts Location</h3>
-
-
-
-    <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
-        <MudIconButton Icon="@Icons.Material.Filled.Map" OnClick="ShowMapView"></MudIconButton>
-        <MudIconButton Icon="@Icons.Material.Filled.List" OnClick="ShowListView"></MudIconButton>
-    </MudButtonGroup>
 </div>
+<MudChipSet @bind-SelectedChip="selected" Filter="true">
+    <MudChip Text="map" Default=@IsMapView Color="Color.Primary" OnClick="ShowMapView">Map</MudChip>
+    <MudChip Text="cartslist" Color="Color.Secondary" OnClick="ShowListView">Carts list</MudChip>
+    <MudChip Text="ontruck" Color="Color.Success" OnClick="ShowOnTruckListView">On Truck</MudChip>
+    <MudChip Text="damage" Color="Color.Tertiary" OnClick="ShowDamageListView">Damage</MudChip>
+    <MudChip Text="trash" Color="Color.Warning" OnClick="ShowTrashListView">Trash</MudChip>
+    <MudChip Text="lost" Color="Color.Error" OnClick="ShowLostListView">Lost</MudChip>
+</MudChipSet>
+
 @if (IsMapView)
 {
     <div style="width:100%;height:100%;overflow: auto;">
         <label id="distance" />
-        <div id="map" style="height:80vh;width:100%;"></div>
-
+        <div id="map" style="height:77vh;width:100%;"></div>
     </div>
 }
 else
 {
     <div>
-        <p>No of carts have to pickup @cartstopickupcount</p>
-        <div class="container">
-            <MudTable Items="@CartsList" Class="Pagingstyle" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false"
+        <h5>No of carts @message</h5>
+        @if (CartsList.Count > 0)
+        {
+            <div class="container">
+                <MudTable Items="@CartsList" Class="Pagingstyle" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false"
                   LoadingProgressColor="Color.Primary">
-                <HeaderContent>
-                    <MudTh>
-                        <MudTableSortLabel SortBy="new Func<CartDto, object>(x=>x.Store.StoreName)">
-                            Store Name
-                        </MudTableSortLabel>
-                    </MudTh>
-                    <MudTh>
-                        <MudTableSortLabel SortBy="new Func<CartDto, object>(x => x.CartNumber)">
-                            Cart Number
-                        </MudTableSortLabel>
-                    </MudTh>
-                    <MudTh>
-
-                        Cart Status
-
-                    </MudTh>
-                    <MudTh></MudTh>
-                </HeaderContent>
-                <RowTemplate>
-                    <MudTd DataLabel="Store">@context.Store.StoreName - @context.Store.StoreNumber</MudTd>
-                    <MudTd DataLabel="Cart Number">@context.CartNumber</MudTd>
-                    <MudTd DataLabel="Cart Status">
-                        @switch (context.Status)
-                        {
-                            case CartStatus.InsideGeofence:
+                    <HeaderContent>
+                        <MudTh>
+                            <MudTableSortLabel SortBy="new Func<CartDto, object>(x=>x.Store.StoreName)">
+                                Store Name
+                            </MudTableSortLabel>
+                        </MudTh>
+                        <MudTh>
+                            <MudTableSortLabel SortBy="new Func<CartDto, object>(x => x.CartNumber)">
+                                Cart Number
+                            </MudTableSortLabel>
+                        </MudTh>
+                        <MudTh>
+                            Cart Status
+                        </MudTh>
+                        <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Store Name">@context.Store.StoreName - @context.Store.StoreNumber</MudTd>
+                        <MudTd DataLabel="Cart Number">@context.CartNumber</MudTd>
+                        <MudTd DataLabel="Cart Status">
+                            @switch (context.Status)
+                            {
+                                case CartStatus.InsideGeofence:
                             <span style="background:#90ee90;padding:2px;">Delivered</span>
-                                break;
-                            case CartStatus.OutsideGeofence:
+                                    break;
+                                case CartStatus.OutsideGeofence:
                             <span style="background:#ffffe0;padding:2px;">Needs Pick Up</span>
-                                break;
-                            case CartStatus.PickedUp:
-                            <span style="background:#90ee90;padding:2px;">On Truck</span>
-                                break;
-                            case CartStatus.Lost:
+                                    break;
+                                case CartStatus.PickedUp:
+                                    if (selected.Text.Equals("damage"))
+                                    {
+                                <span style="background:#90ee90;padding:2px;">On Truck</span>
+                                @*<span style="background:#ffdddd;padding:2px;">@context.DamageIssue</span>*@
+                                    }
+                                    else
+                                    {
+                                <span style="background:#90ee90;padding:2px;">On Truck</span>
+                                    }
+                                    break;
+                                case CartStatus.Lost:
                             <span style="background:#ff474c;padding:2px;">Lost</span>
-                                break;
-                        }
-
+                                    break;
+                            }
                 </MudTd>
-                <MudButton StartIcon="@Icons.Material.Filled.Details" Variant="Variant.Filled" Color="Color.Primary"
-                           OnClick="((e) => UpdateCartStatusDialog(context))">
-                    Edit Status
-
-                </MudButton>
+                <MudTd DataLabel="">
+                    <MudButton StartIcon="@Icons.Material.Filled.Details" Variant="Variant.Filled" Color="Color.Primary"
+                               OnClick="((e) => UpdateCartStatusDialog(context))">
+                        Edit Status
+                    </MudButton>
+                </MudTd>
             </RowTemplate>
+            <PagerContent>
+                <MudTablePager PageSizeOptions="new int[]{10,50, 100}" />
+            </PagerContent>
         </MudTable>
     </div>
-</div>
+        }
+    </div>
 }
 @code {
     [Inject] IJSRuntime JsRuntime { get; set; }
@@ -90,33 +104,73 @@ else
     List<CartDto> CartsList = new();
     List<StoreDto> storelist = new();
     bool IsMapView = true;
-    int cartstopickupcount = 0;
-
+    bool IsListView;
+    MudChip selected;
+    string message = "";
+    public List<RepairIssueDto> RepairIssues { get; set; }
     protected override async Task OnInitializedAsync()
     {
-        await GetCartsList();
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule1.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
+        CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
         storelist = await StoreRepository.GetStoresByDriverId(CurrentUser.UserId);
         storelist = storelist.Where(x => x.IsActive && x.DriverStoresIsActive).ToList();
         storelist = storelist.OrderBy(x => x.StoreName).OrderBy(s => s.StoreNumber).ToList();
         await ShowMapView();
-    }
-    private void ShowListView()
-    {
 
+    }
+    private async Task ShowListView()
+    {
         IsMapView = false;
+        await GetCartsList();
         StateHasChanged();
+    }
+    private async Task ShowTrashListView()
+    {
+        IsMapView = false;
+        CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
+        CartsList = CartsList.Where(x => x.Condition == CartCondition.DamageBeyondRepair).ToList();
+        message = "in trash condition " + CartsList.Count;
+        StateHasChanged();
+        await GetRepairIssueList();
+    }
+    private async Task ShowDamageListView()
+    {
+        IsMapView = false;
+        CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
+        CartsList = CartsList.Where(x => x.Condition == CartCondition.Damage).ToList();
+        message = "in damage condition " + CartsList.Count;
+        StateHasChanged();
+        await GetRepairIssueList();
+    }
+    private async Task ShowOnTruckListView()
+    {
+        IsMapView = false;
+        CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
+        CartsList = CartsList.Where(x => x.Status == CartStatus.PickedUp).ToList();
+        message = "on truck " + CartsList.Count;
+        StateHasChanged();
+        await GetRepairIssueList();
+    }
+    private async Task ShowLostListView()
+    {
+        IsMapView = false;
+        CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
+        CartsList = CartsList.Where(x => x.Status == CartStatus.Lost).ToList();
+        message = "lost " + CartsList.Count;
+        StateHasChanged();
+        await GetRepairIssueList();
     }
     private async Task ShowMapView()
     {
         try
         {
             IsMapView = true;
-            if (CurrentUser.UserId == Guid.Empty)
-            {
-                JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-                var Id = await JsModule1.InvokeAsync<string>("getUserId");
-                CurrentUser.UserId = new Guid(Id);
-            }
+
             if (JsModule1 is null)
             {
                 JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
@@ -194,8 +248,10 @@ else
     }
     public async Task UpdateCartStatusDialog(CartDto cart)
     {
+
         var parameters = new DialogParameters();
         parameters.Add("Cart", cart);
+        parameters.Add("RepairIssues", RepairIssues);
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
         try
@@ -224,7 +280,7 @@ else
                         StoreId = cart.StoreId,
                         DriverId = CurrentUser.UserId,
                         Condition = cart.Condition,
-                        Status = CartStatus.PickedUp,
+                        Status = cart.Status,
                         CartId = cart.Id,
                         PickedUpAt = DateTime.UtcNow,
                         PickupLatitude = Latitude,
@@ -237,11 +293,12 @@ else
                         DateManufactured = cart.DateManufactured,
                         OrderedFrom = cart.OrderedFrom,
                         Condition = cart.Condition,
-                        Status = CartStatus.PickedUp,
+                        Status = cart.Status,
                         PicUrl = cart.PicUrl,
                         IsProvisioned = cart.IsProvisioned,
                         BarCode = cart.BarCode,
                         StoreId = cart.StoreId,
+                        CartNumber = cart.CartNumber,
                         CartHistory = cartHistory
                     };
                 await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
@@ -259,8 +316,12 @@ else
     {
         CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
         var cartstopickup = CartsList.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
-        cartstopickupcount = cartstopickup.Count;
-
+        message = "have to pickup " + cartstopickup.Count;
+        RepairIssues = await RepairIssueRepository.GetAllRepairIssuesAsync();
+    }
+    private async Task GetRepairIssueList()
+    {
+        RepairIssues = await RepairIssueRepository.GetAllRepairIssuesAsync();
     }
     public class MapDetails
     {

@@ -32,5 +32,6 @@ namespace WiiTrakClient.DTOs
         public string Signee { get; set; } = string.Empty;
         public bool IsActive { get; set; }
         public Guid? UpdatedBy { get; set; }
+        public List<CartDto>? PickedUpCarts { get; set; }
     }
 }

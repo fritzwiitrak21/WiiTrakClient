@@ -37,7 +37,7 @@ namespace WiiTrakClient.DTOs
         public TrackingDeviceDto? TrackingDevice { get; set; }
 
         public string DamageIssue { get; set; } = string.Empty;
-       
+        
 
     }
 }

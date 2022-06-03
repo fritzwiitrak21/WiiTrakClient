@@ -51,6 +51,8 @@ builder.Services.AddScoped<IEmailHttpRepository, EmailHttpRepository>();
 builder.Services.AddScoped<IDriverStoresHttpRepository, DriverStoresHttpRepository>();
 builder.Services.AddScoped<ICountyCodeHttpRepository, CountyCodeHttpRepository>();
 builder.Services.AddScoped<INotificationHttpRepository, NotificationHttpRepository>();
+builder.Services.AddScoped<ISimCardsHttpRepository, SimCardsHttpRepository>();
+builder.Services.AddScoped<IDevicesHttpRepository, DevicesHttpRepository>();
 
 
 

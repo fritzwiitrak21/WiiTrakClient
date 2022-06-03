@@ -16,7 +16,7 @@ namespace WiiTrakClient.Features.Drivers
 {
     public partial class DeliveryTickets : ComponentBase
     {
-        
+
         [Inject] IJSRuntime JsRuntime { get; set; }
 
         [Inject] IDriverHttpRepository DriverRepository { get; set; }
@@ -72,15 +72,16 @@ namespace WiiTrakClient.Features.Drivers
                 }
                 TempStores = _stores = await StoreHttpRepository.GetStoresByDriverId(CurrentUser.UserId);
                 await GetDeliveryTicketsByDriverId(CurrentUser.UserId);
-            
+
                 SelectedDriver = await DriverRepository.GetDriverByIdAsync(CurrentUser.UserId);
+               
             }
-            catch 
+            catch
             {
                 //Exsception
             }
             await HandleDriverSelected();
-           
+
         }
 
         private async Task HandleDriverSelected()
@@ -92,7 +93,7 @@ namespace WiiTrakClient.Features.Drivers
         #region GetDeliveryTicketsByDriverId
         private async Task GetDeliveryTicketsByDriverId(Guid id)
         {
-            deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(id,(Role)CurrentUser.UserRoleId, SelectedOption);
+            deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(id, (Role)CurrentUser.UserRoleId, SelectedOption);
 
             if (deliveryTickets is not null)
             {
@@ -103,7 +104,7 @@ namespace WiiTrakClient.Features.Drivers
                         item.DriverStoresIsActive = TempStores.FirstOrDefault(x => x.Id == item.StoreId).DriverStoresIsActive;
                         item.StoresIsActive = TempStores.FirstOrDefault(x => x.Id == item.StoreId).IsActive;
                     }
-                    catch 
+                    catch
                     {
                         //Exception
                     }
@@ -147,7 +148,7 @@ namespace WiiTrakClient.Features.Drivers
                 Longitude = Core.ToDouble(Lon);
                 await JsModule.InvokeVoidAsync("ClearCoord");
             }
-            catch 
+            catch
             {
                 await JsModule.InvokeVoidAsync("ClearCoord");
             }
@@ -155,14 +156,12 @@ namespace WiiTrakClient.Features.Drivers
             FindDistance();
             var parameters = new DialogParameters();
             _newDeliveryTicket = new DeliveryTicketCreationDto();
-
             parameters.Add("NewDeliveryTicket", _newDeliveryTicket);
             parameters.Add("Driver", SelectedDriver);
             parameters.Add("Carts", _carts);
             parameters.Add("Stores", _stores);
             parameters.Add("Latitude", Latitude);
             parameters.Add("Longitude", Longitude);
-
             DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
             var dialog = DialogService.Show<AddDeliveryTicketDialog>("New Delivery Ticket", parameters);
@@ -186,8 +185,8 @@ namespace WiiTrakClient.Features.Drivers
                 await GetDeliveryTicketsByDriverId(CurrentUser.UserId);//Refreshing the data in the grid once new ticket added
 
                 // update status of carts to delivered and update cart hitory
-                var carts = _carts.Where(x => x.StoreId == _newDeliveryTicket.StoreId).ToList();
-                foreach (var cart in carts)
+                //var carts = _carts.Where(x => x.StoreId == _newDeliveryTicket.StoreId && x.Status==(CartStatus)2).ToList();
+                foreach (var cart in _newDeliveryTicket.PickedUpCarts)
                 {
                     if (!deliveryTicketResponse.SignOffRequired)
                     {
@@ -216,7 +215,7 @@ namespace WiiTrakClient.Features.Drivers
                         StoreId = cart.StoreId,
                         DriverId = CurrentUser.UserId,
                         Condition = cart.Condition,
-                        Status = CartStatus.PickedUp,// CartStatus.InsideGeofence,
+                        Status = CartStatus.InsideGeofence,
                         IsDelivered = true,
                         CartId = cart.Id
                     };
@@ -227,11 +226,12 @@ namespace WiiTrakClient.Features.Drivers
                         DateManufactured = cart.DateManufactured,
                         OrderedFrom = cart.OrderedFrom,
                         Condition = cart.Condition,
-                        Status = CartStatus.PickedUp,// CartStatus.InsideGeofence,
+                        Status =  CartStatus.InsideGeofence,
                         PicUrl = cart.PicUrl,
                         IsProvisioned = cart.IsProvisioned,
                         BarCode = cart.BarCode,
                         StoreId = cart.StoreId,
+                        CartNumber = cart.CartNumber,
                         CartHistory = cartHistory
                     };
 

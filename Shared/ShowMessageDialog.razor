@@ -25,15 +25,15 @@
     <DialogContent>
         <div style="width: 320px;height:100px;overflow: auto;">
             <MudForm Model="@DisplayMessage">
-                @if (IsSuccessNotification)
+                @if ((IsSuccessNotification) && (FromWindow.ToLower().Contains("deliveryicketlist")))
                 {
-                    <span style="color:green">
+                    <span style="color:black;">
                         <MudText Class="my-4" Style="font-size:medium" Typo="Typo.h6">@DisplayMessage</MudText>
                     </span>
                 }
-                else if ((!IsSuccessNotification) && (FromWindow.ToLower().Contains("deliveryicketlist")))
+                else if (IsSuccessNotification)
                 {
-                    <span style="color:black;" >
+                    <span style="color:green">
                         <MudText Class="my-4" Style="font-size:medium" Typo="Typo.h6">@DisplayMessage</MudText>
                     </span>
                 }

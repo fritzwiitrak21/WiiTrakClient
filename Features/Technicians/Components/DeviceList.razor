@@ -1,0 +1,86 @@
+﻿@using WiiTrakClient.Features.Technicians.Components
+@inject IDialogService DialogService
+@inject IDevicesHttpRepository DevicesRepository
+@using WiiTrakClient.Cores
+
+<MudTable Items="@Devices" Class="Pagingstyle" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@ListIsLoading"
+    LoadingProgressColor="Color.Primary">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<DevicesDto, object>(x=>x.DeviceName)">Device Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<DevicesDto, object>(x=>x.DeviceModel)">Device Model</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<DevicesDto, object>(x=>x.ActivatedTime)">Activated Time</MudTableSortLabel></MudTh>       
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<DevicesDto, object>(x=>x.SubscriptionExpiration)">Subscription Expiration</MudTableSortLabel></MudTh>  
+        <MudTh>Type</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Device Name">
+            @context.DeviceName
+        </MudTd>
+        <MudTd DataLabel="Device Modal">
+            @context.DeviceModel
+        </MudTd>
+        <MudTd DataLabel="Activated Time">
+            @context.ActivatedTime
+        </MudTd>
+        <MudTd DataLabel="Subscription Expiry">
+            @context.SubscriptionExpiration
+        </MudTd>
+        <MudTd DataLabel="Type">
+            @context.Type
+        </MudTd>
+        <MudTd DataLabel="Action">           
+            <MudButton 
+                Variant="Variant.Filled" 
+                Color="Color.Primary" 
+                OnClick="((e) => OpenDialog(context))">Update
+            </MudButton>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{10, 50, 100}" />
+    </PagerContent>
+</MudTable>
+
+@code {
+    [Parameter]
+    public List<DevicesDto>? Devices { get; set; } = null;
+    private bool ListIsLoading = true;
+
+    protected override void OnParametersSet()
+    {
+        ListIsLoading = false;
+    }
+    public async Task OpenDialog(DevicesDto device) 
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("Device", device);   
+
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+
+        var dialog  = DialogService.Show<UpdateDeviceDialog>("UpdateDevice", parameters);
+        var result = await dialog.Result; 
+
+        if (!result.Cancelled) 
+        {
+            // save updated device to backend
+            var DeviceUpdate = new DeviceUpdateDto 
+            {
+                DeviceModel=device.DeviceModel,
+                DeviceName=device.DeviceName,
+                IMEI=device.IMEI,
+                ICCID=device.ICCID,
+                IMSI=device.IMSI,
+                SIMCardId=device.SIMCardId,
+                SIMNo=device.SIMNo,
+                ActivatedTime=device.ActivatedTime,
+                SubscriptionExpiration=device.SubscriptionExpiration,
+                Type=device.Type,
+                IsActive=true,
+            };
+           await DevicesRepository.UpdateDeviceAsync(device.Id, DeviceUpdate);
+        }
+         Devices = await DevicesRepository.GetAllDeviceDetailsAsync();
+    }
+
+}

@@ -205,9 +205,9 @@ namespace WiiTrakClient.Features.Companies.Components
             var parameters = new DialogParameters();
             ErrorMessage = "";
             SuccessMessage = "Are you sure do you want to delete this ticket " + deliveryTicket.DeliveryTicketNumber + "?";
-            parameters.Add("DisplayMessage", deliveryTicket == null ? ErrorMessage : SuccessMessage);
+            parameters.Add("DisplayMessage",SuccessMessage);
             parameters.Add("FromWindow", "deliveryicketlist");
-            parameters.Add("IsSuccessNotification", deliveryTicket != null ? false : true);
+            parameters.Add("IsSuccessNotification", true);
 
             DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 

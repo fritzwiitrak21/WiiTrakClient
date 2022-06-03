@@ -4,6 +4,7 @@
 @using WiiTrakClient.Cores
 @using System.Net.Http.Headers
 @inject IPicUploadHttpRepository PicUploadHttpRepository
+@inject ICartHttpRepository CartHttpRepository
 
 <style>
     .validation-message {
@@ -46,6 +47,22 @@
                 }
 
                 <MudTextField @bind-Value="@NewDeliveryTicket.NumberOfCarts" Label="No of Carts" Required="true" RequiredError=" " For="@(() => @NewDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
+                @if (PickedupCartList != null)
+                {
+                    <div>
+                        <div>
+                            <label>Carts List</label>
+                        </div>
+                        <div class="form-check" style="max-height:75px;overflow-x:auto;min-height:30px">
+
+                            @foreach (var cart in PickedupCartList)
+                            {
+                                <input type="checkbox" id="@cart.Id" value="@cart.CartNumber - @cart.ManufacturerName" checked="checked" @onchange="@((e) => CheckboxChanged(e.Value, cart.Id))" />
+                                <span>&nbsp;@cart.ManufacturerName - #@cart.CartNumber </span> <br />
+                            }
+                        </div>
+                    </div>
+                }
                 <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" IBrowserContent="@SaveIBrowserFile" />
 
                 @if (NewDeliveryTicket.NumberOfCarts >= 0)
@@ -55,8 +72,10 @@
                 @if (!string.IsNullOrWhiteSpace(_fileUrl))
                 {
                     <div class="d-flex justify-start mt-6 popupitemimage">
-                        <img src="@_fileUrl" width="300" height="300" />
+                        <img src="@_fileUrl" width="250" height="250" />
                     </div>
+
+                    <br />
                 }
                 @if (success && picupload && IsStoreSelected)
                 {
@@ -66,8 +85,6 @@
                 {
                     formvalid = false;
                 }
-
-
             </MudForm>
         </div>
     </DialogContent>
@@ -79,7 +96,8 @@
     </DialogActions>
 </MudDialog>
 
-@code {    [Parameter]
+@code {
+    [Parameter]
     public DeliveryTicketCreationDto? NewDeliveryTicket { get; set; }
 
     public int NoOfCarts;
@@ -96,13 +114,16 @@
     public double Latitude { get; set; }
     [Parameter]
     public double Longitude { get; set; }
+
     [Inject]
     IJSRuntime JsRuntime { get; set; }
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; }
 
     public IBrowserFile? UploadedBrowserFile { get; set; }
-
+    public List<CartDto> PickedUpCarts { get; set; }
+    public List<CartDto> PickedupCartList { get; set; }
+    public List<CartDto> TempPickedupCartList { get; set; }
     bool success;
     bool picupload, Ispicuploadtoblob;
     bool formvalid;
@@ -273,10 +294,17 @@
             NewDeliveryTicket.StoreId = new Guid(Id);
             SelectedStore = Stores.AsEnumerable().FirstOrDefault(x => x.Id == NewDeliveryTicket.StoreId);
             StoreName = SelectedStore.StoreName;
-            StoreTimeZoneDiff  =  SelectedStore.TimezoneDiff;
+            StoreTimeZoneDiff = SelectedStore.TimezoneDiff;
             IsStoreSelected = true;
+            #region get carts by storeid
+            PickedUpCarts = await CartHttpRepository.GetCartsByStoreIdAsync(NewDeliveryTicket.StoreId);
+            PickedupCartList = PickedUpCarts.Where(x => x.Status == (CartStatus)2).ToList();
+            NewDeliveryTicket.NumberOfCarts = PickedupCartList.Count();
+            TempPickedupCartList = PickedupCartList;
+             StateHasChanged();
+            #endregion
         }
-        catch
+        catch 
         {
             IsStoreSelected = false;
         }
@@ -296,7 +324,7 @@
         var Lon = coords.Split("##")[1];
         Latitude = Core.ToDouble(lat);
         Longitude = Core.ToDouble(Lon);
-        var StoreCurrentTime= DateTime.UtcNow.AddSeconds(Convert.ToDouble(StoreTimeZoneDiff));
+        var StoreCurrentTime = DateTime.UtcNow.AddSeconds(Convert.ToDouble(StoreTimeZoneDiff));
 
         using (var ms = UploadedBrowserFile.OpenReadStream(UploadedBrowserFile.Size))
         {
@@ -315,7 +343,21 @@
             Ispicuploadtoblob = true;
         }
     }
-
+    async Task CheckboxChanged(object IsChecked, Guid Id)
+    {
+        if ((bool)IsChecked)
+        {
+            NewDeliveryTicket.NumberOfCarts = NewDeliveryTicket.NumberOfCarts + 1;
+            TempPickedupCartList.AddRange(PickedupCartList.Where(x => x.Id == Id).ToList());
+        }
+        else
+        {
+            NewDeliveryTicket.NumberOfCarts = NewDeliveryTicket.NumberOfCarts - 1;
+            TempPickedupCartList.RemoveAll(x => x.Id == Id);
+        }
+        NewDeliveryTicket.PickedUpCarts = TempPickedupCartList;
+        PickedupCartList = PickedUpCarts.Where(x => x.Status == (CartStatus)2).ToList();
+    }
     async Task Submit()
     {
         await AddCoordAndTime();

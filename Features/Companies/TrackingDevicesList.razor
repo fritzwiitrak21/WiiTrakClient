@@ -1,0 +1,73 @@
+﻿@page "/prime-tracking-devices"
+
+@using Features.Companies.Components
+@using WiiTrakClient.Cores
+@inject IJSRuntime JsRuntime
+@inject ITrackingDeviceHttpRepository TrackingDeviceRepository
+@using WiiTrakClient.Shared;
+@using WiiTrakClient.Shared.Components;
+
+<UserAuthentication/>
+<h1>Tracking Devices</h1>
+
+<div class="my-8">
+    @if (trackingdevicelist == null)
+    {
+        <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+    }
+    else if (trackingdevice.Count > 0)
+    {
+        <MudTable Items="@trackingdevice" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending"  SortBy="new Func<TrackingDeviceDto, object>(x=>x.Manufactor)">Manufactor</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<TrackingDeviceDto, object>(x=>x.TelecomCompanyName)">Telecom Company Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<TrackingDeviceDto, object>(x=>x.SIMCardPhoneNumber)">Phone Number</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<TrackingDeviceDto, object>(x=>x.ModelNumber)">Model Number</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<TrackingDeviceDto, object>(x=>x.ManufacturedDate)">Manufactured Date</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<TrackingDeviceDto, object>(x=>x.InstalledDate)">Installed Date</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Manufactor">
+             @context.Manufactor
+        </MudTd>
+        <MudTd DataLabel="Telecom Company Name">
+            @context.TelecomCompanyName
+        </MudTd>
+        <MudTd DataLabel="Phone Number">
+            @context.SIMCardPhoneNumber
+        </MudTd>
+        <MudTd DataLabel="Model Number">
+            @context.ModelNumber
+        </MudTd>
+        <MudTd DataLabel="Manufactured Date">
+            @context.ManufacturedDate
+        </MudTd>
+        <MudTd DataLabel="Installed Date">
+            @context.InstalledDate
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{10, 50, 100}" />
+    </PagerContent>
+</MudTable> 
+
+    }
+</div>
+
+@code {
+    List<TrackingDeviceDto> trackingdevice = new();
+    List<TrackingDeviceDto> trackingdevicelist = new();
+
+    private IJSObjectReference JsModule;
+    protected override async Task OnInitializedAsync()
+    {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
+        trackingdevicelist = await TrackingDeviceRepository.GetAllTrackingDevicesAsync();
+    }
+
+}

@@ -6,98 +6,98 @@ namespace WiiTrakClient.HttpRepository
 {
     public class CartHttpRepository : ICartHttpRepository
     {
-        private readonly IHttpService HttpService;
+        private readonly IHttpService _httpService;
         private const string ControllerName = "carts";
-        private readonly string ApiUrl;
+        private readonly string _apiUrl;
 
         public CartHttpRepository(IHttpService httpService)
         {
-            HttpService = httpService;
-            ApiUrl = $"{ httpService.BaseUrl }{ ControllerName }";
+            _httpService = httpService;
+            _apiUrl = $"{ httpService.BaseUrl }{ ControllerName }";
         }
 
         public async Task<List<CartDto>> GetAllCartsAsync()
         {
-            var response = await HttpService.Get<List<CartDto>>(ApiUrl);
+            var response = await _httpService.Get<List<CartDto>>(_apiUrl);
             return response.Response;
         }
 
         public async Task<List<CartDto>> GetCartsByDeliveryTicketIdAsync(Guid deliveryTicketId)
         {
-            string url = $"{ApiUrl}/DeliveryTicket/{deliveryTicketId}";
+            string url = $"{_apiUrl}/DeliveryTicket/{deliveryTicketId}";
 
             System.Console.WriteLine("url:" + url);
 
-            var response = await HttpService.Get<List<CartDto>>(url);
+            var response = await _httpService.Get<List<CartDto>>(url);
             return response.Response;
         }
 
         public async Task<List<CartDto>> GetCartsByStoreIdAsync(Guid storeId)
         {
-            string url = $"{ApiUrl}/store/{storeId}";
+            string url = $"{_apiUrl}/store/{storeId}";
 
             System.Console.WriteLine("url:" + url);
 
-            var response = await HttpService.Get<List<CartDto>>(url);
+            var response = await _httpService.Get<List<CartDto>>(url);
             return response.Response;
         }
 
         public async Task<List<CartDto>> GetCartsByDriverIdAsync(Guid driverId)
         {
-            string url = $"{ApiUrl}/driver/{driverId}";
+            string url = $"{_apiUrl}/driver/{driverId}";
 
             System.Console.WriteLine("url:" + url);
 
-            var response = await HttpService.Get<List<CartDto>>(url);
+            var response = await _httpService.Get<List<CartDto>>(url);
             return response.Response;
         }
 
         public async Task<List<CartDto>> GetCartsByCorporateIdAsync(Guid corporateId)
         {
-            string url = $"{ApiUrl}/corporate/{corporateId}";
+            string url = $"{_apiUrl}/corporate/{corporateId}";
 
             System.Console.WriteLine("url:" + url);
 
-            var response = await HttpService.Get<List<CartDto>>(url);
+            var response = await _httpService.Get<List<CartDto>>(url);
             return response.Response;
         }
 
         public async Task<List<CartDto>> GetCartsByCompanyIdAsync(Guid companyId)
         {
-            string url = $"{ApiUrl}/company/{companyId}";
+            string url = $"{_apiUrl}/company/{companyId}";
 
             System.Console.WriteLine("url:" + url);
 
-            var response = await HttpService.Get<List<CartDto>>(url);
+            var response = await _httpService.Get<List<CartDto>>(url);
 
             return response.Response;
         }
 
         public async Task<CartDto> GetCartByIdAsync(Guid id)
         {
-            string url = $"{ApiUrl}/{id}";
+            string url = $"{_apiUrl}/{id}";
 
-            var response = await HttpService.Get<CartDto>(url);
+            var response = await _httpService.Get<CartDto>(url);
 
             return response.Response;
         }
 
         public async Task CreateCartAsync(CartCreationDto cart)
         {
-            await HttpService.Post(ApiUrl, cart);
+            await _httpService.Post(_apiUrl, cart);
             
         }
 
         public async Task UpdateCartAsync(Guid id, CartUpdateDto cart)
         {
 
-             await HttpService.Put($"{ ApiUrl }/{ id }", cart);
+             await _httpService.Put($"{ _apiUrl }/{ id }", cart);
 
         }
 
         public async Task DeleteCartAsync(Guid id)
         {
-             await HttpService.Delete($"{ ApiUrl }/{ id }");
+             await _httpService.Delete($"{ _apiUrl }/{ id }");
 
         }
     }

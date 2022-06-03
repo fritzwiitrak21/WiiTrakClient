@@ -1,5 +1,6 @@
 @page "/tracking-devices"
 
+@using WiiTrakClient.Cores
 @using WiiTrakClient.Features.SystemOwner.Components
 
 @inject IJSRuntime JsRuntime
@@ -9,13 +10,13 @@
 <UserAuthentication/>
 <h1>Tracking Devices</h1>
 
-<div class="d-flex justify-end">
+@*<div class="d-flex justify-end">
     <MudButton Variant="Variant.Filled" 
         StartIcon="@Icons.Material.Filled.Add" 
         IconColor="Color.Secondary" 
         Size="Size.Large"
         OnClick="OpenDialog">Add</MudButton>
-</div>
+</div>*@
 
 <div class="my-8">
     <TrackingDeviceList Devices="@_devices" />
@@ -25,12 +26,21 @@
 
 @code {
     List<TrackingDeviceDto> _devices = new ();
-    
+    private IJSObjectReference JsModule;
     TrackingDeviceCreationDto _newTrackingDevice = new();
 
     protected override async Task OnInitializedAsync()
     {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+            CurrentUser.UserName = await JsModule.InvokeAsync<string>("getUserName");
+
+        }
         _devices = await TrackingDeviceRepository.GetAllTrackingDevicesAsync();
+        StateHasChanged();
     }  
 
     private async Task OpenDialog() 

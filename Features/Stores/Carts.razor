@@ -36,10 +36,6 @@ else
     List<CartDto> CartsList = new();
     List<CartDto> carts = new();
     CartCreationDto AddCart = new();
-    
-    [Inject] 
-    public ICartHttpRepository CartHttpRepository { get; set; }
-
 
     protected override async Task OnInitializedAsync()
     {
