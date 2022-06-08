@@ -6,6 +6,7 @@
 @using WiiTrakClient.Cores
 @using WiiTrakClient.Features.Drivers
 @using WiiTrakClient.Features.Drivers.Components
+@using System.Linq.Expressions;
 @inject IDialogService DialogService
 @using MudBlazor
 <UserAuthentication />
@@ -32,7 +33,7 @@ else
 {
     <div>
         <h5>No of carts @message</h5>
-        @if (CartsList.Count > 0)
+        @if (cartlistcount > 0)
         {
             <div class="container">
                 <MudTable Items="@CartsList" Class="Pagingstyle" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false"
@@ -68,8 +69,8 @@ else
                                 case CartStatus.PickedUp:
                                     if (selected.Text.Equals("damage"))
                                     {
-                                <span style="background:#90ee90;padding:2px;">On Truck</span>
-                                @*<span style="background:#ffdddd;padding:2px;">@context.DamageIssue</span>*@
+                                <span style="background:#90ee90;padding:2px;">On Truck</span><span>&nbsp-&nbsp</span>
+                                <span style="background:#ffdddd;padding:2px;">@context.IssueType</span>
                                     }
                                     else
                                     {
@@ -108,6 +109,7 @@ else
     MudChip selected;
     string message = "";
     public List<RepairIssueDto> RepairIssues { get; set; }
+    int cartlistcount = 0;
     protected override async Task OnInitializedAsync()
     {
         if (CurrentUser.UserId == Guid.Empty)
@@ -127,43 +129,39 @@ else
     {
         IsMapView = false;
         await GetCartsList();
-        StateHasChanged();
     }
     private async Task ShowTrashListView()
     {
-        IsMapView = false;
-        CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
-        CartsList = CartsList.Where(x => x.Condition == CartCondition.DamageBeyondRepair).ToList();
-        message = "in trash condition " + CartsList.Count;
-        StateHasChanged();
-        await GetRepairIssueList();
+        cartlistcount = await GetListOfCarts(x => x.Condition == CartCondition.DamageBeyondRepair);
+        message = "in trash condition " + cartlistcount;
     }
     private async Task ShowDamageListView()
     {
-        IsMapView = false;
-        CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
-        CartsList = CartsList.Where(x => x.Condition == CartCondition.Damage).ToList();
-        message = "in damage condition " + CartsList.Count;
-        StateHasChanged();
-        await GetRepairIssueList();
+        cartlistcount = await GetListOfCarts(x => x.Condition == CartCondition.Damage);
+        message = "in damage condition " + cartlistcount;
     }
     private async Task ShowOnTruckListView()
     {
-        IsMapView = false;
-        CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
-        CartsList = CartsList.Where(x => x.Status == CartStatus.PickedUp).ToList();
-        message = "on truck " + CartsList.Count;
-        StateHasChanged();
-        await GetRepairIssueList();
+        cartlistcount = await GetListOfCarts(x => x.Status == CartStatus.PickedUp);
+        message = "on truck " + cartlistcount;
     }
     private async Task ShowLostListView()
     {
+        cartlistcount = await GetListOfCarts(x => x.Status == CartStatus.Lost);
+        message = "lost " + cartlistcount;
+    }
+    private async Task<int> GetListOfCarts(Func<CartDto, bool> expression)
+    {
         IsMapView = false;
         CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
-        CartsList = CartsList.Where(x => x.Status == CartStatus.Lost).ToList();
-        message = "lost " + CartsList.Count;
+        if (CartsList != null && CartsList.Count > 0)
+        {
+            CartsList = CartsList.Where(expression).ToList();
+            cartlistcount = CartsList.Count;
+        }
         StateHasChanged();
-        await GetRepairIssueList();
+        RepairIssues = await RepairIssueRepository.GetAllRepairIssuesAsync();
+        return cartlistcount;
     }
     private async Task ShowMapView()
     {
@@ -284,7 +282,9 @@ else
                         CartId = cart.Id,
                         PickedUpAt = DateTime.UtcNow,
                         PickupLatitude = Latitude,
-                        PickupLongitude = Longitude
+                        PickupLongitude = Longitude,
+                        IssueType = cart.IssueType,
+                        IssueDescription = cart.IssueDescription
                     };
 
                 var cartUpdate = new CartUpdateDto
@@ -299,6 +299,8 @@ else
                         BarCode = cart.BarCode,
                         StoreId = cart.StoreId,
                         CartNumber = cart.CartNumber,
+                        IssueType = cart.IssueType,
+                        IssueDescription = cart.IssueDescription,
                         CartHistory = cartHistory
                     };
                 await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
@@ -310,19 +312,21 @@ else
         {
         }
 
-
     }
     private async Task GetCartsList()
     {
         CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
-        var cartstopickup = CartsList.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
-        message = "have to pickup " + cartstopickup.Count;
+        if (CartsList != null && CartsList.Count > 0)
+        {
+            var cartstopickup = CartsList.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
+            cartlistcount = CartsList.Count;
+
+        }
+        message = "have to pickup " + cartlistcount;
         RepairIssues = await RepairIssueRepository.GetAllRepairIssuesAsync();
+        StateHasChanged();
     }
-    private async Task GetRepairIssueList()
-    {
-        RepairIssues = await RepairIssueRepository.GetAllRepairIssuesAsync();
-    }
+
     public class MapDetails
     {
         public string Title { get; set; } = string.Empty;

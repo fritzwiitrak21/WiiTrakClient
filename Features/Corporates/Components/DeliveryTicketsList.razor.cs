@@ -1,9 +1,10 @@
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using MudBlazor;
 using WiiTrakClient.DTOs;
-using WiiTrakClient.Enums;
-using WiiTrakClient.Features.Corporates;
 using WiiTrakClient.HttpRepository.Contracts;
 
 namespace WiiTrakClient.Features.Corporates.Components
@@ -48,6 +49,8 @@ namespace WiiTrakClient.Features.Corporates.Components
             var store = await StoreHttpRepository.GetStoreByIdAsync(deliveryTicket.StoreId);
             var deliveryTicketSummary = await DeliveryTicketHttpRepository.GetDeliveryTicketSummaryAsync(deliveryTicket.Id);
             cartsTable = await CartRepository.GetCartsByDeliveryTicketIdAsync(deliveryTicket.Id);
+            var SelectedCartList = await CartHttpRepository.GetCartsByDeliveryTicketIdAsync(deliveryTicket.Id);
+            parameters.Add("SelectedCartList", SelectedCartList);
             parameters.Add("deliveryTicketDto", deliveryTicket);
             parameters.Add("StoreName", store.StoreNumber + "-" + store.StoreName);
             parameters.Add("deliveryTicketSummary", deliveryTicketSummary);

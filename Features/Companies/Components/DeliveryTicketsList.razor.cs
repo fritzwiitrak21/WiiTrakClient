@@ -1,9 +1,12 @@
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor;
 using WiiTrakClient.DTOs;
 using WiiTrakClient.Enums;
-using WiiTrakClient.Features.Companies;
 using WiiTrakClient.Features.Components.Components;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.Cores;
@@ -88,6 +91,7 @@ namespace WiiTrakClient.Features.Companies.Components
                     ServiceProviderId = _editDeliveryTicket.ServiceProviderId,
                     DriverId = _editDeliveryTicket.DriverId,
                     DeliveryTicketNumber = _editDeliveryTicket.DeliveryTicketNumber,
+                    IsActive = true,
                     SignOffRequired = _stores.FirstOrDefault(x => x.Id == _editDeliveryTicket.StoreId).IsSignatureRequired
 
                 };
@@ -188,6 +192,8 @@ namespace WiiTrakClient.Features.Companies.Components
             var store = await StoreHttpRepository.GetStoreByIdAsync(deliveryTicket.StoreId);
             var deliveryTicketSummary = await DeliveryTicketHttpRepository.GetDeliveryTicketSummaryAsync(deliveryTicket.Id);
             cartsTable = await CartRepository.GetCartsByDeliveryTicketIdAsync(deliveryTicket.Id);
+            var SelectedCartList = await CartHttpRepository.GetCartsByDeliveryTicketIdAsync(deliveryTicket.Id);
+            parameters.Add("SelectedCartList", SelectedCartList);
             parameters.Add("deliveryTicketDto", deliveryTicket);
             parameters.Add("StoreName", store.StoreNumber + "-" + store.StoreName);
             parameters.Add("deliveryTicketSummary", deliveryTicketSummary);

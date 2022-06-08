@@ -1,5 +1,8 @@
-﻿using WiiTrakClient.Helpers;
-using WiiTrakClient.DTOs;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using WiiTrakClient.Helpers;
 
 namespace WiiTrakClient.Services
 {

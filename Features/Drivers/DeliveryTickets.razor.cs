@@ -1,8 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using WiiTrakClient.Features.Drivers.Models;
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using WiiTrakClient.HttpRepository.Contracts;
@@ -74,7 +73,7 @@ namespace WiiTrakClient.Features.Drivers
                 await GetDeliveryTicketsByDriverId(CurrentUser.UserId);
 
                 SelectedDriver = await DriverRepository.GetDriverByIdAsync(CurrentUser.UserId);
-               
+
             }
             catch
             {
@@ -194,8 +193,8 @@ namespace WiiTrakClient.Features.Drivers
                         {
                             var newWorkOrder = new WorkOrderCreationDto
                             {
-                                Issue = cart.DamageIssue,
-                                Notes = "",
+                                Issue = cart.IssueType,
+                                Notes = cart.IssueDescription,
                                 CartId = cart.Id,
                                 StoreId = cart.Store != null ? cart.Store.Id : null,
                                 DriverId = CurrentUser.UserId
@@ -217,7 +216,9 @@ namespace WiiTrakClient.Features.Drivers
                         Condition = cart.Condition,
                         Status = CartStatus.InsideGeofence,
                         IsDelivered = true,
-                        CartId = cart.Id
+                        CartId = cart.Id,
+                        IssueType = cart.IssueType,
+                        IssueDescription = cart.IssueDescription
                     };
 
                     var cartUpdate = new CartUpdateDto
@@ -226,12 +227,14 @@ namespace WiiTrakClient.Features.Drivers
                         DateManufactured = cart.DateManufactured,
                         OrderedFrom = cart.OrderedFrom,
                         Condition = cart.Condition,
-                        Status =  CartStatus.InsideGeofence,
+                        Status = CartStatus.InsideGeofence,
                         PicUrl = cart.PicUrl,
                         IsProvisioned = cart.IsProvisioned,
                         BarCode = cart.BarCode,
                         StoreId = cart.StoreId,
                         CartNumber = cart.CartNumber,
+                        IssueType = cart.IssueType,
+                        IssueDescription = cart.IssueDescription,
                         CartHistory = cartHistory
                     };
 

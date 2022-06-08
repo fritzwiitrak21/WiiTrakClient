@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor;
 using WiiTrakClient.DTOs;
@@ -58,6 +62,8 @@ namespace WiiTrakClient.Features.Stores.Components
             var store = await StoreHttpRepository.GetStoreByIdAsync(deliveryTicket.StoreId);
             var deliveryTicketSummary = await DeliveryTicketHttpRepository.GetDeliveryTicketSummaryAsync(deliveryTicket.Id);
             cartsTable = await CartRepository.GetCartsByDeliveryTicketIdAsync(deliveryTicket.Id);
+            var SelectedCartList = await CartHttpRepository.GetCartsByDeliveryTicketIdAsync(deliveryTicket.Id);
+            parameters.Add("SelectedCartList", SelectedCartList);
             parameters.Add("deliveryTicketDto", deliveryTicket);
             parameters.Add("StoreName", store.StoreNumber + "-" + store.StoreName);
             parameters.Add("deliveryTicketSummary", deliveryTicketSummary);
@@ -129,7 +135,8 @@ namespace WiiTrakClient.Features.Stores.Components
                     ApprovedByStore = _editDeliveryTicket.ApprovedByStore,
                     SignOffRequired = _editDeliveryTicket.SignOffRequired,
                     SignaturePicUrl = _editDeliveryTicket.SignaturePicUrl,
-                    Signee = _editDeliveryTicket.Signee
+                    Signee = _editDeliveryTicket.Signee,
+                    IsActive=true
                 };
 
                 await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);

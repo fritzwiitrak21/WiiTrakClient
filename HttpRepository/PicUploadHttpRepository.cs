@@ -1,9 +1,11 @@
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using System;
-using System.Threading.Tasks;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.Services;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using WiiTrakClient.HttpRepository.Models;
 
 

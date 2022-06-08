@@ -1,10 +1,12 @@
-﻿using System.Text.Json;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Text.Json;
 using System.Text;
 using WiiTrakClient.Helpers;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using WiiTrakClient.DTOs;
-
 
 namespace WiiTrakClient.Services
 {

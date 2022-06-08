@@ -1,4 +1,8 @@
-﻿using System.Data;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Data;
 using System.Reflection;
 using WiiTrakClient.DTOs;
 
@@ -20,7 +24,7 @@ namespace WiiTrakClient.Cores
         public static Guid SelectedDriverId { get; set; }
         public static int NotificationCount { get; set; }
         public static List<NotificationDto> NotificationsList { get; set; } = new();
-        public static int ServiceBoardCount { get; set; } = 0;
+        public static int ServiceBoardCount { get; set; } 
         public static List<ServiceBoardDto> ServiceBoardList { get; set; } = new();
 
         public static double ToDouble(string Value)

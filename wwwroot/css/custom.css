@@ -336,8 +336,8 @@ h5 {
 
 .popupitemimage img {
     width: 100%;
-    max-width: 300px;
-    height: auto;
+    max-width: 250px !important;
+    height: 200px !important;
 }
 
 .mud-popover-provider .mud-popover-open:first-child {
@@ -516,7 +516,26 @@ h5 {
     font-size: 16px;
     padding-bottom: 5px;
 }
+.inputtext:focus-visible {
+    outline: -webkit-focus-ring-color auto 0px;
+    border-bottom: 1px solid var(--mud-palette-action-default);
+}
 
+.inputtext:hover, .inputtext:focus {
+    border-top-width: 0px !important;
+    border-bottom: 2px solid #2d84cc;
+}
+
+.inputtext {
+    border-top-width: 0px;
+    border-right-width: 0px;
+    border-left-width: 0px;
+    width: 100%;
+    border-bottom-width: 1px;
+    border-color: #d1d1d1;
+    font-size: 16px;
+    padding-bottom: 5px;
+}
 .Mudsearchselect label {
     transform: translate(0,1.5px) scale(.75);
     transform-origin: top left;
@@ -527,6 +546,10 @@ h5 {
 }
 
 .inputselect.mud-input-error {
+    border-color: var(--mud-palette-error) !important
+}
+
+.inputtext.mud-input-error {
     border-color: var(--mud-palette-error) !important
 }
 

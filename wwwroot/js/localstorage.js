@@ -63,6 +63,15 @@ export function removeValidationClass() {
     $('#targetlabel').removeClass("mud-input-error");
 }
 
+export function addTextValidationClass() {
+    $('input[type="text"].inputtext').addClass("mud-input-error");
+    $('#NoOfCartLabel').addClass("mud-input-error");
+}
+export function removeTextValidationClass() {
+    $('input[type="text"].inputtext').removeClass("mud-input-error");
+    $('#NoOfCartLabel').removeClass("mud-input-error");
+}
+
 export function updateCanvas() {
     var canvas = document.getElementById("ctlSignature");
     canvas.height = 130;

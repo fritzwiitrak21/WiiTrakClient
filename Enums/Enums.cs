@@ -12,8 +12,7 @@
         InsideGeofence,
         OutsideGeofence,
         PickedUp, 
-        Lost, 
-        Trashed
+        Lost
     }
 
     public enum CartOrderedFrom
@@ -31,6 +30,7 @@
         OnTruck,
         Lost
     }
+
 
     public enum Role
     {

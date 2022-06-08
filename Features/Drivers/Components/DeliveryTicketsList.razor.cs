@@ -1,3 +1,7 @@
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor;
@@ -43,8 +47,6 @@ namespace WiiTrakClient.Features.Drivers.Components
 
         protected override async Task OnInitializedAsync()
         {
-            //module = await _js.InvokeAsync<IJSObjectReference>("import", "./js/ss.js?$$REVISION$$");
-            //module = await _js.InvokeAsync<IJSObjectReference>("import", "./js/ss.ui.js?$$REVISION$$");
             var targetUrl = "js/ss.js?$$REVISION$$";
             await _js.InvokeVoidAsync("loadJs", targetUrl, "ssFile");
 
@@ -54,7 +56,6 @@ namespace WiiTrakClient.Features.Drivers.Components
             selectedDriver = await DriverRepository.GetDriverByIdAsync(CurrentUser.UserId);
             TempStoreList = _stores = await StoreHttpRepository.GetStoresByDriverId(CurrentUser.UserId);
             _carts = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
-
         }
         protected override void OnParametersSet()
         {
@@ -63,8 +64,6 @@ namespace WiiTrakClient.Features.Drivers.Components
 
         public async Task OpenUpdateDeliveryTicketDialog(DeliveryTicketDto deliveryTicket)
         {
-            Console.WriteLine("OpenUpdateDeliveryTickerDialog()");
-
             _stores = _stores.Where(x => x.DriverStoresIsActive && x.IsActive).ToList();
             _editDeliveryTicket.StoreId = deliveryTicket.StoreId;
             _editDeliveryTicket.PicUrl = deliveryTicket.PicUrl;
@@ -99,6 +98,7 @@ namespace WiiTrakClient.Features.Drivers.Components
                     ServiceProviderId = _editDeliveryTicket.ServiceProviderId,
                     DriverId = _editDeliveryTicket.DriverId,
                     DeliveryTicketNumber = _editDeliveryTicket.DeliveryTicketNumber,
+                    IsActive = true,
                     SignOffRequired = SignOffRequired
 
                 };
@@ -108,8 +108,8 @@ namespace WiiTrakClient.Features.Drivers.Components
                 await Refreshdeliveryticket();
                 StateHasChanged();
                 // update status of carts to delivered and update cart hitory
-                //var PickedUpCarts = await CartHttpRepository.GetCartsByStoreIdAsync(_editDeliveryTicket.StoreId);
-                var carts = _carts.Where(x => x.StoreId == _editDeliveryTicket.StoreId).ToList(); //PickedUpCarts.Where(x=>(x.Status == CartStatus.InsideGeofence || x.Status == CartStatus.PickedUp)).ToList();
+                var PickedUpCarts = await CartHttpRepository.GetCartsByStoreIdAsync(_editDeliveryTicket.StoreId);
+                var carts = PickedUpCarts.Where(x => (x.Status == CartStatus.InsideGeofence || x.Status == CartStatus.PickedUp)).ToList();
                 foreach (var cart in carts)
                 {
                     var cartHistory = new CartHistoryUpdateDto
@@ -124,33 +124,38 @@ namespace WiiTrakClient.Features.Drivers.Components
                         Condition = cart.Condition,
                         Status = CartStatus.InsideGeofence,
                         IsDelivered = true,
-                        CartId = cart.Id
+                        CartId = cart.Id,
+                        IssueType = cart.IssueType,
+                        IssueDescription = cart.IssueDescription
                     };
 
                     var cartUpdate = new CartUpdateDto
                     {
+                        CartNumber=cart.CartNumber,
                         ManufacturerName = cart.ManufacturerName,
                         DateManufactured = cart.DateManufactured,
                         OrderedFrom = cart.OrderedFrom,
                         Condition = cart.Condition,
-                        Status = CartStatus.InsideGeofence, 
+                        Status = CartStatus.InsideGeofence,
                         PicUrl = cart.PicUrl,
                         IsProvisioned = cart.IsProvisioned,
                         BarCode = cart.BarCode,
                         StoreId = cart.StoreId,
+                        IssueType = cart.IssueType,
+                        IssueDescription = cart.IssueDescription,
                         CartHistory = cartHistory
                     };
 
-                    //if (_editDeliveryTicket.PickedUpCarts.Where(x => x.Id == cart.Id).ToList().Any())
-                    //{
-                    //    cartUpdate.CartHistory.Status = CartStatus.InsideGeofence;
-                    //    cartUpdate.Status = CartStatus.InsideGeofence;
-                    //}
-                    //else
-                    //{
-                    //    cartUpdate.CartHistory.Status = CartStatus.OutsideGeofence;
-                    //    cartUpdate.Status = CartStatus.OutsideGeofence;
-                    //}
+                    if (_editDeliveryTicket.PickedUpCarts.Where(x => x.Id == cart.Id).ToList().Any())
+                    {
+                        cartUpdate.CartHistory.Status = CartStatus.InsideGeofence;
+                        cartUpdate.Status = CartStatus.InsideGeofence;
+                    }
+                    else
+                    {
+                        cartUpdate.CartHistory.Status = CartStatus.PickedUp;
+                        cartUpdate.Status = CartStatus.PickedUp;
+                    }
                     await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
                 }
             }
@@ -207,10 +212,12 @@ namespace WiiTrakClient.Features.Drivers.Components
             var store = await StoreHttpRepository.GetStoreByIdAsync(deliveryTicket.StoreId);
             var deliveryTicketSummary = await DeliveryTicketHttpRepository.GetDeliveryTicketSummaryAsync(deliveryTicket.Id);
             cartsTable = await CartRepository.GetCartsByDeliveryTicketIdAsync(deliveryTicket.Id);
+            var SelectedCartList = await CartHttpRepository.GetCartsByDeliveryTicketIdAsync(deliveryTicket.Id);
             parameters.Add("deliveryTicketDto", deliveryTicket);
             parameters.Add("StoreName", store.StoreNumber + "-" + store.StoreName);
             parameters.Add("deliveryTicketSummary", deliveryTicketSummary);
             parameters.Add("cartsTable", cartsTable);
+            parameters.Add("SelectedCartList", SelectedCartList);
             DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
             var dialog = DialogService.Show<DeliveryTicketDetailsDialog>("Delivery Ticket Summary", parameters);
@@ -278,7 +285,8 @@ namespace WiiTrakClient.Features.Drivers.Components
                     ApprovedByStore = _editDeliveryTicket.ApprovedByStore,
                     SignOffRequired = _editDeliveryTicket.SignOffRequired,
                     SignaturePicUrl = _editDeliveryTicket.SignaturePicUrl,
-                    Signee = _editDeliveryTicket.Signee
+                    Signee = _editDeliveryTicket.Signee,
+                    IsActive = true
                 };
 
                 await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);

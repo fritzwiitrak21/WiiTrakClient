@@ -1,4 +1,8 @@
-﻿using System.Security.Claims;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Security.Claims;
 using System.Text.Json;
 
 namespace WiiTrakClient.Helpers

@@ -1,4 +1,8 @@
-﻿using WiiTrakClient.Enums;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using WiiTrakClient.Enums;
 
 namespace WiiTrakClient.DTOs
 {
@@ -37,7 +41,8 @@ namespace WiiTrakClient.DTOs
         public TrackingDeviceDto? TrackingDevice { get; set; }
 
         public string DamageIssue { get; set; } = string.Empty;
-        
 
+        public string IssueType { get; set; } = string.Empty;
+        public string IssueDescription { get; set; } = string.Empty;
     }
 }

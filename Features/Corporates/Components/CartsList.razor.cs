@@ -1,11 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using WiiTrakClient.DTOs;
-using WiiTrakClient.Enums;
 using WiiTrakClient.HttpRepository.Contracts;
 
 namespace WiiTrakClient.Features.Corporates.Components

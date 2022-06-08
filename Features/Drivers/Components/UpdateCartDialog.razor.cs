@@ -1,13 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor;
 using WiiTrakClient.DTOs;
 using WiiTrakClient.Enums;
-using WiiTrakClient.Features.Drivers.Models;
 using WiiTrakClient.Shared;
 
 namespace WiiTrakClient.Features.Drivers.Components

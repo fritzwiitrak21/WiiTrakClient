@@ -42,11 +42,15 @@
                 </div>
 
                 @{
-                    //UpdateNumberOfCarts();
+                    //UpdateNumberOfCarts(); @onchange="eventArgs => { OnSelect(eventArgs.Value); }"
                     UpdateStoreAndServiceProviderIds();
                 }
 
-                <MudTextField @bind-Value="@NewDeliveryTicket.NumberOfCarts" Label="No of Carts" Required="true" RequiredError=" " For="@(() => @NewDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
+                @*<MudTextField Value="@NewDeliveryTicket.NumberOfCarts" Label="No of Carts"  Required="true" ValueChanged="vaue=>{}"  RequiredError=" " For="@(() => @NewDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>*@
+                <div Class="mt-2">
+                <label id="NoOfCartLabel">No of Carts*</label>
+                <input type="text" Class="inputtext" placeholder="No of Carts*" value="@NewDeliveryTicket.NumberOfCarts"  @onchange="eventArgs => { HandleNumberOfCarts(eventArgs.Value); }" />
+               </div>
                 @if (PickedupCartList != null)
                 {
                     <div>
@@ -77,7 +81,7 @@
 
                     <br />
                 }
-                @if (success && picupload && IsStoreSelected)
+                @if (success && picupload && IsStoreSelected && IsNoOfCarts)
                 {
                     formvalid = true;
                 }
@@ -125,6 +129,7 @@
     public List<CartDto> PickedupCartList { get; set; }
     public List<CartDto> TempPickedupCartList { get; set; }
     bool success;
+    bool IsNoOfCarts = true;
     bool picupload, Ispicuploadtoblob;
     bool formvalid;
     bool IsStoreSelected = false;
@@ -266,14 +271,15 @@
         {
             IsStoreSelected = false;
             await JsModule.InvokeVoidAsync("addValidationClass");
-            StateHasChanged();
+            
         }
         else
         {
             IsStoreSelected = true;
             await JsModule.InvokeVoidAsync("removeValidationClass");
-            StateHasChanged();
+           
         }
+        StateHasChanged();
     }
     private async Task OnSelect(object e)
     {
@@ -298,13 +304,17 @@
             IsStoreSelected = true;
             #region get carts by storeid
             PickedUpCarts = await CartHttpRepository.GetCartsByStoreIdAsync(NewDeliveryTicket.StoreId);
-            PickedupCartList = PickedUpCarts.Where(x => x.Status == (CartStatus)2).ToList();
-            NewDeliveryTicket.NumberOfCarts = PickedupCartList.Count();
-            TempPickedupCartList = PickedupCartList;
-             StateHasChanged();
+            if (PickedUpCarts != null)
+            {
+                PickedupCartList = PickedUpCarts.Where(x => x.Status == (CartStatus)2).ToList();
+                NewDeliveryTicket.NumberOfCarts = PickedupCartList.Count();
+                TempPickedupCartList = PickedupCartList;
+                NewDeliveryTicket.PickedUpCarts = TempPickedupCartList;
+            }
+            StateHasChanged();
             #endregion
         }
-        catch 
+        catch (Exception ex)
         {
             IsStoreSelected = false;
         }
@@ -357,6 +367,27 @@
         }
         NewDeliveryTicket.PickedUpCarts = TempPickedupCartList;
         PickedupCartList = PickedUpCarts.Where(x => x.Status == (CartStatus)2).ToList();
+    }
+    public async Task HandleNumberOfCarts(object NoOfCart)
+    {
+        if (JsModule is null)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
+
+      //  var inputtext = await JsModule.InvokeAsync<string>("getTextBoxValue");
+        if (Convert.ToInt32(NoOfCart) < NewDeliveryTicket.PickedUpCarts.Count)
+        {
+            IsNoOfCarts = false;
+            await JsModule.InvokeVoidAsync("addTextValidationClass");
+            StateHasChanged();
+        }
+        else
+        {
+            IsNoOfCarts = true;
+            await JsModule.InvokeVoidAsync("removeTextValidationClass");
+            StateHasChanged();
+        }
     }
     async Task Submit()
     {

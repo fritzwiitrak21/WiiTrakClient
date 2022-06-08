@@ -25,7 +25,7 @@
 <MudDialog>
     <DialogContent>
         <div style="width: 400px;height:450px;overflow: auto;">
-            <MudForm Model="@Cart">
+            <MudForm Model="@Cart" @bind-IsValid="@success">
                 <MudText Typo="Typo.h6" Class="my-1">Store : @Cart.Store.StoreName - @Cart.Store.StoreNumber</MudText>
                 <MudText Typo="Typo.h6" Class="my-1">Cart : @Cart.ManufacturerName - Cart# @Cart.CartNumber</MudText>
                 <MudSelect Class="my-2" T="String" ValueChanged="(value) => SelectStatus(value)" Value="@SelectedStatus" Label="Select Status" Required=true RequiredError=" "
@@ -48,7 +48,7 @@
                 }
 
 
-                @if (SelectedCondition == "Damage" && RepairIssues is not null)
+                @if (SelectedCondition == "Damage")
                 {
                     <MudSelect Class="my-2" T="string" Label="Damage Issue" AnchorOrigin="Origin.BottomCenter"
                            Required="true" AdornmentColor="Color.Error" Value="@SeletedIssue"
@@ -61,17 +61,22 @@
 
                     </MudSelect>
                 }
+                else { success = true; }
                 @if (SeletedIssue.Contains("Other"))
                 {
-                    <MudTextField T="string" Label="Issue" Variant="Variant.Text" @bind-Value="@IssueNameText" Required="true" AutoFocus="true" />
-                    @*<MudTextField T="string" Label="Issue Description" Variant="Variant.Text" Text="@IssueDescText" Lines="5" Required="true" />*@
+                    <MudTextField Class="my-2" T="string" Label="Issue Title" Variant="Variant.Text" @bind-Value="@IssueNameText" Required=@(!IssueDescVisibility) AutoFocus="true" />
+                    <MudTextField Class="my-2" T="string" Label="Issue Description" Variant="Variant.Text" @bind-Value="@IssueDescText" Lines="4" Required=@(!IssueDescVisibility) OnKeyUp=EnableSaveButton />
+                }
+                else if (IssueDescVisibility)
+                {
+                    <MudTextField Class="my-2" T="string" Label="Issue Description" Variant="Variant.Text" @bind-Value="@IssueDescText" OnKeyUp=EnableSaveButton Lines="4" Required=@IssueDescVisibility AutoFocus="true" />
                 }
             </MudForm>
         </div>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary"
+        <MudButton Color="Color.Primary" Disabled="@(!success)"
                    OnClick="Submit">Save</MudButton>
     </DialogActions>
 </MudDialog>
@@ -80,21 +85,26 @@
     public CartDto? Cart { get; set; }
     [Parameter]
     public List<RepairIssueDto>? RepairIssues { get; set; }
-
+    bool success = false;
     string SelectedStatus = string.Empty;
     string SelectedCondition = string.Empty;
     string IssueNameText = string.Empty;
     string IssueDescText = string.Empty;
     string SeletedIssue = string.Empty;
+    bool IssueDescVisibility = false;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     protected override void OnParametersSet()
     {
-        SelectedStatus = Cart.Status.ToString().Contains("OutsideGeofence") ? "Needs Pick Up" : Cart.Status.ToString();
-        SelectedCondition = Cart.Condition.ToString();
+        if (Cart is not null)
+        {
+            SelectedStatus = Cart.Status.ToString().Contains("OutsideGeofence") ? "Needs Pick Up" : Cart.Status.ToString();
+            SelectedCondition = Cart.Condition.ToString();
+            IssueDescText = Cart.IssueDescription;
+            IssueNameText = SeletedIssue = Cart.IssueType;
+        }
+
         if (RepairIssues is not null)
         {
-            SeletedIssue = RepairIssues[0].Issue;
-
             if (!RepairIssues.Any(x => x.Issue.Equals("Other")))
             {
                 RepairIssues.Add(new RepairIssueDto
@@ -116,11 +126,27 @@
     }
     private void SelectIssueType(string value)
     {
-        SeletedIssue =  value;
+        SeletedIssue = value;
+        if (!SeletedIssue.Equals("Other"))
+        {
+            IssueDescVisibility = true;
+            IssueDescText = "";
+        }
+        else
+        {
+            IssueDescVisibility = false;
+        }
+        StateHasChanged();
+    }
+    private void EnableSaveButton()
+    {
+        success = true;
+        StateHasChanged();
     }
     void Submit()
     {
-        Cart.DamageIssue = SeletedIssue.Equals("Other") ? IssueNameText : SeletedIssue;
+        Cart.IssueType = SeletedIssue.Equals("Other") ? IssueNameText : SeletedIssue;
+        Cart.IssueDescription = IssueDescText;
         MudDialog.Close(DialogResult.Ok(true));
     }
 

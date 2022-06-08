@@ -20,7 +20,7 @@
 
 <MudDialog>
     <DialogContent>              
-        <div style="width: 400px;height:450px;overflow: auto;">
+        <div style="width: 400px;height:450px;overflow-y: auto; overflow-x: hidden;">
                 <MudForm @ref=form Model="@Cart" @bind-IsValid="@success" @bind-Errors="@errors">  
                     <DataAnnotationsValidator />
                     <MudTextField T="string" class="my-6" @bind-Value="Cart.CartNumber" Label="Cart Number" Required="true" RequiredError=" " For="@(() => @Cart.CartNumber)" Variant="Variant.Text"></MudTextField>  
@@ -28,33 +28,61 @@
                     <MudDatePicker Label="Manufactured Date" Class="my-6" Editable="true" @bind-Date="Cart.DateManufactured" Placeholder="Manufactured Date" Required=true RequiredError=" " For="@(() => @Cart.DateManufactured)" />
                     <MudItem>
                     <MudSelect T="string" Value=@SelectedOrderFrom ValueChanged="(value) => HandleCartOrder(value)"   
-                        Label="Select Cart Ordered From" AnchorOrigin="Origin.BottomCenter">
-                        @for(int i = 0; i < CartOrder.Length; i++)
+                        Label="Select Cart Ordered From" AnchorOrigin="Origin.BottomCenter"
+                        Required=true RequiredError="">
+                        <ValidationMessage For="@(() => @Cart.OrderedFrom)"></ValidationMessage>
+                        @foreach(var order in Enum.GetNames(typeof(CartOrderedFrom)))
                         {
-                            string str = CartOrder[i];
-                            <MudSelectItem T="string" Value="@i.ToString()">@str</MudSelectItem>
+                            <MudSelectItem Value="@order">@order</MudSelectItem>
                         }
                     </MudSelect> 
                     </MudItem>
                     <br />
                     <MudItem>
                     <MudSelect T="string" Value=@SelectedStatus ValueChanged="(value) => HandleStatus(value)"
-                        Label="Select Cart Status" AnchorOrigin="Origin.BottomCenter">
-                        @for(int i = 0; i < CartStatus.Length; i++)
+                        Label="Select Cart Status" AnchorOrigin="Origin.BottomCenter"
+                        Required=true RequiredError="">
+                        <ValidationMessage For="@(() => @Cart.Status)"></ValidationMessage>
+                        @foreach(var status in Enum.GetNames(typeof(CartStatus)))
                         {
-                            string str = CartStatus[i];
-                            <MudSelectItem T="string" Value="@i.ToString()">@str</MudSelectItem>
+                            switch(status)
+                            {
+                                case "InsideGeofence":
+                                   <MudSelectItem Value="@status">Inside Geofence</MudSelectItem>   
+                                   break;
+                                 case "OutsideGeofence":
+                                   <MudSelectItem Value="@status">Outside Geofence</MudSelectItem>   
+                                   break;
+                                 case "PickedUp":
+                                   <MudSelectItem Value="@status">Picked Up</MudSelectItem>   
+                                   break;
+                                 case "Lost":
+                                   <MudSelectItem Value="@status">Lost</MudSelectItem>   
+                                   break;
+                            }
                         }
                     </MudSelect> 
                     </MudItem>
                     <br />
                     <MudItem>
                     <MudSelect T="string" Value=@SelectedCondition ValueChanged="(value) => HandleCondition(value)"
-                        Label="Select Cart Condition" AnchorOrigin="Origin.BottomCenter">
-                        @for(int i = 0; i < CartCondition.Length; i++)
+                        Label="Select Cart Condition" AnchorOrigin="Origin.BottomCenter"
+                        Required=true RequiredError="">
+                        <ValidationMessage For="@(() => @Cart.Condition)"></ValidationMessage>
+                        @foreach(var condition in Enum.GetNames(typeof(CartCondition)))
                         {
-                            string str = CartCondition[i];
-                            <MudSelectItem T="string" Value="@i.ToString()">@str</MudSelectItem>
+                            switch(condition)
+                            {
+                                case "Good":
+                                    <MudSelectItem Value="@condition">Good</MudSelectItem>
+                                    break;
+                                case "Damage":
+                                    <MudSelectItem Value="@condition">Damage</MudSelectItem>
+                                    break;
+                                case "DamageBeyondRepair":
+                                    <MudSelectItem Value="@condition">Trash</MudSelectItem>
+                                    break;
+                            }
                         }
                     </MudSelect> 
                     </MudItem>
@@ -76,17 +104,12 @@
     bool success;
     string[] errors = { };
     MudForm form;
-    string[] CartOrder = new string[3];
-    string[] CartStatus = new string[5];
-    string[] CartCondition = new string[3];
     public string SelectedOrderFrom = "";
     public string SelectedStatus = "";
     public string SelectedCondition = "";
     protected override async Task OnInitializedAsync()
     {
-        CartOrder = Enum.GetNames(typeof(CartOrderedFrom));
-        CartStatus = Enum.GetNames(typeof(CartStatus));
-        CartCondition = Enum.GetNames(typeof(CartCondition));
+        
     }
     protected override void OnParametersSet() 
     {
@@ -118,17 +141,17 @@
     public async Task HandleCartOrder(string value)
     {
         SelectedOrderFrom = value;
-        Cart.OrderedFrom = (CartOrderedFrom)Convert.ToInt32(value);
+        Cart.OrderedFrom = (CartOrderedFrom) Enum.Parse(typeof(CartOrderedFrom), value);
     }
     public async Task HandleStatus(string value)
     {
         SelectedStatus = value;
-        Cart.Status = (CartStatus)Convert.ToInt32(value);
+        Cart.Status = (CartStatus) Enum.Parse(typeof(CartStatus), value);
     }
     public async Task HandleCondition(string value)
     {
         SelectedCondition = value;
-        Cart.Condition = (CartCondition)Convert.ToInt32(value);
+        Cart.Condition = (CartCondition) Enum.Parse(typeof(CartCondition), value);
     }
     void Submit() 
     {

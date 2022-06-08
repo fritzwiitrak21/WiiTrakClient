@@ -1,9 +1,13 @@
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.DTOs;
 using WiiTrakClient.Cores;
-using WiiTrakClient.Enums;
+using WiiTrakClient.Enums; 
 
 namespace WiiTrakClient.Features.Companies
 {

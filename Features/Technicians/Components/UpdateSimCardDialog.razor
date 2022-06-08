@@ -20,7 +20,7 @@
 
 <MudDialog>
     <DialogContent>              
-        <div style="width: 400px;height:450px;overflow: auto;">
+        <div style="width: 400px;height:450px;overflow-y: auto; overflow-x: hidden;">
                 <MudForm @ref=form Model="@SimCard" @bind-IsValid="@success" @bind-Errors="@errors">  
                     <DataAnnotationsValidator />
                         <MudTextField T="string" class="my-6" @bind-Value="SimCard.TelecomCompany" Label="Telecom Company" Required="true" RequiredError=" " For="@(() => @SimCard.TelecomCompany)" Variant="Variant.Text"></MudTextField>  

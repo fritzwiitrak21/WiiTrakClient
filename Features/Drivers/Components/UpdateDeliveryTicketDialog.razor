@@ -41,6 +41,10 @@
                 }
 
                 <MudTextField @bind-Value="@editDeliveryTicket.NumberOfCarts" Label="No of carts" Required="true" For="@(() => @editDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
+                 @*  <div>
+                <label id="NoOfCartLabel">No of Carts*</label>
+                <input type="text" Class="inputtext" placeholder="No of Carts*" value="@editDeliveryTicket.NumberOfCarts"  @onchange="eventArgs => { HandleNumberOfCarts(eventArgs.Value); }" />
+               </div>*@
                 @if (PickedupCartList != null)
                 {
                     <div>
@@ -51,11 +55,11 @@
 
                             @foreach (var cart in PickedupCartList)
                             {
-                                if (SelectdeCartList != null)
+                                if (SelectedCartList != null)
                                 {
-                                    @*   foreach (var selectcart in SelectdeCartList)
+                                    @*   foreach (var selectcart in SelectedCartList)
                                         {*@
-                                    bool test = SelectdeCartList.Where(x => x.Id == cart.Id).ToList().Any();
+                                    bool test = SelectedCartList.Where(x => x.Id == cart.Id && x.Status == CartStatus.InsideGeofence).ToList().Any();
                                     if (test)
                                     {
                                         <input type="checkbox" id="@cart.Id" value="@cart.CartNumber - @cart.ManufacturerName" checked="checked" @onchange="@((e) => CheckboxChanged(e.Value, cart.Id))" />
@@ -117,7 +121,7 @@
     public List<CartDto> PickedUpCarts { get; set; }
     public List<CartDto> PickedupCartList { get; set; }
     public List<CartDto> TempPickedupCartList { get; set; }
-    public List<CartDto> SelectdeCartList { get; set; }
+    public List<CartDto> SelectedCartList { get; set; }
     bool success;
     string[] errors = { };
     MudForm form;
@@ -152,10 +156,14 @@
     {
         #region get carts by storeid
         PickedUpCarts = await CartHttpRepository.GetCartsByStoreIdAsync(editDeliveryTicket.StoreId);
-        SelectdeCartList = await CartHttpRepository.GetCartsByDeliveryTicketIdAsync(DeliveryTicketId);
+        var SelectedCarts = await CartHttpRepository.GetCartsByDeliveryTicketIdAsync(DeliveryTicketId);
+        if (SelectedCarts != null)
+        {
+            SelectedCartList = SelectedCarts.Where(x => x.Status == CartStatus.InsideGeofence).ToList();
+        }
         if (PickedUpCarts != null)
         {
-            PickedupCartList = PickedUpCarts.Where(x => x.Status == (CartStatus)2 || x.Status == (CartStatus)0).ToList();
+            PickedupCartList = PickedUpCarts.Where(x => x.Status == CartStatus.PickedUp || x.Status == CartStatus.InsideGeofence).ToList();
             //editDeliveryTicket.NumberOfCarts = PickedupCartList.Count();
         }
         else
@@ -163,7 +171,8 @@
             PickedupCartList = new List<CartDto>();
             // editDeliveryTicket.NumberOfCarts = 0;
         }
-        TempPickedupCartList = SelectdeCartList;
+        TempPickedupCartList = SelectedCartList;
+        editDeliveryTicket.PickedUpCarts = TempPickedupCartList;
         StateHasChanged();
         #endregion
     }
@@ -192,15 +201,16 @@
         {
             editDeliveryTicket.NumberOfCarts = editDeliveryTicket.NumberOfCarts + 1;
             //TempPickedupCartList.AddRange(PickedupCartList.Where(x => x.Id == Id).ToList());
-            SelectdeCartList.AddRange(PickedupCartList.Where(x => x.Id == Id).ToList());
+            SelectedCartList.AddRange(PickedupCartList.Where(x => x.Id == Id).ToList());
         }
         else
         {
             editDeliveryTicket.NumberOfCarts = editDeliveryTicket.NumberOfCarts - 1;
             //TempPickedupCartList.RemoveAll(x => x.Id == Id);
-            SelectdeCartList.RemoveAll(x => x.Id == Id);
+            SelectedCartList.RemoveAll(x => x.Id == Id);
         }
-        TempPickedupCartList = SelectdeCartList;
+        success = true;
+        TempPickedupCartList = SelectedCartList;
         editDeliveryTicket.PickedUpCarts = TempPickedupCartList;
         PickedupCartList = PickedUpCarts.Where(x => x.Status == (CartStatus)2 || x.Status == (CartStatus)0).ToList();
         StateHasChanged();
@@ -219,9 +229,30 @@
             editDeliveryTicket.NumberOfCarts = 0;
         }
         TempPickedupCartList = PickedupCartList;
-        SelectdeCartList = await CartHttpRepository.GetCartsByDeliveryTicketIdAsync(DeliveryTicketId);
+        SelectedCartList = await CartHttpRepository.GetCartsByDeliveryTicketIdAsync(DeliveryTicketId);
         SelectedStore = store;
         StateHasChanged();
+    }
+    public async Task HandleNumberOfCarts(object NoOfCart)
+    {
+        if (JsModule is null)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
+
+      //  var inputtext = await JsModule.InvokeAsync<string>("getTextBoxValue");
+        if (Convert.ToInt32(NoOfCart) < editDeliveryTicket.PickedUpCarts.Count)
+        {
+            success = false;
+            await JsModule.InvokeVoidAsync("addTextValidationClass");
+            StateHasChanged();
+        }
+        else
+        {
+            success = true;
+            await JsModule.InvokeVoidAsync("removeTextValidationClass");
+            StateHasChanged();
+        }
     }
     void Submit()
     {

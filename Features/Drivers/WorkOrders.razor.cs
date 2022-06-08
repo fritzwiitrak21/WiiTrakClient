@@ -1,11 +1,13 @@
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using System;
-using System.Collections.Generic;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.DTOs;
 using MudBlazor;
-using WiiTrakClient.Enums;
 
 namespace WiiTrakClient.Features.Drivers
 {

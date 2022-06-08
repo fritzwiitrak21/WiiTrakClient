@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using WiiTrakClient.Cores;
 using WiiTrakClient.DTOs;
