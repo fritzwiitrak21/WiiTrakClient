@@ -71,12 +71,12 @@
                 <MudTextField class="my-6" @bind-Value="NewStore.City" Label="City" Required="true" RequiredError=" " For="@(() => @NewStore.City)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="NewStore.State" Label="State" Required="true" RequiredError=" " For="@(() => @NewStore.State)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="NewStore.PostalCode" Label="Zip Code" Required="true" RequiredError=" " For="@(() => @NewStore.PostalCode)" Variant="Variant.Text"></MudTextField>
-                <div Class="Mudsearchselect my-6">
+                <div Class="Mudsearchselect">
                     @if (SelectedCounty != "")
                     {
                         <label id="targetlabel">County Code*</label>
                     }
-                    <input type="text" list="textsearch" Class="inputselect" placeholder="County Code*" value="@SelectedCounty" @onkeyup="OnClick" @onchange="eventArgs => { OnSelect(eventArgs.Value); }" />
+                    <input type="text" list="textsearch" Class="inputselect my-3" placeholder="County Code*" value="@SelectedCounty" @onkeyup="OnClick" @onchange="eventArgs => { OnSelect(eventArgs.Value); }" />
 
                     <datalist id="textsearch">
                         @foreach (var county in County)
@@ -85,7 +85,7 @@
                         }
                     </datalist>
                 </div>
-                <MudItem Class="my-6">
+                <MudItem Class="my-3">
                     <MudSelect T="String" Value="@SelectedService" ValueChanged="(value) => HandleServiceFrequency(value)" Label="Select Service Frequency" Required=true RequiredError=" "
                                AnchorOrigin="Origin.BottomCenter">
 
@@ -103,8 +103,7 @@
                 <MudCheckBox @bind-Checked="NewStore.IsSignatureRequired" Label="Signature Reqired For Deliveries" Color="Color.Primary"></MudCheckBox>
                 <div class="d-flex SubmitGrp">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
-                    @*                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
-                    *@                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
                 </div>
             </MudForm>
         </div>
@@ -182,8 +181,8 @@
     }
     public async Task HandleServiceFrequency(string value)
     {
-        NewStore.ServiceFrequency = value;
-        SelectedService = value;
+        NewStore.ServiceFrequency = value; 
+        SelectedService = value; 
     }
     private async Task OnClick()
     {
@@ -277,7 +276,14 @@
 
     void Submit()
     {
-        MudDialog.Close(DialogResult.Ok(true));
+        if(!success)
+        {
+            form.Validate();
+        }
+        else
+        {
+            MudDialog.Close(DialogResult.Ok(true)); 
+        }
     }
     void Cancel() => MudDialog.Cancel();
     private async Task<IEnumerable<string>> Search1(string value)

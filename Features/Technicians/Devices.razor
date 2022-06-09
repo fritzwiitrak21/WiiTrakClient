@@ -35,7 +35,7 @@ else
     private IJSObjectReference jsmodule;
     List<DevicesDto> DeviceList = new();
     List<DevicesDto> devices = new();
-    DeviceCreationDto AddDevice = new();
+    DevicesDto AddDevice = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -57,7 +57,7 @@ else
     private async Task OpenDialog()
     {
         var parameters = new DialogParameters();
-        AddDevice = new DeviceCreationDto();
+        AddDevice = new DevicesDto();
         parameters.Add("NewDevice", AddDevice);
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
@@ -68,7 +68,7 @@ else
         if (!result.Cancelled)
         {
             //add new device to backend
-            var DeviceCreation = new DeviceCreationDto
+            var DeviceCreation = new DevicesDto
             {
                 DeviceModel=AddDevice.DeviceModel,
                 DeviceName=AddDevice.DeviceName,

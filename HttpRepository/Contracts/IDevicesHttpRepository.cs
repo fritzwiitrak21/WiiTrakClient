@@ -10,7 +10,7 @@ namespace WiiTrakClient.HttpRepository.Contracts
     {
         Task<List<DevicesDto>> GetAllDeviceDetailsAsync();
         Task<DevicesDto> GetDeviceByIdAsync(Guid id);
-        Task CreateDeviceAsync(DeviceCreationDto device);
-        Task UpdateDeviceAsync(Guid id, DeviceUpdateDto device);
+        Task CreateDeviceAsync(DevicesDto device);
+        Task UpdateDeviceAsync(Guid id, DevicesDto device);
     }
 }

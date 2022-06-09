@@ -10,49 +10,42 @@ namespace WiiTrakClient.HttpRepository
 {
     public class TechnicianHttpRepository : ITechnicianHttpRepository
     {
-        private readonly IHttpService _httpService;
+        private readonly IHttpService Httpservice;
         private const string ControllerName = "technicians";
-        private readonly string _apiUrl;
+        private readonly string ApiUrl;
 
-        public TechnicianHttpRepository(IHttpService httpService)
+        public TechnicianHttpRepository(IHttpService HttpService)
         {
-            _httpService = httpService;
-            _apiUrl = $"{ httpService.BaseUrl }{ ControllerName }";
+            Httpservice = HttpService;
+            ApiUrl = $"{ HttpService.BaseUrl }{ ControllerName }";
         }
 
         public async Task<List<TechnicianDto>> GetAllTechniciansAsync()
         {
-            var response = await _httpService.Get<List<TechnicianDto>>(_apiUrl);
-
+            var response = await Httpservice.Get<List<TechnicianDto>>(ApiUrl);
             return response.Response;
         }
 
         public async Task<TechnicianDto> GetTechnicianByIdAsync(Guid id)
         {
-            string url = $"{_apiUrl}/{id}";
-
-            var response = await _httpService.Get<TechnicianDto>(url);
-
+            string url = $"{ApiUrl}/{id}";
+            var response = await Httpservice.Get<TechnicianDto>(url);
             return response.Response;
         }
 
         public async Task CreateTechnicianAsync(TechnicianCreationDto technician)
         {
-            await _httpService.Post(_apiUrl, technician);
-
+            await Httpservice.Post(ApiUrl, technician);
         }
 
         public async Task UpdateTechnicianAsync(Guid id, TechnicianUpdateDto client)
         {
-
-            await _httpService.Put($"{ _apiUrl }/{ id }", client);
-
+            await Httpservice.Put($"{ ApiUrl }/{ id }", client);
         }
 
         public async Task DeleteTechnicianAsync(Guid id)
         {
-            await _httpService.Delete($"{ _apiUrl }/{ id }");
-
+            await Httpservice.Delete($"{ ApiUrl }/{ id }");
         }
     }
 }

@@ -9,19 +9,19 @@
             <MudText Class="my-2" Typo="Typo.h5">Driver Name: @deliveryTicketDto.DriverName</MudText>
             <MudText Class="my-2" Typo="Typo.h5">Number of Carts: @deliveryTicketDto.NumberOfCarts</MudText>
             <div class="my-2">
-                @if (SelectedCartList != null)
+               @if (SelectedCartList != null && SelectedCartList.Count > 0)
                 {
-                    <label>Carts List</label>
+                        <label>Carts List</label>
 
-                    <br />
-                    @foreach (var cart in SelectedCartList)
-                    {
-                       if (cart.Status == CartStatus.InsideGeofence)
+                        <br />
+                        @foreach (var cart in SelectedCartList)
                         {
-                            <span>  • @cart.ManufacturerName - #@cart.CartNumber </span>
-                            <br />
+                            if (cart.Status == CartStatus.InsideGeofence)
+                            {
+                                <span>  • @cart.ManufacturerName - #@cart.CartNumber </span>
+                                <br />
+                            }
                         }
-                    }
                 }
             </div>
 

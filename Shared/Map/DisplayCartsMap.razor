@@ -69,7 +69,9 @@ else
                                 case CartStatus.PickedUp:
                                     if (selected.Text.Equals("damage"))
                                     {
-                                <span style="background:#90ee90;padding:2px;">On Truck</span><span>&nbsp-&nbsp</span>
+                                <span style="background:#90ee90;padding:2px;">On Truck</span>
+
+                                <span>&nbsp-&nbsp</span>
                                 <span style="background:#ffdddd;padding:2px;">@context.IssueType</span>
                                     }
                                     else
@@ -130,20 +132,20 @@ else
         IsMapView = false;
         await GetCartsList();
     }
-    private async Task ShowTrashListView()
+    private async Task ShowOnTruckListView()
     {
-        cartlistcount = await GetListOfCarts(x => x.Condition == CartCondition.DamageBeyondRepair);
-        message = "in trash condition " + cartlistcount;
+        cartlistcount = await GetListOfCarts(x => x.Status == CartStatus.PickedUp);
+        message = "on truck " + cartlistcount;
     }
     private async Task ShowDamageListView()
     {
         cartlistcount = await GetListOfCarts(x => x.Condition == CartCondition.Damage);
         message = "in damage condition " + cartlistcount;
     }
-    private async Task ShowOnTruckListView()
+    private async Task ShowTrashListView()
     {
-        cartlistcount = await GetListOfCarts(x => x.Status == CartStatus.PickedUp);
-        message = "on truck " + cartlistcount;
+        cartlistcount = await GetListOfCarts(x => x.Condition == CartCondition.DamageBeyondRepair);
+        message = "in trash condition " + cartlistcount;
     }
     private async Task ShowLostListView()
     {
@@ -254,24 +256,12 @@ else
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
         try
         {
-            if (JsModule1 is null)
-            {
-                JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-            }
-            await JsModule1.InvokeVoidAsync("getCoord", false);
-            var coords = await JsModule1.InvokeAsync<string>("getCoordinates");
-
-
             var dialog = DialogService.Show<UpdateCartStatusDialog>("Cart Status", parameters);
 
             var result = await dialog.Result;
             if (!result.Cancelled)
             {
-                var lat = coords.Split("##")[0];
-                var Lon = coords.Split("##")[1];
-                var Latitude = Core.ToDouble(lat);
-                var Longitude = Core.ToDouble(Lon);
-                await JsModule1.InvokeVoidAsync("ClearCoord");
+
                 var cartHistory = new CartHistoryUpdateDto
                     {
                         ServiceProviderId = cart.Store != null ? cart.Store.ServiceProviderId : null,
@@ -281,8 +271,8 @@ else
                         Status = cart.Status,
                         CartId = cart.Id,
                         PickedUpAt = DateTime.UtcNow,
-                        PickupLatitude = Latitude,
-                        PickupLongitude = Longitude,
+                        PickupLatitude = cart.TrackingDevice != null ? cart.TrackingDevice.Latitude : 0,
+                        PickupLongitude = cart.TrackingDevice != null ? cart.TrackingDevice.Longitude : 0,
                         IssueType = cart.IssueType,
                         IssueDescription = cart.IssueDescription
                     };
@@ -304,7 +294,28 @@ else
                         CartHistory = cartHistory
                     };
                 await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
-                await GetCartsList();
+
+                switch (selected.Text)
+                {
+                    case "cartslist":
+                        await GetCartsList();
+                        break;
+                    case "ontruck":
+                        await ShowOnTruckListView();
+                        break;
+                    case "damage":
+                        await ShowDamageListView();
+                        break;
+                    case "trash":
+                        await ShowTrashListView();
+                        break;
+                    case "lost":
+                        await ShowLostListView();
+                        break;
+                    default:
+                        await GetCartsList();
+                        break;
+                }
                 StateHasChanged();
             }
         }

@@ -2,6 +2,8 @@
 * 06.06.2022
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
+using System.ComponentModel.DataAnnotations;
+
 namespace WiiTrakClient.DTOs
 {
     public class DeliveryTicketDto
@@ -13,7 +15,8 @@ namespace WiiTrakClient.DTOs
         public DateTime CreatedAt { get; set; }
 
         public long DeliveryTicketNumber { get; set; }
-         
+        [Required]
+        [RegularExpression(@"^[0-9]*$")]
         public int NumberOfCarts { get; set; }
 
         public string Grid { get; set; } = string.Empty;
@@ -39,7 +42,9 @@ namespace WiiTrakClient.DTOs
         public Guid StoreId { get; set; } = Guid.Empty;
 
         public Guid DriverId { get; set; } = Guid.Empty;
-        
+        [Required]
+        [StringLength(25)]
+        [RegularExpression(@"^[a-zA-Z ]*$")]
         public string Signee { get;set; } = string.Empty;
         public int DriverNumber { get; set; }
         public string StreetAddress1 { get; set; }

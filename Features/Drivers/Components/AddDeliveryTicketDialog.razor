@@ -51,21 +51,21 @@
                 <label id="NoOfCartLabel">No of Carts*</label>
                 <input type="text" Class="inputtext" placeholder="No of Carts*" value="@NewDeliveryTicket.NumberOfCarts"  @onchange="eventArgs => { HandleNumberOfCarts(eventArgs.Value); }" />
                </div>
-                @if (PickedupCartList != null)
+                @if (PickedupCartList != null && PickedupCartList.Count > 0)
                 {
-                    <div>
                         <div>
-                            <label>Carts List</label>
-                        </div>
-                        <div class="form-check" style="max-height:75px;overflow-x:auto;min-height:30px">
+                            <div>
+                                <label>Carts List</label>
+                            </div>
+                            <div class="form-check" style="max-height:75px;overflow-x:auto;min-height:30px">
 
-                            @foreach (var cart in PickedupCartList)
-                            {
-                                <input type="checkbox" id="@cart.Id" value="@cart.CartNumber - @cart.ManufacturerName" checked="checked" @onchange="@((e) => CheckboxChanged(e.Value, cart.Id))" />
-                                <span>&nbsp;@cart.ManufacturerName - #@cart.CartNumber </span> <br />
-                            }
+                                @foreach (var cart in PickedupCartList)
+                                {
+                                    <input type="checkbox" id="@cart.Id" value="@cart.CartNumber - @cart.ManufacturerName" checked="checked" @onchange="@((e) => CheckboxChanged(e.Value, cart.Id))" />
+                                    <span>&nbsp;@cart.ManufacturerName - #@cart.CartNumber </span> <br />
+                                }
+                            </div>
                         </div>
-                    </div>
                 }
                 <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" IBrowserContent="@SaveIBrowserFile" />
 
@@ -95,8 +95,7 @@
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
         <MudButton Color="Color.Primary"
-                   OnClick="Submit"
-                   Disabled="@(!formvalid)">Save</MudButton>
+                   OnClick="Submit">Save</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -271,13 +270,13 @@
         {
             IsStoreSelected = false;
             await JsModule.InvokeVoidAsync("addValidationClass");
-            
+
         }
         else
         {
             IsStoreSelected = true;
             await JsModule.InvokeVoidAsync("removeValidationClass");
-           
+
         }
         StateHasChanged();
     }
@@ -308,9 +307,15 @@
             {
                 PickedupCartList = PickedUpCarts.Where(x => x.Status == (CartStatus)2).ToList();
                 NewDeliveryTicket.NumberOfCarts = PickedupCartList.Count();
-                TempPickedupCartList = PickedupCartList;
-                NewDeliveryTicket.PickedUpCarts = TempPickedupCartList;
+
             }
+            else
+            {
+                PickedupCartList = new List<CartDto>();
+                NewDeliveryTicket.NumberOfCarts = 0;
+            }
+            TempPickedupCartList = PickedupCartList;
+                NewDeliveryTicket.PickedUpCarts = TempPickedupCartList;
             StateHasChanged();
             #endregion
         }
@@ -375,7 +380,7 @@
             JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
         }
 
-      //  var inputtext = await JsModule.InvokeAsync<string>("getTextBoxValue");
+        //  var inputtext = await JsModule.InvokeAsync<string>("getTextBoxValue");
         if (Convert.ToInt32(NoOfCart) < NewDeliveryTicket.PickedUpCarts.Count)
         {
             IsNoOfCarts = false;
@@ -396,7 +401,14 @@
         {
             System.Threading.Thread.Sleep(600);
         }
-        MudDialog.Close(DialogResult.Ok(true));
+        if(!formvalid)
+        {
+            form.Validate();
+        }
+        else
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
     }
 
     void Cancel() => MudDialog.Cancel();

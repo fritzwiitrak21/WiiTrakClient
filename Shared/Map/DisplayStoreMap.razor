@@ -2,17 +2,34 @@
 @namespace WiiTrakClient.Shared.Components
 @using WiiTrakClient.Shared.Components
 @using WiiTrakClient.Cores
-
+<style>
+    .recenterbtn {
+        background-color: DodgerBlue;
+        border: none;
+        color: white;
+        padding: 10px 10px;
+        font-size: 12px;
+        cursor: pointer;
+        position: absolute;
+        left: 32px;
+        bottom: 32px;
+        border-radius: 10px;
+    }
+</style>
 <MudDialog>
     <DialogContent>
         <div style="width:1000px;height:490px;overflow: auto;">
             <h6>Address:</h6>
             @Address<br />
 
-            
-                <label id="distance"/>
-                <div id="map" style="height:400px;width:100%;"></div>
-          
+
+            <label id="distance" />
+            <div id="map" style="height:400px;width:100%;"></div>
+            @*<div id="map" style="float:left;width:70%;height:100%"></div>
+                <div id="directionsPanel" style="float:right;width:30%;height:460px;overflow: auto;"></div>*@
+
+
+            <button class="recenterbtn" onclick="@LoadMap"><i class="fa fa-location-arrow"></i>&nbsp Re-Center</button>
         </div>
     </DialogContent>
     <DialogActions>
@@ -24,6 +41,8 @@
     private IJSObjectReference JsModule;
     private IJSObjectReference JsModule1;
 
+    [Parameter]
+    public string StoreName { get; set; } = string.Empty;
     [Parameter]
     public string Address { get; set; } = string.Empty;
     [Parameter]
@@ -38,7 +57,32 @@
 
     protected override async Task OnInitializedAsync()
     {
-        JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+
+        await GetCoordinates();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/StoreGoogleMaps.js");
+            await JsModule1.InvokeVoidAsync("initMap", StoreLatitude, StoreLongitude, DriverLatitude, DriverLongitude, StoreName);
+        }
+    }
+    private async Task LoadMap()
+    {
+        await GetCoordinates();
+        if (JsModule1 is null)
+        {
+            JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/StoreGoogleMaps.js");
+        }
+        await JsModule1.InvokeVoidAsync("initMap", StoreLatitude, StoreLongitude, DriverLatitude, DriverLongitude, StoreName);
+    }
+    private async Task GetCoordinates()
+    {
+        if (JsModule is null)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
         await JsModule.InvokeVoidAsync("getCoord", false);
         var CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
 
@@ -57,16 +101,5 @@
         }
         await JsModule.InvokeVoidAsync("ClearCoord");
     }
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await LoadMap();
-        }
-    }
-    private async Task LoadMap()
-    {
-        JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/StoreGoogleMaps.js");
-        await JsModule1.InvokeVoidAsync("initMap", StoreLatitude, StoreLongitude, DriverLatitude, DriverLongitude);
-    }
+
 }

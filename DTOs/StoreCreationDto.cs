@@ -8,58 +8,58 @@ namespace WiiTrakClient.DTOs
 {
     public class StoreCreationDto
     {
-        [Required(ErrorMessage = " ")]
-        [StringLength(25, ErrorMessage = " ")]
-        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = " ")]
+        [Required]
+        [StringLength(25)]
+        [RegularExpression(@"^[a-zA-Z ]*$")]
         public string StoreName { get; set; } = string.Empty;
 
 
-        [Required(ErrorMessage = " ")]
-        [StringLength(10, ErrorMessage = " ")]
-        [RegularExpression(@"^[A-Za-z0-9]*$", ErrorMessage = " ")]
+        [Required]
+        [StringLength(10)]
+        [RegularExpression(@"^[A-Za-z0-9]*$")]
         public string StoreNumber { get; set; } = string.Empty;
 
 
-        [Required(ErrorMessage = " ")]
+        [Required]
         [RegularExpression(@"^[a-zA-Z0-9_]+@[a-z]+\.[a-z]{2,3}$")]
         public string Email { get; set; } = string.Empty;
 
 
-        [Required(ErrorMessage = " ")]
-        [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$", ErrorMessage = " ")]
+        [Required]
+        [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$")]
         public string PhonePrimary { get; set; } = string.Empty;
 
 
-        [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$", ErrorMessage = " ")]
+        [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$")]
         public string PhoneSecondary { get; set; } = string.Empty;
 
 
-        [Required(ErrorMessage = " ")]
-        [StringLength(50, ErrorMessage = " ")]
+        [Required]
+        [StringLength(50)]
         public string StreetAddress1 { get; set; } = string.Empty;
 
 
-        [StringLength(25, ErrorMessage = " ")]
+        [StringLength(25)]
         public string StreetAddress2 { get; set; } = string.Empty;
 
 
-        [Required(ErrorMessage = " ")]
-        [MaxLength(15, ErrorMessage = " ")]
-        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = " ")]
+        [Required]
+        [MaxLength(15)]
+        [RegularExpression(@"^[a-zA-Z ]*$")]
         public string City { get; set; } = string.Empty;
 
 
-        [Required(ErrorMessage = " ")]
-        [MaxLength(15, ErrorMessage = " ")]
-        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = " ")]
+        [Required]
+        [MaxLength(15)]
+        [RegularExpression(@"^[a-zA-Z ]*$")]
         public string State { get; set; } = string.Empty;
 
 
         public string CountryCode { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = " ")]
+        [Required]
         [MinLength(4)]
-        [RegularExpression(@"^[1-9][0-9]*$", ErrorMessage = " ")]
+        [RegularExpression(@"^[1-9][0-9]*$")]
         public string PostalCode { get; set; } = string.Empty;
 
         public string ProfilePicUrl { get; set; } = string.Empty;

@@ -89,7 +89,7 @@
                     <br />
                     <div class="d-flex"> 
                         <MudButton OnClick="Cancel">Cancel</MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
                     </div>
                     <br />
                 </MudForm> 
@@ -155,7 +155,14 @@
     }
     void Submit() 
     {
-        MudDialog.Close(DialogResult.Ok(true));
+        if(!success)
+        {
+            form.Validate();
+        }
+        else
+        {
+            MudDialog.Close(DialogResult.Ok(true)); 
+        }
     }
     void Cancel() => MudDialog.Cancel();
 }

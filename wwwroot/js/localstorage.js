@@ -43,15 +43,12 @@ export function clearSession(){
     localStorage.clear();
 }
 
-
 export function getStoreId(value) {
-    var storeid = $('#textsearch [value="' + value + '"]').data('value');
-    return storeid;
+    return $('#textsearch [value="' + value + '"]').data('value');
 }
 
 export function getTextBoxValue() {
-    var inputtext = $('input[type="text"].inputselect').val();
-    return inputtext;
+    return $('input[type="text"].inputselect').val();
 }
 
 export function addValidationClass() {
@@ -130,11 +127,15 @@ export function addValidationCountycodeClass() {
     $('input[type="text"].inputselect').addClass("mud-input-error");
     $('input[type="text"].inputselect').addClass("countycode");
     $('#targetlabel').addClass("mud-input-error");
+    $('input[type="text"].inputselect').addClass("my-3");
+    $('input[type="text"].inputselect').removeClass("my-1");
 }
 export function removeValidationCountycodeClass() {
     $('input[type="text"].inputselect').removeClass("mud-input-error");
     $('input[type="text"].inputselect').removeClass("countycode");
     $('#targetlabel').removeClass("mud-input-error");
+    $('input[type="text"].inputselect').removeClass("my-3");
+    $('input[type="text"].inputselect').addClass("my-1");
 }
 export function BlazorDownloadFile(filename, content) {
     const file = new File([content], filename, { type: "application/octet-stream" });

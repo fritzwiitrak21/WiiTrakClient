@@ -17,7 +17,7 @@
     margin: 0;
     font-size: 0;   
 }
-        </style> 
+</style> 
     
         
         <MudDialog>
@@ -53,12 +53,11 @@
     string[] errors = { };
     MudForm form;
     protected override void OnParametersSet() {
-            
-    }
 
+    }
     void Submit() 
     { 
-        MudDialog.Close(DialogResult.Ok(true)); 
+        MudDialog.Close(DialogResult.Ok(true));
     }
     void Cancel() => MudDialog.Cancel();
 }

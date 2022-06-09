@@ -10,11 +10,11 @@ namespace WiiTrakClient.DTOs
     {
         public long DeliveryTicketNumber { get; set; }
         [Required]
-        [RegularExpression(@"^[0-9]*$", ErrorMessage =" ")]
+        [RegularExpression(@"^[0-9]*$")]
         public int NumberOfCarts { get; set; }
 
         public string Grid { get; set; } = string.Empty;
-        [Required(ErrorMessage =" ")]
+        [Required]
         public string PicUrl { get; set; } = string.Empty;
 
         public string SignaturePicUrl { get; set; } = string.Empty;
@@ -28,8 +28,8 @@ namespace WiiTrakClient.DTOs
 
         public Guid DriverId { get; set; } = Guid.Empty;
         [Required]
-        [StringLength(25, ErrorMessage = " ")]
-        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = " ")]
+        [StringLength(25)]
+        [RegularExpression(@"^[a-zA-Z ]*$")]
         public string Signee { get; set; } = string.Empty;
         public bool IsActive { get; set; }
         public Guid? UpdatedBy { get; set; }

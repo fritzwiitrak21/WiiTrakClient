@@ -34,7 +34,7 @@
                     <MudTextField T="string" class="my-6" @bind-Value="NewCorporate.PhoneSecondary" Label="Phone Secondary" For="@(() => @NewCorporate.PhoneSecondary)"  Variant="Variant.Text"></MudTextField>  
                     <div class="d-flex">
                         <MudButton OnClick="Cancel">Cancel</MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
                     </div>
                 </MudForm> 
         </div>
@@ -56,7 +56,14 @@
     }
     void Submit() 
     {
-        MudDialog.Close(DialogResult.Ok(true));
+        if(!success)
+        {
+            form.Validate();
+        }
+        else
+        {
+            MudDialog.Close(DialogResult.Ok(true)); 
+        }
     }
     void Cancel() => MudDialog.Cancel();
 

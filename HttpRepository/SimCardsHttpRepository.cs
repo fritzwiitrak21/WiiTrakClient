@@ -34,12 +34,12 @@ namespace WiiTrakClient.HttpRepository
             return response.Response;
         }
 
-        public async Task CreateSimCardAsync(SimCardCreationDto sim)
+        public async Task CreateSimCardAsync(SimCardsDto sim)
         {
             await HttpService.Post(ApiUrl, sim);
         }
 
-        public async Task UpdateSimCardAsync(Guid id, SimCardUpdateDto sim)
+        public async Task UpdateSimCardAsync(Guid id, SimCardsDto sim)
         {
             await HttpService.Put($"{ ApiUrl }/{ id }", sim);
         }

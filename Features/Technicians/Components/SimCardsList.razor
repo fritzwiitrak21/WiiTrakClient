@@ -73,7 +73,7 @@
         if (!result.Cancelled) 
         {
             // save updated SimCard to backend
-            var SimCardUpdate = new SimCardUpdateDto 
+            var SimCardUpdate = new SimCardsDto 
             {
                 TelecomCompany=simcard.TelecomCompany,
                     PhoneNumber=simcard.PhoneNumber,
@@ -83,6 +83,7 @@
                     SIMNo=simcard.SIMNo,
                     IMSI=simcard.IMSI,
                     IsActive=true,
+                    CreatedAt=simcard.CreatedAt
             };
            await SimCardRepository.UpdateSimCardAsync(simcard.Id, SimCardUpdate);
         }

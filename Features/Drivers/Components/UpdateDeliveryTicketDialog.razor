@@ -41,46 +41,43 @@
                 }
 
                 <MudTextField @bind-Value="@editDeliveryTicket.NumberOfCarts" Label="No of carts" Required="true" For="@(() => @editDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
-                 @*  <div>
-                <label id="NoOfCartLabel">No of Carts*</label>
-                <input type="text" Class="inputtext" placeholder="No of Carts*" value="@editDeliveryTicket.NumberOfCarts"  @onchange="eventArgs => { HandleNumberOfCarts(eventArgs.Value); }" />
-               </div>*@
-                @if (PickedupCartList != null)
+                @*  <div>
+                    <label id="NoOfCartLabel">No of Carts*</label>
+                    <input type="text" Class="inputtext" placeholder="No of Carts*" value="@editDeliveryTicket.NumberOfCarts"  @onchange="eventArgs => { HandleNumberOfCarts(eventArgs.Value); }" />
+                    </div>*@
+                @if (PickedupCartList != null && PickedupCartList.Count > 0)
                 {
-                    <div>
                         <div>
-                            <label>Carts List</label>
-                        </div>
-                        <div class="form-check" style="max-height:75px;overflow-x:auto;min-height:30px">
+                            <div>
+                                <label>Carts List</label>
+                            </div>
+                            <div class="form-check" style="max-height:75px;overflow-x:auto;min-height:30px">
 
-                            @foreach (var cart in PickedupCartList)
-                            {
-                                if (SelectedCartList != null)
+                                @foreach (var cart in PickedupCartList)
                                 {
-                                    @*   foreach (var selectcart in SelectedCartList)
-                                        {*@
-                                    bool test = SelectedCartList.Where(x => x.Id == cart.Id && x.Status == CartStatus.InsideGeofence).ToList().Any();
-                                    if (test)
+                                    if (SelectedCartList != null)
                                     {
-                                        <input type="checkbox" id="@cart.Id" value="@cart.CartNumber - @cart.ManufacturerName" checked="checked" @onchange="@((e) => CheckboxChanged(e.Value, cart.Id))" />
-                                        <span> @cart.ManufacturerName - #@cart.CartNumber </span> <br />
+                                        bool IsChecked = SelectedCartList.Where(x => x.Id == cart.Id && x.Status == CartStatus.InsideGeofence).ToList().Any();
+                                        if (IsChecked)
+                                        {
+                                            <input type="checkbox" id="@cart.Id" value="@cart.CartNumber - @cart.ManufacturerName" checked="checked" @onchange="@((e) => CheckboxChanged(e.Value, cart.Id))" />
+                                            <span> @cart.ManufacturerName - #@cart.CartNumber </span> <br />
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" id="@cart.Id" value="@cart.CartNumber - @cart.ManufacturerName" @onchange="@((e) => CheckboxChanged(e.Value, cart.Id))" />
+                                            <span> @cart.ManufacturerName - #@cart.CartNumber </span> <br />
+                                        }
                                     }
                                     else
                                     {
                                         <input type="checkbox" id="@cart.Id" value="@cart.CartNumber - @cart.ManufacturerName" @onchange="@((e) => CheckboxChanged(e.Value, cart.Id))" />
                                         <span> @cart.ManufacturerName - #@cart.CartNumber </span> <br />
                                     }
-                                    // }
                                 }
-                                else
-                                {
-                                    <input type="checkbox" id="@cart.Id" value="@cart.CartNumber - @cart.ManufacturerName" @onchange="@((e) => CheckboxChanged(e.Value, cart.Id))" />
-                                    <span> @cart.ManufacturerName - #@cart.CartNumber </span> <br />
-                                }
-                            }
+                            </div>
                         </div>
-                    </div>
-                }
+                    }
                 @if (!string.IsNullOrWhiteSpace(_fileUrl))
                 {
                     <div class="d-flex justify-center mt-6 popupitemimage">
@@ -156,7 +153,7 @@
     {
         #region get carts by storeid
         PickedUpCarts = await CartHttpRepository.GetCartsByStoreIdAsync(editDeliveryTicket.StoreId);
-        var SelectedCarts = await CartHttpRepository.GetCartsByDeliveryTicketIdAsync(DeliveryTicketId);
+        var SelectedCarts = await CartHttpRepository.GetCartHistoryByDeliveryTicketIdAsync(DeliveryTicketId);
         if (SelectedCarts != null)
         {
             SelectedCartList = SelectedCarts.Where(x => x.Status == CartStatus.InsideGeofence).ToList();
@@ -229,7 +226,7 @@
             editDeliveryTicket.NumberOfCarts = 0;
         }
         TempPickedupCartList = PickedupCartList;
-        SelectedCartList = await CartHttpRepository.GetCartsByDeliveryTicketIdAsync(DeliveryTicketId);
+        SelectedCartList = await CartHttpRepository.GetCartHistoryByDeliveryTicketIdAsync(DeliveryTicketId);
         SelectedStore = store;
         StateHasChanged();
     }
@@ -240,7 +237,7 @@
             JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
         }
 
-      //  var inputtext = await JsModule.InvokeAsync<string>("getTextBoxValue");
+        //  var inputtext = await JsModule.InvokeAsync<string>("getTextBoxValue");
         if (Convert.ToInt32(NoOfCart) < editDeliveryTicket.PickedUpCarts.Count)
         {
             success = false;

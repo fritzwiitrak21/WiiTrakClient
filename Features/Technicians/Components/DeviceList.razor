@@ -64,7 +64,7 @@
         if (!result.Cancelled) 
         {
             // save updated device to backend
-            var DeviceUpdate = new DeviceUpdateDto 
+            var DeviceUpdate = new DevicesDto 
             {
                 DeviceModel=device.DeviceModel,
                 DeviceName=device.DeviceName,
@@ -77,6 +77,8 @@
                 SubscriptionExpiration=device.SubscriptionExpiration,
                 Type=device.Type,
                 IsActive=true,
+                CreatedAt=device.CreatedAt,
+                Id=device.Id
             };
            await DevicesRepository.UpdateDeviceAsync(device.Id, DeviceUpdate);
         }

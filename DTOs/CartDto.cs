@@ -2,6 +2,7 @@
 * 06.06.2022
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
+using System.ComponentModel.DataAnnotations;
 using WiiTrakClient.Enums;
 
 namespace WiiTrakClient.DTOs
@@ -14,16 +15,20 @@ namespace WiiTrakClient.DTOs
 
         public DateTime CreatedAt { get; set; }
 
-        public string CartNumber { get; set; } = string.Empty;
-
+        [Required]
+        [StringLength(25)]
+        [RegularExpression(@"^[a-zA-Z ]*$")]
         public string ManufacturerName { get; set; } = string.Empty;
-
+        [Required]
         public DateTime? DateManufactured { get; set; }
-
+        [Required]
+        [RegularExpression(@"^[1-9][0-9 ]*$")]
+        public string CartNumber { get; set; } = string.Empty;
+        [Required]
         public CartOrderedFrom OrderedFrom { get; set; }
-
+        [Required]
         public CartCondition Condition { get; set; }
-
+        [Required]
         public CartStatus Status { get; set; }
 
         public string PicUrl { get; set; } = string.Empty;

@@ -13,11 +13,11 @@
             </MudTableSortLabel>
         </MudTh>*@
         <MudTh>
-            <MudTableSortLabel InitialDirection="@SortDirection.Ascending"
+            <MudTableSortLabel 
                 SortBy="new Func<CartDto, object>(x=>x.CartNumber)">Cart Number</MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel InitialDirection="@SortDirection.Ascending"
+            <MudTableSortLabel 
                 SortBy="new Func<CartDto, object>(x=>x.ManufacturerName)">Manufacturer Name</MudTableSortLabel>
         </MudTh>
         @*<MudTh>

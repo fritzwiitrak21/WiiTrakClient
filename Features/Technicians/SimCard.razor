@@ -35,7 +35,7 @@ else
     private IJSObjectReference jsmodule;
     List<SimCardsDto> SimCardsList = new();
     List<SimCardsDto> simcards = new();
-    SimCardCreationDto AddSim = new();
+    SimCardsDto AddSim = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -57,7 +57,7 @@ else
     private async Task OpenDialog()
     {
         var parameters = new DialogParameters();
-        AddSim = new SimCardCreationDto();
+        AddSim = new SimCardsDto();
         parameters.Add("NewSim", AddSim);
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
@@ -68,7 +68,7 @@ else
         if (!result.Cancelled)
         {
             //add new simcard to backend
-            var SimCreation = new SimCardCreationDto
+            var SimCreation = new SimCardsDto
             {
                 TelecomCompany = AddSim.TelecomCompany,
                 PhoneNumber = AddSim.PhoneNumber,

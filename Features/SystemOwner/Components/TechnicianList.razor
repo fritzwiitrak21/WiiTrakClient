@@ -1,3 +1,4 @@
+@using WiiTrakClient.Cores
 @using WiiTrakClient.Features.SystemOwner.Components
 @inject IDialogService DialogService
 
@@ -42,32 +43,34 @@
 @code {
     [Parameter]
     public List<TechnicianDto>? Technicians {get; set;} = null;
-    private bool _enabled = true;
+
     public async Task OpenDialog(TechnicianDto technician) {
 
-         // TODO Update for technicians 
- 
+        // TODO Update for technicians 
+
         Console.WriteLine("technician id: " + technician.Id);
 
         var parameters = new DialogParameters();
-                parameters.Add("Technician", technician);   
+        parameters.Add("Technician", technician);   
 
-         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
 
-         var dialog  = DialogService.Show<UpdateTechnicianDialog>("Update Technician", parameters);
+        var dialog  = DialogService.Show<UpdateTechnicianDialog>("Update Technician", parameters);
         var result = await dialog.Result; 
 
         if (!result.Cancelled) 
         {
             // save updated technician to backend
-            var technicianUpdate = new TechnicianUpdateDto() {
+            var TechnicianUpdate = new TechnicianUpdateDto() {
                 FirstName = technician.FirstName,
                 LastName = technician.LastName,
                 Email = technician.Email,
                 Phone = technician.Phone,
                 ProfilePic = technician.ProfilePic,
+                SystemOwnerId=CurrentUser.UserId,
             };
-           await TechnicianRepository.UpdateTechnicianAsync(technician.Id, technicianUpdate);
-        }  
+            await TechnicianRepository.UpdateTechnicianAsync(technician.Id, TechnicianUpdate);
+        }
+        Technicians = await TechnicianRepository.GetAllTechniciansAsync();
     }
 }

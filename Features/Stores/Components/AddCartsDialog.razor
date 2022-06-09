@@ -26,9 +26,9 @@
                     <DataAnnotationsValidator />
                     <MudTextField T="string" class="my-6" @bind-Value="NewCart.CartNumber" Label="Cart Number" Required="true" RequiredError=" " For="@(() => @NewCart.CartNumber)" Variant="Variant.Text"></MudTextField>  
                     <MudTextField T="string" class="my-6" @bind-Value="NewCart.ManufacturerName" Label="Manufacturer Name" Required="true" RequiredError=" " For="@(() => @NewCart.ManufacturerName)" Variant="Variant.Text"></MudTextField>
-                    <MudDatePicker class="my-6" @bind-Date="NewCart.DateManufactured" Label="Manufactured Date" MaxDate="Enddate" Editable="true" Required=true RequiredError=" " For="@(() => @NewCart.DateManufactured)" />
+                    <MudDatePicker class="my-6" @bind-Date="NewCart.DateManufactured" Label="Manufactured Date" MaxDate="Enddate" Editable="true" Required=true RequiredError="" For="@(() => @NewCart.DateManufactured)" />
                     <MudItem>
-                    <MudSelect T="string" Value=@SelectedOrderFrom ValueChanged="(value) => HandleCartOrder(value)"  
+                    <MudSelect T="string" @ref="mySwitch" Value=@SelectedOrderFrom ValueChanged="(value) => HandleCartOrder(value)"  
                         Label="Select Cart Ordered From" AnchorOrigin="Origin.BottomCenter"
                         Required=true RequiredError="">
                         <ValidationMessage For="@(() => @NewCart.OrderedFrom)"></ValidationMessage>
@@ -90,7 +90,7 @@
                     <br />
                     <div class="d-flex">
                         <MudButton OnClick="Cancel">Cancel</MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
                     </div>
                     <br />
                 </MudForm> 
@@ -106,16 +106,17 @@
     bool success;
     string[] errors = { };
     MudForm form;
+    MudSelect<string> mySwitch;
     public string SelectedOrderFrom = "";
     public string SelectedStatus = "Inside Geofence";
     public string SelectedCondition = "Good";
     protected override async Task OnInitializedAsync()
     {
-        
+
     }
     protected override void OnParametersSet()
     {
-        
+
     }
     public async Task HandleCartOrder(string value)
     {
@@ -134,7 +135,15 @@
     }
     void Submit() 
     {
-        MudDialog.Close(DialogResult.Ok(true));
+        if(!success)
+        {
+            form.Validate();
+        }
+        else
+        {
+            MudDialog.Close(DialogResult.Ok(true)); 
+        }
+        
     }
     void Cancel() => MudDialog.Cancel();
 }

@@ -35,12 +35,12 @@ namespace WiiTrakClient.HttpRepository
             return response.Response;
         }
 
-        public async Task CreateDeviceAsync(DeviceCreationDto device)
+        public async Task CreateDeviceAsync(DevicesDto device)
         {
             await HttpService.Post(ApiUrl, device);
         }
 
-        public async Task UpdateDeviceAsync(Guid id, DeviceUpdateDto device)
+        public async Task UpdateDeviceAsync(Guid id, DevicesDto device)
         {
             await HttpService.Put($"{ ApiUrl }/{ id }", device);
         }
