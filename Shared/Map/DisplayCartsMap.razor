@@ -155,6 +155,7 @@ else
     private async Task<int> GetListOfCarts(Func<CartDto, bool> expression)
     {
         IsMapView = false;
+        CartsList = new();
         CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
         if (CartsList != null && CartsList.Count > 0)
         {
@@ -326,6 +327,7 @@ else
     }
     private async Task GetCartsList()
     {
+        CartsList = new();
         CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
         if (CartsList != null && CartsList.Count > 0)
         {

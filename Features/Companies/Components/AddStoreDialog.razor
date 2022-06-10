@@ -175,6 +175,7 @@
     protected override void OnParametersSet()
     {
         SelectedService = "1 time a week";
+        NewStore.ServiceFrequency = "1 time a week";
     }
     public async Task HandleServiceFrequency(string value)
     {

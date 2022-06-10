@@ -60,16 +60,17 @@
                         }
 
                     </MudSelect>
+
                 }
                 else { success = true; }
                 @if (SeletedIssue.Contains("Other"))
                 {
-                    <MudTextField Class="my-2" T="string" Label="Issue Title" Variant="Variant.Text" @bind-Value="@IssueNameText" Required=@(!IssueDescVisibility) AutoFocus="true" />
-                    <MudTextField Class="my-2" T="string" Label="Issue Description" Variant="Variant.Text" @bind-Value="@IssueDescText" Lines="4" Required=@(!IssueDescVisibility) OnKeyUp=EnableSaveButton />
+                    <MudTextField Class="my-2" T="string" Label="Issue Title" Variant="Variant.Text" @bind-Value="@IssueNameText" Required=@(!IssueDescVisibility) OnKeyUp="EnableSaveButton" AutoFocus="true" />
+                    
                 }
-                else if (IssueDescVisibility)
+                @if (SelectedCondition == "Damage")
                 {
-                    <MudTextField Class="my-2" T="string" Label="Issue Description" Variant="Variant.Text" @bind-Value="@IssueDescText" OnKeyUp=EnableSaveButton Lines="4" Required=@IssueDescVisibility AutoFocus="true" />
+                    <MudTextField Class="my-2" T="string" Label="Issue Description" Variant="Variant.Text" @bind-Value="@IssueDescText" Lines="4" OnKeyUp="EnableSaveButton"  />
                 }
             </MudForm>
         </div>

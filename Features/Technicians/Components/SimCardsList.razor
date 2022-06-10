@@ -83,7 +83,8 @@
                     SIMNo=simcard.SIMNo,
                     IMSI=simcard.IMSI,
                     IsActive=true,
-                    CreatedAt=simcard.CreatedAt
+                    CreatedAt=simcard.CreatedAt,
+                    Id=simcard.Id
             };
            await SimCardRepository.UpdateSimCardAsync(simcard.Id, SimCardUpdate);
         }
