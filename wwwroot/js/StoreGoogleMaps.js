@@ -16,9 +16,6 @@ var templist;
 
 
 
-
-
-
 export function getGMaps(latitude, longitude, dlat, dlon) {
     var latlng = new google.maps.LatLng(latitude, longitude);
     MovingDlat = dlat;
@@ -45,10 +42,12 @@ export function getGMaps(latitude, longitude, dlat, dlon) {
 
 //Map to Store
 export function initMap(latitude, longitude, dlat, dlon, StoreName) {
+    
     DestName = StoreName;
     var latlng = new google.maps.LatLng(latitude, longitude);
     var directionsService = new google.maps.DirectionsService();
     var directionsRenderer = new google.maps.DirectionsRenderer();
+    
     MovingDlat = dlat;
     MovingDlon = dlon;
 
@@ -59,7 +58,7 @@ export function initMap(latitude, longitude, dlat, dlon, StoreName) {
     };
     map = new google.maps.Map(document.getElementById("map"), options);
     const point = { lat: MovingDlat, lng: MovingDlon };
-
+   
     // create marker
     marker = new google.maps.Marker({
         position: point,
@@ -72,15 +71,29 @@ export function initMap(latitude, longitude, dlat, dlon, StoreName) {
     storemarker = new google.maps.Marker({
         position: new google.maps.LatLng(latitude, longitude),
         map,
-        title: "Store",
+        title: StoreName,
         icon: StoreMarkerIcon,
         optimized: false,
     });
 
     marker.setAnimation(google.maps.Animation.BOUNCE);
+    marker.addListener("click", () => {
+
+        infoWindow.close();
+        infoWindow.setContent(marker.getTitle());
+        infoWindow.open(stepmarker.getMap(), marker);
+
+    });
     storemarker.setAnimation(google.maps.Animation.BOUNCE);
+    storemarker.addListener("click", () => {
+
+        infoWindow.close();
+        infoWindow.setContent(storemarker.getTitle());
+        infoWindow.open(stepmarker.getMap(), storemarker);
+
+    });
     directionsRenderer.setMap(map);
-    directionsRenderer.setPanel(document.getElementById("directionsPanel"));
+    //directionsRenderer.setPanel(document.getElementById("directionsPanel"));
 
     calcRoute(directionsService, directionsRenderer, latitude, longitude, dlat, dlon);
 }
@@ -177,7 +190,7 @@ function GetCoordinates(position) {
     //MovingDlon = MovingDlon - 0.1;
     changeMarkerPosition();
     StopWatch();
-    if (i % 3 == 0) {
+    if (true) {
         var dist = Finddistance(MovingDlat, MovingDlon, templist[travelindex].End_Lat, templist[travelindex].End_Lng)
        
         if (dist <= 5) {
@@ -228,5 +241,19 @@ function Finddistance(lat1, lon1, lat2, lon2) {
     dist = dist * 1609.34
 
     return Math.round(dist)
+}
+
+
+function GetCoords() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(GetPosition);
+    }
+}
+
+function GetPosition(position) {
+    dlat = position.coords.latitude;
+    dlon = position.coords.longitude;
+    debugger;
+    console.log(dlat + "," + dlon);
 }
 window.initMap = initMap;
