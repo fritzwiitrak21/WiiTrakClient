@@ -42,14 +42,14 @@ export function getGMaps(latitude, longitude, dlat, dlon) {
 
 //Map to Store
 export function initMap(latitude, longitude, dlat, dlon, StoreName) {
-    
+    watchid = navigator.geolocation.watchPosition(GetCoordinates);
     DestName = StoreName;
     var latlng = new google.maps.LatLng(latitude, longitude);
     var directionsService = new google.maps.DirectionsService();
     var directionsRenderer = new google.maps.DirectionsRenderer();
     
-    MovingDlat = dlat;
-    MovingDlon = dlon;
+    //MovingDlat = dlat;
+    //MovingDlon = dlon;
 
     var options = {
         zoom: 16, center: latlng,
@@ -58,7 +58,7 @@ export function initMap(latitude, longitude, dlat, dlon, StoreName) {
     };
     map = new google.maps.Map(document.getElementById("map"), options);
     const point = { lat: MovingDlat, lng: MovingDlon };
-   
+    console.log("5");
     // create marker
     marker = new google.maps.Marker({
         position: point,
@@ -183,21 +183,23 @@ function RemoveHtml(html) {
     return tmp.textContent || tmp.innerText || "";
 }
 function GetCoordinates(position) {
-   
      MovingDlat = position.coords.latitude;
     MovingDlon = position.coords.longitude;
     //MovingDlat = MovingDlat - 0.1;
     //MovingDlon = MovingDlon - 0.1;
     changeMarkerPosition();
     StopWatch();
-    if (true) {
+    if (i%5==0) {
         var dist = Finddistance(MovingDlat, MovingDlon, templist[travelindex].End_Lat, templist[travelindex].End_Lng)
        
-        if (dist <= 5) {
+        if (dist <= 4 && templist[travelindex].IsNavigated == 1) {
+           
             templist[travelindex].IsReached = 1;
             travelindex++;
             TextToSpeech(templist[travelindex].Speech_Text);
+            alert(dist);
             templist[travelindex].IsNavigated = 1;
+            console.table(templist);
         }
        
     }
@@ -219,6 +221,7 @@ export function StopTimer() {
     window.speechSynthesis.cancel();
 }
 function TextToSpeech(Text) {
+    console.log(travelindex + " " + Text);
     var msg = new SpeechSynthesisUtterance();
     var voices = window.speechSynthesis.getVoices();
     msg.text = Text;
@@ -244,16 +247,5 @@ function Finddistance(lat1, lon1, lat2, lon2) {
 }
 
 
-function GetCoords() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(GetPosition);
-    }
-}
 
-function GetPosition(position) {
-    dlat = position.coords.latitude;
-    dlon = position.coords.longitude;
-    debugger;
-    console.log(dlat + "," + dlon);
-}
 window.initMap = initMap;
