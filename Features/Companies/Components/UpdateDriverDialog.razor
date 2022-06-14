@@ -37,7 +37,7 @@
                 <MudCheckBox class="my-6" @bind-Checked="@Driver.IsTerminated" Label="Terminate" Color="Color.Primary"></MudCheckBox> 
                 <div class="d-flex">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Update</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Update</MudButton>
                 </div>
             </MudForm>
         </div>
@@ -58,7 +58,11 @@
 
     void Submit() 
     { 
-        MudDialog.Close(DialogResult.Ok(true)); 
+        form.Validate();
+        if (success && errors.Length == 0)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        } 
     }
     void Cancel() => MudDialog.Cancel();
 }

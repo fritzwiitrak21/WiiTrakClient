@@ -28,7 +28,7 @@
 
 <MudDialog Class="dialogstyle">
     <DialogContent>
-        <div style="width: 400px;height:550px;">
+        <div style="width: 430px;height:550px;">
             <MudForm Model="@NewStore" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudItem>
                     <MudSelect T="CorporateDto" Label="Select Corporate" Required=true RequiredError=" "
@@ -90,7 +90,7 @@
                 <MudCheckBox @bind-Checked="NewStore.IsSignatureRequired" Label="Signature Reqired For Deliveries" Color="Color.Primary"></MudCheckBox>
                 <div class="d-flex SubmitGrp">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary"  OnClick="Submit" Class="ml-auto">Save</MudButton>
                 </div>
             </MudForm>
         </div>
@@ -126,6 +126,7 @@
     DateTime? MinDate { get; set; } = DateTime.Today;
     DateTime SelectedDate { get; set; } = DateTime.Today;
     public string SelectedCounty = "";
+    bool IsValidCountyCode = false;
     protected override async Task OnInitializedAsync()
     {
 
@@ -220,6 +221,7 @@
                 {
                     success = false;// Disable the Save button when other fields are valid
                 }
+                  IsValidCountyCode = true;
                 StateHasChanged();
             }
             else
@@ -227,6 +229,7 @@
                 SelectedCounty = e.ToString();
                 success = false;
                 await JsModule.InvokeVoidAsync("addValidationCountycodeClass");
+                  IsValidCountyCode = false;
                 StateHasChanged();
             }
         }
@@ -235,9 +238,22 @@
             //Exception
         }
     }
-    void Submit()
+     public async Task Submit()
     {
-        MudDialog.Close(DialogResult.Ok(true));
+        form.Validate();
+        if (JsModule is null)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
+        if (!IsValidCountyCode)
+        {
+          await  JsModule.InvokeVoidAsync("addValidationCountycodeClass");
+            StateHasChanged();
+        }
+        if (success && errors.Length == 0 && IsValidCountyCode)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
     }
     void Cancel() => MudDialog.Cancel();
     private async Task<IEnumerable<string>> Search1(string value)

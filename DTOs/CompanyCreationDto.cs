@@ -35,7 +35,7 @@ namespace WiiTrakClient.DTOs
 
 
         [Required(ErrorMessage = " ")]
-        [MinLength(4)]
+        [MinLength(4, ErrorMessage = " ")]
         [RegularExpression(@"^[1-9][0-9]*$", ErrorMessage = " ")]
         public string PostalCode { get; set; } = string.Empty;
 

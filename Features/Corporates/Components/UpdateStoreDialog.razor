@@ -32,7 +32,7 @@
 
 <MudDialog Class="dialogstyle">
     <DialogContent>
-        <div style="width: 400px;height:550px;">
+        <div style="width: 430px;height:550px;">
             <MudForm Model="@Store" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudItem>
                     <MudSelect T="CompanyDto" Label="Select Company" Required=true RequiredError=" "
@@ -44,16 +44,16 @@
                         }
                     </MudSelect>
                 </MudItem>
-                <MudTextField class="my-6" @bind-Value="Store.StoreName" Label="Store Name" Required="true" RequiredError="" For="@(() => @Store.StoreName)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Store.StoreNumber" Label="Store Number" Required="true" RequiredError="" For="@(() => @Store.StoreNumber)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Store.Email" Label="Email" Required="true" RequiredError="" For="@(() => @Store.Email)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Store.PhonePrimary" Label="Phone Primary" Required="true" RequiredError="" For="@(() => @Store.PhonePrimary)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.StoreName" Label="Store Name" Required="true" RequiredError=" " For="@(() => @Store.StoreName)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.StoreNumber" Label="Store Number" Required="true" RequiredError=" " For="@(() => @Store.StoreNumber)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.Email" Label="Email" Required="true" RequiredError=" " For="@(() => @Store.Email)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.PhonePrimary" Label="Phone Primary" Required="true" RequiredError=" " For="@(() => @Store.PhonePrimary)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Store.PhoneSecondary" Label="Phone Secondary" For="@(() => @Store.PhoneSecondary)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Store.StreetAddress1" Label="Street Address 1" Required="true" RequiredError="" For="@(() => @Store.StreetAddress1)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.StreetAddress1" Label="Street Address 1" Required="true" RequiredError=" " For="@(() => @Store.StreetAddress1)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Store.StreetAddress2" Label="Street Address 2" For="@(() => @Store.StreetAddress2)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Store.City" Label="City" Required="true" RequiredError="" For="@(() => @Store.City)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Store.State" Label="State" Required="true" RequiredError="" For="@(() => @Store.State)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="Store.PostalCode" Label="Zip Code" Required="true" RequiredError="" For="@(() => @Store.PostalCode)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.City" Label="City" Required="true" RequiredError=" " For="@(() => @Store.City)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.State" Label="State" Required="true" RequiredError=" " For="@(() => @Store.State)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.PostalCode" Label="Zip Code" Required="true" RequiredError=" " For="@(() => @Store.PostalCode)" Variant="Variant.Text"></MudTextField>
                 <div Class="Mudsearchselect my-6">
                     @if (SelectedCounty != "")
                     {
@@ -94,7 +94,7 @@
                 }
                 <div class="d-flex SubmitGrp">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Update</MudButton>
                 </div>
             </MudForm>
         </div>
@@ -124,6 +124,7 @@
     DateTime? SelectedDate { get; set; } = DateTime.Today;
     [Inject] IJSRuntime JsRuntime { get; set; }
     private IJSObjectReference JsModule;
+    bool IsValidCountyCode = true;
     MudForm form;
 
     protected override async Task OnInitializedAsync()
@@ -224,6 +225,7 @@
                 {
                     success = false;// Disable the Save button when other fields are valid
                 }
+                IsValidCountyCode = true;
             }
             else
             {
@@ -231,6 +233,7 @@
                 success = false;
                 await JsModule.InvokeVoidAsync("addValidationCountycodeClass");
                 StateHasChanged();
+                IsValidCountyCode = false;
             }
         }
         catch (Exception ex)
@@ -238,10 +241,23 @@
         }
     }
 
-
-    void Submit()
+ public async Task Submit()
     {
-        MudDialog.Close(DialogResult.Ok(true));
+        form.Validate();
+        if (JsModule is null)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
+        if (!IsValidCountyCode)
+        {
+          await  JsModule.InvokeVoidAsync("addValidationCountycodeClass");
+            StateHasChanged();
+        }
+        if (success && errors.Length == 0 && IsValidCountyCode)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
     }
+
     void Cancel() => MudDialog.Cancel();
     }

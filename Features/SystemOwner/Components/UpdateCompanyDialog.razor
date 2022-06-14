@@ -1,64 +1,70 @@
 @namespace WiiTrakClient.Features.SystemOwner.Components
 @using System.ComponentModel.DataAnnotations
 
- <style>
+<style>
     .validation-message {
-    font-size:0;
-    display:none;
-    font-display:block;
-    
-    color: red;
-}
-.mud-input-helper-text.mud-input-error {
-    font-size: 0;
-}
-.mud-input-helper-text {
-    color: var(--mud-palette-text-secondary);
-    margin: 0;
-    font-size: 0;   
-}
-        </style> 
-    
-        
-        <MudDialog>
-    <DialogContent>               
-        <div style="width: 400px;height:450px;overflow: auto;" > 
-            <MudForm Model="@Company" @ref=form @bind-IsValid="@success" @bind-Errors="@errors"> 
-                <MudTextField Class="my-6" @bind-Value="Company.Name"  Label="Company Name" Required="true" RequiredError=" " For="@(() => @Company.Name)" Variant="Variant.Text"></MudTextField>  
-                <MudTextField Class="my-6" @bind-Value="Company.StreetAddress1" Label="Street Address 1" Required="true" RequiredError=" " For="@(() => @Company.StreetAddress1)" Variant="Variant.Text"></MudTextField>  
-                <MudTextField Class="my-6" @bind-Value="Company.StreetAddress2" Label="Street Address 2" For="@(() => @Company.StreetAddress2)" Variant="Variant.Text"></MudTextField>  
-                <MudTextField Class="my-6" @bind-Value="Company.City" Label="City" Required="true" RequiredError=" " For="@(() => @Company.City)" Variant="Variant.Text"></MudTextField>  
-                <MudTextField Class="my-6" @bind-Value="Company.State" Label="State" Required="true" RequiredError=" " For="@(() => @Company.State)" Variant="Variant.Text"></MudTextField>  
-                <MudTextField Class="my-6" @bind-Value="Company.PostalCode" Label="Zip Code" Required="true" RequiredError=" " For="@(() => @Company.PostalCode)"  Variant="Variant.Text"></MudTextField>  
-                <MudTextField Class="my-6" @bind-Value="Company.Email" Label="Email" Required="true" RequiredError=" " For="@(() => @Company.Email)"  Variant="Variant.Text"></MudTextField>  
-                <MudTextField Class="my-6" @bind-Value="Company.PhonePrimary" Label="Phone Primary" Required="true" RequiredError=" " For="@(() => @Company.PhonePrimary)"  Variant="Variant.Text"></MudTextField>
-                <MudTextField Class="my-6" @bind-Value="Company.PhoneSecondary" Label="Phone Secondary" For="@(() => @Company.PhoneSecondary)"  Variant="Variant.Text"></MudTextField>
-                <MudCheckBox @bind-Checked="Company.CannotHaveChildren" Label="Do Not Allow Sub Companies" Color="Color.Primary"></MudCheckBox> 
+        font-size: 0;
+        display: none;
+        font-display: block;
+        color: red;
+    }
+
+    .mud-input-helper-text.mud-input-error {
+        font-size: 0;
+    }
+
+    .mud-input-helper-text {
+        color: var(--mud-palette-text-secondary);
+        margin: 0;
+        font-size: 0;
+    }
+</style>
+
+
+<MudDialog>
+    <DialogContent>
+        <div style="width: 400px;height:450px;overflow: auto;">
+            <MudForm Model="@Company" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
+                <MudTextField Class="my-6" @bind-Value="Company.Name" Label="Company Name" Required="true" RequiredError=" " For="@(() => @Company.Name)" Variant="Variant.Text"></MudTextField>
+                <MudTextField Class="my-6" @bind-Value="Company.StreetAddress1" Label="Street Address 1" Required="true" RequiredError=" " For="@(() => @Company.StreetAddress1)" Variant="Variant.Text"></MudTextField>
+                <MudTextField Class="my-6" @bind-Value="Company.StreetAddress2" Label="Street Address 2" For="@(() => @Company.StreetAddress2)" Variant="Variant.Text"></MudTextField>
+                <MudTextField Class="my-6" @bind-Value="Company.City" Label="City" Required="true" RequiredError=" " For="@(() => @Company.City)" Variant="Variant.Text"></MudTextField>
+                <MudTextField Class="my-6" @bind-Value="Company.State" Label="State" Required="true" RequiredError=" " For="@(() => @Company.State)" Variant="Variant.Text"></MudTextField>
+                <MudTextField Class="my-6" @bind-Value="Company.PostalCode" Label="Zip Code" Required="true" RequiredError=" " For="@(() => @Company.PostalCode)" Variant="Variant.Text"></MudTextField>
+                <MudTextField Class="my-6" @bind-Value="Company.Email" Label="Email" Required="true" RequiredError=" " For="@(() => @Company.Email)" Variant="Variant.Text"></MudTextField>
+                <MudTextField Class="my-6" @bind-Value="Company.PhonePrimary" Label="Phone Primary" Required="true" RequiredError=" " For="@(() => @Company.PhonePrimary)" Variant="Variant.Text"></MudTextField>
+                <MudTextField Class="my-6" @bind-Value="Company.PhoneSecondary" Label="Phone Secondary" For="@(() => @Company.PhoneSecondary)" Variant="Variant.Text"></MudTextField>
+                <MudCheckBox @bind-Checked="Company.CannotHaveChildren" Label="Do Not Allow Sub Companies" Color="Color.Primary"></MudCheckBox>
                 <div class="d-flex">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Update</MudButton>
-                    </div>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Update</MudButton>
+                </div>
             </MudForm>
-        </div> 
+        </div>
     </DialogContent>
 </MudDialog>
 
 
 @code {
     [Parameter]
-    public CompanyDto? Company {get; set;}
+    public CompanyDto? Company { get; set; }
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     bool success;
     string[] errors = { };
     MudForm form;
-    protected override void OnParametersSet() {
-            
+    protected override void OnParametersSet()
+    {
+
     }
 
-    void Submit() 
-    { 
-        MudDialog.Close(DialogResult.Ok(true)); 
+    void Submit()
+    {
+        form.Validate();
+        if (success && errors.Length == 0)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
     }
     void Cancel() => MudDialog.Cancel();
 }
