@@ -42,7 +42,7 @@ export function getGMaps(latitude, longitude, dlat, dlon) {
 
 //Map to Store
 export function initMap(latitude, longitude, dlat, dlon, StoreName) {
-    
+    travelindex = 0;
     DestName = StoreName;
     var latlng = new google.maps.LatLng(latitude, longitude);
     var directionsService = new google.maps.DirectionsService();
@@ -166,8 +166,7 @@ function calcRoute(directionsService, directionsRenderer, latitude, longitude, d
                 customList.push(obj);
             });
             console.table(customList);
-            TextToSpeech(customList[travelindex].Speech_Text);//index 0
-            customList[travelindex].IsNavigated = 1;
+           
             templist = customList;
             console.table(templist);
             Timer = setInterval(function () {
@@ -193,13 +192,15 @@ function GetCoordinates(position) {
     StopWatch();
 
     var dist = Finddistance(MovingDlat, MovingDlon, templist[travelindex].End_Lat, templist[travelindex].End_Lng)
+   
+    if (dist <= 10 && templist[travelindex].IsReached == 0) {
 
-    if (dist <= 10 && templist[travelindex].IsNavigated == 1) {
         alert(templist[travelindex].Speech_Text);
         templist[travelindex].IsReached = 1;
-        travelindex++;
+       
         TextToSpeech(templist[travelindex].Speech_Text);
         templist[travelindex].IsNavigated = 1;
+        travelindex++;
         console.table(templist);
     }
 
