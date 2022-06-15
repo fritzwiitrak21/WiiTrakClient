@@ -1,7 +1,6 @@
 @namespace WiiTrakClient.Features.Companies.Components
-
+@using WiiTrakClient.Cores
 @inject IDialogService DialogService
-
 @inject ITechnicianHttpRepository TechnicianRepository
 
    <MudTable Items="@Technicians" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
@@ -51,24 +50,26 @@
         Console.WriteLine("technician id: " + technician.Id);
 
         var parameters = new DialogParameters();
-                parameters.Add("Technician", technician);   
+        parameters.Add("Technician", technician);   
 
-         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
 
-         var dialog  = DialogService.Show<UpdateTechnicianDialog>("Update Technician", parameters);
+        var dialog  = DialogService.Show<UpdateTechnicianDialog>("Update Technician", parameters);
         var result = await dialog.Result; 
 
         if (!result.Cancelled) 
         {
             // save updated technician to backend
-            var technicianUpdate = new TechnicianUpdateDto() {
+            var TechnicianUpdate = new TechnicianUpdateDto() {
                 FirstName = technician.FirstName,
                 LastName = technician.LastName,
                 Email = technician.Email,
                 Phone = technician.Phone,
                 ProfilePic = technician.ProfilePic,
+                CompanyId=CurrentUser.UserId,
             };
-           await TechnicianRepository.UpdateTechnicianAsync(technician.Id, technicianUpdate);
-        }  
+           await TechnicianRepository.UpdateTechnicianAsync(technician.Id, TechnicianUpdate, CurrentUser.UserRoleId);
+        }
+        Technicians = await TechnicianRepository.GetAllTechniciansAsync();
     }
 }

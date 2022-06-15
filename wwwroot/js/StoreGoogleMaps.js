@@ -42,14 +42,14 @@ export function getGMaps(latitude, longitude, dlat, dlon) {
 
 //Map to Store
 export function initMap(latitude, longitude, dlat, dlon, StoreName) {
-    watchid = navigator.geolocation.watchPosition(GetCoordinates);
+    
     DestName = StoreName;
     var latlng = new google.maps.LatLng(latitude, longitude);
     var directionsService = new google.maps.DirectionsService();
     var directionsRenderer = new google.maps.DirectionsRenderer();
-    
-    //MovingDlat = dlat;
-    //MovingDlon = dlon;
+
+    MovingDlat = dlat;
+    MovingDlon = dlon;
 
     var options = {
         zoom: 16, center: latlng,
@@ -58,8 +58,7 @@ export function initMap(latitude, longitude, dlat, dlon, StoreName) {
     };
     map = new google.maps.Map(document.getElementById("map"), options);
     const point = { lat: MovingDlat, lng: MovingDlon };
-    console.log("5");
-    // create marker
+
     marker = new google.maps.Marker({
         position: point,
         map,
@@ -122,7 +121,7 @@ function calcRoute(directionsService, directionsRenderer, latitude, longitude, d
             if (directionsData) {
                 document.getElementById('distance').innerText = " Driving distance is " + directionsData.distance.text + " (" + directionsData.duration.text + ").";
 
-                TextToSpeech("total Driving distance to reach " + DestName+" is " + directionsData.distance.text + " and it will takes around " + directionsData.duration.text);
+                TextToSpeech("total Driving distance to reach " + DestName + " is " + directionsData.distance.text + " and it will takes around " + directionsData.duration.text);
 
             }
             var steps = directionsData.steps;
@@ -133,14 +132,14 @@ function calcRoute(directionsService, directionsRenderer, latitude, longitude, d
                 //console.log(i + 1 + " " + text);
 
                 //TextToSpeech(text);
-               
+
                 var position = new google.maps.LatLng(steps[i].end_location);
-                
+
                 var stepmarker = new google.maps.Marker({
                     position: position,
                     map,
                     title: step.instructions,
-                    
+
                     optimized: false,
                 });
                 stepmarker.addListener("click", () => {
@@ -148,6 +147,9 @@ function calcRoute(directionsService, directionsRenderer, latitude, longitude, d
                     infoWindow.close();
                     infoWindow.setContent(stepmarker.getTitle());
                     infoWindow.open(stepmarker.getMap(), stepmarker);
+                    var texts = RemoveHtml(stepmarker.getTitle());
+                    texts = texts.replaceAll("Rd", "Road <br\>")
+                    TextToSpeech(RemoveHtml(texts));
 
                 });
                 //console.log(stepmarker.position.lat(), stepmarker.position.lng());
@@ -169,10 +171,10 @@ function calcRoute(directionsService, directionsRenderer, latitude, longitude, d
             templist = customList;
             console.table(templist);
             Timer = setInterval(function () {
-             
+
                 watchid = navigator.geolocation.watchPosition(GetCoordinates);
                 //changeMarkerPosition();
-               // StopWatch();
+                // StopWatch();
             }, 900);
         }
     });
@@ -183,26 +185,25 @@ function RemoveHtml(html) {
     return tmp.textContent || tmp.innerText || "";
 }
 function GetCoordinates(position) {
-     MovingDlat = position.coords.latitude;
+    MovingDlat = position.coords.latitude;
     MovingDlon = position.coords.longitude;
     //MovingDlat = MovingDlat - 0.1;
     //MovingDlon = MovingDlon - 0.1;
     changeMarkerPosition();
     StopWatch();
-    if (i%5==0) {
-        var dist = Finddistance(MovingDlat, MovingDlon, templist[travelindex].End_Lat, templist[travelindex].End_Lng)
-       
-        if (dist <= 4 && templist[travelindex].IsNavigated == 1) {
-           
-            templist[travelindex].IsReached = 1;
-            travelindex++;
-            TextToSpeech(templist[travelindex].Speech_Text);
-            alert(dist);
-            templist[travelindex].IsNavigated = 1;
-            console.table(templist);
-        }
-       
+
+    var dist = Finddistance(MovingDlat, MovingDlon, templist[travelindex].End_Lat, templist[travelindex].End_Lng)
+
+    if (dist <= 10 && templist[travelindex].IsNavigated == 1) {
+        alert(templist[travelindex].Speech_Text);
+        templist[travelindex].IsReached = 1;
+        travelindex++;
+        TextToSpeech(templist[travelindex].Speech_Text);
+        templist[travelindex].IsNavigated = 1;
+        console.table(templist);
     }
+
+
     i++;
 }
 

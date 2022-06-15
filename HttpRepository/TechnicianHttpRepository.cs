@@ -33,14 +33,14 @@ namespace WiiTrakClient.HttpRepository
             return response.Response;
         }
 
-        public async Task CreateTechnicianAsync(TechnicianCreationDto technician)
+        public async Task CreateTechnicianAsync(TechnicianCreationDto technician, int RoleId)
         {
-            await Httpservice.Post(ApiUrl, technician);
+            await Httpservice.Post($"{ApiUrl}/{RoleId}", technician);
         }
 
-        public async Task UpdateTechnicianAsync(Guid id, TechnicianUpdateDto client)
+        public async Task UpdateTechnicianAsync(Guid id, TechnicianUpdateDto client, int RoleId)
         {
-            await Httpservice.Put($"{ ApiUrl }/{ id }", client);
+            await Httpservice.Put($"{ ApiUrl }/{ id }/{RoleId}", client);
         }
 
         public async Task DeleteTechnicianAsync(Guid id)

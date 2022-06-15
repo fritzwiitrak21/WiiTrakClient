@@ -62,7 +62,7 @@ else
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
-        var dialog = DialogService.Show<AddDeviceDialog>("AddDevice", parameters);
+        var dialog = DialogService.Show<AddDeviceDialog>("Add Device", parameters);
         var result = await dialog.Result;
 
         if (!result.Cancelled)

@@ -1,35 +1,54 @@
 @namespace WiiTrakClient.Features.Companies.Components
-
+<style>
+    .validation-message {
+    font-size:0;
+    display:none;
+    font-display:block;
+    color: red;
+}
+.mud-input-helper-text.mud-input-error {
+    font-size: 0;
+}
+.mud-input-helper-text {
+    color: var(--mud-palette-text-secondary);
+    margin: 0;
+    font-size: 0;
+}
+</style>
 <MudDialog>
     <DialogContent>              
         <div style="width: 400px;height:450px;overflow: auto;">
-                <MudForm Model="@NewTechnician">   
-                    <MudTextField class="my-6" @bind-Value="NewTechnician.FirstName" Label="First Name" Variant="Variant.Text"></MudTextField>  
-                    <MudTextField class="my-6" @bind-Value="NewTechnician.LastName" Label="Last Name" Variant="Variant.Text"></MudTextField>  
-                    <MudTextField class="my-6" @bind-Value="NewTechnician.Email" Label="Email" Variant="Variant.Text"></MudTextField>  
-                    <MudTextField class="my-6" @bind-Value="NewTechnician.Phone" Label="Phone" Variant="Variant.Text"></MudTextField>  
+                <MudForm Model="@NewTechnician" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">   
+                    <MudTextField class="my-6" @bind-Value="NewTechnician.FirstName" Label="First Name" Required=true RequiredError="" For="@(() => @NewTechnician.FirstName)" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField class="my-6" @bind-Value="NewTechnician.LastName" Label="Last Name" Required=true RequiredError="" For="@(() => @NewTechnician.LastName)" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField class="my-6" @bind-Value="NewTechnician.Email" Label="Email" Required=true RequiredError="" For="@(() => @NewTechnician.Email)" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField class="my-6" @bind-Value="NewTechnician.Phone" Label="Phone" Required=true RequiredError="" For="@(() => @NewTechnician.Phone)" Variant="Variant.Text"></MudTextField>  
+                    <div class="d-flex">
+                    <MudButton OnClick="Cancel">Cancel</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                    </div>  
                 </MudForm>
-        </div>
+         </div>
     </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
-    </DialogActions>
 </MudDialog>
 
 @code {
     [Parameter]
     public TechnicianCreationDto? NewTechnician {get; set;}
-
-     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    bool success;
+    string[] errors = { };
+    MudForm form;
     protected override void OnParametersSet() {
             
     }
-
     void Submit() 
     { 
-        MudDialog.Close(DialogResult.Ok(true)); 
+        form.Validate();
+        if (success && errors.Length == 0)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
     }
     void Cancel() => MudDialog.Cancel();
 }

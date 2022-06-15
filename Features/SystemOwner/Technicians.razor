@@ -18,9 +18,6 @@
         OnClick="OpenDialog">Add</MudButton>
 </div>
 
-@*<div class="my-8">
-    <TechnicianList Technicians="@_technicians" />
-</div>*@
 <div class="my-8">
     @if (TechniciansList == null)
     {
@@ -35,8 +32,6 @@
         <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
     }
 </div>
-
-
 
 @code {
     private IJSObjectReference JsModule;
@@ -81,8 +76,9 @@
                 Phone = AddTechnician.Phone,
                 ProfilePic = AddTechnician.ProfilePic,
                 SystemOwnerId=CurrentUser.UserId,
+                CompanyId=AddTechnician.CompanyId,
             };
-           await TechnicianRepository.CreateTechnicianAsync(TechnicianCreation);
+           await TechnicianRepository.CreateTechnicianAsync(TechnicianCreation,CurrentUser.UserRoleId);
         }  
         Technician = await TechnicianRepository.GetAllTechniciansAsync();    
     } 

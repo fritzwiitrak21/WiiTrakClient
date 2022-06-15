@@ -26,5 +26,6 @@ namespace WiiTrakClient.DTOs
         public string ProfilePic { get; set; } = string.Empty;
 
         public Guid SystemOwnerId { get; set; }
+        public Guid CompanyId { get; set; }
     }
 }

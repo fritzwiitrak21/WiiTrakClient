@@ -12,9 +12,9 @@ namespace WiiTrakClient.HttpRepository.Contracts
 
         Task<TechnicianDto> GetTechnicianByIdAsync(Guid id);
 
-        Task CreateTechnicianAsync(TechnicianCreationDto technician);
+        Task CreateTechnicianAsync(TechnicianCreationDto technician, int RoleId);
 
-        Task UpdateTechnicianAsync(Guid id, TechnicianUpdateDto technician);
+        Task UpdateTechnicianAsync(Guid id, TechnicianUpdateDto technician, int RoleId);
 
         Task DeleteTechnicianAsync(Guid id);
     }
