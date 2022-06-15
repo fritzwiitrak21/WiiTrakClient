@@ -8,7 +8,6 @@ var Timer;
 var watchid;
 const StoreMarkerIcon = "https://wiitrakstorageaccount.blob.core.windows.net/wiitrakblobcontainer/StoreMarker.png";
 const DriverMarkerIcon = "https://wiitrakstorageaccount.blob.core.windows.net/wiitrakblobcontainer/NavigationLogo.png";
-var i = 1;
 const infoWindow = new google.maps.InfoWindow();
 var DestName;
 var travelindex = 0;
@@ -41,12 +40,18 @@ export function getGMaps(latitude, longitude, dlat, dlon) {
 }
 
 //Map to Store
-export function initMap(latitude, longitude, dlat, dlon, StoreName) {
+export function initMap(storedetails, driverdetails) {
+
     travelindex = 0;
-    DestName = StoreName;
+    DestName = storedetails.title;
+    var latitude = storedetails.latitude;
+    var longitude = storedetails.longitude;
+
     var latlng = new google.maps.LatLng(latitude, longitude);
     var directionsService = new google.maps.DirectionsService();
     var directionsRenderer = new google.maps.DirectionsRenderer();
+    var dlat = driverdetails.latitude;
+    var dlon = driverdetails.longitude;
 
     MovingDlat = dlat;
     MovingDlon = dlon;
@@ -62,7 +67,7 @@ export function initMap(latitude, longitude, dlat, dlon, StoreName) {
     marker = new google.maps.Marker({
         position: point,
         map,
-        title: "Current Position",
+        title: driverdetails.title,
         icon: DriverMarkerIcon,
         optimized: false,
     });
@@ -70,7 +75,7 @@ export function initMap(latitude, longitude, dlat, dlon, StoreName) {
     storemarker = new google.maps.Marker({
         position: new google.maps.LatLng(latitude, longitude),
         map,
-        title: StoreName,
+        title: DestName,
         icon: StoreMarkerIcon,
         optimized: false,
     });
@@ -92,7 +97,6 @@ export function initMap(latitude, longitude, dlat, dlon, StoreName) {
 
     });
     directionsRenderer.setMap(map);
-    //directionsRenderer.setPanel(document.getElementById("directionsPanel"));
 
     calcRoute(directionsService, directionsRenderer, latitude, longitude, dlat, dlon);
 }
@@ -115,9 +119,6 @@ function calcRoute(directionsService, directionsRenderer, latitude, longitude, d
             directionsRenderer.setDirections(response);
             var directionsData = response.routes[0].legs[0]; // Get data about the mapped route
 
-            //console.table(directionsData.steps);
-            //console.log(directionsData.steps);
-
             if (directionsData) {
                 document.getElementById('distance').innerText = " Driving distance is " + directionsData.distance.text + " (" + directionsData.duration.text + ").";
 
@@ -129,10 +130,6 @@ function calcRoute(directionsService, directionsRenderer, latitude, longitude, d
             steps.forEach((step, i) => {
                 var text = RemoveHtml(step.instructions);
                 text = text.replaceAll("Rd", "Road <br\>")
-                //console.log(i + 1 + " " + text);
-
-                //TextToSpeech(text);
-
                 var position = new google.maps.LatLng(steps[i].end_location);
 
                 var stepmarker = new google.maps.Marker({
@@ -152,10 +149,7 @@ function calcRoute(directionsService, directionsRenderer, latitude, longitude, d
                     TextToSpeech(RemoveHtml(texts));
 
                 });
-                //console.log(stepmarker.position.lat(), stepmarker.position.lng());
                 var distance = Finddistance(MovingDlat, MovingDlon, position.lat(), position.lng())
-                //console.log("Distance: " + distance);
-
                 var obj = {};
                 obj['End_Lat'] = position.lat();
                 obj['End_Lng'] = position.lng();
@@ -166,14 +160,11 @@ function calcRoute(directionsService, directionsRenderer, latitude, longitude, d
                 customList.push(obj);
             });
             console.table(customList);
-           
+
             templist = customList;
             console.table(templist);
             Timer = setInterval(function () {
-
                 watchid = navigator.geolocation.watchPosition(GetCoordinates);
-                //changeMarkerPosition();
-                // StopWatch();
             }, 900);
         }
     });
@@ -186,26 +177,19 @@ function RemoveHtml(html) {
 function GetCoordinates(position) {
     MovingDlat = position.coords.latitude;
     MovingDlon = position.coords.longitude;
-    //MovingDlat = MovingDlat - 0.1;
-    //MovingDlon = MovingDlon - 0.1;
     changeMarkerPosition();
     StopWatch();
 
     var dist = Finddistance(MovingDlat, MovingDlon, templist[travelindex].End_Lat, templist[travelindex].End_Lng)
-   
-    if (dist <= 10 && templist[travelindex].IsReached == 0) {
 
-        alert(templist[travelindex].Speech_Text);
+    if (dist <= 10 && templist[travelindex].IsReached == 0) {
         templist[travelindex].IsReached = 1;
-       
+
         TextToSpeech(templist[travelindex].Speech_Text);
         templist[travelindex].IsNavigated = 1;
         travelindex++;
         console.table(templist);
     }
-
-
-    i++;
 }
 
 function changeMarkerPosition() {

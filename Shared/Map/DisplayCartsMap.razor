@@ -8,6 +8,7 @@
 @using WiiTrakClient.Features.Drivers.Components
 @using System.Linq.Expressions;
 @inject IDialogService DialogService
+@using WiiTrakClient.Shared.Map
 @using MudBlazor
 <UserAuthentication />
 <div class="pagetitle my-8" style="margin-bottom: 0px !important;">
@@ -180,15 +181,15 @@ else
 
 
 
-            List<MapDetails> CartDetailsList = new();
+            List<MapMarkerDetails> CartDetailsList = new();
             if (CartsList is not null)
             {
 
-                MapDetails cartobj = new MapDetails();
+                MapMarkerDetails cartobj = new MapMarkerDetails();
                 foreach (var item in CartsList)
                 {
                     var cartinfo = "Store # " + item.Store.StoreName + " - " + item.Store.StoreNumber + Environment.NewLine + "Cart # " + item.CartNumber;
-                    cartobj = new MapDetails()
+                    cartobj = new MapMarkerDetails()
                         {
                             Title = cartinfo,
                             Latitude = item.TrackingDevice.Latitude,
@@ -197,15 +198,15 @@ else
                     CartDetailsList.Add(cartobj);
                 }
             }
-            List<MapDetails> StoretDetailsList = new();
+            List<MapMarkerDetails> StoretDetailsList = new();
             if (StoretDetailsList is not null)
             {
 
-                MapDetails storeobj = new MapDetails();
+                MapMarkerDetails storeobj = new MapMarkerDetails();
                 foreach (var item in storelist)
                 {
                     var storeinfo = "Store # " + item.StoreName + " - " + item.StoreNumber;
-                    storeobj = new MapDetails()
+                    storeobj = new MapMarkerDetails()
                         {
                             Title = storeinfo,
                             Latitude = item.Latitude,
@@ -232,7 +233,7 @@ else
                 Driverlatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
                 Driverlongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
             }
-            MapDetails driverobj = new MapDetails();
+            MapMarkerDetails driverobj = new MapMarkerDetails();
             driverobj.Title = CurrentUser.UserName;
             driverobj.Latitude = Driverlatitude;
             driverobj.Longitude = Driverlongitude;
@@ -338,12 +339,5 @@ else
         message = "have to pickup " + cartlistcount;
         RepairIssues = await RepairIssueRepository.GetAllRepairIssuesAsync();
         StateHasChanged();
-    }
-
-    public class MapDetails
-    {
-        public string Title { get; set; } = string.Empty;
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
     }
 }
