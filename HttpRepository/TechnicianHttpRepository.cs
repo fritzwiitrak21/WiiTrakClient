@@ -19,30 +19,38 @@ namespace WiiTrakClient.HttpRepository
             Httpservice = HttpService;
             ApiUrl = $"{ HttpService.BaseUrl }{ ControllerName }";
         }
-
         public async Task<List<TechnicianDto>> GetAllTechniciansAsync()
         {
             var response = await Httpservice.Get<List<TechnicianDto>>(ApiUrl);
             return response.Response;
         }
-
         public async Task<TechnicianDto> GetTechnicianByIdAsync(Guid id)
         {
             string url = $"{ApiUrl}/{id}";
             var response = await Httpservice.Get<TechnicianDto>(url);
             return response.Response;
         }
-
-        public async Task CreateTechnicianAsync(TechnicianCreationDto technician, int RoleId)
+        public async Task<List<TechnicianDto>> GetTechniciansBySystemOwnerIdAsync(Guid id)
+        {
+            string url = $"{ApiUrl}/systemowner/{id}";
+            var response = await Httpservice.Get<List<TechnicianDto>>(url);
+            return response.Response;
+        }
+        public async Task<List<TechnicianDto>> GetTechniciansByCompanyIdAsync(Guid id)
+        {
+            string url = $"{ApiUrl}/company/{id}";
+            var response = await Httpservice.Get<List<TechnicianDto>>(url);
+            return response.Response;
+        }
+        public async Task CreateTechnicianAsync(TechnicianDto technician, int RoleId)
         {
             await Httpservice.Post($"{ApiUrl}/{RoleId}", technician);
         }
 
-        public async Task UpdateTechnicianAsync(Guid id, TechnicianUpdateDto client, int RoleId)
+        public async Task UpdateTechnicianAsync(Guid id, TechnicianDto client, int RoleId)
         {
             await Httpservice.Put($"{ ApiUrl }/{ id }/{RoleId}", client);
         }
-
         public async Task DeleteTechnicianAsync(Guid id)
         {
             await Httpservice.Delete($"{ ApiUrl }/{ id }");

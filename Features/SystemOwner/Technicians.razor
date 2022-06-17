@@ -37,7 +37,7 @@
     private IJSObjectReference JsModule;
     List<TechnicianDto> Technician = new ();
     List<TechnicianDto> TechniciansList = new();
-    TechnicianCreationDto AddTechnician = new();
+    TechnicianDto AddTechnician = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -48,7 +48,7 @@
             CurrentUser.UserId = new Guid(Id);
         }
 
-        TechniciansList = await TechnicianRepository.GetAllTechniciansAsync();
+        TechniciansList = await TechnicianRepository.GetTechniciansBySystemOwnerIdAsync(CurrentUser.UserId);
         if (TechniciansList is not null)
         {
             Technician = TechniciansList;
@@ -58,7 +58,7 @@
     private async Task OpenDialog() 
     {
         var parameters = new DialogParameters();
-        AddTechnician = new TechnicianCreationDto();
+        AddTechnician = new TechnicianDto();
         parameters.Add("NewTechnician", AddTechnician);
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
@@ -69,7 +69,7 @@
         if (!result.Cancelled) 
         {
             // add new technician to backend
-            var TechnicianCreation = new TechnicianCreationDto {
+            var TechnicianCreation = new TechnicianDto {
                 FirstName = AddTechnician.FirstName,
                 LastName = AddTechnician.LastName,
                 Email = AddTechnician.Email,
@@ -80,6 +80,6 @@
             };
            await TechnicianRepository.CreateTechnicianAsync(TechnicianCreation,CurrentUser.UserRoleId);
         }  
-        Technician = await TechnicianRepository.GetAllTechniciansAsync();    
+        Technician = await TechnicianRepository.GetTechniciansBySystemOwnerIdAsync(CurrentUser.UserId);    
     } 
 }

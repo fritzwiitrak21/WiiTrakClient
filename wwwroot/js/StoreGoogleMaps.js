@@ -15,33 +15,9 @@ var templist;
 
 
 
-export function getGMaps(latitude, longitude, dlat, dlon) {
-    var latlng = new google.maps.LatLng(latitude, longitude);
-    MovingDlat = dlat;
-    MovingDlon = dlon;
-    var options = {
-        zoom: 15, center: latlng,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-
-    };
-
-    map = new google.maps.Map(document.getElementById("map"), options);
-
-    marker = new google.maps.Marker({
-        position: latlng,
-        map,
-        title: "Current Location",
-        icon: DriverMarkerIcon
-    });
-
-    setInterval(function () {
-        changeMarkerPosition();
-    }, 2000);
-}
-
 //Map to Store
 export function initMap(storedetails, driverdetails) {
-
+  
     travelindex = 0;
     DestName = storedetails.title;
     var latitude = storedetails.latitude;

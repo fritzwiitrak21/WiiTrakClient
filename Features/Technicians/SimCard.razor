@@ -62,7 +62,7 @@ else
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
-        var dialog = DialogService.Show<AddSimCardDialog>("Add Sim", parameters);
+        var dialog = DialogService.Show<AddSimCardDialog>("Add Simcard", parameters);
         var result = await dialog.Result;
 
         if (!result.Cancelled)

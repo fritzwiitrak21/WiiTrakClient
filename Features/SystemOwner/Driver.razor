@@ -59,7 +59,7 @@ else
 @code {
     List<DriverDto> driver = new();
     List<DriverDto> DriverList = new();
-    DriverCreationDto AddDriver = new();
+    DriverDto AddDriver = new();
 
     private IJSObjectReference JsModule;
 
@@ -83,7 +83,7 @@ else
     private async Task OpenDialog()
     {
         var parameters = new DialogParameters();
-        AddDriver = new DriverCreationDto();
+        AddDriver = new DriverDto();
         parameters.Add("NewDriver", AddDriver);
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
@@ -94,7 +94,7 @@ else
         if (!result.Cancelled)
         {
             // add new driver to backend
-            var driverCreation = new DriverCreationDto
+            var driverCreation = new DriverDto
                 {
                     CompanyId = AddDriver.CompanyId,
                     FirstName = AddDriver.FirstName,

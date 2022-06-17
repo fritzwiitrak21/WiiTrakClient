@@ -44,7 +44,7 @@
 @code {
 
     [Parameter]
-    public CorporateCreationDto? NewCorporate {get; set;}
+    public CorporateDto? NewCorporate {get; set;}
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     bool success;
@@ -56,13 +56,10 @@
     }
     void Submit() 
     {
-        if(!success)
+        form.Validate();
+        if (success && errors.Length == 0)
         {
-            form.Validate();
-        }
-        else
-        {
-            MudDialog.Close(DialogResult.Ok(true)); 
+            MudDialog.Close(DialogResult.Ok(true));
         }
     }
     void Cancel() => MudDialog.Cancel();

@@ -54,13 +54,10 @@
     }
     void Submit() 
     {
-        if(success==false)
+        form.Validate();
+        if (success && errors.Length == 0)
         {
-            form.Validate();
-        }
-        else
-        {
-            MudDialog.Close(DialogResult.Ok(true)); 
+            MudDialog.Close(DialogResult.Ok(true));
         }
     }
     void Cancel() => MudDialog.Cancel();

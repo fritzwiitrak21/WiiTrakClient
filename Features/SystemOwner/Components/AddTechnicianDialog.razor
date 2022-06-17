@@ -44,7 +44,7 @@
 
 @code {
     [Parameter]
-    public TechnicianCreationDto? NewTechnician {get; set;}
+    public TechnicianDto? NewTechnician {get; set;}
     public List<CompanyDto> Company { get; set; } = new();
     [Inject]
     public ICompanyHttpRepository CompanyRepository { get; set; }

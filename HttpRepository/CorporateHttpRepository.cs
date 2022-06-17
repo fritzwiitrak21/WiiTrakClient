@@ -64,13 +64,13 @@ namespace WiiTrakClient.HttpRepository
             return response.Response;
         }
 
-        public async Task CreateCorporateAsync(Guid CompanyId, int RoleId, CorporateCreationDto corporate)
+        public async Task CreateCorporateAsync(Guid CompanyId, int RoleId, CorporateDto corporate)
         {
             await _httpService.Post($"{_apiUrl}/{CompanyId}/{RoleId}",corporate);
              
         }
 
-        public async Task UpdateCorporateAsync(Guid id, CorporateUpdateDto corporate)
+        public async Task UpdateCorporateAsync(Guid id, CorporateDto corporate)
         {
 
              await _httpService.Put($"{ _apiUrl }/{ id }", corporate);

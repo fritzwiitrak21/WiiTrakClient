@@ -59,7 +59,7 @@
         if (!result.Cancelled) 
         {
             // save updated company to backend
-            var companyUpdate = new CompanyUpdateDto {
+            var companyUpdate = new CompanyDto {
                 Name = company.Name,
                 StreetAddress1 = company.StreetAddress1,
                 StreetAddress2 = company.StreetAddress2,
@@ -71,6 +71,8 @@
                 PhonePrimary = company.PhonePrimary,
                 PhoneSecondary = company.PhoneSecondary,
                 SystemOwnerId = CurrentUser.UserId,
+                Id=company.Id,
+                CreatedAt=company.CreatedAt,
             };
             await CompanyHttpRepository.UpdateCompanyAsync(company.Id, companyUpdate);
         }

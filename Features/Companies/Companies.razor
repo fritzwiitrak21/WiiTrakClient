@@ -40,7 +40,7 @@
     List<CompanyDto> CompaniesList = new();
     List<CompanyDto> companies = new();
 
-    CompanyCreationDto AddCompany = new();
+    CompanyDto AddCompany = new();
  
     protected override async Task OnInitializedAsync()
     {
@@ -62,7 +62,7 @@
     private async Task OpenDialog()
     {
         var parameters = new DialogParameters();
-        AddCompany = new CompanyCreationDto();
+        AddCompany = new CompanyDto();
         parameters.Add("NewCompany", AddCompany);
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
@@ -73,7 +73,7 @@
         if (!result.Cancelled)
         {
             // add new customer to backend
-            var customerCreation = new CompanyCreationDto
+            var customerCreation = new CompanyDto
                 {
                     Name = AddCompany.Name,
                     StreetAddress1 = AddCompany.StreetAddress1,

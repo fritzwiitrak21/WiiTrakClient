@@ -112,6 +112,7 @@
     DateTime? MinDate { get; set; } = DateTime.Today;
     DateTime SelectedDate { get; set; } = DateTime.Today;
     public string SelectedCounty = "";
+    bool IsValidCountyCode = false;
     protected override async Task OnInitializedAsync()
     {
         NewStore.StartDate = SelectedDate;
@@ -195,12 +196,15 @@
                 {
                     success = false;// Disable the Save button when other fields are valid
                 }
+                IsValidCountyCode = true;
+                StateHasChanged();
             }
             else
             {
                 SelectedCounty = e.ToString();
                 success = false;
                 await JsModule.InvokeVoidAsync("addValidationCountycodeClass");
+                IsValidCountyCode = true;
                 StateHasChanged();
             }
         }
@@ -208,15 +212,21 @@
         {
         }
     }
-    void Submit()
+     public async Task Submit()
     {
-        if(!success)
+        form.Validate();
+        if (JsModule is null)
         {
-            form.Validate();
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
         }
-        else
+        if (!IsValidCountyCode)
         {
-            MudDialog.Close(DialogResult.Ok(true)); 
+          await  JsModule.InvokeVoidAsync("addValidationCountycodeClass");
+            StateHasChanged();
+        }
+        if (success && errors.Length == 0 && IsValidCountyCode)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
         }
     }
     void Cancel() => MudDialog.Cancel();

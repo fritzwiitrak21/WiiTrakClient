@@ -62,7 +62,7 @@
         if (!result.Cancelled) 
         {
             // save updated technician to backend
-            var TechnicianUpdate = new TechnicianUpdateDto() {
+            var TechnicianUpdate = new TechnicianDto() {
                 FirstName = technician.FirstName,
                 LastName = technician.LastName,
                 Email = technician.Email,
@@ -70,9 +70,11 @@
                 ProfilePic = technician.ProfilePic,
                 SystemOwnerId=CurrentUser.UserId,
                 CompanyId=technician.CompanyId,
+                Id=technician.Id,
+                CreatedAt=technician.CreatedAt,
             };
             await TechnicianRepository.UpdateTechnicianAsync(technician.Id, TechnicianUpdate, CurrentUser.UserRoleId);
         }
-        Technicians = await TechnicianRepository.GetAllTechniciansAsync();
+        Technicians = await TechnicianRepository.GetTechniciansBySystemOwnerIdAsync(CurrentUser.UserId);
     }
 }

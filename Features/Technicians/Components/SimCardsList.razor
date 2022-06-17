@@ -67,7 +67,7 @@
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
 
-        var dialog  = DialogService.Show<UpdateSimCardDialog>("UpdateSimCard", parameters);
+        var dialog  = DialogService.Show<UpdateSimCardDialog>("Update Simcard", parameters);
         var result = await dialog.Result; 
 
         if (!result.Cancelled) 

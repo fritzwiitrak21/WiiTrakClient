@@ -16,9 +16,9 @@ namespace WiiTrakClient.HttpRepository.Contracts
 
         Task<DriverReportDto> GetDriverReportAsync(Guid id);
 
-        Task CreateDriverAsync(DriverCreationDto driver);
+        Task CreateDriverAsync(DriverDto driver);
 
-        Task UpdateDriverAsync(Guid id, DriverUpdateDto driver);
+        Task UpdateDriverAsync(Guid id, DriverDto driver);
 
         Task DeleteDriverAsync(Guid id);
     }

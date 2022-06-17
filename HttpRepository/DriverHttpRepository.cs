@@ -61,13 +61,13 @@ namespace WiiTrakClient.HttpRepository
             return response.Response;
         }
 
-        public async Task CreateDriverAsync(DriverCreationDto driver)
+        public async Task CreateDriverAsync(DriverDto driver)
         {
             await _httpService.Post(_apiUrl, driver);
 
         }
 
-        public async Task UpdateDriverAsync(Guid id, DriverUpdateDto driver)
+        public async Task UpdateDriverAsync(Guid id, DriverDto driver)
         {
 
             await _httpService.Put($"{ _apiUrl }/{ id }", driver);

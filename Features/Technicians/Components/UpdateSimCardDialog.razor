@@ -32,7 +32,7 @@
                         <MudTextField T="string" class="my-6" @bind-Value="SimCard.IMSI" Label="IMSI" Required="true" RequiredError=" " For="@(() => @SimCard.IMSI)" Variant="Variant.Text"></MudTextField>  
                         <div class="d-flex">
                             <MudButton OnClick="Cancel">Cancel</MudButton>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Update</MudButton>
                         </div>
                         <br />
                 </MudForm>
@@ -56,7 +56,11 @@
 
     void Submit() 
     {
-        MudDialog.Close(DialogResult.Ok(true));
+        form.Validate();
+        if (success && errors.Length == 0)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
     }
     void Cancel() => MudDialog.Cancel();
 

@@ -56,7 +56,7 @@
     List<DriverDto> drivers = new();
     List<DriverDto> DriversList = new();
 
-    DriverCreationDto AddDriver = new();
+    DriverDto AddDriver = new();
     private IJSObjectReference JsModule;
     bool LoaderVisibility { get; set; } = false;
 
@@ -80,7 +80,7 @@
     private async Task OpenDialog()
     {
         var parameters = new DialogParameters();
-        AddDriver = new DriverCreationDto();
+        AddDriver = new DriverDto();
         parameters.Add("NewDriver", AddDriver);
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
@@ -91,7 +91,7 @@
         if (!result.Cancelled)
         {
             // add new driver to backend
-            var driverCreation = new DriverCreationDto
+            var driverCreation = new DriverDto
                 {
                     FirstName = AddDriver.FirstName,
                     LastName = AddDriver.LastName,

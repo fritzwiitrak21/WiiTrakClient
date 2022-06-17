@@ -172,7 +172,7 @@
                 Driverlongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
             }
 
-            var address = string.Concat(store.StreetAddress1, store.StreetAddress2.Length > 0 ? store.StreetAddress2 + "," : "", store.City, ",", store.State, ",", store.PostalCode);
+            var address = string.Concat(store.StreetAddress1.Trim(),", ", store.StreetAddress2.Length > 0 ? store.StreetAddress2.Trim() + ", " : "", store.City.Trim(), ", ", store.State.Trim(), ", ", store.PostalCode.Trim());
             var parameters = new DialogParameters();
             parameters.Add("StoreName", store.StoreName + " - " + store.StoreNumber);
             parameters.Add("Address", address);

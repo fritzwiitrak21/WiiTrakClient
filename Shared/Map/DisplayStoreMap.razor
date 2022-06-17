@@ -15,9 +15,19 @@
         left: 32px;
         bottom: 32px;
         border-radius: 10px;
+        opacity: 90%;
     }
+
+    .dialogstyle {
+        width: 1000px;
+        height: 570px;
+        
+    }
+    .dialogstyle .mud-dialog-content{height:100%;}
+    .dialogstyle div[tabindex="-1"]{ height:100%;}
+
 </style>
-<MudDialog>
+<MudDialog >
     <DialogContent>
         <div style="width:1000px;height:490px;overflow: auto;">
             <h6>Address:</h6>
@@ -25,12 +35,17 @@
 
 
             <label id="distance" />
-            <div id="map" style="height:400px;width:100%;"></div>
+            
+            <div id="map" style="height:400px;width:100%;">
+                
+            </div>
+            <button class="recenterbtn" onclick="@LoadMap"><i class="fa fa-location-arrow"></i>&nbsp Re-centre</button>
+            
             @*<div id="map" style="float:left;width:70%;height:100%"></div>
                 <div id="directionsPanel" style="float:right;width:30%;height:460px;overflow: auto;"></div>*@
 
 
-            <button class="recenterbtn" onclick="@LoadMap"><i class="fa fa-location-arrow"></i>&nbsp Re-Center</button>
+            
         </div>
     </DialogContent>
     <DialogActions>

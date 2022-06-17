@@ -52,11 +52,7 @@ namespace WiiTrakClient.Features.Companies
             StateHasChanged();
         }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            // await ReadSummary();
-        }
-
+       
         private async Task HandleCompanySelected(CompanyDto company)
         {
             System.Console.WriteLine("company id: " + company.Id);

@@ -82,13 +82,13 @@ namespace WiiTrakClient.HttpRepository
             return response.Response;
         }
 
-        public async Task CreateCompanyAsync(CompanyCreationDto company)
+        public async Task CreateCompanyAsync(CompanyDto company)
         {
               await _httpService.Post(_apiUrl, company);
             
         }
 
-        public async Task UpdateCompanyAsync(Guid id, CompanyUpdateDto company)
+        public async Task UpdateCompanyAsync(Guid id, CompanyDto company)
         {
 
               await _httpService.Put($"{ _apiUrl }/{ id }", company);

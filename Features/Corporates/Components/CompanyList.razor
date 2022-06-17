@@ -10,7 +10,7 @@
         <MudTh><MudTableSortLabel  SortBy="new Func<CompanyDto, object>(x=>x.StreetAddress1)">Address</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<CompanyDto, object>(x=>x.Email)">Email</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<CompanyDto, object>(x=>x.PhonePrimary)">Phone</MudTableSortLabel></MudTh>        
-        <MudTh></MudTh>
+        @*<MudTh></MudTh>*@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Company Name">
@@ -26,14 +26,13 @@
          <MudTd DataLabel="Phone">
             @context.PhonePrimary
         </MudTd>
-     
-        <MudTd DataLabel="Action">           
+        @*<MudTd DataLabel="Action">           
             <MudButton 
                 Variant="Variant.Filled" 
                 Color="Color.Primary" 
                 OnClick="((e) => OpenDialog(context))">Update
             </MudButton>
-        </MudTd>
+        </MudTd>*@
     </RowTemplate>
     <PagerContent>
         <MudTablePager PageSizeOptions="new int[]{10, 50, 100}" />
@@ -60,7 +59,7 @@
         if (!result.Cancelled) 
         {
             // save updated company to backend
-            var companyUpdate = new CompanyUpdateDto {
+            var companyUpdate = new CompanyDto {
                 Name = company.Name,
                 StreetAddress1 = company.StreetAddress1,
                 StreetAddress2 = company.StreetAddress2,

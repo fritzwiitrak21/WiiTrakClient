@@ -9,13 +9,11 @@ namespace WiiTrakClient.HttpRepository.Contracts
     public interface ITechnicianHttpRepository
     {
         Task<List<TechnicianDto>> GetAllTechniciansAsync();
-
         Task<TechnicianDto> GetTechnicianByIdAsync(Guid id);
-
-        Task CreateTechnicianAsync(TechnicianCreationDto technician, int RoleId);
-
-        Task UpdateTechnicianAsync(Guid id, TechnicianUpdateDto technician, int RoleId);
-
+        Task<List<TechnicianDto>> GetTechniciansBySystemOwnerIdAsync(Guid id);
+        Task<List<TechnicianDto>> GetTechniciansByCompanyIdAsync(Guid id);
+        Task CreateTechnicianAsync(TechnicianDto technician, int RoleId);
+        Task UpdateTechnicianAsync(Guid id, TechnicianDto technician, int RoleId);
         Task DeleteTechnicianAsync(Guid id);
     }
 }

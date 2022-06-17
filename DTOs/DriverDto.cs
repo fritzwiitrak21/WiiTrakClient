@@ -57,6 +57,7 @@ namespace WiiTrakClient.DTOs
         public bool IsActive { get; set; }
 
         public Guid CompanyId { get; set; }
+        public Guid SystemOwnerId { get; set; }
         public int DriverNumber { get; set; }
 
     }

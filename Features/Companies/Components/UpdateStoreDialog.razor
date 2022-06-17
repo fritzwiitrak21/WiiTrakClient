@@ -73,7 +73,7 @@
 
                 <div class="d-flex SubmitGrp">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
                 </div>
             </MudForm>
         </div>
@@ -104,6 +104,7 @@
     MudForm form;
     [Inject] IJSRuntime JsRuntime { get; set; }
     private IJSObjectReference JsModule;
+    bool IsValidCountyCode = true;
     protected override void OnParametersSet()
     {
         if (Corporate != null && Corporate.Count > 0)
@@ -193,11 +194,13 @@
                 {
                     success = false;// Disable the Save button when other fields are valid
                 }
+                IsValidCountyCode = true;
             }
             else
             {
                 SelectedCounty = e.ToString();
                 await JsModule.InvokeVoidAsync("addValidationCountycodeClass");
+                IsValidCountyCode = false;
                 StateHasChanged();
             }
         }
@@ -206,9 +209,22 @@
         }
     }
 
-    void Submit()
+    public async Task Submit()
     {
-        MudDialog.Close(DialogResult.Ok(true));
+        form.Validate();
+        if (JsModule is null)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
+        if (!IsValidCountyCode)
+        {
+          await  JsModule.InvokeVoidAsync("addValidationCountycodeClass");
+            StateHasChanged();
+        }
+        if (success && errors.Length == 0 && IsValidCountyCode)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
     }
 
     void Cancel() => MudDialog.Cancel();

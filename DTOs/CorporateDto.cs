@@ -68,6 +68,6 @@ namespace WiiTrakClient.DTOs
         public Guid CompanyId { get; set; }
         public Guid SystemOwnerId { get; set; }
 
-        public List<StoreDto> Stores { get; set; }
+        public List<StoreDto>? Stores { get; set; }
     }
 }

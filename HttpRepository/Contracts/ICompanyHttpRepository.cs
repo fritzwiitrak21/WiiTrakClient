@@ -19,9 +19,9 @@ namespace WiiTrakClient.HttpRepository.Contracts
         Task<CompanyReportDto> GetCompanyReportAsync(Guid id);
         Task<CompanyDto> GetParentCompanyAsync(Guid subcompanyId);
 
-        Task CreateCompanyAsync(CompanyCreationDto company);
+        Task CreateCompanyAsync(CompanyDto company);
 
-        Task UpdateCompanyAsync(Guid id, CompanyUpdateDto company);
+        Task UpdateCompanyAsync(Guid id, CompanyDto company);
 
         Task DeleteCompanyAsync(Guid id);
     }

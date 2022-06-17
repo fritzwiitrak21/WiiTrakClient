@@ -5,6 +5,7 @@
 using WiiTrakClient.DTOs;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.Services;
+using WiiTrakClient.Enums;
 
 namespace WiiTrakClient.HttpRepository
 {
@@ -35,7 +36,14 @@ namespace WiiTrakClient.HttpRepository
 
             return response.Response;
         }
+        public async Task<List<TrackingDeviceDetailsDto>> GetTrackingDeviceDetailsByIdAsync(Guid id,int RoleId)
+        {
+            string url = $"{_apiUrl}/TrackingDevice/{id}/{RoleId}";
 
+            var response = await _httpService.Get<List<TrackingDeviceDetailsDto>>(url);
+
+            return response.Response;
+        }
         public async Task CreateTrackingDeviceAsync(TrackingDeviceCreationDto trackingDevice)
         {
             await _httpService.Post(_apiUrl, trackingDevice);

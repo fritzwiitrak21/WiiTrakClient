@@ -55,7 +55,7 @@
 
 @code {
     [Parameter]
-    public DriverCreationDto? NewDriver {get; set;}
+    public DriverDto? NewDriver {get; set;}
 
     public List<CompanyDto> companies { get; set; } = new();
 
@@ -84,13 +84,10 @@
 
     void Submit() 
     { 
-        if(!success)
+        form.Validate();
+        if (success && errors.Length == 0)
         {
-            form.Validate();
-        }
-        else
-        {
-            MudDialog.Close(DialogResult.Ok(true)); 
+            MudDialog.Close(DialogResult.Ok(true));
         }
     }
     void Cancel() => MudDialog.Cancel();
