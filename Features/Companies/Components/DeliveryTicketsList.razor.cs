@@ -19,7 +19,6 @@ namespace WiiTrakClient.Features.Companies.Components
         [Inject] IDriverHttpRepository DriverRepository { get; set; }
         [Inject] public IDeliveryTicketHttpRepository DeliveryTicketHttpRepository { get; set; }
         [Inject] public ICartHttpRepository CartHttpRepository { get; set; }
-
         [Inject] public IStoreHttpRepository StoreHttpRepository { get; set; }
         [Inject] ICartHttpRepository CartRepository { get; set; }
         [Inject] NavigationManager NavManager { get; set; }
@@ -27,17 +26,12 @@ namespace WiiTrakClient.Features.Companies.Components
         public List<DeliveryTicketDto>? DeliveryTickets { get; set; }
         [Parameter]
         public int RecordCount { get; set; }
-
         [Parameter]
         public EventCallback DeliveryTicketUpdatedEventCallback { get; set; }
-
         [Inject]
         IDialogService? DialogService { get; set; }
-
         DriverDto selectedDriver = new();
-   
         private bool _listIsLoading = true;
-       
         List<DeliveryTicketDto> _deliveryTickets = new();
         List<CartDto> _carts = new();
         List<StoreDto> _stores = new();
@@ -47,13 +41,10 @@ namespace WiiTrakClient.Features.Companies.Components
         [Inject] IJSRuntime JsRuntime { get; set; }
         private string ErrorMessage { get; set; } = "";
         private string SuccessMessage { get; set; } = "";
-
-
         protected override void OnParametersSet()
         {
             _listIsLoading = false;
         }
-
         #region Update Dialog
         public async Task OpenUpdateDeliveryTicketDialog(DeliveryTicketDto deliveryTicket)
         {
@@ -72,12 +63,9 @@ namespace WiiTrakClient.Features.Companies.Components
             parameters.Add("Driver", selectedDriver);
             parameters.Add("Carts", _carts);
             parameters.Add("Stores", _stores);
-
             deliveryTicketId = deliveryTicket.Id;
             DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
-
             var dialog = DialogService.Show<UpdateDeliveryTicketDialog>("Edit Delivery Ticket", parameters);
-
             var result = await dialog.Result;
             if (!result.Cancelled)
             {
@@ -93,11 +81,8 @@ namespace WiiTrakClient.Features.Companies.Components
                     DeliveryTicketNumber = _editDeliveryTicket.DeliveryTicketNumber,
                     IsActive = true,
                     SignOffRequired = _stores.FirstOrDefault(x => x.Id == _editDeliveryTicket.StoreId).IsSignatureRequired
-
                 };
-
                 await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);
-
                 // update status of carts to delivered and update cart hitory
                 //dont remove the code
                 #region
@@ -140,20 +125,14 @@ namespace WiiTrakClient.Features.Companies.Components
             _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId,RecordCount);
             StateHasChanged();
             //var cartPreUpdate = cart;
-
             //Console.WriteLine("cart id: " + cart.Id);
-
             //var parameters = new DialogParameters();
             //parameters.Add("Cart", cart);
             //parameters.Add("RepairIssues", RepairIssues);
-
             //DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
-
             //if (DialogService is null) return;
-
             //var dialog = DialogService.Show<UpdateCartDialog>("Update Cart", parameters);
             //var result = await dialog.Result;
-
             //if (!result.Cancelled)
             //{
             //    // save updated cart to backend
@@ -171,7 +150,6 @@ namespace WiiTrakClient.Features.Companies.Components
             //    };
             //    if (CartHttpRepository is null) return;
             //    await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
-
             //    // pass update changes back to parent for driver summary
             //    var cartChange = new CartChange
             //    {

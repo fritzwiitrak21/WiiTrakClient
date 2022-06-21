@@ -14,35 +14,22 @@ namespace WiiTrakClient.Features.Corporates.Components
         [Inject] IDriverHttpRepository DriverRepository { get; set; }
         [Inject] public IDeliveryTicketHttpRepository DeliveryTicketHttpRepository { get; set; }
         [Inject] public ICartHttpRepository CartHttpRepository { get; set; }
-
         [Inject] public IStoreHttpRepository StoreHttpRepository { get; set; }
         [Inject] ICartHttpRepository CartRepository { get; set; }
         [Parameter]
         public List<DeliveryTicketDto>? DeliveryTickets { get; set; }
-        
-
         [Parameter]
         public EventCallback DeliveryTicketUpdatedEventCallback { get; set; }
-
         [Inject]
         IDialogService? DialogService { get; set; }
-
         List<CartDto>? cartsTable { get; set; } = new();
         private bool _listIsLoading = true;
-      
-      
-      
         DeliveryTicketUpdateDto _editDeliveryTicket = new();
         Guid deliveryTicketId = Guid.Empty;
-      
-       
         protected override void OnParametersSet()
         {
             _listIsLoading = false;
         }
-
-      
-
         public async Task OpenDeliveryTicketDialog(DeliveryTicketDto deliveryTicket)
         {
             var parameters = new DialogParameters();
@@ -59,9 +46,5 @@ namespace WiiTrakClient.Features.Corporates.Components
 
             var dialog = DialogService.Show<DeliveryTicketDetailsDialog>("Delivery Ticket Summary", parameters);
         }
-
-       
-
-       
     }    
 }

@@ -12,6 +12,5 @@ namespace WiiTrakClient.HttpRepository.Contracts
         Task<SimCardsDto> GetSimCardByIdAsync(Guid id);
         Task CreateSimCardAsync(SimCardsDto sim);
         Task UpdateSimCardAsync(Guid id, SimCardsDto sim);
-
     }
 }

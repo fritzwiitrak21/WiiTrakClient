@@ -18,6 +18,5 @@ namespace WiiTrakClient.DTOs
         public int October { get; set; }
         public int November { get; set; }
         public int December { get; set; }
-
     }
 }

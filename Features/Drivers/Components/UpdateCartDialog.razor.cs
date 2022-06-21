@@ -16,10 +16,8 @@ namespace WiiTrakClient.Features.Drivers.Components
         [Inject] public IJSRuntime JSRuntime { get; set; }
         [Parameter]
         public CartDto? Cart { get; set; }
-
         [Parameter]
         public List<RepairIssueDto>? RepairIssues { get; set; }
-
         [CascadingParameter] MudDialogInstance MudDialog { get; set; }
         private IJSObjectReference? _jsModule = null;
         bool _cartHasGeolocation = true;
@@ -28,7 +26,6 @@ namespace WiiTrakClient.Features.Drivers.Components
         int _seletedConditionInt = 0;
         string _seletedIssue = "";
         string _otherText = "";
-
         protected override async Task OnInitializedAsync()
         {
             if (_jsModule is null)
@@ -40,14 +37,6 @@ namespace WiiTrakClient.Features.Drivers.Components
             await _jsModule.InvokeVoidAsync("GetRoutePermission", dotNetObjectRef);
             StateHasChanged();
         }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (!firstRender) return;
-
-            System.Console.WriteLine($"long: {Cart.TrackingDevice.Longitude}");
-            
-        }
         protected override void OnParametersSet()
         {
             if (Cart is not null)
@@ -55,11 +44,9 @@ namespace WiiTrakClient.Features.Drivers.Components
                 _selectedStatusInt = (int)Cart.Status;
                 _seletedConditionInt = (int)Cart.Condition;
             }
-
             if (RepairIssues is not null)
             {
                 _seletedIssue = RepairIssues[0].Issue;
-
                 if (!RepairIssues.Any(x => x.Issue.Equals("Other")))
                 {
                     RepairIssues.Add(new RepairIssueDto
@@ -72,8 +59,6 @@ namespace WiiTrakClient.Features.Drivers.Components
         [JSInvokable]
         public async Task ShowCartRoute(bool routePermission)
         {
-            System.Console.WriteLine($"show cart Route Permission: {routePermission}");
-
             showRoute = routePermission;
             StateHasChanged();
         }
@@ -82,7 +67,6 @@ namespace WiiTrakClient.Features.Drivers.Components
             if (Cart.TrackingDevice is not null && Cart.TrackingDevice.Latitude > 0)
             {
                 _cartHasGeolocation = true;
-
                 var cartMarker = new CartMarkerInfo
                 {
                     CartId = Cart.Id,
@@ -99,7 +83,6 @@ namespace WiiTrakClient.Features.Drivers.Components
                 _cartHasGeolocation = false;
             }
         }
-
         void Submit()
         {
             if (_selectedStatusInt > -1)
@@ -110,22 +93,18 @@ namespace WiiTrakClient.Features.Drivers.Components
             {
                 Cart.Condition = (CartCondition)_seletedConditionInt;
             }
-
             Cart.DamageIssue = _seletedIssue;
             MudDialog.Close(DialogResult.Ok(true));
         }
         void Cancel() => MudDialog.Cancel();
-
         void StatusChangedHandler(int statusInt)
         {
             _selectedStatusInt = statusInt;
         }
-
         void ConditionChangedHandler(int conditionInt)
         {
             _seletedConditionInt = conditionInt;
         }
-
         public async ValueTask DisposeAsync()
         {
             if (_jsModule is not null)

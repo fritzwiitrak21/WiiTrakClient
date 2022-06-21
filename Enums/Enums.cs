@@ -1,4 +1,8 @@
-﻿namespace WiiTrakClient.Enums
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+namespace WiiTrakClient.Enums
 {
     public enum CartCondition
     {
@@ -6,7 +10,6 @@
         Damage,
         DamageBeyondRepair
     }
-
     public enum CartStatus
     {
         InsideGeofence,
@@ -14,14 +17,12 @@
         PickedUp, 
         Lost
     }
-
     public enum CartOrderedFrom
     {
         Manufacture,
         Seller,
         Lessor
     }
-
     public enum CartFilterOption
     {
         All,
@@ -30,8 +31,6 @@
         OnTruck,
         Lost
     }
-
-
     public enum Role
     {
         WiiTrak = 1,
@@ -42,6 +41,5 @@
         Store = 6,
         ServiceProvider = 7,
         Technician = 8
-
     }
 }

@@ -9,9 +9,7 @@ namespace WiiTrakClient.DTOs
     public class TechnicianDto
     {
         public Guid Id { get; set; }
-
         public DateTime? UpdatedAt { get; set; }
-
         public DateTime CreatedAt { get; set; }
         [Required]
         [StringLength(10)]
@@ -27,9 +25,7 @@ namespace WiiTrakClient.DTOs
         [Required]
         [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$")]
         public string Phone { get; set; } = string.Empty;
-
         public string ProfilePic { get; set; } = string.Empty;
-
         public Guid SystemOwnerId { get; set; }
         public Guid CompanyId { get; set; }
     }

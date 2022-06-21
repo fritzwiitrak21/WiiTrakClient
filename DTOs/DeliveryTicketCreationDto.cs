@@ -12,20 +12,14 @@ namespace WiiTrakClient.DTOs
         [Required]
         [RegularExpression(@"^[0-9]*$")]
         public int NumberOfCarts { get; set; }
-
         public string Grid { get; set; } = string.Empty;
         [Required]
         public string PicUrl { get; set; } = string.Empty;
-
         public string SignaturePicUrl { get; set; } = string.Empty;
         public bool SignOffRequired { get; set; }
-
         public DateTime DeliveredAt { get; set; }
-
         public Guid ServiceProviderId { get; set; } = Guid.Empty;
-
         public Guid StoreId { get; set; } = Guid.Empty;
-
         public Guid DriverId { get; set; } = Guid.Empty;
         [Required]
         [StringLength(25)]

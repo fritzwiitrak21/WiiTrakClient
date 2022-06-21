@@ -4,7 +4,6 @@
 */
 namespace WiiTrakClient.DTOs
 {
-
     public class MailSettingsDto
     {
         public string Mail { get; set; } = string.Empty;

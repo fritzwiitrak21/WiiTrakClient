@@ -13,13 +13,11 @@ namespace WiiTrakClient.HttpRepository
         private readonly IHttpService HttpService;
         private const string ControllerName = "simcards";
         private readonly string ApiUrl;
-
         public SimCardsHttpRepository(IHttpService httpservice)
         {
             HttpService = httpservice;
             ApiUrl = $"{ httpservice.BaseUrl }{ ControllerName }";
         }
-
         public async Task<List<SimCardsDto>> GetAllSimCardDetailsAsync()
         {
             var response = await HttpService.Get<List<SimCardsDto>>(ApiUrl);
@@ -28,17 +26,13 @@ namespace WiiTrakClient.HttpRepository
         public async Task<SimCardsDto> GetSimCardByIdAsync(Guid id)
         {
             string url = $"{ApiUrl}/{id}";
-
             var response = await HttpService.Get<SimCardsDto>(url);
-
             return response.Response;
         }
-
         public async Task CreateSimCardAsync(SimCardsDto sim)
         {
             await HttpService.Post(ApiUrl, sim);
         }
-
         public async Task UpdateSimCardAsync(Guid id, SimCardsDto sim)
         {
             await HttpService.Put($"{ ApiUrl }/{ id }", sim);

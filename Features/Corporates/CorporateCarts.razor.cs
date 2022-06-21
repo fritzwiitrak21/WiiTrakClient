@@ -34,14 +34,10 @@ namespace WiiTrakClient.Features.Corporates
             List,
             Grid
         }
-
         ViewOption _view = ViewOption.Map;
-
         // Filter chip set
         // ref: https://mudblazor.com/components/chipset#api
         MudChip? listFilterChip;
-
-
         protected override async Task OnInitializedAsync()
         {
             _corporates = await CorporateRepository.GetAllCorporatesAsync();
@@ -51,15 +47,12 @@ namespace WiiTrakClient.Features.Corporates
             await GetStoreListByCoroporateId();
             StateHasChanged();
         }
-
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             // await ReadSummary();
         }
-
         private async Task HandleCorporateSelected(CorporateDto corporate)
         {
-            System.Console.WriteLine(corporate.Id);
             mapCoporateBind = true;
             await GetCartsByCorporateId(corporate.Id);
             SelectedCorporate = corporate;
@@ -67,12 +60,10 @@ namespace WiiTrakClient.Features.Corporates
             await GetStoreListByCoroporateId();
             StateHasChanged();
         }
-
         private async Task HandleStoreSelected(StoreDto store)
         {
             Console.WriteLine("HandleStoreSelected" + store.StoreName);
             mapCoporateBind = false;
-            System.Console.WriteLine(store.Id);
             if (store.Id == Guid.Empty)
             {
                 await GetAllStoreCartsByCorporateId(SelectedCorporate.Id);
@@ -86,7 +77,6 @@ namespace WiiTrakClient.Features.Corporates
             await UpdateStoreReport(store.Id);
             StateHasChanged();
         }
-
         private async Task GetStoreListByCoroporateId()
         {
             _stores = new List<StoreDto>();
@@ -107,7 +97,6 @@ namespace WiiTrakClient.Features.Corporates
             }
             await UpdateStoreReport(SelectedStore.Id);
         }
-
         private async Task GetCartsByCorporateId(Guid id)
         {
             _carts = await CartRepository.GetCartsByCorporateIdAsync(id);
@@ -115,7 +104,6 @@ namespace WiiTrakClient.Features.Corporates
             _mapStores = await StoreRepository.GetStoresByCorporateId(id);
             _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();            
         }
-
         private async Task GetAllStoreCartsByCorporateId(Guid id)
         {
             _carts = await CartRepository.GetCartsByCorporateIdAsync(id);
@@ -123,7 +111,6 @@ namespace WiiTrakClient.Features.Corporates
             _mapStores = await StoreRepository.GetStoresByCorporateId(id);
             _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
         }
-
         private async Task GetCartsByStoreId(StoreDto store)
         {
             _carts = await CartRepository.GetCartsByStoreIdAsync(store.Id);
@@ -138,13 +125,11 @@ namespace WiiTrakClient.Features.Corporates
                 _filteredCarts = new List<CartDto>();
             }
         }
-
         private async Task UpdateReport(Guid id)
         {
             _report = new CorporateReportDto();
             _report = await CorporateRepository.GetCorporateReportAsync(id);
         }
-
         private async Task UpdateStoreReport(Guid id)
         {
             if (id != Guid.Empty)
@@ -158,13 +143,11 @@ namespace WiiTrakClient.Features.Corporates
                 _storeReport = await StoreRepository.GetAllStoreReportByCoprporateAsync(SelectedCorporate.Id);
             }
         }
-
         private void ShowMapView()
         {
             Console.WriteLine("map view");
             _view = ViewOption.Map;
         }
-
         private void ShowListView()
         {
             Console.WriteLine("list view");

@@ -14,55 +14,39 @@ namespace WiiTrakClient.Features.Drivers
     public partial class WorkOrders : ComponentBase
     {
          [Inject] IJSRuntime JsRuntime { get; set; }
-
          [Inject] IWorkOrderHttpRepository WorkOrderHttpRepository {get; set;}
-
-        [Inject] IDriverHttpRepository DriverRepository { get; set; }
-
-        [Inject] public ICartHttpRepository CartHttpRepository { get; set; }
-
-        [Inject] public IStoreHttpRepository StoreHttpRepository { get; set; }
-
-        [Inject] IDialogService DialogService { get; set; }
-
-        List<WorkOrderDto> _workOrders = new();
-
-
-        DriverDto SelectedDriver = new();
-        List<DriverDto> _drivers = new();
-        List<CartDto> _carts = new();
-        List<StoreDto> _stores = new();
-
+         [Inject] IDriverHttpRepository DriverRepository { get; set; }
+         [Inject] public ICartHttpRepository CartHttpRepository { get; set; }
+         [Inject] public IStoreHttpRepository StoreHttpRepository { get; set; }
+         [Inject] IDialogService DialogService { get; set; }
+         List<WorkOrderDto> _workOrders = new();
+         DriverDto SelectedDriver = new();
+         List<DriverDto> _drivers = new();
+         List<CartDto> _carts = new();
+         List<StoreDto> _stores = new();
         protected override async Task OnInitializedAsync()
         {
             _drivers = await DriverRepository.GetAllDriversAsync();
             SelectedDriver = _drivers[0];
-
-           await HandleDriverSelected(SelectedDriver);
+            await HandleDriverSelected(SelectedDriver);
         }
-
         private async Task HandleDriverSelected(DriverDto driver)
         {
-            System.Console.WriteLine(driver.Id);
             SelectedDriver = driver;
              await GetWorkOrdersByDriverId(SelectedDriver.Id);
             //_stores = await StoreHttpRepository.GetStoresByDriverId(SelectedDriver.Id);
             //_carts = await CartHttpRepository.GetCartsByDriverIdAsync(SelectedDriver.Id);
         }
-
         private async Task GetWorkOrdersByDriverId(Guid id)
         {
-
             // TODO for now we are just getting all work orders
             // but this should be by driver
-
             var workOrders = await WorkOrderHttpRepository.GetAllWorkOrdersAsync();
             if (workOrders is not null)
             {
                 _workOrders = workOrders;
             }
         }
-        
         // private async Task OpenDialog()
         // {
         //     var parameters = new DialogParameters();
@@ -70,12 +54,9 @@ namespace WiiTrakClient.Features.Drivers
         //     parameters.Add("Driver", SelectedDriver);
         //     parameters.Add("Carts", _carts);
         //     parameters.Add("Stores", _stores);
-
         //     DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
-
         //     var dialog = DialogService.Show<AddDeliveryTicketDialog>("New Delivery Ticket", parameters);
         //     var result = await dialog.Result;
-
         //     if (!result.Cancelled)
         //     {
         //         // add new delivery ticket to backend
@@ -88,9 +69,7 @@ namespace WiiTrakClient.Features.Drivers
         //             ServiceProviderId = _newDeliveryTicket.ServiceProviderId,
         //             DriverId = _newDeliveryTicket.DriverId
         //         };
-
         //         var deliveryTicketResponse = await DeliveryTicketHttpRepository.CreateDeliveryTicketAsync(deliveryTicketCreation);
-
         //         // update status of carts to delivered and update cart hitory
         //         var carts = _carts.Where(x => x.StoreId == _newDeliveryTicket.StoreId).ToList();
         //         foreach(var cart in carts) 
@@ -108,7 +87,6 @@ namespace WiiTrakClient.Features.Drivers
         //                 IsDelivered = true,
         //                 CartId = cart.Id
         //             };
-
         //             var cartUpdate = new CartUpdateDto {
         //                 ManufacturerName = cart.ManufacturerName,
         //                 DateManufactured = cart.DateManufactured,
@@ -121,7 +99,6 @@ namespace WiiTrakClient.Features.Drivers
         //                 StoreId = cart.StoreId,
         //                 CartHistory = cartHistory                  
         //             };
-
         //             await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
         //         }
         //     }

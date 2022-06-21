@@ -101,30 +101,31 @@ function calcRoute(directionsService, directionsRenderer, latitude, longitude, d
                 TextToSpeech("total Driving distance to reach " + DestName + " is " + directionsData.distance.text + " and it will takes around " + directionsData.duration.text);
 
             }
-            var steps = directionsData.steps;
             let customList = [];
+            var steps = directionsData.steps;
+            
             steps.forEach((step, i) => {
                 var text = RemoveHtml(step.instructions);
                 text = text.replaceAll("Rd", "Road <br\>")
                 var position = new google.maps.LatLng(steps[i].end_location);
 
-                var stepmarker = new google.maps.Marker({
-                    position: position,
-                    map,
-                    title: step.instructions,
+                //var stepmarker = new google.maps.Marker({
+                //    position: position,
+                //    map,
+                //    title: step.instructions,
 
-                    optimized: false,
-                });
-                stepmarker.addListener("click", () => {
+                //    optimized: false,
+                //});
+                //stepmarker.addListener("click", () => {
 
-                    infoWindow.close();
-                    infoWindow.setContent(stepmarker.getTitle());
-                    infoWindow.open(stepmarker.getMap(), stepmarker);
-                    var texts = RemoveHtml(stepmarker.getTitle());
-                    texts = texts.replaceAll("Rd", "Road <br\>")
-                    TextToSpeech(RemoveHtml(texts));
+                //    infoWindow.close();
+                //    infoWindow.setContent(stepmarker.getTitle());
+                //    infoWindow.open(stepmarker.getMap(), stepmarker);
+                //    var texts = RemoveHtml(stepmarker.getTitle());
+                //    texts = texts.replaceAll("Rd", "Road <br\>")
+                //    TextToSpeech(RemoveHtml(texts));
 
-                });
+                //});
                 var distance = Finddistance(MovingDlat, MovingDlon, position.lat(), position.lng())
                 var obj = {};
                 obj['End_Lat'] = position.lat();
@@ -158,7 +159,7 @@ function GetCoordinates(position) {
 
     var dist = Finddistance(MovingDlat, MovingDlon, templist[travelindex].End_Lat, templist[travelindex].End_Lng)
 
-    if (dist <= 10 && templist[travelindex].IsReached == 0) {
+    if (dist <= 7 && templist[travelindex].IsReached == 0) {
         templist[travelindex].IsReached = 1;
 
         TextToSpeech(templist[travelindex].Speech_Text);

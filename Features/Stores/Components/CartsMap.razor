@@ -25,12 +25,8 @@
 };
 
     private Stack<string> _colorsStack = new Stack<string>();
-
     private bool _showNoCartsMessage = false;
 
-    protected override async Task OnInitializedAsync()
-    {
-    }
     protected override async Task OnParametersSetAsync()
     {
         if (_jsModule is null)
@@ -131,8 +127,6 @@
     [JSInvokable]
     public async Task ShowUpdateCartDialog(Guid cartId)
     {
-        System.Console.WriteLine($"show update cart dialog: {cartId}");
-
         //await OpenUpdateCartDialog(cartId);
     }
 

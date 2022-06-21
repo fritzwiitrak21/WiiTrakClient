@@ -13,21 +13,15 @@ namespace WiiTrakClient.Features.SystemOwner
 {
     public partial class DeliveryTickets : ComponentBase
     {
-        
         [Inject] IJSRuntime JsRuntime { get; set; }
-
         [Inject] public IDeliveryTicketHttpRepository DeliveryTicketHttpRepository { get; set; }
-
         List<DeliveryTicketDto> deliveryTickets = new();
-        
         List<DeliveryTicketDto> _deliveryTickets = new();
-        
         private IJSObjectReference JsModule;
         public int SelectedOption=30;
         public int TempSelectedOption = 0;
         protected override async Task OnInitializedAsync()
         {
-           
             try
             {
                 if (CurrentUser.UserId == Guid.Empty)
@@ -38,15 +32,15 @@ namespace WiiTrakClient.Features.SystemOwner
                     var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
                     CurrentUser.UserRoleId = Convert.ToInt32(roleid);
                 }
-
                 deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId,(Role)CurrentUser.UserRoleId, SelectedOption);
                 if (deliveryTickets is not null)
                 {
                     _deliveryTickets = deliveryTickets;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
+                //exception
             }
         }
         public async Task GetDeliveryTicketDetails()
@@ -64,8 +58,5 @@ namespace WiiTrakClient.Features.SystemOwner
               
             }
         }
-
-
-
     }
 }

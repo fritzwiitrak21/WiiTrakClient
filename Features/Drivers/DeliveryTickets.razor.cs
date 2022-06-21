@@ -246,7 +246,7 @@ namespace WiiTrakClient.Features.Drivers
         #endregion
 
         #region Get Distance
-        private double Getdistance(double lat2, double lon2, char unit = 'K')
+        private double Getdistance(double lat2, double lon2)
         {
             double lat1 = Latitude;
             double lon1 = Longitude;
@@ -258,28 +258,22 @@ namespace WiiTrakClient.Features.Drivers
             else
             {
                 double theta = lon1 - lon2;
-                double dist = Math.Sin(deg2rad(lat1)) * Math.Sin(deg2rad(lat2)) + Math.Cos(deg2rad(lat1)) * Math.Cos(deg2rad(lat2)) * Math.Cos(deg2rad(theta));
+                double dist = Math.Sin(degtorad(lat1)) * Math.Sin(degtorad(lat2)) + Math.Cos(degtorad(lat1)) * Math.Cos(degtorad(lat2)) * Math.Cos(degtorad(theta));
                 dist = Math.Acos(dist);
-                dist = rad2deg(dist);
+                dist = radtodeg(dist);
                 dist = dist * 60 * 1.1515;
-                if (unit == 'K')
-                {
-                    dist = dist * 1.609344;
-                }
-                else if (unit == 'N')
-                {
-                    dist = dist * 0.8684;
-                }
+                dist = dist * 1.609344;
+
                 return (dist);
             }
         }
 
-        private double deg2rad(double deg)
+        private double degtorad(double deg)
         {
             return (deg * Math.PI / 180.0);
         }
 
-        private double rad2deg(double rad)
+        private double radtodeg(double rad)
         {
             return (rad / Math.PI * 180.0);
         }

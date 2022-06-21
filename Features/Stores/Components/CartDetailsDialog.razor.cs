@@ -13,37 +13,25 @@ namespace WiiTrakClient.Features.Stores.Components
     public partial class CartDetailsDialog : ComponentBase, IAsyncDisposable
     {
         [Inject] public IJSRuntime JSRuntime { get; set; }
-
         [Parameter]
         public CartDto? Cart { get; set; }
-
         bool _cartHasGeolocation = true;
-
         [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-
         private IJSObjectReference? _jsModule = null;
-
-        protected override async Task OnParametersSetAsync()
-        {
-
-        }
-
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (!firstRender) return;
-
-            System.Console.WriteLine($"long: {Cart.TrackingDevice.Longitude}");
-
+            if (!firstRender)
+            {
+                return;
+            }
             if (_jsModule is null)
             {
                 _jsModule = await JSRuntime
                     .InvokeAsync<IJSObjectReference>("import", "./js/CartMap.js");
             }
-
             if (Cart.TrackingDevice is not null && Cart.TrackingDevice.Latitude > 0)
             {
                 _cartHasGeolocation = true;
-
                 var cartMarker = new CartMarkerInfo
                 {
                     CartId = Cart.Id,
@@ -60,7 +48,6 @@ namespace WiiTrakClient.Features.Stores.Components
                 _cartHasGeolocation = false;
             }
         }
-
         void Cancel() => MudDialog.Cancel();
         public async ValueTask DisposeAsync()
         {

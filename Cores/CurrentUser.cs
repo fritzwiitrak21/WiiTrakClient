@@ -31,8 +31,6 @@ namespace WiiTrakClient.Cores
         {
             return double.Parse(Value, System.Globalization.CultureInfo.InvariantCulture);
         }
-
-
         public static string ToPascalCase(string Text)
         {
             try
@@ -94,7 +92,6 @@ namespace WiiTrakClient.Cores
             try
             {
                 DataTable dataTable = new DataTable(typeof(T).Name);
-
                 //Get all the properties
                 PropertyInfo[] Props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
                 foreach (PropertyInfo prop in Props)
@@ -124,7 +121,5 @@ namespace WiiTrakClient.Cores
             }
         }
         #endregion
-
-
     }
 }

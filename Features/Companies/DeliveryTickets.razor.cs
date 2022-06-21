@@ -13,17 +13,11 @@ namespace WiiTrakClient.Features.Companies
 {
     public partial class DeliveryTickets : ComponentBase
     {
-
         [Inject] IJSRuntime JsRuntime { get; set; }
-
         [Inject] public IDeliveryTicketHttpRepository DeliveryTicketHttpRepository { get; set; }
-
         private IJSObjectReference JsModule;
-      
-
         List<DeliveryTicketDto> deliveryTickets = new();
         List<DeliveryTicketDto> _deliveryTickets = new();
-
         int SelectedOption = 30;
         int TempSelectedOption = 0;
         protected override async Task OnInitializedAsync()
@@ -36,7 +30,6 @@ namespace WiiTrakClient.Features.Companies
                 var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
                 CurrentUser.UserRoleId = Convert.ToInt32(roleid);
             }
-
             deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, SelectedOption);
             if (deliveryTickets is not null)
             {

@@ -13,9 +13,7 @@ namespace WiiTrakClient.Helpers
         {
             var claims = new List<Claim>();
             var payload = jwt.Split('.')[1];
-
             var jsonBytes = ParseBase64WithoutPadding(payload);
-
             var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
             claims.AddRange(keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString())));
             return claims;

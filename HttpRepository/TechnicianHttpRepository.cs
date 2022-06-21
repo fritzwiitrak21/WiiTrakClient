@@ -13,7 +13,6 @@ namespace WiiTrakClient.HttpRepository
         private readonly IHttpService Httpservice;
         private const string ControllerName = "technicians";
         private readonly string ApiUrl;
-
         public TechnicianHttpRepository(IHttpService HttpService)
         {
             Httpservice = HttpService;
@@ -46,7 +45,6 @@ namespace WiiTrakClient.HttpRepository
         {
             await Httpservice.Post($"{ApiUrl}/{RoleId}", technician);
         }
-
         public async Task UpdateTechnicianAsync(Guid id, TechnicianDto client, int RoleId)
         {
             await Httpservice.Put($"{ ApiUrl }/{ id }/{RoleId}", client);

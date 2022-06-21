@@ -9,11 +9,8 @@ namespace WiiTrakClient.DTOs
     public class DriverDto
     {
         public Guid Id { get; set; } 
-
         public DateTime? UpdatedAt { get; set; }
-
         public DateTime CreatedAt { get; set; }
-
         [Required]
         [StringLength(10)]
         [RegularExpression(@"^[a-zA-Z ]*$")]
@@ -22,19 +19,15 @@ namespace WiiTrakClient.DTOs
         [StringLength(10)]
         [RegularExpression(@"^[a-zA-Z ]*$")]
         public string LastName { get; set; } = string.Empty;
-
         [Required]
         [RegularExpression(@"^[a-zA-Z0-9_]+@[a-z]+\.[a-z]{2,3}$")]
         public string Email { get; set; } = string.Empty;
-
-
         [Required]
         [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$")]
         public string Phone { get; set; } = string.Empty;
         [Required]
         [StringLength(50)]
         public string StreetAddress1 { get; set; } = string.Empty;
-
         [StringLength(50)]
         public string StreetAddress2 { get; set; } = string.Empty;
         [Required]
@@ -50,15 +43,12 @@ namespace WiiTrakClient.DTOs
         [MinLength(4)]
         [RegularExpression(@"^[1-9][0-9]*$")]
         public string PostalCode { get; set; } = string.Empty;
-
         public string ProfilePic { get; set; } = string.Empty;
         public bool IsSuspended { get; set; }
         public bool IsTerminated { get; set; }
         public bool IsActive { get; set; }
-
         public Guid CompanyId { get; set; }
         public Guid SystemOwnerId { get; set; }
         public int DriverNumber { get; set; }
-
     }
 }
