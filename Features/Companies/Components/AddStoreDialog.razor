@@ -90,7 +90,7 @@
                 <MudCheckBox @bind-Checked="NewStore.IsSignatureRequired" Label="Signature Reqired For Deliveries" Color="Color.Primary"></MudCheckBox>
                 <div class="d-flex SubmitGrp">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary"  OnClick="Submit" Class="ml-auto">Save</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
                 </div>
             </MudForm>
         </div>
@@ -176,10 +176,12 @@
     protected override void OnParametersSet()
     {
         SelectedService = "1 time a week";
+        NewStore.ServiceFrequency = SelectedService;
     }
     public async Task HandleServiceFrequency(string value)
     {
         NewStore.ServiceFrequency = value;
+        SelectedService = value;
     }
     private async Task OnClick()
     {
@@ -221,7 +223,7 @@
                 {
                     success = false;// Disable the Save button when other fields are valid
                 }
-                  IsValidCountyCode = true;
+                IsValidCountyCode = true;
                 StateHasChanged();
             }
             else
@@ -229,7 +231,7 @@
                 SelectedCounty = e.ToString();
                 success = false;
                 await JsModule.InvokeVoidAsync("addValidationCountycodeClass");
-                  IsValidCountyCode = false;
+                IsValidCountyCode = false;
                 StateHasChanged();
             }
         }
@@ -238,7 +240,7 @@
             //Exception
         }
     }
-     public async Task Submit()
+    public async Task Submit()
     {
         form.Validate();
         if (JsModule is null)
@@ -247,7 +249,7 @@
         }
         if (!IsValidCountyCode)
         {
-          await  JsModule.InvokeVoidAsync("addValidationCountycodeClass");
+            await JsModule.InvokeVoidAsync("addValidationCountycodeClass");
             StateHasChanged();
         }
         if (success && errors.Length == 0 && IsValidCountyCode)

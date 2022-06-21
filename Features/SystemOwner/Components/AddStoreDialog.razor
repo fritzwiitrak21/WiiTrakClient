@@ -179,6 +179,7 @@
     protected override void OnParametersSet()
     {
         SelectedService = "1 time a week";
+        NewStore.ServiceFrequency = SelectedService;
     }
     public async Task HandleServiceFrequency(string value)
     {
@@ -286,7 +287,7 @@
         }
         if (!IsValidCountyCode)
         {
-          await  JsModule.InvokeVoidAsync("addValidationCountycodeClass");
+            await JsModule.InvokeVoidAsync("addValidationCountycodeClass");
             StateHasChanged();
         }
         if (success && errors.Length == 0 && IsValidCountyCode)

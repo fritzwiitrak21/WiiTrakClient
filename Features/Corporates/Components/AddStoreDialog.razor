@@ -84,7 +84,7 @@
                 <div class="d-flex SubmitGrp">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
                     @*                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
-                    *@                        <MudButton Variant="Variant.Filled" Color="Color.Primary"  OnClick="Submit" Class="ml-auto">Save</MudButton>
+                    *@                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
                 </div>
             </MudForm>
         </div>
@@ -150,10 +150,12 @@
     protected override void OnParametersSet()
     {
         SelectedService = "1 time a week";
+        NewStore.ServiceFrequency = SelectedService;
     }
     public async Task HandleServiceFrequency(string value)
     {
         NewStore.ServiceFrequency = value;
+        SelectedService = value;
     }
     private async Task OnClick()
     {
