@@ -8,9 +8,9 @@
     <DialogContent>
         <div style="width:1000px;height:490px;overflow: auto;">
 
-            <div id="map" style="height:100%;width:100%;overflow: auto;"></div>
+        <div id="map" style="height:100%;width:100%;overflow: auto;"></div>
 
-        </div>
+         </div>
     </DialogContent>
     <DialogActions>
     </DialogActions>
@@ -24,15 +24,18 @@
     [Parameter]
     public TrackingDeviceDetailsDto device { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/DeviceGoogleMaps.js");
-        MapMarkerDetails devicedetails = new();
-        devicedetails.Title = "Store : " + device.StoreName + " - " + device.StoreNumber + ",\n" + "Cart : " +
-                                device.ManufacturerName + " - Cart#" + device.CartNumber + ",\nDevice : " +
-                                device.DeviceName;
-        devicedetails.Latitude = device.Latitude;
-        devicedetails.Longitude = device.Longitude;
-        await JsModule.InvokeVoidAsync("initMap", devicedetails);
+        if (firstRender)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/DeviceGoogleMaps.js");
+            MapMarkerDetails devicedetails = new();
+            devicedetails.Title ="Store : " +device.StoreName + " - " + device.StoreNumber + ",\n" +"Cart : "+
+                                    device.ManufacturerName + " - Cart#" + device.CartNumber + ",\nDevice : " +
+                                    device.DeviceName;
+            devicedetails.Latitude = device.Latitude;
+            devicedetails.Longitude = device.Longitude;
+            await JsModule.InvokeVoidAsync("initMap", devicedetails);
+        }
     }
 }
