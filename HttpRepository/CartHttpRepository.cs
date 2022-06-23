@@ -26,35 +26,30 @@ namespace WiiTrakClient.HttpRepository
         public async Task<List<CartDto>> GetCartsByDeliveryTicketIdAsync(Guid deliveryTicketId)
         {
             string url = $"{_apiUrl}/DeliveryTicket/{deliveryTicketId}";
-            System.Console.WriteLine("url:" + url);
             var response = await _httpService.Get<List<CartDto>>(url);
             return response.Response;
         }
         public async Task<List<CartDto>> GetCartsByStoreIdAsync(Guid storeId)
         {
             string url = $"{_apiUrl}/store/{storeId}";
-            System.Console.WriteLine("url:" + url);
             var response = await _httpService.Get<List<CartDto>>(url);
             return response.Response;
         }
         public async Task<List<CartDto>> GetCartsByDriverIdAsync(Guid driverId)
         {
             string url = $"{_apiUrl}/driver/{driverId}";
-            System.Console.WriteLine("url:" + url);
             var response = await _httpService.Get<List<CartDto>>(url);
             return response.Response;
         }
         public async Task<List<CartDto>> GetCartsByCorporateIdAsync(Guid corporateId)
         {
             string url = $"{_apiUrl}/corporate/{corporateId}";
-            System.Console.WriteLine("url:" + url);
             var response = await _httpService.Get<List<CartDto>>(url);
             return response.Response;
         }
         public async Task<List<CartDto>> GetCartsByCompanyIdAsync(Guid companyId)
         {
             string url = $"{_apiUrl}/company/{companyId}";
-            System.Console.WriteLine("url:" + url);
             var response = await _httpService.Get<List<CartDto>>(url);
             return response.Response;
         }

@@ -1,6 +1,7 @@
 ﻿@using WiiTrakClient.Features.Technicians.Components
 @inject IDialogService DialogService
 @inject IDevicesHttpRepository DevicesRepository
+@inject ISimCardsHttpRepository SimCardRepository
 @using WiiTrakClient.Cores
 
 <MudTable Items="@Devices" Class="Pagingstyle" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@ListIsLoading"
@@ -46,16 +47,17 @@
     [Parameter]
     public List<DevicesDto>? Devices { get; set; } = null;
     private bool ListIsLoading = true;
-
+    public List<SimCardsDto> SimCardNo { get; set; } = new();
     protected override void OnParametersSet()
     {
         ListIsLoading = false;
     }
     public async Task OpenDialog(DevicesDto device) 
     {
+        SimCardNo = await SimCardRepository.GetAllSimCardDetailsAsync();
         var parameters = new DialogParameters();
-        parameters.Add("Device", device);   
-
+        parameters.Add("Device", device);
+        parameters.Add("SimNo", SimCardNo);
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
 
         var dialog  = DialogService.Show<UpdateDeviceDialog>("Update Device", parameters);

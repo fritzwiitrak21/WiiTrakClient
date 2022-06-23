@@ -25,11 +25,23 @@
                     <DataAnnotationsValidator />
                         <MudTextField T="string" class="my-6" @bind-Value="NewDevice.DeviceName" Label="Device Name" Required="true" RequiredError=" " For="@(() => @NewDevice.DeviceName)" Variant="Variant.Text"></MudTextField>  
                         <MudTextField T="string" class="my-6" @bind-Value="NewDevice.DeviceModel" Label="Device Model" Required="true" RequiredError=" " For="@(() => @NewDevice.DeviceModel)" Variant="Variant.Text"></MudTextField>  
-                        <MudDatePicker class="my-6" Label="Activated Time" Editable="true" @bind-Date="NewDevice.ActivatedTime" Required=true  For="@(() => @NewDevice.ActivatedTime)"/>
-                        <MudDatePicker class="my-6" Label="Subscription Expiration" Editable="true" @bind-Date="NewDevice.SubscriptionExpiration" Required=true  For="@(() => @NewDevice.SubscriptionExpiration)"/>
+                        <MudDatePicker class="my-6" Label="Activated Time" MaxDate="Enddate" Editable="true" @bind-Date="NewDevice.ActivatedTime" Required=true  For="@(() => @NewDevice.ActivatedTime)"/>
+                        <MudDatePicker class="my-6" Label="Subscription Expiration" Editable="true" MinDate='Enddate' @bind-Date="NewDevice.SubscriptionExpiration" Required=true  For="@(() => @NewDevice.SubscriptionExpiration)"/>
                         <MudTextField T="string" class="my-6" @bind-Value="NewDevice.IMEI" Label="IMEI" Required="true" RequiredError=" " For="@(() => @NewDevice.IMEI)" Variant="Variant.Text"></MudTextField> 
                         <MudTextField T="string" class="my-6" @bind-Value="NewDevice.ICCID" Label="ICCID" Required="true" RequiredError=" " For="@(() => @NewDevice.ICCID)" Variant="Variant.Text"></MudTextField> 
-                        <MudTextField T="string" class="my-6" @bind-Value="NewDevice.SIMNo" Label="SIM Number" Required="true" RequiredError=" " For="@(() => @NewDevice.SIMNo)" Variant="Variant.Text"></MudTextField>  
+                         <MudItem>
+                            <MudSelect T="SimCardsDto" Label="Select SIM Card" Required=true RequiredError=" "
+                               ValueChanged="(value) => HandleSimNo(value)"
+                               AnchorOrigin="Origin.BottomCenter">
+                                @foreach (var sim in SimCardNo)
+                                {
+                                    if(!sim.IsMapped)
+                                    {
+                                        <MudSelectItem T="SimCardsDto" Value="@sim">@sim.SIMNo</MudSelectItem>
+                                    }
+                                }
+                            </MudSelect>
+                        </MudItem>
                         <MudTextField T="string" class="my-6" @bind-Value="NewDevice.IMSI" Label="IMSI" Required="true" RequiredError=" " For="@(() => @NewDevice.IMSI)" Variant="Variant.Text"></MudTextField>
                         <MudTextField T="string" class="my-6" @bind-Value="NewDevice.Type" Label="Type" Required="true" RequiredError=" " For="@(() => @NewDevice.Type)" Variant="Variant.Text"></MudTextField> 
                         <div class="d-flex">
@@ -45,14 +57,27 @@
 @code {
     [Parameter]
     public DevicesDto? NewDevice {get; set;}
+    public List<SimCardsDto> SimCardNo { get; set; } = new();
+    DateTime? Enddate { get; set; } = DateTime.Today;
+    [Inject]
+    public ISimCardsHttpRepository SimCardRepository { get; set; }
     [CascadingParameter] 
     MudDialogInstance MudDialog { get; set; }
     bool success;
     string[] errors = { };
     MudForm form;
+    protected override async Task OnInitializedAsync()
+    {
+        SimCardNo = await SimCardRepository.GetAllSimCardDetailsAsync();
+    }
     protected override void OnParametersSet()
     {
-        
+
+    }
+    public async Task HandleSimNo(SimCardsDto SimNo)
+    {
+        NewDevice.SIMNo = SimNo.SIMNo;
+        NewDevice.SIMCardId = SimNo.Id;
     }
     void Submit() 
     {
@@ -63,5 +88,4 @@
         }
     }
     void Cancel() => MudDialog.Cancel();
-
 }
