@@ -17,6 +17,7 @@ namespace WiiTrakClient.Features.Drivers.Components
         [Inject] IDriverHttpRepository DriverRepository { get; set; }
         [Inject] public IDeliveryTicketHttpRepository DeliveryTicketHttpRepository { get; set; }
         [Inject] public ICartHttpRepository CartHttpRepository { get; set; }
+        [Inject] public ICartHistoryHttpRepository CartHistoryHttpRepository { get; set; }
         [Inject] public IStoreHttpRepository StoreHttpRepository { get; set; }
         [Inject] ICartHttpRepository CartRepository { get; set; }
         [Parameter]
@@ -110,11 +111,12 @@ namespace WiiTrakClient.Features.Drivers.Components
                         IsDelivered = true,
                         CartId = cart.Id,
                         IssueType = cart.IssueType,
-                        IssueDescription = cart.IssueDescription
+                        IssueDescription = cart.IssueDescription,
+                        DeviceId = cart.DeviceId
                     };
                     var cartUpdate = new CartUpdateDto
                     {
-                        CartNumber=cart.CartNumber,
+                        CartNumber = cart.CartNumber,
                         ManufacturerName = cart.ManufacturerName,
                         DateManufactured = cart.DateManufactured,
                         OrderedFrom = cart.OrderedFrom,
@@ -127,6 +129,7 @@ namespace WiiTrakClient.Features.Drivers.Components
                         IssueType = cart.IssueType,
                         IssueDescription = cart.IssueDescription,
                         CartHistory = cartHistory
+                      
                     };
                     if (_editDeliveryTicket.PickedUpCarts.Where(x => x.Id == cart.Id).ToList().Any())
                     {
@@ -184,7 +187,7 @@ namespace WiiTrakClient.Features.Drivers.Components
             var store = await StoreHttpRepository.GetStoreByIdAsync(deliveryTicket.StoreId);
             var deliveryTicketSummary = await DeliveryTicketHttpRepository.GetDeliveryTicketSummaryAsync(deliveryTicket.Id);
             cartsTable = await CartRepository.GetCartsByDeliveryTicketIdAsync(deliveryTicket.Id);
-            var SelectedCartList = await CartHttpRepository.GetCartHistoryByDeliveryTicketIdAsync(deliveryTicket.Id);
+            var SelectedCartList = await CartHistoryHttpRepository.GetCartHistoryByDeliveryTicketIdAsync(deliveryTicket.Id);
             parameters.Add("deliveryTicketDto", deliveryTicket);
             parameters.Add("StoreName", store.StoreNumber + "-" + store.StoreName);
             parameters.Add("deliveryTicketSummary", deliveryTicketSummary);

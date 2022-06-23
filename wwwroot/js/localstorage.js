@@ -127,15 +127,15 @@ export function addValidationCountycodeClass() {
     $('input[type="text"].inputselect').addClass("mud-input-error");
     $('input[type="text"].inputselect').addClass("countycode");
     $('#targetlabel').addClass("mud-input-error");
-    $('input[type="text"].inputselect').addClass("my-3");
-    $('input[type="text"].inputselect').removeClass("my-1");
+    $('input[type="text"].inputselect').addClass("my-10");
+    $('input[type="text"].inputselect').removeClass("my-6");
 }
 export function removeValidationCountycodeClass() {
     $('input[type="text"].inputselect').removeClass("mud-input-error");
     $('input[type="text"].inputselect').removeClass("countycode");
     $('#targetlabel').removeClass("mud-input-error");
-    $('input[type="text"].inputselect').removeClass("my-3");
-    $('input[type="text"].inputselect').addClass("my-1");
+    $('input[type="text"].inputselect').removeClass("my-10");
+    $('input[type="text"].inputselect').addClass("my-6");
 }
 export function BlazorDownloadFile(filename, content) {
     const file = new File([content], filename, { type: "application/octet-stream" });
@@ -147,4 +147,8 @@ export function BlazorDownloadFile(filename, content) {
     a.target = "_self";
     a.click();
     URL.revokeObjectURL(exportUrl);
+}
+export function ShowRadioListClass() {
+    $('#RadioList').addClass("ShowRadioList");
+    $('#RadioList').removeClass("HideRadioList");
 }

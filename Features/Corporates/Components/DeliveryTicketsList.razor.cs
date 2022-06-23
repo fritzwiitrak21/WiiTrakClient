@@ -14,6 +14,7 @@ namespace WiiTrakClient.Features.Corporates.Components
         [Inject] IDriverHttpRepository DriverRepository { get; set; }
         [Inject] public IDeliveryTicketHttpRepository DeliveryTicketHttpRepository { get; set; }
         [Inject] public ICartHttpRepository CartHttpRepository { get; set; }
+        [Inject] public ICartHistoryHttpRepository CartHistoryHttpRepository { get; set; }
         [Inject] public IStoreHttpRepository StoreHttpRepository { get; set; }
         [Inject] ICartHttpRepository CartRepository { get; set; }
         [Parameter]
@@ -36,7 +37,7 @@ namespace WiiTrakClient.Features.Corporates.Components
             var store = await StoreHttpRepository.GetStoreByIdAsync(deliveryTicket.StoreId);
             var deliveryTicketSummary = await DeliveryTicketHttpRepository.GetDeliveryTicketSummaryAsync(deliveryTicket.Id);
             cartsTable = await CartRepository.GetCartsByDeliveryTicketIdAsync(deliveryTicket.Id);
-            var SelectedCartList = await CartHttpRepository.GetCartHistoryByDeliveryTicketIdAsync(deliveryTicket.Id);
+            var SelectedCartList = await CartHistoryHttpRepository.GetCartHistoryByDeliveryTicketIdAsync(deliveryTicket.Id);
             parameters.Add("SelectedCartList", SelectedCartList);
             parameters.Add("deliveryTicketDto", deliveryTicket);
             parameters.Add("StoreName", store.StoreNumber + "-" + store.StoreName);

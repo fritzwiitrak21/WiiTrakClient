@@ -29,5 +29,6 @@ namespace WiiTrakClient.DTOs
         public Guid AssignedBy { get; set; }
         public string AssignedDriver { get; set; } = string.Empty;
         public string CountyCode { get; set; } = string.Empty;
+        public bool IsConnectedStore { get; set; }
     }
 }

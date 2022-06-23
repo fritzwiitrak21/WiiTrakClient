@@ -60,5 +60,6 @@ namespace WiiTrakClient.DTOs
         public string ServiceFrequency { get; set; } = string.Empty;
         [Required]
         public DateTime? StartDate { get; set; }
+        public bool IsConnectedStore { get; set; }
     }
 }

@@ -276,7 +276,8 @@ else
                         PickupLatitude = cart.TrackingDevice != null ? cart.TrackingDevice.Latitude : 0,
                         PickupLongitude = cart.TrackingDevice != null ? cart.TrackingDevice.Longitude : 0,
                         IssueType = cart.IssueType,
-                        IssueDescription = cart.IssueDescription
+                        IssueDescription = cart.IssueDescription,
+                        DeviceId = cart.DeviceId
                     };
 
                 var cartUpdate = new CartUpdateDto

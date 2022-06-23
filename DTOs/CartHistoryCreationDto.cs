@@ -23,5 +23,6 @@ namespace WiiTrakClient.DTOs
         public Guid CartId { get; set; }
         public string IssueType { get; set; } = string.Empty;
         public string IssueDescription { get; set; } = string.Empty;
+        public Guid? DeviceId { get; set; } 
     }
 }

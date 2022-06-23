@@ -3,7 +3,7 @@
 @using WiiTrakClient.Shared.Components
 @using WiiTrakClient.Cores
 @inject ICartHttpRepository CartHttpRepository
-
+@inject ICartHistoryHttpRepository CartHistoryHttpRepository 
 <style>
     .validation-message {
         font-size: 0;
@@ -153,7 +153,7 @@
     {
         #region get carts by storeid
         PickedUpCarts = await CartHttpRepository.GetCartsByStoreIdAsync(editDeliveryTicket.StoreId);
-        var SelectedCarts = await CartHttpRepository.GetCartHistoryByDeliveryTicketIdAsync(DeliveryTicketId);
+        var SelectedCarts = await CartHistoryHttpRepository.GetCartHistoryByDeliveryTicketIdAsync(DeliveryTicketId);
         if (SelectedCarts != null)
         {
             SelectedCartList = SelectedCarts.Where(x => x.Status == CartStatus.InsideGeofence).ToList();
@@ -226,7 +226,7 @@
             editDeliveryTicket.NumberOfCarts = 0;
         }
         TempPickedupCartList = PickedupCartList;
-        SelectedCartList = await CartHttpRepository.GetCartHistoryByDeliveryTicketIdAsync(DeliveryTicketId);
+        SelectedCartList = await CartHistoryHttpRepository.GetCartHistoryByDeliveryTicketIdAsync(DeliveryTicketId);
         SelectedStore = store;
         StateHasChanged();
     }

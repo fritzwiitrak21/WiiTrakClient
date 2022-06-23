@@ -218,7 +218,8 @@ namespace WiiTrakClient.Features.Drivers
                         IsDelivered = true,
                         CartId = cart.Id,
                         IssueType = cart.IssueType,
-                        IssueDescription = cart.IssueDescription
+                        IssueDescription = cart.IssueDescription,
+                        DeviceId = cart.DeviceId
                     };
 
                     var cartUpdate = new CartUpdateDto

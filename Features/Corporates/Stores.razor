@@ -1,9 +1,6 @@
 @page "/corporate-stores"
-
-
 @using WiiTrakClient.Features.Corporates.Components
 @using WiiTrakClient.Cores
-
 @inject IJSRuntime JsRuntime
 @inject IDialogService DialogService
 @inject IStoreHttpRepository StoreHttpRepository
@@ -39,11 +36,8 @@
 
 </div>
 
-
-
 @code {
     List<StoreDto> stores = new();
-
     StoreCreationDto AddStore = new();
     bool LoaderVisibility = false;
     private IJSObjectReference JsModule;
@@ -65,12 +59,9 @@
         var parameters = new DialogParameters();
         AddStore = new StoreCreationDto();
         parameters.Add("NewStore", AddStore);
-
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
-
         var dialog = DialogService.Show<AddStoreDialog>("Add Store", parameters);
         var result = await dialog.Result;
-
         if (!result.Cancelled)
         {
             // add new store to backend
@@ -93,7 +84,8 @@
                     IsActive = true,
                     CountyCode = AddStore.CountyCode,
                     ServiceFrequency = AddStore.ServiceFrequency,
-                    StartDate = AddStore.StartDate
+                    StartDate = AddStore.StartDate,
+                    IsConnectedStore=AddStore.IsConnectedStore,
                 };
             await StoreHttpRepository.CreateStoreAsync(storeCreation);
             stores = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);

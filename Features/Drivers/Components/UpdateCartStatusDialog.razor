@@ -45,32 +45,33 @@
                         <MudSelectItem T="String" Value=@("DamageBeyondRepair")>Damage Beyond Repair</MudSelectItem>
 
                     </MudSelect>
-                }
 
 
-                @if (SelectedCondition == "Damage")
-                {
-                    <MudSelect Class="my-2" T="string" Label="Damage Issue" AnchorOrigin="Origin.BottomCenter"
+
+                    @if (SelectedCondition == "Damage")
+                    {
+                        <MudSelect Class="my-2" T="string" Label="Damage Issue" AnchorOrigin="Origin.BottomCenter"
                            Required="true" AdornmentColor="Color.Error" Value="@SeletedIssue"
                            ValueChanged="(value) => SelectIssueType(value)">
 
-                        @foreach (var issue in RepairIssues)
-                        {
-                            <MudSelectItem T="string" Value="@issue.Issue">@issue.Issue</MudSelectItem>
-                        }
+                            @foreach (var issue in RepairIssues)
+                            {
+                                <MudSelectItem T="string" Value="@issue.Issue">@issue.Issue</MudSelectItem>
+                            }
 
-                    </MudSelect>
+                        </MudSelect>
 
-                }
-                else { success = true; }
-                @if (SeletedIssue.Contains("Other"))
-                {
-                    <MudTextField Class="my-2" T="string" Label="Issue Title" Variant="Variant.Text" @bind-Value="@IssueNameText" Required=@(!IssueDescVisibility) OnKeyUp="EnableSaveButton" AutoFocus="true" />
-                    
-                }
-                @if (SelectedCondition == "Damage")
-                {
-                    <MudTextField Class="my-2" T="string" Label="Issue Description" Variant="Variant.Text" @bind-Value="@IssueDescText" Lines="4" OnKeyUp="EnableSaveButton"  />
+                    }
+                    else { success = true; }
+                    @if (SeletedIssue.Contains("Other"))
+                    {
+                        <MudTextField Class="my-2" T="string" Label="Issue Title" Variant="Variant.Text" @bind-Value="@IssueNameText" Required=@(!IssueDescVisibility) OnKeyUp="EnableSaveButton" AutoFocus="true" />
+
+                    }
+                    @if (SelectedCondition == "Damage")
+                    {
+                        <MudTextField Class="my-2" T="string" Label="Issue Description" Variant="Variant.Text" @bind-Value="@IssueDescText" Lines="4" OnKeyUp="EnableSaveButton" />
+                    }
                 }
             </MudForm>
         </div>

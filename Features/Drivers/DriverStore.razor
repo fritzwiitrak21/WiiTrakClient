@@ -104,11 +104,8 @@
 
 
 @code {
-
     List<StoreDto> driverstore = new();
     List<StoreDto> driverstorelist = new();
-
-
     private IJSObjectReference JsModule;
     private IJSObjectReference JsModuleStore;
     private IJSObjectReference JsModuleCart;
@@ -133,7 +130,6 @@
             var Id = await JsModule.InvokeAsync<string>("getUserId");
             CurrentUser.UserId = new Guid(Id);
             CurrentUser.UserName = await JsModule.InvokeAsync<string>("getUserName");
-
         }
         driverstorelist = await StoreRepository.GetStoresByDriverId(CurrentUser.UserId);
 

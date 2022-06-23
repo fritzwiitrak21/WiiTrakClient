@@ -8,7 +8,7 @@ namespace WiiTrakClient.DTOs
 {
     public class CartHistoryUpdateDto
     {
-       public DateTime? PickedUpAt { get; set; }
+        public DateTime? PickedUpAt { get; set; }
         public DateTime? DroppedOffAt { get; set; }
         public DateTime? ProvisionedAt { get; set; }
         public Guid? ServiceProviderId { get; set; } = Guid.Empty;
@@ -23,5 +23,6 @@ namespace WiiTrakClient.DTOs
         public Guid CartId { get; set; }
         public string IssueType { get; set; } = string.Empty;
         public string IssueDescription { get; set; } = string.Empty;
+        public Guid? DeviceId { get; set; } 
     }
 }

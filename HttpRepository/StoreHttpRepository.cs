@@ -87,9 +87,9 @@ namespace WiiTrakClient.HttpRepository
         {
             await _httpService.Post(_apiUrl, store);
         }
-        public async Task UpdateStoreAsync(Guid id, StoreUpdateDto client)
+        public async Task UpdateStoreAsync(Guid id, StoreUpdateDto store)
         {
-            await _httpService.Put($"{ _apiUrl }/{ id }", client);
+            await _httpService.Put($"{ _apiUrl }/{ id }", store);
         }
         public async Task DeleteStoreAsync(Guid id)
         {

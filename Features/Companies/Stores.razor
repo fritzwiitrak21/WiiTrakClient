@@ -1,9 +1,6 @@
 ﻿@page "/company-stores"
-
-
 @using WiiTrakClient.Features.Companies.Components
 @using WiiTrakClient.Cores
-
 @inject IJSRuntime JsRuntime
 @inject IDialogService DialogService
 @inject IStoreHttpRepository StoreHttpRepository
@@ -108,8 +105,8 @@ else
                     IsActive=true,
                     CountyCode=AddStore.CountyCode,
                     ServiceFrequency=AddStore.ServiceFrequency,
-                    StartDate=AddStore.StartDate
-                    
+                    StartDate=AddStore.StartDate,
+                    IsConnectedStore=AddStore.IsConnectedStore,
         };
            await StoreHttpRepository.CreateStoreAsync(storeCreation);
            

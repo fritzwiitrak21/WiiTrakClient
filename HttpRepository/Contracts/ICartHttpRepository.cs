@@ -10,7 +10,6 @@ namespace WiiTrakClient.HttpRepository.Contracts
     {
         Task<List<CartDto>> GetAllCartsAsync();
         Task<List<CartDto>> GetCartsByDeliveryTicketIdAsync(Guid deliveryTicketId);
-        Task<List<CartDto>> GetCartHistoryByDeliveryTicketIdAsync(Guid deliveryTicketId);
         Task<List<CartDto>> GetCartsByStoreIdAsync(Guid storeId);
         Task<List<CartDto>> GetCartsByDriverIdAsync(Guid driverId);
         Task<List<CartDto>> GetCartsByCorporateIdAsync(Guid corporateId);

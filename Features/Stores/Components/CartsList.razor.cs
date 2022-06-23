@@ -37,7 +37,6 @@ namespace WiiTrakClient.Features.Stores.Components
         }
         public async Task OpenDialog(CartDto cart)
         {
-            Console.WriteLine("cart id: " + cart.Id);
             var parameters = new DialogParameters();
             parameters.Add("Cart", cart);
             DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
