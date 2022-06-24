@@ -35,5 +35,6 @@ namespace WiiTrakClient.DTOs
         public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsMapped { get; set; }
+        public Guid TechnicianId { get; set; }
     }
 }

@@ -9,5 +9,8 @@ namespace WiiTrakClient.HttpRepository.Contracts
     public interface ICountyCodeHttpRepository
     {
         Task<List<CountyCodeDTO>> GetCountyListAsync();
+        Task<CountyCodeDTO> GetCountyCodeByIdAsync(Guid id);
+        Task CreateCountyCodeAsync(CountyCodeDTO CountyCreation);
+        Task UpdateCartAsync(Guid id, CountyCodeDTO CountyUpdation);
     }
 }

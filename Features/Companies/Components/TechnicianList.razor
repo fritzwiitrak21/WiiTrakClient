@@ -44,7 +44,7 @@
     private bool _enabled = true;
     public async Task OpenDialog(TechnicianDto technician) 
     {
-         // TODO Update for technicians 
+        // TODO Update for technicians 
         Console.WriteLine("technician id: " + technician.Id);
         var parameters = new DialogParameters();
         parameters.Add("Technician", technician);   
@@ -64,8 +64,9 @@
                 Id=technician.Id,
                 CreatedAt=technician.CreatedAt,
             };
-           await TechnicianRepository.UpdateTechnicianAsync(technician.Id, TechnicianUpdate, CurrentUser.UserRoleId);
+            await TechnicianRepository.UpdateTechnicianAsync(technician.Id, TechnicianUpdate, CurrentUser.UserRoleId);
         }
         Technicians = await TechnicianRepository.GetTechniciansByCompanyIdAsync(CurrentUser.UserId);
+        StateHasChanged();
     }
 }

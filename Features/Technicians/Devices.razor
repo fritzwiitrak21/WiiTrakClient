@@ -46,7 +46,7 @@ else
             CurrentUser.UserId = new Guid(id);
         }
 
-        DeviceList = await DevicesRepository.GetAllDeviceDetailsAsync();
+        DeviceList = await DevicesRepository.GetDeviceByTechnicianIdAsync(CurrentUser.UserId);
         if (DeviceList is not null)
         {
             devices = DeviceList;
@@ -81,10 +81,11 @@ else
                 SubscriptionExpiration=AddDevice.SubscriptionExpiration,
                 Type=AddDevice.Type,
                 IsActive=true,
+                TechnicianId=CurrentUser.UserId,
             };
             await DevicesRepository.CreateDeviceAsync(DeviceCreation);
         }
-        devices = await DevicesRepository.GetAllDeviceDetailsAsync();
+        devices = await DevicesRepository.GetDeviceByTechnicianIdAsync(CurrentUser.UserId);
         StateHasChanged();
     }
 

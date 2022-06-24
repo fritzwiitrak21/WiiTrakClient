@@ -54,7 +54,7 @@
     }
     public async Task OpenDialog(DevicesDto device) 
     {
-        SimCardNo = await SimCardRepository.GetAllSimCardDetailsAsync();
+        SimCardNo = await SimCardRepository.GetSimCardByTechnicianIdAsync(CurrentUser.UserId);
         var parameters = new DialogParameters();
         parameters.Add("Device", device);
         parameters.Add("SimNo", SimCardNo);
@@ -79,12 +79,14 @@
                 SubscriptionExpiration=device.SubscriptionExpiration,
                 Type=device.Type,
                 IsActive=true,
+                TechnicianId=CurrentUser.UserId,
                 CreatedAt=device.CreatedAt,
-                Id=device.Id
+                Id=device.Id,
             };
-           await DevicesRepository.UpdateDeviceAsync(device.Id, DeviceUpdate);
+            await DevicesRepository.UpdateDeviceAsync(device.Id, DeviceUpdate);
         }
-         Devices = await DevicesRepository.GetAllDeviceDetailsAsync();
+        Devices = await DevicesRepository.GetDeviceByTechnicianIdAsync(CurrentUser.UserId);
+        StateHasChanged();
     }
 
 }

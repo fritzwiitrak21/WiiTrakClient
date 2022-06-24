@@ -64,12 +64,9 @@
     {
         var parameters = new DialogParameters();
         parameters.Add("SimCard", simcard);   
-
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
-
         var dialog  = DialogService.Show<UpdateSimCardDialog>("Update Simcard", parameters);
         var result = await dialog.Result; 
-
         if (!result.Cancelled) 
         {
             // save updated SimCard to backend
@@ -83,11 +80,13 @@
                     SIMNo=simcard.SIMNo,
                     IMSI=simcard.IMSI,
                     IsActive=true,
+                    TechnicianId=CurrentUser.UserId,
                     CreatedAt=simcard.CreatedAt,
                     Id=simcard.Id
             };
-           await SimCardRepository.UpdateSimCardAsync(simcard.Id, SimCardUpdate);
+            await SimCardRepository.UpdateSimCardAsync(simcard.Id, SimCardUpdate);
         }
-         SimCards = await SimCardRepository.GetAllSimCardDetailsAsync();
+        SimCards = await SimCardRepository.GetSimCardByTechnicianIdAsync(CurrentUser.UserId);
+        StateHasChanged();
     }
 }

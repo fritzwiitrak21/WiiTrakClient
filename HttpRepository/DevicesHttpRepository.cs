@@ -29,6 +29,12 @@ namespace WiiTrakClient.HttpRepository
             var response = await HttpService.Get<DevicesDto>(url);
             return response.Response;
         }
+        public async Task<List<DevicesDto>> GetDeviceByTechnicianIdAsync(Guid TechnicianId)
+        {
+            string url = $"{ApiUrl}/technicians/{TechnicianId}";
+            var response = await HttpService.Get<List<DevicesDto>>(url);
+            return response.Response;
+        }
         public async Task CreateDeviceAsync(DevicesDto device)
         {
             await HttpService.Post(ApiUrl, device);

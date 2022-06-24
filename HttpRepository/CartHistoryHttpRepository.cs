@@ -39,9 +39,6 @@ namespace WiiTrakClient.HttpRepository
         public async Task<List<CartDto>> GetCartHistoryByDeliveryTicketIdAsync(Guid deliveryTicketId)
         {
             string url = $"{_apiUrl}/CartHistory/{deliveryTicketId}";
-
-            System.Console.WriteLine("url:" + url);
-
             var response = await _httpService.Get<List<CartDto>>(url);
             return response.Response;
         }

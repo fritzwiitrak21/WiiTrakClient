@@ -76,5 +76,6 @@
             await TechnicianRepository.UpdateTechnicianAsync(technician.Id, TechnicianUpdate, CurrentUser.UserRoleId);
         }
         Technicians = await TechnicianRepository.GetTechniciansBySystemOwnerIdAsync(CurrentUser.UserId);
+        StateHasChanged();
     }
 }

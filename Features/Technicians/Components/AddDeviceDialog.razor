@@ -1,5 +1,6 @@
 ﻿@namespace WiiTrakClient.Features.Technicians.Components
 @using System.ComponentModel.DataAnnotations
+@using WiiTrakClient.Cores
 
 <style>
     .validation-message {
@@ -30,7 +31,7 @@
                         <MudTextField T="string" class="my-6" @bind-Value="NewDevice.IMEI" Label="IMEI" Required="true" RequiredError=" " For="@(() => @NewDevice.IMEI)" Variant="Variant.Text"></MudTextField> 
                         <MudTextField T="string" class="my-6" @bind-Value="NewDevice.ICCID" Label="ICCID" Required="true" RequiredError=" " For="@(() => @NewDevice.ICCID)" Variant="Variant.Text"></MudTextField> 
                          <MudItem>
-                            <MudSelect T="SimCardsDto" Label="Select SIM Card" Required=true RequiredError=" "
+                            <MudSelect T="SimCardsDto" Label="Select SIM No" Required=true RequiredError=" "
                                ValueChanged="(value) => HandleSimNo(value)"
                                AnchorOrigin="Origin.BottomCenter">
                                 @foreach (var sim in SimCardNo)
@@ -68,7 +69,7 @@
     MudForm form;
     protected override async Task OnInitializedAsync()
     {
-        SimCardNo = await SimCardRepository.GetAllSimCardDetailsAsync();
+        SimCardNo = await SimCardRepository.GetSimCardByTechnicianIdAsync(CurrentUser.UserId);
     }
     protected override void OnParametersSet()
     {

@@ -75,6 +75,7 @@
             };
             await TechnicianRepository.CreateTechnicianAsync(TechnicianCreation,CurrentUser.UserRoleId);
         }  
-        Technician = await TechnicianRepository.GetTechniciansByCompanyIdAsync(CurrentUser.UserId); 
+        Technician = await TechnicianRepository.GetTechniciansByCompanyIdAsync(CurrentUser.UserId);
+        StateHasChanged();
     } 
 }

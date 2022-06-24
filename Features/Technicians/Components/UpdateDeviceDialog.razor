@@ -30,7 +30,7 @@
                         <MudTextField T="string" class="my-6" @bind-Value="Device.IMEI" Label="IMEI" Required="true" RequiredError=" " For="@(() => @Device.IMEI)" Variant="Variant.Text"></MudTextField> 
                         <MudTextField T="string" class="my-6" @bind-Value="Device.ICCID" Label="ICCID" Required="true" RequiredError=" " For="@(() => @Device.ICCID)" Variant="Variant.Text"></MudTextField> 
                         <MudItem>
-                            <MudSelect T="SimCardsDto" Label="Select SIM Card" Required=true RequiredError=" " 
+                            <MudSelect T="SimCardsDto" Label="Select SIM No" Required=true RequiredError=" " 
                                Value="@SelectedSimNo" ValueChanged="(value) => HandleSimNo(value)"
                                AnchorOrigin="Origin.BottomCenter">
                                <MudSelectItem T="SimCardsDto" Value="@SelectedSimNo">@SelectedSimNo.SIMNo</MudSelectItem>

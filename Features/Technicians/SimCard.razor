@@ -46,7 +46,7 @@ else
             CurrentUser.UserId = new Guid(id);
         }
 
-        SimCardsList = await SimCardRepository.GetAllSimCardDetailsAsync();
+        SimCardsList = await SimCardRepository.GetSimCardByTechnicianIdAsync(CurrentUser.UserId);
         if (SimCardsList is not null)
         {
             simcards = SimCardsList;
@@ -78,10 +78,11 @@ else
                 SIMNo = AddSim.SIMNo,
                 IMSI = AddSim.IMSI,
                 IsActive = true,
+                TechnicianId=CurrentUser.UserId,
             };
             await SimCardRepository.CreateSimCardAsync(SimCreation);
         }
-        simcards = await SimCardRepository.GetAllSimCardDetailsAsync();
+        simcards = await SimCardRepository.GetSimCardByTechnicianIdAsync(CurrentUser.UserId);
         StateHasChanged();
     }
 }

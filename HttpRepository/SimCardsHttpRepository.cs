@@ -29,6 +29,12 @@ namespace WiiTrakClient.HttpRepository
             var response = await HttpService.Get<SimCardsDto>(url);
             return response.Response;
         }
+        public async Task<List<SimCardsDto>> GetSimCardByTechnicianIdAsync(Guid TechnicianId)
+        {
+            string url = $"{ApiUrl}/technicians/{TechnicianId}";
+            var response = await HttpService.Get<List<SimCardsDto>>(url);
+            return response.Response;
+        }
         public async Task CreateSimCardAsync(SimCardsDto sim)
         {
             await HttpService.Post(ApiUrl, sim);
