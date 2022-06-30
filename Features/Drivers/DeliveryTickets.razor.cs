@@ -43,7 +43,7 @@ namespace WiiTrakClient.Features.Drivers
         private double Longitude;
 
         int SelectedOption = 30;
-        int TempSelectedOption = 0;
+        int TempSelectedOption;
         protected override async Task OnInitializedAsync()
         {
 

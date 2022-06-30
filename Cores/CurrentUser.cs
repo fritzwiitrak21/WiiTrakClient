@@ -23,9 +23,12 @@ namespace WiiTrakClient.Cores
     {
         public static Guid SelectedDriverId { get; set; }
         public static int NotificationCount { get; set; }
-        public static List<NotificationDto> NotificationsList { get; set; } = new();
-        public static int ServiceBoardCount { get; set; } 
-        public static List<ServiceBoardDto> ServiceBoardList { get; set; } = new();
+        public static List<NotificationDto>? NotificationsList { get; set; }
+        public static int ServiceBoardCount { get; set; }
+        public static List<ServiceBoardDto>? ServiceBoardList { get; set; }
+
+        public static int MessageCount { get; set; }
+        public static List<MessagesDto>? MessagesList { get; set; }
 
         public static double ToDouble(string Value)
         {
@@ -35,7 +38,7 @@ namespace WiiTrakClient.Cores
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(Text) )
+                if (string.IsNullOrWhiteSpace(Text))
                 {
                     return Text;
                 }

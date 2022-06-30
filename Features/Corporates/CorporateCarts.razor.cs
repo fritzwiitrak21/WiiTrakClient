@@ -35,9 +35,7 @@ namespace WiiTrakClient.Features.Corporates
             Grid
         }
         ViewOption _view = ViewOption.Map;
-        // Filter chip set
-        // ref: https://mudblazor.com/components/chipset#api
-        MudChip? listFilterChip;
+       
         protected override async Task OnInitializedAsync()
         {
             _corporates = await CorporateRepository.GetAllCorporatesAsync();

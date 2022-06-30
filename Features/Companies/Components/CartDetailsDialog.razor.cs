@@ -18,7 +18,7 @@ namespace WiiTrakClient.Features.Companies.Components
         public CartDto? Cart { get; set; }
         bool _cartHasGeolocation = true;
         [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-        private IJSObjectReference? _jsModule = null;
+        private IJSObjectReference? _jsModule;
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (!firstRender)

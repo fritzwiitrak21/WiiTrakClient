@@ -152,3 +152,11 @@ export function ShowRadioListClass() {
     $('#RadioList').addClass("ShowRadioList");
     $('#RadioList').removeClass("HideRadioList");
 }
+export function ShowdivPreviewClass() {
+    $('#divPreview').addClass("ShowPreview");
+    $('#divPreview').removeClass("HidePreview");
+}
+export function HidedivPreviewClass() {
+    $('#divPreview').removeClass("ShowPreview");
+    $('#divPreview').addClass("HidePreview");
+}

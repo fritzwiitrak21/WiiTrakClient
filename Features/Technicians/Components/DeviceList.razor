@@ -3,14 +3,15 @@
 @inject IDevicesHttpRepository DevicesRepository
 @inject ISimCardsHttpRepository SimCardRepository
 @using WiiTrakClient.Cores
+@using WiiTrakClient.Shared.Components;
 
 <MudTable Items="@Devices" Class="Pagingstyle" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@ListIsLoading"
-    LoadingProgressColor="Color.Primary">
+          LoadingProgressColor="Color.Primary">
     <HeaderContent>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<DevicesDto, object>(x=>x.DeviceName)">Device Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<DevicesDto, object>(x=>x.DeviceModel)">Device Model</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<DevicesDto, object>(x=>x.ActivatedTime)">Activated Time</MudTableSortLabel></MudTh>       
-        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<DevicesDto, object>(x=>x.SubscriptionExpiration)">Subscription Expiration</MudTableSortLabel></MudTh>  
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<DevicesDto, object>(x=>x.ActivatedTime)">Activated Time</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<DevicesDto, object>(x=>x.SubscriptionExpiration)">Subscription Expiration</MudTableSortLabel></MudTh>
         <MudTh>Type</MudTh>
         <MudTh></MudTh>
     </HeaderContent>
@@ -30,12 +31,21 @@
         <MudTd DataLabel="Type">
             @context.Type
         </MudTd>
-        <MudTd DataLabel="Action">           
-            <MudButton 
-                Variant="Variant.Filled" 
-                Color="Color.Primary" 
-                OnClick="((e) => OpenDialog(context))">Update
+        <MudTd DataLabel="Action">
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       OnClick="((e) => OpenDialog(context))">
+                Update
             </MudButton>
+
+            @if (context.SIMCardId != null && context.SIMCardId!=Guid.Empty)
+            {
+                <MudButton Variant="Variant.Filled" Style="background-color:blueviolet;color:white;"
+                       Color="Color.Primary"
+                       OnClick="((e) => GetConfirmation(context))">
+                    Remove SimCard
+                </MudButton>
+            }
         </MudTd>
     </RowTemplate>
     <PagerContent>
@@ -48,41 +58,79 @@
     public List<DevicesDto>? Devices { get; set; } = null;
     private bool ListIsLoading = true;
     public List<SimCardsDto> SimCardNo { get; set; } = new();
+    private string SuccessMessage { get; set; } = "";
     protected override void OnParametersSet()
     {
         ListIsLoading = false;
     }
-    public async Task OpenDialog(DevicesDto device) 
+    public async Task OpenDialog(DevicesDto device)
     {
         SimCardNo = await SimCardRepository.GetSimCardByTechnicianIdAsync(CurrentUser.UserId);
         var parameters = new DialogParameters();
         parameters.Add("Device", device);
         parameters.Add("SimNo", SimCardNo);
-        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
-        var dialog  = DialogService.Show<UpdateDeviceDialog>("Update Device", parameters);
-        var result = await dialog.Result; 
+        var dialog = DialogService.Show<UpdateDeviceDialog>("Update Device", parameters);
+        var result = await dialog.Result;
 
-        if (!result.Cancelled) 
+        if (!result.Cancelled)
         {
             // save updated device to backend
-            var DeviceUpdate = new DevicesDto 
-            {
-                DeviceModel=device.DeviceModel,
-                DeviceName=device.DeviceName,
-                IMEI=device.IMEI,
-                ICCID=device.ICCID,
-                IMSI=device.IMSI,
-                SIMCardId=device.SIMCardId,
-                SIMNo=device.SIMNo,
-                ActivatedTime=device.ActivatedTime,
-                SubscriptionExpiration=device.SubscriptionExpiration,
-                Type=device.Type,
-                IsActive=true,
-                TechnicianId=CurrentUser.UserId,
-                CreatedAt=device.CreatedAt,
-                Id=device.Id,
-            };
+            var DeviceUpdate = new DevicesDto
+                {
+                    DeviceModel = device.DeviceModel,
+                    DeviceName = device.DeviceName,
+                    IMEI = device.IMEI,
+                    ICCID = device.ICCID,
+                    IMSI = device.IMSI,
+                    SIMCardId = device.SIMCardId,
+                    SIMNo = device.SIMNo,
+                    ActivatedTime = device.ActivatedTime,
+                    SubscriptionExpiration = device.SubscriptionExpiration,
+                    Type = device.Type,
+                    IsActive = true,
+                    CreatedAt = device.CreatedAt,
+                    Id = device.Id,
+                    TechnicianId = CurrentUser.UserId
+                };
+            await DevicesRepository.UpdateDeviceAsync(device.Id, DeviceUpdate);
+        }
+        Devices = await DevicesRepository.GetAllDeviceDetailsAsync();
+        StateHasChanged();
+    }
+    public async Task GetConfirmation(DevicesDto device)
+    {
+        var parameters = new DialogParameters();
+        SuccessMessage = "Are you sure do you want to remove SIMCard from " + device.DeviceName + "?";
+        parameters.Add("DisplayMessage", SuccessMessage);
+        parameters.Add("FromWindow", "device");
+        parameters.Add("IsSuccessNotification", true);
+
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+
+        var dialog = DialogService.Show<ShowMessageDialog>("Confirmation Message", parameters);
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            
+          var DeviceUpdate = new DevicesDto
+                {
+                    DeviceModel = device.DeviceModel,
+                    DeviceName = device.DeviceName,
+                    IMEI = device.IMEI,
+                    ICCID = device.ICCID,
+                    IMSI = device.IMSI,
+                    SIMCardId = Guid.Empty,
+                    SIMNo = "",
+                    ActivatedTime = device.ActivatedTime,
+                    SubscriptionExpiration = device.SubscriptionExpiration,
+                    Type = device.Type,
+                    IsActive = true,
+                    CreatedAt = device.CreatedAt,
+                    Id = device.Id,
+                    TechnicianId = CurrentUser.UserId
+                };
             await DevicesRepository.UpdateDeviceAsync(device.Id, DeviceUpdate);
         }
         Devices = await DevicesRepository.GetDeviceByTechnicianIdAsync(CurrentUser.UserId);

@@ -31,12 +31,14 @@ namespace WiiTrakClient.DTOs
         public bool IsProvisioned { get; set; }
         public string BarCode { get; set; } = string.Empty;
         public Guid StoreId { get; set; }
-        public Guid? DeviceId { get; set; }
+        public Guid DeviceId { get; set; }
         public bool IsActive { get; set; }
-        public StoreDto? Store {get; set;}
-        public TrackingDeviceDto? TrackingDevice { get; set; }
+        public StoreDto Store {get; set;}
+        public TrackingDeviceDto TrackingDevice { get; set; }
+        public DevicesDto? Device { get; set; }
         public string DamageIssue { get; set; } = string.Empty;
         public string IssueType { get; set; } = string.Empty;
         public string IssueDescription { get; set; } = string.Empty;
+        public Guid? CreatedBy { get; set; }
     }
 }

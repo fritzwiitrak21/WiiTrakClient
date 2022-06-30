@@ -1,0 +1,52 @@
+﻿@using WiiTrakClient.Cores;
+
+<MudTable Items="@Messages" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
+    <HeaderContent>
+        @if (CurrentUser.UserRoleId != 6)
+        {
+            <MudTh><MudTableSortLabel SortBy="new Func<MessagesDto, object>(x=>x.Store)">Store Name</MudTableSortLabel></MudTh>
+        }
+        <MudTh><MudTableSortLabel SortBy="new Func<MessagesDto, object>(x=>x.Address)">Address</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<MessagesDto, object>(x=>x.ReciverName)">Driver Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<MessagesDto, object>(x=>x.Message)">Addtional Message</MudTableSortLabel></MudTh>
+        <MudTh>Action Taken</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        @if (CurrentUser.UserRoleId != 6)
+        {
+            <MudTd DataLabel="Store Name">
+                @context.Store
+            </MudTd>
+        }
+        <MudTd DataLabel="Address">
+            @context.Address
+        </MudTd>
+        <MudTd DataLabel="Driver Name">
+            @context.ReciverName
+        </MudTd>
+        <MudTd DataLabel="Addtional Message">
+            @context.Message
+        </MudTd>
+        <MudTd DataLabel="Action Taken">
+            @switch (context.ActionTaken)
+            {
+                case "Picked":
+                    <span style="background:#4CAF50;padding:2px;color:white;">Picked</span>
+                    break;
+                case "Not Picked":
+                    <span style="background:#f44336;padding:2px;color:white;">Not Picked</span>
+                    break;
+                default:
+                    <span style="display: flex;justify-content: center;align-items: center;">-</span>
+                    break;
+
+            }
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{10, 50, 100}" />
+    </PagerContent>
+</MudTable>
+@code {
+
+}

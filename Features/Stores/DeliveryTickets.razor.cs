@@ -25,8 +25,8 @@ namespace WiiTrakClient.Features.Stores
         List<DeliveryTicketDto> deliveryTickets = new();
         DeliveryTicketCreationDto _newDeliveryTicket = new();
         private IJSObjectReference JsModule;
-        public int SelectedOption = 30;
-        public int TempSelectedOption = 0;
+        int SelectedOption = 30;
+        int TempSelectedOption;
         protected override async Task OnInitializedAsync()
         {
             //_drivers = await DriverRepository.GetAllDriversAsync();

@@ -25,7 +25,7 @@
     <DialogContent>
         <div style="width: 320px;height:100px;overflow: auto;">
             <MudForm Model="@DisplayMessage">
-                @if ((IsSuccessNotification) && (FromWindow.ToLower().Contains("deliveryicketlist")))
+                @if ((IsSuccessNotification) && (FromWindow.ToLower().Contains("deliveryicketlist") || FromWindow.ToLower().Contains("device") || FromWindow.ToLower().Contains("carts")))
                 {
                     <span style="color:black;">
                         <MudText Class="my-4" Style="font-size:medium" Typo="Typo.h6">@DisplayMessage</MudText>
@@ -110,7 +110,7 @@
                 OkButtonText = "Login";
                 Visibility = true;
             }
-            else if (FromWindow.ToLower().Contains("deliveryicketlist"))
+            else if (FromWindow.ToLower().Contains("deliveryicketlist") || FromWindow.ToLower().Contains("device")||FromWindow.ToLower().Contains("carts"))
             {
                 OkButtonText = "Yes";
                 Visibility = true;
@@ -119,7 +119,7 @@
             }
             else if (FromWindow.ToLower().Contains("change"))
             {
-                OkButtonText = "Ok";
+               OkButtonText = "Ok";
                 if (IsSuccessNotification)
                 {
                     Visibility = true;

@@ -57,7 +57,7 @@ builder.Services.AddScoped<ICountyCodeHttpRepository, CountyCodeHttpRepository>(
 builder.Services.AddScoped<INotificationHttpRepository, NotificationHttpRepository>();
 builder.Services.AddScoped<ISimCardsHttpRepository, SimCardsHttpRepository>();
 builder.Services.AddScoped<IDevicesHttpRepository, DevicesHttpRepository>();
-
+builder.Services.AddScoped<IMessageHttpRepository, MessageHttpRepository>();
 
 
 builder.Services.AddMudServices();

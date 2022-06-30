@@ -47,6 +47,12 @@ namespace WiiTrakClient.HttpRepository
             var response = await _httpService.Get<List<StoreDto>>(url);
             return response.Response;
         }
+        public async Task<List<StoreDto>> GetStoresByTechnicianId(Guid technicianId)
+        {
+            string url = $"{_apiUrl}/Technician/{technicianId}";
+            var response = await _httpService.Get<List<StoreDto>>(url);
+            return response.Response;
+        }
         public async Task<List<StoreDto>> GetStoresBySystemOwnerId(Guid SystemownerId)
         {
             string url = $"{_apiUrl}/Systemowner/{SystemownerId}";

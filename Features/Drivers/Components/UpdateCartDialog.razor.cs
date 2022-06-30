@@ -19,7 +19,7 @@ namespace WiiTrakClient.Features.Drivers.Components
         [Parameter]
         public List<RepairIssueDto>? RepairIssues { get; set; }
         [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-        private IJSObjectReference? _jsModule = null;
+        private IJSObjectReference? _jsModule;
         bool _cartHasGeolocation = true;
         bool showRoute = false;
         int _selectedStatusInt = 0;

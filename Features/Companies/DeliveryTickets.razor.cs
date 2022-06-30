@@ -19,7 +19,7 @@ namespace WiiTrakClient.Features.Companies
         List<DeliveryTicketDto> deliveryTickets = new();
         List<DeliveryTicketDto> _deliveryTickets = new();
         int SelectedOption = 30;
-        int TempSelectedOption = 0;
+        int TempSelectedOption;
         protected override async Task OnInitializedAsync()
         {
             if (CurrentUser.UserId == Guid.Empty)

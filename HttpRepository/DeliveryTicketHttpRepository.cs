@@ -63,31 +63,7 @@ namespace WiiTrakClient.HttpRepository
                 return null;
             }
         }
-        //public async Task<DeliveryTicketDto> GetDeliveryTicketsByIdTest(DeliveryTicketInputDto inputDto)
-        //{
-        //    //string url = $"{_apiUrl}/DeliveryTickets/{Id}/{(int)Role}/{RecordCount}/{Fromdate}/{Todate}";
-        //    string url = $"{_apiUrl}/GetDeliveryTicketsByIdTest/";
-        //    var response = await _httpService.Post<DeliveryTicketInputDto, DeliveryTicketDto>(url, inputDto);
-        //    try
-        //    {
-        //        //var response = await _httpService.Post<List<DeliveryTicketDto>>();
-        //        if (!response.Success)
-        //        {
-        //            // throw new ApplicationException(await response.GetBody());
-        //        }
-        //        return response.Response;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return null;
-        //    }
-        //}
-        public async Task<List<DeliveryTicketDto>> GetReportByDateAsync(Guid Id, Role role, DateTime Startdate, DateTime Enddate)
-        {
-            string url = $"{_apiUrl}/Report/{Id}/{(int)role}/{Startdate}/{Enddate}";
-            var response = await _httpService.Get<List<DeliveryTicketDto>>(url);
-            return response.Response;
-        }
+       
         public async Task<List<DeliveryTicketDto>> GetDeliveryTicketsByCorporateIdAsync(Guid CorporateId)
         {
             string url = $"{_apiUrl}/Corporate/{CorporateId}";

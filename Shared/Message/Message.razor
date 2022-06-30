@@ -1,0 +1,118 @@
+﻿@page "/messages-list"
+@using WiiTrakClient.Cores
+@using WiiTrakClient.Shared.Message.Components
+@inject IJSRuntime JsRuntime
+@inject IMessageHttpRepository MessageHttpRepository
+<UserAuthentication />
+<h3>Message List</h3>
+
+<div class="d-flex justify-end">
+    <MudButton Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.EditNote"
+               IconColor="Color.Secondary"
+               Size="Size.Large"
+               OnClick="OpenDialog">New Message</MudButton>
+</div>
+<br />
+@if (Messages == null)
+{
+    <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+
+}
+else if (Messages.Count > 0)
+{
+    <MessagesList Messages="Messages" />
+}
+else
+{
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
+}
+
+
+@code {
+    private IJSObjectReference JsModule;
+    List<MessagesDto> MessageList = new();
+    List<MessagesDto> Messages = new();
+    [Inject]
+    IStoreHttpRepository StoreHttpRepository { get; set; }
+    [Inject]
+    IDriverHttpRepository DriverHttpRepository { get; set; }
+     [Inject]
+    
+    IDialogService? DialogService { get; set; }
+    public List<StoreDto> Store { get; set; } = null;
+    public List<DriverDto> DriverList { get; set; } = null;
+    public MessagesDto NewMessage = new MessagesDto();
+    protected override async Task OnInitializedAsync()
+    {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
+
+        MessageList = await MessageHttpRepository.GetMessagesByIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+        if (MessageList is not null)
+        {
+            Messages = MessageList;
+        }
+        StateHasChanged();
+    }
+
+    private async Task OpenDialog()
+    {
+        try
+        {
+            switch (CurrentUser.UserRoleId)
+            {
+                case 1:
+                    Store = await StoreHttpRepository.GetStoresBySystemOwnerId(CurrentUser.UserId);
+                    break;
+                case 2:
+                    Store = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);
+                    break;
+                case 3:
+                    Store = await StoreHttpRepository.GetStoresByCompanyId(CurrentUser.UserId);
+                    break;
+                case 4:
+                     Store = await StoreHttpRepository.GetStoresByCompanyId(CurrentUser.UserId);
+                    break;
+                case 6:
+                    StoreDto storedetail = await StoreHttpRepository.GetStoreByIdAsync(CurrentUser.UserId);
+                    Store = new List<StoreDto>();
+                    Store.Add(storedetail);
+                    break;
+            }
+            var parameters = new DialogParameters();
+            parameters.Add("Stores", Store);
+            parameters.Add("Messages", NewMessage);
+            var dialog = DialogService.Show<MessageDialog>("New Message", parameters);
+            var result = await dialog.Result;
+            if (!result.Cancelled)
+            {
+                var AddMessage = new MessagesDto
+                    {
+                        SenderId = CurrentUser.UserId,
+                        SenderRoleId = CurrentUser.UserRoleId,
+                        StoreId = NewMessage.StoreId,
+                        Store = NewMessage.Store,
+                        Address = NewMessage.Address,
+                        Message = NewMessage.Message,
+                        ReciverId = NewMessage.ReciverId,
+                        CreatedAt = DateTime.UtcNow,
+                        DeliveredAt = DateTime.UtcNow
+                    };
+                await MessageHttpRepository.AddNewMessageAsync(AddMessage);
+
+            }
+            Messages = await MessageHttpRepository.GetMessagesByIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+}
