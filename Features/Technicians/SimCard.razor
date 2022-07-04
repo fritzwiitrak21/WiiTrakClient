@@ -80,7 +80,14 @@ else
                 IsActive = true,
                 TechnicianId=CurrentUser.UserId,
             };
-            await SimCardRepository.CreateSimCardAsync(SimCreation);
+            try
+            {
+                await SimCardRepository.CreateSimCardAsync(SimCreation);
+            }
+            catch (Exception ex)
+            {
+                //Exception
+            }
         }
         simcards = await SimCardRepository.GetSimCardByTechnicianIdAsync(CurrentUser.UserId);
         StateHasChanged();

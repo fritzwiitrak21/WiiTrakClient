@@ -42,7 +42,8 @@
                 var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
                 CurrentUser.UserRoleId = Convert.ToInt32(roleid);
             }
-            
+            if (CurrentUser.UserRoleId == 5)
+            {
                 Core.NotificationsList = await NotifyHttpRepository.GetNotificationIdAsync(CurrentUser.UserId);
                 if (Core.NotificationsList != null && Core.NotificationsList.Count() > 0)
                 {
@@ -52,26 +53,19 @@
                 {
                     Core.NotificationCount = 0;
                 }
-                if (CurrentUser.UserRoleId == 5)
-            {
-
-                Core.MessagesList = await MessageHttpRepository.GetMessagesByIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
-                if (Core.MessagesList != null && Core.MessagesList.Count() > 0)
-                {
-                    Core.MessageCount = Core.MessagesList.Where(x => x.DeliveredAt == null).Count();
-                }
-                else
-                {
-                    Core.MessageCount = 0;
-                }
-
                 StateHasChanged();
-
-
-
                 await JsModule.InvokeVoidAsync("getCoord", false);
                 var CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
                 await JsModule.InvokeVoidAsync("ClearCoord");
+            }
+            Core.MessagesList = await MessageHttpRepository.GetMessagesByIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+            if (Core.MessagesList != null && Core.MessagesList.Count() > 0)
+            {
+                Core.MessageCount = Core.MessagesList.Where(x => x.DeliveredAt == null).Count();
+            }
+            else
+            {
+                Core.MessageCount = 0;
             }
 
         }

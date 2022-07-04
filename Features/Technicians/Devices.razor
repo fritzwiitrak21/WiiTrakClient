@@ -5,7 +5,7 @@
 @inject IDialogService DialogService
 @inject IJSRuntime JsRuntime
 
-<UserAuthentication/>
+<UserAuthentication />
 <h3>Device</h3>
 
 <div class="d-flex justify-end">
@@ -16,7 +16,7 @@
                OnClick="OpenDialog">Add</MudButton>
 </div>
 <br />
-@if(DeviceList == null)
+@if (DeviceList == null)
 {
     <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
 
@@ -27,7 +27,7 @@ else if (devices.Count > 0)
 }
 else
 {
-    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7"/>
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
 }
 
 @code {
@@ -69,21 +69,28 @@ else
         {
             //add new device to backend
             var DeviceCreation = new DevicesDto
+                {
+                    DeviceModel = AddDevice.DeviceModel,
+                    DeviceName = AddDevice.DeviceName,
+                    IMEI = AddDevice.IMEI,
+                    ICCID = AddDevice.ICCID,
+                    IMSI = AddDevice.IMSI,
+                    SIMCardId = AddDevice.SIMCardId,
+                    SIMNo = AddDevice.SIMNo,
+                    ActivatedTime = AddDevice.ActivatedTime,
+                    SubscriptionExpiration = AddDevice.SubscriptionExpiration,
+                    Type = AddDevice.Type,
+                    IsActive = true,
+                    TechnicianId = CurrentUser.UserId,
+                };
+            try
             {
-                DeviceModel=AddDevice.DeviceModel,
-                DeviceName=AddDevice.DeviceName,
-                IMEI=AddDevice.IMEI,
-                ICCID=AddDevice.ICCID,
-                IMSI=AddDevice.IMSI,
-                SIMCardId=AddDevice.SIMCardId,
-                SIMNo=AddDevice.SIMNo,
-                ActivatedTime=AddDevice.ActivatedTime,
-                SubscriptionExpiration=AddDevice.SubscriptionExpiration,
-                Type=AddDevice.Type,
-                IsActive=true,
-                TechnicianId=CurrentUser.UserId,
-            };
-            await DevicesRepository.CreateDeviceAsync(DeviceCreation);
+                await DevicesRepository.CreateDeviceAsync(DeviceCreation);
+            }
+            catch (Exception ex)
+            {
+                //Exception
+            }
         }
         devices = await DevicesRepository.GetDeviceByTechnicianIdAsync(CurrentUser.UserId);
         StateHasChanged();

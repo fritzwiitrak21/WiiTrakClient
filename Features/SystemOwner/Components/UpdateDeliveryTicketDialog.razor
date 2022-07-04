@@ -54,8 +54,7 @@
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
         <MudButton Color="Color.Primary"
-                   OnClick="Submit"
-                   Disabled="@(!success)">Save</MudButton>
+                   OnClick="Submit">Update</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -108,7 +107,11 @@
 
     void Submit()
     {
-        MudDialog.Close(DialogResult.Ok(true));
+         form.Validate();
+        if (success && errors.Length == 0)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
     }
 
     void Cancel() => MudDialog.Cancel();

@@ -107,8 +107,15 @@
                     IsActive = true,
                     IsSuspended = false
                 };
-            await DriverHttpRepository.CreateDriverAsync(driverCreation);
-            drivers = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
+            try
+            {
+                await DriverHttpRepository.CreateDriverAsync(driverCreation);
+            }
+             catch (Exception ex)
+            {
+                //Exception
+            }
+        drivers = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
 
             #region Send Login details to User
             MailRequest request = new MailRequest();

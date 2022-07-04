@@ -48,24 +48,24 @@
 
                 @*<MudTextField Value="@NewDeliveryTicket.NumberOfCarts" Label="No of Carts"  Required="true" ValueChanged="vaue=>{}"  RequiredError=" " For="@(() => @NewDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>*@
                 <div Class="mt-2">
-                <label id="NoOfCartLabel">No of Carts*</label>
-                <input type="text" Class="inputtext" placeholder="No of Carts*" value="@NewDeliveryTicket.NumberOfCarts"  @onchange="eventArgs => { HandleNumberOfCarts(eventArgs.Value); }" />
-               </div>
+                    <label id="NoOfCartLabel">No of Carts*</label>
+                    <input type="text" Class="inputtext" placeholder="No of Carts*" value="@NewDeliveryTicket.NumberOfCarts" @onchange="eventArgs => { HandleNumberOfCarts(eventArgs.Value); }" />
+                </div>
                 @if (PickedupCartList != null && PickedupCartList.Count > 0)
                 {
+                    <div>
                         <div>
-                            <div>
-                                <label>Carts List</label>
-                            </div>
-                            <div class="form-check" style="max-height:75px;overflow-x:auto;min-height:30px">
-
-                                @foreach (var cart in PickedupCartList)
-                                {
-                                    <input type="checkbox" id="@cart.Id" value="@cart.CartNumber - @cart.ManufacturerName" checked="checked" @onchange="@((e) => CheckboxChanged(e.Value, cart.Id))" />
-                                    <span>&nbsp;@cart.ManufacturerName - #@cart.CartNumber </span> <br />
-                                }
-                            </div>
+                            <label>Carts List</label>
                         </div>
+                        <div class="form-check" style="max-height:75px;overflow-x:auto;min-height:30px">
+
+                            @foreach (var cart in PickedupCartList)
+                            {
+                                <input type="checkbox" id="@cart.Id" value="@cart.CartNumber - @cart.ManufacturerName" checked="checked" @onchange="@((e) => CheckboxChanged(e.Value, cart.Id))" />
+                                <span>&nbsp;@cart.ManufacturerName - #@cart.CartNumber </span> <br />
+                            }
+                        </div>
+                    </div>
                 }
                 <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" IBrowserContent="@SaveIBrowserFile" />
 
@@ -270,9 +270,21 @@
         }
         else
         {
-            IsStoreSelected = true;
-            await JsModule.InvokeVoidAsync("removeValidationClass");
-
+            foreach (var item in Stores)
+            {
+                string storename = item.StoreName + " - " + item.StoreNumber;
+                if (storename == inputtext)
+                {
+                    IsStoreSelected = true;
+                    await JsModule.InvokeVoidAsync("removeValidationClass");
+                    break;
+                }
+                else
+                {
+                    IsStoreSelected = false;
+                    await JsModule.InvokeVoidAsync("addValidationClass");
+                }
+            }
         }
         StateHasChanged();
     }
@@ -311,7 +323,7 @@
                 NewDeliveryTicket.NumberOfCarts = 0;
             }
             TempPickedupCartList = PickedupCartList;
-                NewDeliveryTicket.PickedUpCarts = TempPickedupCartList;
+            NewDeliveryTicket.PickedUpCarts = TempPickedupCartList;
             StateHasChanged();
             #endregion
         }
@@ -376,7 +388,7 @@
             JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
         }
 
-        //  var inputtext = await JsModule.InvokeAsync<string>("getTextBoxValue");
+        //  var inputtext = await JsModule.InvokeAsync<string> ("getTextBoxValue");
         if (Convert.ToInt32(NoOfCart) < NewDeliveryTicket.PickedUpCarts.Count)
         {
             IsNoOfCarts = false;
@@ -392,20 +404,24 @@
     }
     async Task Submit()
     {
+          if (!IsStoreSelected)
+        {
+            await JsModule.InvokeVoidAsync("addValidationClass");
+            StateHasChanged();
+        }
         await AddCoordAndTime();
         while (!Ispicuploadtoblob)
         {
             System.Threading.Thread.Sleep(600);
         }
-        if(!formvalid)
-        {
-            form.Validate();
-        }
-        else
+      
+        form.Validate();
+        if (success && errors.Length == 0 && IsStoreSelected)
         {
             MudDialog.Close(DialogResult.Ok(true));
         }
+
     }
 
     void Cancel() => MudDialog.Cancel();
-}
+                            }

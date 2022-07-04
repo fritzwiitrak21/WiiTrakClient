@@ -13,7 +13,6 @@
     <DialogContent>
         <div style="width: 1000px; height:600px; overflow-y: auto; overflow-x: hidden;">
             <MudForm @ref=form Model="@Messages" @bind-IsValid="@success" @bind-Errors="@errors">
-                <DataAnnotationsValidator />
                 <MudItem Class="TextWidth">
                     @if (CurrentUser.UserRoleId == 6)
                     {
@@ -47,10 +46,10 @@
                         }
                     </MudSelect>
                 </MudItem>
-                <MudTextField class="my-3 TextWidth" @bind-Value="StreetAdd" Label="Street Address" Required="true" RequiredError=" " Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-3 TextWidth" @bind-Value="City" Label="City" Required="true" RequiredError=" " Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-3 TextWidth" @bind-Value="State" Label="State" Required="true" RequiredError=" " Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-3 TextWidth" @bind-Value="ZipCode" Label="Zip Code" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-3 TextWidth" @bind-Value="Address.StreetAddress" Label="Street Address" Required="true" RequiredError=" " For="@(() => @Address.StreetAddress)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-3 TextWidth" @bind-Value="Address.City" Label="City" Required="true" Pattern="" RequiredError=" " For="@(() => @Address.City)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-3 TextWidth" @bind-Value="Address.State" Label="State" Required="true" RequiredError=" " For="@(() => @Address.State)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-3 TextWidth" @bind-Value="Address.ZipCode" Label="Zip Code" For="@(() => @Address.ZipCode)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-3" @bind-Value="AddionalMessage" Lines="3" MaxLength=300 Label="Addtional Message" Placeholder="Optional" Variant="Variant.Text"></MudTextField>
                 <div class="HidePreview" id="divPreview">
                     <b>Preview</b> <br />
@@ -60,7 +59,7 @@
                         <p>
                             A cart belongs to the store <b>@Messages.Store</b>
                             is located in this address <b>@Messages.Address</b>
-                            Please Pick that cart.
+                            Please pick that cart.
                         </p>
                     }
                     @if (Messages.Message.Trim().Length > 0)
@@ -98,16 +97,27 @@
     public MessagesDto Messages { get; set; }
     private IJSObjectReference JsModule;
     public List<DriverDto>? Driver { get; set; }
-    public string StreetAdd = "";
-    public string City = "";
-    public string State = "";
-    public string ZipCode = "";
+    public AddressDto Address { get; set; } = new();
     public string AddionalMessage = "";
     bool success;
     string[] errors = { };
     MudForm form;
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; }
+    public class AddressDto
+    {
+        [StringLength(50, ErrorMessage = " ")]
+        public string StreetAddress { get; set; } = string.Empty;
+        [MaxLength(15, ErrorMessage = " ")]
+        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = " ")]
+        public string City { get; set; } = string.Empty;
+        [MaxLength(15, ErrorMessage = " ")]
+        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = " ")]
+        public string State { get; set; } = string.Empty;
+        [MinLength(4, ErrorMessage = " ")]
+        [RegularExpression(@"^[1-9][0-9]*$", ErrorMessage = " ")]
+        public string ZipCode { get; set; } = string.Empty;
+    }
     protected override void OnParametersSet()
     {
         if (CurrentUser.UserRoleId == 6)
@@ -127,10 +137,10 @@
     }
     public async Task Preview()
     {
-        Messages.Address = StreetAdd + "," + City + "," + State;
-        if (ZipCode != "")
+        Messages.Address = Address.StreetAddress + "," + Address.City + "," + Address.State;
+        if (Address.ZipCode != "")
         {
-            Messages.Address = Messages.Address + "," + ZipCode;
+            Messages.Address = Messages.Address + "," + Address.ZipCode;
         }
         Messages.Message = AddionalMessage;
         if (JsModule is null)
@@ -146,14 +156,14 @@
         form.Validate();
         if (success && errors.Length == 0)
         {
-            Messages.Address = StreetAdd + "," + City + "," + State;
-            if (ZipCode != "")
+            Messages.Address = Address.StreetAddress + "," + Address.City + "," + Address.State;
+            if (Address.ZipCode != "")
             {
-                Messages.Address = Messages.Address + "," + ZipCode;
+                Messages.Address = Messages.Address + "," + Address.ZipCode;
             }
             Messages.Message = AddionalMessage;
             MudDialog.Close(DialogResult.Ok(true));
         }
     }
-    void Cancel() => MudDialog.Cancel();
+
 }
