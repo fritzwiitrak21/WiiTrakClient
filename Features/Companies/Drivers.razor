@@ -56,7 +56,7 @@
     List<DriverDto> drivers = new();
     List<DriverDto> DriversList = new();
 
-    DriverCreationDto AddDriver = new();
+    DriverDto AddDriver = new();
     private IJSObjectReference JsModule;
     bool LoaderVisibility { get; set; } = false;
 
@@ -68,19 +68,13 @@
             var Id = await JsModule.InvokeAsync<string>("getUserId");
             CurrentUser.UserId = new Guid(Id);
         }
-
-        DriversList = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
-        if (DriversList is not null)
-        {
-            drivers = DriversList;
-        }
-        StateHasChanged();
+        await RefreshDriverGrid();
     }
 
     private async Task OpenDialog()
     {
         var parameters = new DialogParameters();
-        AddDriver = new DriverCreationDto();
+        AddDriver = new DriverDto();
         parameters.Add("NewDriver", AddDriver);
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
@@ -91,7 +85,7 @@
         if (!result.Cancelled)
         {
             // add new driver to backend
-            var driverCreation = new DriverCreationDto
+            var driverCreation = new DriverDto
                 {
                     FirstName = AddDriver.FirstName,
                     LastName = AddDriver.LastName,
@@ -107,15 +101,37 @@
                     IsActive = true,
                     IsSuspended = false
                 };
-            await DriverHttpRepository.CreateDriverAsync(driverCreation);
-            drivers = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
+            try
+            {
+                await DriverHttpRepository.CreateDriverAsync(driverCreation);
+            }
+            catch (Exception ex)
+            {
+                //Exception
+            }
+            await RefreshDriverGrid();
+            try
+            {
+                #region Send Login details to User
+                MailRequest request = new MailRequest();
+                request.MailTo = driverCreation.Email;
+                request.Name = string.Concat(driverCreation.FirstName, " ", driverCreation.LastName);
+                await EmailHttpRepository.SendMailAsync(request);
+            }
+            catch (Exception ex)
+            {
 
-            #region Send Login details to User
-            MailRequest request = new MailRequest();
-            request.MailTo = driverCreation.Email;
-            request.Name = string.Concat(driverCreation.FirstName, " ", driverCreation.LastName);
-            await EmailHttpRepository.SendMailAsync(request);
+            }
             #endregion
         }
+    }
+    private async Task RefreshDriverGrid()
+    {
+        DriversList = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
+        if (DriversList is not null)
+        {
+            drivers = DriversList;
+        }
+        StateHasChanged();
     }
 }

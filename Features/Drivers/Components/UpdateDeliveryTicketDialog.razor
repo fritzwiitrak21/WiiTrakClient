@@ -2,7 +2,8 @@
 @using System.ComponentModel.DataAnnotations
 @using WiiTrakClient.Shared.Components
 @using WiiTrakClient.Cores
-
+@inject ICartHttpRepository CartHttpRepository
+@inject ICartHistoryHttpRepository CartHistoryHttpRepository 
 <style>
     .validation-message {
         font-size: 0;
@@ -23,10 +24,10 @@
 </style>
 <MudDialog>
     <DialogContent>
-        <div style="width: 400px;height:450px;overflow: auto;">
+        <div style="width: 400px;height:480px;overflow: auto;">
             <MudForm Model="@editDeliveryTicket" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudSelect Class="my-6" T="StoreDto" Label="Store" AnchorOrigin="Origin.BottomCenter"
-                           HelperText="Select a Store" @bind-Value="@SelectedStore" Required="true"
+                           HelperText="Select a Store" Value="@SelectedStore" ValueChanged="(value) => HandleStore(value)" Required="true"
                            AdornmentColor="Color.Primary">
                     @foreach (var store in Stores)
                     {
@@ -40,7 +41,43 @@
                 }
 
                 <MudTextField @bind-Value="@editDeliveryTicket.NumberOfCarts" Label="No of carts" Required="true" For="@(() => @editDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
+                @*  <div>
+                    <label id="NoOfCartLabel">No of Carts*</label>
+                    <input type="text" Class="inputtext" placeholder="No of Carts*" value="@editDeliveryTicket.NumberOfCarts"  @onchange="eventArgs => { HandleNumberOfCarts(eventArgs.Value); }" />
+                    </div>*@
+                @if (PickedupCartList != null && PickedupCartList.Count > 0)
+                {
+                        <div>
+                            <div>
+                                <label>Carts List</label>
+                            </div>
+                            <div class="form-check" style="max-height:75px;overflow-x:auto;min-height:30px">
 
+                                @foreach (var cart in PickedupCartList)
+                                {
+                                    if (SelectedCartList != null)
+                                    {
+                                        bool IsChecked = SelectedCartList.Where(x => x.Id == cart.Id && x.Status == CartStatus.InsideGeofence).ToList().Any();
+                                        if (IsChecked)
+                                        {
+                                            <input type="checkbox" id="@cart.Id" value="@cart.CartNumber - @cart.ManufacturerName" checked="checked" @onchange="@((e) => CheckboxChanged(e.Value, cart.Id))" />
+                                            <span> @cart.ManufacturerName - #@cart.CartNumber </span> <br />
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" id="@cart.Id" value="@cart.CartNumber - @cart.ManufacturerName" @onchange="@((e) => CheckboxChanged(e.Value, cart.Id))" />
+                                            <span> @cart.ManufacturerName - #@cart.CartNumber </span> <br />
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" id="@cart.Id" value="@cart.CartNumber - @cart.ManufacturerName" @onchange="@((e) => CheckboxChanged(e.Value, cart.Id))" />
+                                        <span> @cart.ManufacturerName - #@cart.CartNumber </span> <br />
+                                    }
+                                }
+                            </div>
+                        </div>
+                    }
                 @if (!string.IsNullOrWhiteSpace(_fileUrl))
                 {
                     <div class="d-flex justify-center mt-6 popupitemimage">
@@ -54,13 +91,12 @@
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
         <MudButton Color="Color.Primary"
-                   OnClick="Submit"
-                   Disabled="@(!success)">Save</MudButton>
+                   OnClick="Submit">Update</MudButton>
     </DialogActions>
 </MudDialog>
 
-@code {
 
+@code {
     [Parameter]
     public DeliveryTicketUpdateDto? editDeliveryTicket { get; set; }
 
@@ -72,10 +108,16 @@
 
     [Parameter]
     public List<StoreDto>? Stores { get; set; } = new();
+    [Parameter]
+    public Guid DeliveryTicketId { get; set; }
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     [Inject] IJSRuntime JsRuntime { get; set; }
+    public List<CartDto> PickedUpCarts { get; set; }
+    public List<CartDto> PickedupCartList { get; set; }
+    public List<CartDto> TempPickedupCartList { get; set; }
+    public List<CartDto> SelectedCartList { get; set; }
     bool success;
     string[] errors = { };
     MudForm form;
@@ -104,6 +146,31 @@
         {
             SelectedStore = Stores.Where(x => x.Id == editDeliveryTicket.StoreId).FirstOrDefault();
         }
+
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        #region get carts by storeid
+        PickedUpCarts = await CartHttpRepository.GetCartsByStoreIdAsync(editDeliveryTicket.StoreId);
+        var SelectedCarts = await CartHistoryHttpRepository.GetCartHistoryByDeliveryTicketIdAsync(DeliveryTicketId);
+        if (SelectedCarts != null)
+        {
+            SelectedCartList = SelectedCarts.Where(x => x.Status == CartStatus.InsideGeofence).ToList();
+        }
+        if (PickedUpCarts != null)
+        {
+            PickedupCartList = PickedUpCarts.Where(x => x.Status == CartStatus.PickedUp || x.Status == CartStatus.InsideGeofence).ToList();
+            //editDeliveryTicket.NumberOfCarts = PickedupCartList.Count();
+        }
+        else
+        {
+            PickedupCartList = new List<CartDto>();
+            // editDeliveryTicket.NumberOfCarts = 0;
+        }
+        TempPickedupCartList = SelectedCartList;
+        editDeliveryTicket.PickedUpCarts = TempPickedupCartList;
+        StateHasChanged();
+        #endregion
     }
 
     private void UpdateNumberOfCarts()
@@ -124,11 +191,72 @@
 
         //}
     }
+    async Task CheckboxChanged(object IsChecked, Guid Id)
+    {
+        if ((bool)IsChecked)
+        {
+            editDeliveryTicket.NumberOfCarts = editDeliveryTicket.NumberOfCarts + 1;
+            //TempPickedupCartList.AddRange(PickedupCartList.Where(x => x.Id == Id).ToList());
+            SelectedCartList.AddRange(PickedupCartList.Where(x => x.Id == Id).ToList());
+        }
+        else
+        {
+            editDeliveryTicket.NumberOfCarts = editDeliveryTicket.NumberOfCarts - 1;
+            //TempPickedupCartList.RemoveAll(x => x.Id == Id);
+            SelectedCartList.RemoveAll(x => x.Id == Id);
+        }
+        success = true;
+        TempPickedupCartList = SelectedCartList;
+        editDeliveryTicket.PickedUpCarts = TempPickedupCartList;
+        PickedupCartList = PickedUpCarts.Where(x => x.Status == (CartStatus)2 || x.Status == (CartStatus)0).ToList();
+        StateHasChanged();
+    }
+    public async Task HandleStore(StoreDto store)
+    {
+        PickedUpCarts = await CartHttpRepository.GetCartsByStoreIdAsync(store.Id);
+        if (PickedUpCarts != null)
+        {
+            PickedupCartList = PickedUpCarts.Where(x => x.Status == (CartStatus)2 || x.Status == (CartStatus)0).ToList();
+            editDeliveryTicket.NumberOfCarts = PickedupCartList.Count();
+        }
+        else
+        {
+            PickedupCartList = new List<CartDto>();
+            editDeliveryTicket.NumberOfCarts = 0;
+        }
+        TempPickedupCartList = PickedupCartList;
+        SelectedCartList = await CartHistoryHttpRepository.GetCartHistoryByDeliveryTicketIdAsync(DeliveryTicketId);
+        SelectedStore = store;
+        StateHasChanged();
+    }
+    public async Task HandleNumberOfCarts(object NoOfCart)
+    {
+        if (JsModule is null)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
 
-
+        //  var inputtext = await JsModule.InvokeAsync<string>("getTextBoxValue");
+        if (Convert.ToInt32(NoOfCart) < editDeliveryTicket.PickedUpCarts.Count)
+        {
+            success = false;
+            await JsModule.InvokeVoidAsync("addTextValidationClass");
+            StateHasChanged();
+        }
+        else
+        {
+            success = true;
+            await JsModule.InvokeVoidAsync("removeTextValidationClass");
+            StateHasChanged();
+        }
+    }
     void Submit()
     {
-        MudDialog.Close(DialogResult.Ok(true));
+        form.Validate();
+        if (success && errors.Length == 0)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
     }
 
     void Cancel() => MudDialog.Cancel();

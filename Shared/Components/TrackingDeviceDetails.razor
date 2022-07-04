@@ -1,0 +1,115 @@
+﻿@page "/trackingdevice-details"
+
+@inject ITrackingDeviceHttpRepository TrackingDeviceRepository
+@using WiiTrakClient.Cores
+@inject IJSRuntime JsRuntime
+@inject IDialogService DialogService
+
+<UserAuthentication />
+<h1>Tracking Devices</h1>
+@if (@TrackingDevices != null)
+{
+    <MudTable Items="@TrackingDevices" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
+        <HeaderContent>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<TrackingDeviceDetailsDto, object>(x=>x.DeviceName)">Device Name</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<TrackingDeviceDetailsDto, object>(x=>x.SIMCardPhoneNumber)">Phone Number</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<TrackingDeviceDetailsDto, object>(x=>x.StoreName)">Store Name</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<TrackingDeviceDetailsDto, object>(x=>x.ManufacturerName)">Cart Detail</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<TrackingDeviceDetailsDto, object>(x=>x.Condition)">Condition</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<TrackingDeviceDetailsDto, object>(x=>x.Status)">Status</MudTableSortLabel></MudTh>
+            <MudTh>Map</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Device Name">
+                @context.DeviceName
+            </MudTd>
+            <MudTd DataLabel="Phone Number">
+                @context.SIMCardPhoneNumber
+            </MudTd>
+            <MudTd DataLabel="Store Name">
+                @context.StoreName - @context.StoreNumber
+            </MudTd>
+            <MudTd DataLabel="Cart Detail">
+                @context.ManufacturerName - @context.CartNumber
+            </MudTd>
+            <MudTd DataLabel="Condition">
+                 @switch (context.Condition)
+            {
+                case CartCondition.Good:
+                    <span style="background:#90ee90;padding:2px;">Good</span>
+                    break;
+                case CartCondition.Damage:
+                    <span style="background:#ff474c;padding:2px;">Damage</span>
+                    break;
+                case CartCondition.DamageBeyondRepair:
+                    <span style="background:#ff474c;padding:2px;">Trash</span>
+                    break;
+            }
+            </MudTd>
+            <MudTd DataLabel="Status">
+                @switch (context.Status)
+                {
+                    case CartStatus.InsideGeofence:
+                    <span style="background:#90ee90;padding:2px;">Delivered</span>
+                        break;
+                    case CartStatus.OutsideGeofence:
+                    <span style="background:#ffffe0;padding:2px;">Needs Pick Up</span>
+                        break;
+                    case CartStatus.PickedUp:
+                    <span style="background:#90ee90;padding:2px;">On Truck</span>
+                        break;
+                    case CartStatus.Lost:
+                    <span style="background:#ff474c;padding:2px;">Lost</span>
+                        break;
+                }
+        </MudTd>
+        <MudTd>
+            <MudIconButton Icon="@Icons.Outlined.Map"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Size="Size.Large"
+                           OnClick="() => DisplayMaps(context)"
+                           Class="Datebutton" />
+
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{10, 50, 100}" />
+    </PagerContent>
+</MudTable>
+}
+else
+{
+    <h4>No Tracking Device Found</h4>
+}
+@code {
+    public List<TrackingDeviceDetailsDto> TrackingDevices { get; set; } = new();
+    private IJSObjectReference JsModule;
+    protected override async Task OnInitializedAsync()
+    {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+            CurrentUser.UserName = await JsModule.InvokeAsync<string>("getUserName");
+            var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
+            CurrentUser.UserRoleId = Convert.ToInt32(roleid);
+        }
+        await GetTrackingDeviceDetails();
+    }
+    private async Task DisplayMaps(TrackingDeviceDetailsDto Device)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("device", Device);
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+        var dialog = DialogService.Show<DisplayDevicesMap>("Position of " + Device.ManufacturerName + " Cart - " + Device.CartNumber.ToString(), parameters);
+        var result = await dialog.Result;
+        await GetTrackingDeviceDetails();
+    }
+    private async Task GetTrackingDeviceDetails()
+    {
+        TrackingDevices = await TrackingDeviceRepository.GetTrackingDeviceDetailsByIdAsync(CurrentUser.UserId, Convert.ToInt32(CurrentUser.UserRoleId));
+        StateHasChanged();
+    }
+}

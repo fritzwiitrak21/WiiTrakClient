@@ -6,6 +6,7 @@
 @inject ICorporateHttpRepository CorporateHttpRepository
 @inject IStoreHttpRepository StoreHttpRepository
 @inject ISystemOwnerHttpRepository SystemOwnerHttpRepository
+@inject ITechnicianHttpRepository TechnicianHttpRepository
 
 <UserAuthentication/>
 <MudCard Outlined="true" Class="pa-5">
@@ -149,6 +150,16 @@
             countrycode = drivers.CountryCode;
             postalcode = drivers.PostalCode;
             address = address1 + ", " + address2 + ", " + city + ", " + state + ", " + countrycode + ", " + postalcode;
+        }
+        else if(CurrentUser.UserRole=="Technician")
+        {
+            var technicians = await TechnicianHttpRepository.GetTechnicianByIdAsync(CurrentUser.UserId);
+            firstname=technicians.FirstName;
+            lastname=technicians.LastName;
+            name = firstname + " " + lastname;
+            email = technicians.Email;
+            phone = technicians.Phone;
+            address = "NA";
         }
     }
 }

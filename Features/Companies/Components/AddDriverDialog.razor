@@ -44,7 +44,7 @@
 
 @code {
     [Parameter]
-    public DriverCreationDto? NewDriver {get; set;}
+    public DriverDto? NewDriver {get; set;}
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     bool success;
@@ -60,7 +60,7 @@
         if (success && errors.Length == 0)
         {
             MudDialog.Close(DialogResult.Ok(true));
-        } 
+        }
     }
     void Cancel() => MudDialog.Cancel();
 }

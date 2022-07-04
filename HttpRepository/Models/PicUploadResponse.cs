@@ -1,7 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using System.Text.Json.Serialization;
 
 namespace WiiTrakClient.HttpRepository.Models

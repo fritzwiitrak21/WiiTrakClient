@@ -1,0 +1,102 @@
+﻿@using WiiTrakClient.Features.Technicians.Components
+@inject IDialogService DialogService
+@inject ISimCardsHttpRepository SimCardRepository
+@using WiiTrakClient.Cores
+
+<MudTable Items="@SimCards" Class="Pagingstyle" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@ListIsLoading"
+          LoadingProgressColor="Color.Primary">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<SimCardsDto, object>(x=>x.TelecomCompany)">Telecom Company</MudTableSortLabel></MudTh>
+        <MudTh>Phone Number</MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<SimCardsDto, object>(x=>x.PlanName)">Plan Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<SimCardsDto, object>(x=>x.PlanActivationDate)">Plan Activation Date</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<SimCardsDto, object>(x=>x.PlanEndDate)">Plan End Date</MudTableSortLabel></MudTh>
+        <MudTh>SIM Number</MudTh>
+        <MudTh>IMSI</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Telecom Company">
+            @context.TelecomCompany
+        </MudTd>
+        <MudTd DataLabel="Phone Number">
+            @context.PhoneNumber
+        </MudTd>
+        <MudTd DataLabel="Plan Name">
+            @context.PlanName
+        </MudTd>
+        <MudTd DataLabel="Plan Activation Date">
+            @context.PlanActivationDate
+        </MudTd>
+        <MudTd DataLabel="Plan End Date">
+            @context.PlanEndDate
+        </MudTd>
+        <MudTd DataLabel="SIM Number">
+            @context.SIMNo
+        </MudTd>
+        <MudTd DataLabel="IMSI">
+            @context.IMSI
+        </MudTd>
+        <MudTd DataLabel="Action">
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       OnClick="((e) => OpenDialog(context))">
+                Update
+            </MudButton>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{10, 50, 100}" />
+    </PagerContent>
+</MudTable>
+
+@code {
+    [Parameter]
+    public List<SimCardsDto>? SimCards { get; set; } = null;
+    private bool ListIsLoading = true;
+
+    List<SimCardsDto> SimCardslist = new();
+    
+    protected override void OnParametersSet()
+    {
+        ListIsLoading = false;
+    }
+
+    public async Task OpenDialog(SimCardsDto simcard)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("SimCard", simcard);
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+        var dialog = DialogService.Show<UpdateSimCardDialog>("Update Simcard", parameters);
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            // save updated SimCard to backend
+            var SimCardUpdate = new SimCardsDto
+                {
+                    TelecomCompany = simcard.TelecomCompany,
+                    PhoneNumber = simcard.PhoneNumber,
+                    PlanName = simcard.PlanName,
+                    PlanActivationDate = simcard.PlanActivationDate,
+                    PlanEndDate = simcard.PlanEndDate,
+                    SIMNo = simcard.SIMNo,
+                    IMSI = simcard.IMSI,
+                    IsActive = true,
+                    TechnicianId = CurrentUser.UserId,
+                    CreatedAt = simcard.CreatedAt,
+                    Id = simcard.Id
+                };
+            await SimCardRepository.UpdateSimCardAsync(simcard.Id, SimCardUpdate);
+        }
+        await RefreshSimcard();
+    }
+    async Task RefreshSimcard()
+    {
+        SimCardslist = await SimCardRepository.GetSimCardByTechnicianIdAsync(CurrentUser.UserId);
+        if (SimCardslist is not null)
+        {
+            SimCards = SimCardslist;
+        }
+        StateHasChanged();
+    }
+}

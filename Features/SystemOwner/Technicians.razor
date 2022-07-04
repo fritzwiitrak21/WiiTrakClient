@@ -1,5 +1,6 @@
 @page "/technicians"
 
+@using WiiTrakClient.Cores
 @using WiiTrakClient.Features.SystemOwner.Components
 
 @inject IJSRuntime JsRuntime
@@ -18,43 +19,68 @@
 </div>
 
 <div class="my-8">
-    <TechnicianList Technicians="@_technicians" />
+    @if (TechniciansList == null)
+    {
+        <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+    }
+    else if (Technician.Count > 0)
+    {
+        <TechnicianList Technicians="@Technician" />
+    }
+    else
+    {
+        <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
+    }
 </div>
 
-
-
 @code {
-    List<TechnicianDto> _technicians = new ();
-    
-    TechnicianCreationDto _newTechnician = new();
+    private IJSObjectReference JsModule;
+    List<TechnicianDto> Technician = new ();
+    List<TechnicianDto> TechniciansList = new();
+    TechnicianDto AddTechnician = new();
 
     protected override async Task OnInitializedAsync()
     {
-        _technicians = await TechnicianRepository.GetAllTechniciansAsync();     
-    }  
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
 
+        TechniciansList = await TechnicianRepository.GetTechniciansBySystemOwnerIdAsync(CurrentUser.UserId);
+        if (TechniciansList is not null)
+        {
+            Technician = TechniciansList;
+        }
+        StateHasChanged();
+    }
     private async Task OpenDialog() 
     {
-        var parameters = new DialogParameters(); 
-        parameters.Add("NewTechnician", _newTechnician);
+        var parameters = new DialogParameters();
+        AddTechnician = new TechnicianDto();
+        parameters.Add("NewTechnician", AddTechnician);
 
-         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
-         var dialog  = DialogService.Show<AddTechnicianDialog>("Add Technician", parameters);
+        var dialog = DialogService.Show<AddTechnicianDialog>("Add Technician", parameters);
         var result = await dialog.Result; 
 
         if (!result.Cancelled) 
         {
             // add new technician to backend
-            var technicianCreation = new TechnicianCreationDto {
-                FirstName = _newTechnician.FirstName,
-                LastName = _newTechnician.LastName,
-                Email = _newTechnician.Email,
-                Phone = _newTechnician.Phone,
-              
+            var TechnicianCreation = new TechnicianDto {
+                FirstName = AddTechnician.FirstName,
+                LastName = AddTechnician.LastName,
+                Email = AddTechnician.Email,
+                Phone = AddTechnician.Phone,
+                ProfilePic = AddTechnician.ProfilePic,
+                SystemOwnerId=CurrentUser.UserId,
+                CompanyId=AddTechnician.CompanyId,
             };
-           await TechnicianRepository.CreateTechnicianAsync(_newTechnician);
-           _technicians = await TechnicianRepository.GetAllTechniciansAsync();    
+            await TechnicianRepository.CreateTechnicianAsync(TechnicianCreation,CurrentUser.UserRoleId);
         }  
+        Technician = await TechnicianRepository.GetTechniciansBySystemOwnerIdAsync(CurrentUser.UserId);
+        StateHasChanged();
     } 
 }

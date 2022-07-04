@@ -22,36 +22,36 @@
 </div>
 
 <div class="my-8">
-@*    @if (LoaderVisibility)
-    {
-        <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
-    }
-    else
-    {
-
-        if (_driver.Count > 0)
+    @*    @if (LoaderVisibility)
         {
-            <DriverList Driver="@_driver" />
+        <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
         }
         else
         {
-            <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+
+        if (_driver.Count > 0)
+        {
+        <DriverList Driver="@_driver" />
         }
-    }*@
+        else
+        {
+        <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+        }
+        }*@
 
-@if(DriverList == null)
-{
-    <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+    @if (DriverList == null)
+    {
+        <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
 
-}
-else if (driver.Count > 0)
-{
-    <DriverList Driver="@driver" />
-}
-else
-{
-    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7"/>
-}
+    }
+    else if (driver.Count > 0)
+    {
+        <DriverList Driver="@driver" />
+    }
+    else
+    {
+        <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
+    }
 </div>
 
 
@@ -59,7 +59,7 @@ else
 @code {
     List<DriverDto> driver = new();
     List<DriverDto> DriverList = new();
-    DriverCreationDto AddDriver = new();
+    DriverDto AddDriver = new();
 
     private IJSObjectReference JsModule;
 
@@ -71,19 +71,13 @@ else
             var Id = await JsModule.InvokeAsync<string>("getUserId");
             CurrentUser.UserId = new Guid(Id);
         }
-
-        DriverList = await DriverHttpRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
-        if (DriverList is not null)
-        {
-            driver = DriverList;
-        }
-        StateHasChanged();
+        await RefreshDriverGrid();
     }
 
     private async Task OpenDialog()
     {
         var parameters = new DialogParameters();
-        AddDriver = new DriverCreationDto();
+        AddDriver = new DriverDto();
         parameters.Add("NewDriver", AddDriver);
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
@@ -94,7 +88,7 @@ else
         if (!result.Cancelled)
         {
             // add new driver to backend
-            var driverCreation = new DriverCreationDto
+            var driverCreation = new DriverDto
                 {
                     CompanyId = AddDriver.CompanyId,
                     FirstName = AddDriver.FirstName,
@@ -111,16 +105,38 @@ else
                     IsActive = true,
                     IsSuspended = false
                 };
-            await DriverHttpRepository.CreateDriverAsync(driverCreation);
-          
-
+            try
+            {
+                await DriverHttpRepository.CreateDriverAsync(driverCreation);
+            }
+            catch (Exception ex)
+            {
+                //Exception
+            }
             #region Send Login details to User
-            MailRequest request = new MailRequest();
-            request.MailTo = driverCreation.Email;
-            request.Name = string.Concat(driverCreation.FirstName, " ", driverCreation.LastName);
-            await EmailHttpRepository.SendMailAsync(request);
+            try
+            {
+                MailRequest request = new MailRequest();
+                request.MailTo = driverCreation.Email;
+                request.Name = string.Concat(driverCreation.FirstName, " ", driverCreation.LastName);
+                await EmailHttpRepository.SendMailAsync(request);
+            }
+            catch (Exception ex)
+            {
+                
+            }
+
             #endregion
         }
-          driver = await DriverHttpRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
-    } 
+        await RefreshDriverGrid();
+    }
+    private async Task RefreshDriverGrid()
+    {
+        DriverList = await DriverHttpRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
+        if (DriverList is not null)
+        {
+            driver = DriverList;
+        }
+        StateHasChanged();
+    }
 }

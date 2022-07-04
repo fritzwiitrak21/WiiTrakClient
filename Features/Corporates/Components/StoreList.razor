@@ -112,7 +112,8 @@
                     IsActive = store.IsActive,
                     CountyCode = store.CountyCode,
                     ServiceFrequency = store.ServiceFrequency,
-                    StartDate = store.StartDate
+                    StartDate = store.StartDate, 
+                    IsConnectedStore=store.IsConnectedStore,
                 };
             await StoreHttpRepository.UpdateStoreAsync(store.Id, storeUpdate);
         }

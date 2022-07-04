@@ -1,5 +1,8 @@
-﻿using WiiTrakClient.Helpers;
-using WiiTrakClient.DTOs;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using WiiTrakClient.Helpers;
 
 namespace WiiTrakClient.Services
 {
@@ -13,7 +16,6 @@ namespace WiiTrakClient.Services
         Task<HttpResponseWrapper<object>> Put<T>(string url, T data);
         Task<HttpResponseWrapper<object>> Patch(string url, string data);
         Task<HttpResponseWrapper<object>> Delete(string url);
-
         //Task<string> AuthenticateAsync(LoginDto login);
     }
 }

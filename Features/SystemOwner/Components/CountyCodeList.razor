@@ -1,0 +1,75 @@
+﻿@using WiiTrakClient.Features.SystemOwner.Components
+@inject IDialogService DialogService
+@inject ICountyCodeHttpRepository CountyCodeRepository
+@using WiiTrakClient.Cores
+
+<MudTable Items="@CountyCode" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<CountyCodeDTO, object>(x=>x.City)">City</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel  SortBy="new Func<CountyCodeDTO, object>(x=>x.State)">State</MudTableSortLabel></MudTh>
+        <MudTh>Zip Code</MudTh>
+        <MudTh>County Name</MudTh> 
+        <MudTh>County Code</MudTh> 
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="City">
+            @Core.ToPascalCase(context.City)
+        </MudTd>
+        <MudTd DataLabel="State">
+             @context.State
+        </MudTd>
+        <MudTd DataLabel="Zip Code">
+            @context.ZipCode
+        </MudTd>
+         <MudTd DataLabel="County Name">
+            @context.CountyName
+        </MudTd>
+        <MudTd DataLabel="County Code">
+            @context.CountyCode
+        </MudTd>
+        <MudTd DataLabel="Action">           
+            <MudButton 
+                Variant="Variant.Filled" 
+                Color="Color.Primary"
+                OnClick="((e) => OpenDialog(context))">
+                Update
+            </MudButton>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{10, 50, 100}" />
+    </PagerContent>
+</MudTable>
+
+@code {
+    [Parameter]
+    public List<CountyCodeDTO>? CountyCode {get; set;} = null;
+    public async Task OpenDialog(CountyCodeDTO Countycode) 
+    {
+        Console.WriteLine("countycode id: " + Countycode.Id);
+        var parameters = new DialogParameters();
+        parameters.Add("County", Countycode);   
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+        var dialog  = DialogService.Show<UpdateCountyCodeDialog>("Update County Code", parameters);
+        var result = await dialog.Result; 
+        if (!result.Cancelled) 
+        {
+            // save updated countycode to backend
+            var CountyUpdate = new CountyCodeDTO 
+            {
+                City =Core.ToPascalCase(Countycode.City),
+                State = Countycode.State,
+                ZipCode = Countycode.ZipCode,
+                IsActive=true,
+                CountyName=Countycode.CountyName,
+                CountyCode=Countycode.CountyCode,
+                Id=Countycode.Id,
+                CreatedAt=Countycode.CreatedAt,
+            };
+            await CountyCodeRepository.UpdateCartAsync(Countycode.Id, CountyUpdate);
+        }
+        CountyCode = await CountyCodeRepository.GetCountyListAsync();
+        StateHasChanged();
+    }
+}

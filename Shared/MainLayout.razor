@@ -1,8 +1,10 @@
 ﻿@inherits LayoutComponentBase
 @using WiiTrakClient.Cores
+@using WiiTrakClient.Enums
 @using WiiTrakClient.Shared.Components
 @inject INotificationHttpRepository NotifyHttpRepository
-
+@inject IDeliveryTicketHttpRepository DeliveryTicketRepository
+@inject IMessageHttpRepository MessageHttpRepository
 <MudThemeProvider Theme="_themeManager.Theme" />
 <MudDialogProvider FullWidth="false"
                    MaxWidth="MaxWidth.ExtraLarge"
@@ -30,6 +32,18 @@
         <MudSpacer />
         @if (CurrentUser.UserRoleId == 5)//Driver
         {
+            if (Core.MessageCount > 0)
+            {
+                <MudBadge Content="@Core.MessageCount" Overlap="true" Color="Color.Error" Class="mx-6 my-4">
+                    <MudIconButton Icon="@Icons.Sharp.Message" Class="p-0" OnClick="Message" Color="Color.Primary" Link="/message" />
+                </MudBadge>
+            }
+            else
+            {
+                <MudBadge Content="@Core.MessageCount" Overlap="true" Color="Color.Error" Class="mx-6 my-4 Count0">
+                    <MudIconButton Icon="@Icons.Sharp.Message" OnClick="Message" Class="p-0" Color="Color.Primary" Link="/message" />
+                </MudBadge>
+            }
             if (Core.NotificationCount > 0)
             {
                 <MudBadge Content="@Core.NotificationCount" Overlap="true" Color="Color.Error" Class="mx-6 my-4">
@@ -48,11 +62,8 @@
                 var timer = new System.Threading.Timer((e) =>
                 {
                     Notification();
+                    Message();
                 }, null, startTimeSpan, periodTimeSpan);
-
-
-
-
             }
         }
 
@@ -94,8 +105,6 @@
             @Body
         </MudContainer>
     </MudMainContent>
-    @*<MudThemeManagerButton OnClick="@((e) => OpenThemeManager(true))" />
-        <MudThemeManager Open="_themeManagerOpen" OpenChanged="OpenThemeManager" Theme="_themeManager" ThemeChanged="UpdateTheme" />*@
 </MudLayout>
 
 @code
@@ -104,10 +113,38 @@
     private IJSObjectReference JsModule;
     protected override async Task OnInitializedAsync()
     {
-        await Notification();
-
+        if (CurrentUser.UserRoleId == 5)
+        {
+            await Notification();
+            await Message();
+        }
+        if (CurrentUser.UserRoleId < 5)
+        {
+            await ServiceBoard();
+        }
     }
     private async Task Notification()
+    {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
+
+        if (CurrentUser.UserRoleId != 5) return;
+        Core.NotificationsList = await NotifyHttpRepository.GetNotificationIdAsync(CurrentUser.UserId);
+        if (Core.NotificationsList != null && Core.NotificationsList.Count() > 0)
+        {
+            Core.NotificationCount = Core.NotificationsList.Where(x => x.IsNotified == false).Count();
+        }
+        else
+        {
+            Core.NotificationCount = 0;
+        }
+        StateHasChanged();
+    }
+    private async Task Message()
     {
         if (CurrentUser.UserId == Guid.Empty)
         {
@@ -119,8 +156,31 @@
         }
 
         if (CurrentUser.UserRoleId != 5) return;
-        Core.NotificationsList = await NotifyHttpRepository.GetNotificationIdAsync(CurrentUser.UserId);
-        Core.NotificationCount = Core.NotificationsList.Where(x => x.IsNotified == false).Count();
+        Core.MessagesList = await MessageHttpRepository.GetMessagesByIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+        if (Core.MessagesList != null && Core.MessagesList.Count() > 0)
+        {
+            Core.MessageCount = Core.MessagesList.Where(x => x.DeliveredAt == null).Count();
+        }
+        else
+        {
+            Core.MessageCount = 0;
+        }
+        StateHasChanged();
+    }
+    private async Task ServiceBoard()
+    {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+            var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
+            CurrentUser.UserRoleId = Convert.ToInt32(roleid);
+        }
+
+        if (CurrentUser.UserRoleId > 4) return;
+        Core.ServiceBoardList = await DeliveryTicketRepository.GetServiceBoardDetailsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+        Core.ServiceBoardCount = Core.ServiceBoardList.Count();
         StateHasChanged();
     }
 

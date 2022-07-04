@@ -1,0 +1,100 @@
+﻿@page "/devices"
+@using WiiTrakClient.Cores
+@using WiiTrakClient.Features.Technicians.Components
+@inject IDevicesHttpRepository DevicesRepository
+@inject IDialogService DialogService
+@inject IJSRuntime JsRuntime
+
+<UserAuthentication />
+<h3>Device</h3>
+
+<div class="d-flex justify-end">
+    <MudButton Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Add"
+               IconColor="Color.Secondary"
+               Size="Size.Large"
+               OnClick="OpenDialog">Add</MudButton>
+</div>
+<br />
+@if (DeviceList == null)
+{
+    <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+
+}
+else if (devices.Count > 0)
+{
+    <DeviceList Devices="devices" />
+}
+else
+{
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
+}
+
+@code {
+
+    private IJSObjectReference jsmodule;
+    List<DevicesDto> DeviceList = new();
+    List<DevicesDto> devices = new();
+    DevicesDto AddDevice = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            jsmodule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var id = await jsmodule.InvokeAsync<string>("getuserid");
+            CurrentUser.UserId = new Guid(id);
+        }
+        await RefreshDevice();
+
+    }
+
+    private async Task OpenDialog()
+    {
+        var parameters = new DialogParameters();
+        AddDevice = new DevicesDto();
+        parameters.Add("NewDevice", AddDevice);
+
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+
+        var dialog = DialogService.Show<AddDeviceDialog>("Add Device", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            //add new device to backend
+            var DeviceCreation = new DevicesDto
+                {
+                    DeviceModel = AddDevice.DeviceModel,
+                    DeviceName = AddDevice.DeviceName,
+                    IMEI = AddDevice.IMEI,
+                    ICCID = AddDevice.ICCID,
+                    IMSI = AddDevice.IMSI,
+                    SIMCardId = AddDevice.SIMCardId,
+                    SIMNo = AddDevice.SIMNo,
+                    ActivatedTime = AddDevice.ActivatedTime,
+                    SubscriptionExpiration = AddDevice.SubscriptionExpiration,
+                    Type = AddDevice.Type,
+                    IsActive = true,
+                    TechnicianId = CurrentUser.UserId,
+                };
+            try
+            {
+                await DevicesRepository.CreateDeviceAsync(DeviceCreation);
+            }
+            catch (Exception ex)
+            {
+                //Exception
+            }
+        }
+        await RefreshDevice();
+    }
+    async Task RefreshDevice(){
+          DeviceList = await DevicesRepository.GetDeviceByTechnicianIdAsync(CurrentUser.UserId);
+        if (DeviceList is not null)
+        {
+            devices = DeviceList;
+        }
+        StateHasChanged();
+    }
+}

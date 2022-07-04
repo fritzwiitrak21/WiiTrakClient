@@ -104,12 +104,11 @@
 
 
 @code {
-
     List<StoreDto> driverstore = new();
     List<StoreDto> driverstorelist = new();
-
-
-    private IJSObjectReference JsModule, JsModuleStore, JsModuleCart;
+    private IJSObjectReference JsModule;
+    private IJSObjectReference JsModuleStore;
+    private IJSObjectReference JsModuleCart;
     public string CurrentCoord { get; set; } = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -131,7 +130,6 @@
             var Id = await JsModule.InvokeAsync<string>("getUserId");
             CurrentUser.UserId = new Guid(Id);
             CurrentUser.UserName = await JsModule.InvokeAsync<string>("getUserName");
-
         }
         driverstorelist = await StoreRepository.GetStoresByDriverId(CurrentUser.UserId);
 
@@ -140,8 +138,6 @@
             driverstore = driverstorelist.Where(x => x.IsActive && x.DriverStoresIsActive).ToList();
         }
         StateHasChanged();
-       
-
     }
 
     private async Task DisplayMaps(StoreDto store)
@@ -156,7 +152,8 @@
                 await JsModule.InvokeVoidAsync("ClearCoord");
             }
 
-            double Driverlatitude, Driverlongitude;
+            double Driverlatitude;
+            double Driverlongitude;
             if (!string.IsNullOrEmpty(CurrentCoord))
             {
                 Driverlatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
@@ -171,8 +168,9 @@
                 Driverlongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
             }
 
-            var address = string.Concat(store.StreetAddress1, store.StreetAddress2.Length > 0 ? store.StreetAddress2 + "," : "", store.City, ",", store.State, ",", store.PostalCode);
+            var address = string.Concat(store.StreetAddress1.Trim(),", ", store.StreetAddress2.Length > 0 ? store.StreetAddress2.Trim() + ", " : "", store.City.Trim(), ", ", store.State.Trim(), ", ", store.PostalCode.Trim());
             var parameters = new DialogParameters();
+            parameters.Add("StoreName", store.StoreName + " - " + store.StoreNumber);
             parameters.Add("Address", address);
             parameters.Add("StoreLatitude", store.Latitude);
             parameters.Add("StoreLongitude", store.Longitude);
@@ -184,11 +182,9 @@
             var dialog = DialogService.Show<DisplayStoreMap>("Map to " + store.StoreName + " - " + store.StoreNumber, parameters);
             var result = await dialog.Result;
             await JsModule.InvokeVoidAsync("ClearCoord");
-
             await StopWatchAndTimer();
-
         }
-        catch (Exception ex)
+        catch
         {
             // excepion
         }

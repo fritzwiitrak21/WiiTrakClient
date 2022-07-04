@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         .containerscroll {
-            max-height: Calc(100vh - 246px);
+            max-height: Calc(100vh - 240px);
             height: 100%;
             overflow: auto;
         }
@@ -31,26 +31,27 @@
             padding-top: 5px;
             font-size: 1.1em;
         }
+
     </style>
 </head>
 <body style="height:auto">
 
     @if (Core.NotificationCount > 0)
     {
-        <MudBadge Content="@Core.NotificationCount" Overlap="true" Class="mx-6 my-4" Color="Color.Error">
+        <MudBadge Content="@Core.NotificationCount" Overlap="true" Class="mx-6 my-4 HeaderStyle" Color="Color.Error">
             <p style="font-size:22px">Notifications <MudIcon Icon="@Icons.Filled.Notifications" /></p>
         </MudBadge>
     }
     else
     {
-        <MudBadge Content="@Core.NotificationCount" Overlap="true" Class="mx-6 my-4 Count0" Color="Color.Error">
+        <MudBadge Content="@Core.NotificationCount" Overlap="true" Class="mx-6 my-4 Count0 HeaderStyle" Color="Color.Error">
             <p style="font-size:22px">Notifications <MudIcon Icon="@Icons.Filled.Notifications" /></p>
         </MudBadge>
     }
     <div class="container containerscroll">
 
         <div>
-            @if (Core.NotificationsList.Count > 0)
+            @if (Core.NotificationsList != null && Core.NotificationsList.Count() > 0)
             {
                 foreach (var notification in Core.NotificationsList)
                 {
@@ -61,7 +62,7 @@
                         <div class="alert card amber lighten-4 brown-text">
                             <div class="row">
                                 <div style="width:30px">
-                                    <i class="material-icons">sms</i>
+                                    <i class="material-icons">notifications</i>
                                 </div>
                                 <div class="message-text">
                                     @{
@@ -81,7 +82,7 @@
                         <div class="alert card blue lighten-4 blue-text text-darken-3">
                             <div class="row">
                                 <div style="width:30px">
-                                    <i class="material-icons">sms</i>
+                                    <i class="material-icons">notifications</i>
                                 </div>
                                 <div class="message-text">
                                     @{
@@ -101,10 +102,10 @@
                 <div class="alert card purple lighten-4 purple-text text-darken-3">
                     <div class="row">
                         <div style="width:30px">
-                            <i class="material-icons">sms</i>
+                            <i class="material-icons">notifications</i>
                         </div>
                         <div class="message-text">
-                            You do not have any notification. Have a great day.
+                            You do not have any notification(s). Have a great day.
                         </div>
                     </div>
                 </div>
@@ -123,13 +124,20 @@
             JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
             var Id = await JsModule.InvokeAsync<string>("getUserId");
             CurrentUser.UserId = new Guid(Id);
-            var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
-            CurrentUser.UserRoleId = Convert.ToInt32(roleid);
             Core.NotificationsList = await NotifyHttpRepository.GetNotificationIdAsync(CurrentUser.UserId);
         }
-
-        Core.NotificationCount = Core.NotificationsList.Where(x => x.IsNotified == false).Count();
-        await NotifyHttpRepository.UpdateNotifiedTimeAsync();
+        if (Core.NotificationsList != null && Core.NotificationsList.Count() > 0)
+        {
+            Core.NotificationCount = Core.NotificationsList.Where(x => x.IsNotified == false).Count();
+        }
+        else
+        {
+            Core.NotificationCount = 0;
+        }
+        if (Core.NotificationCount > 0)
+        {
+            await NotifyHttpRepository.UpdateNotifiedTimeAsync();
+        }
         StateHasChanged();
     }
 }

@@ -1,0 +1,112 @@
+﻿@namespace WiiTrakClient.Features.Technicians.Components
+@using System.ComponentModel.DataAnnotations
+
+<style>
+    .validation-message {
+        font-size: 0;
+        display: none;
+        font-display: block;
+        color: red;
+    }
+
+    .mud-input-helper-text.mud-input-error {
+        font-size: 0;
+    }
+
+    .mud-input-helper-text {
+        color: var(--mud-palette-text-secondary);
+        margin: 0;
+        font-size: 0;
+    }
+</style>
+
+<MudDialog>
+    <DialogContent>
+        <div style="width: 400px;height:450px;overflow-y: auto; overflow-x: hidden;">
+            <MudForm @ref=form Model="@Device" @bind-IsValid="@success" @bind-Errors="@errors">
+                <DataAnnotationsValidator />
+                <MudTextField T="string" class="my-6" @bind-Value="Device.DeviceName" Label="Device Name" Required="true" RequiredError=" " For="@(() => @Device.DeviceName)" Variant="Variant.Text"></MudTextField>
+                <MudTextField T="string" class="my-6" @bind-Value="Device.DeviceModel" Label="Device Model" Required="true" RequiredError=" " For="@(() => @Device.DeviceModel)" Variant="Variant.Text"></MudTextField>
+                <MudDatePicker class="my-6" Label="Activated Time" Editable="true" @bind-Date="Device.ActivatedTime" Required=true For="@(() => @Device.ActivatedTime)" />
+                <MudDatePicker class="my-6" Label="Subscription Expiration" Editable="true" @bind-Date="Device.SubscriptionExpiration" Required=true For="@(() => @Device.SubscriptionExpiration)" />
+                <MudTextField T="string" class="my-6" @bind-Value="Device.IMEI" Label="IMEI" Required="true" RequiredError=" " For="@(() => @Device.IMEI)" Variant="Variant.Text"></MudTextField>
+                <MudTextField T="string" class="my-6" @bind-Value="Device.ICCID" Label="ICCID" Required="true" RequiredError=" " For="@(() => @Device.ICCID)" Variant="Variant.Text"></MudTextField>
+                <MudItem>
+                    @if (SelectedSimNo != null)
+                    {
+                        <MudSelect T="SimCardsDto" Label="Select SIM Card" Required=true RequiredError=" "
+                               Value="@SelectedSimNo" ValueChanged="(value) => HandleSimNo(value)"
+                               AnchorOrigin="Origin.BottomCenter">
+                            <MudSelectItem T="SimCardsDto" Value="@SelectedSimNo">@SelectedSimNo.SIMNo</MudSelectItem>
+                            @foreach (var sim in SimNo)
+                            {
+                                if (!sim.IsMapped)
+                                {
+                                    <MudSelectItem T="SimCardsDto" Value="@sim">@sim.SIMNo</MudSelectItem>
+                                }
+                            }
+                        </MudSelect>
+                    }
+                    else
+                    {
+                          <MudSelect T="SimCardsDto" Label="Select SIM Card" Required=true RequiredError=" "
+                                ValueChanged="(value) => HandleSimNo(value)"
+                               AnchorOrigin="Origin.BottomCenter">
+                           @* <MudSelectItem T="SimCardsDto" Value="@SelectedSimNo">@SelectedSimNo.SIMNo</MudSelectItem>*@
+                            @foreach (var sim in SimNo)
+                            {
+                                if (!sim.IsMapped)
+                                {
+                                    <MudSelectItem T="SimCardsDto" Value="@sim">@sim.SIMNo</MudSelectItem>
+                                }
+                            }
+                        </MudSelect>
+                    }
+                </MudItem>
+                <MudTextField T="string" class="my-6" @bind-Value="Device.IMSI" Label="IMSI" Required="true" RequiredError=" " For="@(() => @Device.IMSI)" Variant="Variant.Text"></MudTextField>
+                <MudTextField T="string" class="my-6" @bind-Value="Device.Type" Label="Type" Required="true" RequiredError=" " For="@(() => @Device.Type)" Variant="Variant.Text"></MudTextField>
+                <div class="d-flex">
+                    <MudButton OnClick="Cancel">Cancel</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Update</MudButton>
+                </div>
+                <br />
+            </MudForm>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+
+
+@code {
+    [Parameter]
+    public DevicesDto? Device { get; set; }
+    [Parameter]
+    public List<SimCardsDto>? SimNo { get; set; } = new();
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+    bool success;
+    string[] errors = { };
+    MudForm form;
+    [Inject]
+    public ISimCardsHttpRepository SimCardRepository { get; set; }
+    SimCardsDto SelectedSimNo = new();
+    protected override void OnParametersSet()
+    {
+        SelectedSimNo = SimNo.Where(x => x.Id == Device.SIMCardId).FirstOrDefault();
+    }
+    public async Task HandleSimNo(SimCardsDto simno)
+    {
+        Device.SIMNo = simno.SIMNo;
+        SelectedSimNo = simno;
+        Device.SIMCardId = simno.Id;
+    }
+    void Submit()
+    {
+        form.Validate();
+        if (success && errors.Length == 0)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+    }
+    void Cancel() => MudDialog.Cancel();
+}

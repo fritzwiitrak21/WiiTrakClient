@@ -1,4 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.ComponentModel.DataAnnotations;
 
 namespace WiiTrakClient.DTOs
 {
@@ -31,7 +35,7 @@ namespace WiiTrakClient.DTOs
         public string LogoUrl { get; set; } = string.Empty;
 
         [Required]
-        [EmailAddress]
+        [RegularExpression(@"^[a-zA-Z0-9_]+@[a-z]+\.[a-z]{2,3}$")]
         public string Email { get; set; } = string.Empty;
         [Required]
         [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$")]

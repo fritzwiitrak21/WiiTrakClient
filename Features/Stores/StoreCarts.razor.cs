@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor;
 using WiiTrakClient.DTOs;
@@ -18,19 +22,13 @@ namespace WiiTrakClient.Features.Stores
         StoreDto SelectedStore;
         List<CartDto> _filteredCarts = new();
         StoreReportDto _storeReport;
-
         private enum ViewOption
         {
             Map,
             List,
             Grid
         }
-
         ViewOption _view = ViewOption.Map;
-
-        // Filter chip set
-        // ref: https://mudblazor.com/components/chipset#api
-        MudChip? listFilterChip;
 
         protected override async Task OnInitializedAsync()
         {
@@ -40,19 +38,14 @@ namespace WiiTrakClient.Features.Stores
             await UpdateStoreReport(SelectedStore.Id);
             StateHasChanged();
         }
-
         private async Task HandleStoreSelected(StoreDto store)
         {
-            Console.WriteLine("HandleStoreSelected" + store.StoreName);
-
-            System.Console.WriteLine(store.Id);
             await GetCartsByStoreId(store);
             SelectedStore = store;
             //await UpdateReport(SelectedCorporate.Id);
             await UpdateStoreReport(store.Id);
             StateHasChanged();
         }
-
         private async Task GetCartsByStoreId(StoreDto store)
         {
             _carts = await CartRepository.GetCartsByStoreIdAsync(store.Id);
@@ -68,18 +61,15 @@ namespace WiiTrakClient.Features.Stores
             }
             //await UpdateStoreReport(id);
         }
-
         private async Task UpdateStoreReport(Guid id)
         {
             _storeReport = await StoreRepository.GetStoreReportAsync(id);
         }
-
         private void ShowMapView()
         {
             Console.WriteLine("map view");
             _view = ViewOption.Map;
         }
-
         private void ShowListView()
         {
             Console.WriteLine("list view");

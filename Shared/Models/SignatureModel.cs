@@ -1,13 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 namespace WiiTrakClient.Shared.Models
 {
     public class SignatureModel
     {
-         public string SignObject { get; set; }
+        public string SignObject { get; set; }
         public int SignzIndex { get; set; }
         public int PenSize { get; set; }
         public string PenColor { get; set; }
@@ -17,7 +16,6 @@ namespace WiiTrakClient.Shared.Models
         public string SuccessMessage { get; set; }
         public string BackGroundImage { get; set; }
         public string RefreshImage { get; set; }
-
         public int SignWidth { get; set; }
         public int SignHeight { get; set; }
         public int RequiredPoints { get; set; }

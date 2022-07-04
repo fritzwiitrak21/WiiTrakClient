@@ -1,4 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.ComponentModel.DataAnnotations;
 namespace WiiTrakClient.DTOs
 {
     public class CompanyCreationDto
@@ -35,7 +39,7 @@ namespace WiiTrakClient.DTOs
 
 
         [Required(ErrorMessage = " ")]
-        [MinLength(4, ErrorMessage = " ")]
+        [MinLength(4)]
         [RegularExpression(@"^[1-9][0-9]*$", ErrorMessage = " ")]
         public string PostalCode { get; set; } = string.Empty;
 
@@ -45,7 +49,7 @@ namespace WiiTrakClient.DTOs
 
 
         [Required(ErrorMessage = " ")]
-        [RegularExpression(@"^[a-zA-Z0-9]+@[a-z]+\.[a-z]{2,3}$", ErrorMessage = " ")]
+        [RegularExpression(@"^[a-zA-Z0-9_]+@[a-z]+\.[a-z]{2,3}$", ErrorMessage = " ")]
         public string Email { get; set; } = string.Empty;
 
 

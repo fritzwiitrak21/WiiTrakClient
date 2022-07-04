@@ -1,16 +1,14 @@
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.DTOs;
 using MudBlazor;
 using WiiTrakClient.Enums;
-using WiiTrakClient.Helpers;
 
 namespace WiiTrakClient.Features.Companies
 {
@@ -36,13 +34,7 @@ namespace WiiTrakClient.Features.Companies
             List,
             Grid
         }
-
         ViewOption _view = ViewOption.Map;
-
-        // Filter chip set
-        // ref: https://mudblazor.com/components/chipset#api
-        MudChip? listFilterChip;
-
 
         protected override async Task OnInitializedAsync()
         {
@@ -53,27 +45,16 @@ namespace WiiTrakClient.Features.Companies
             await GetStoreListByCompanyId();
             StateHasChanged();
         }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            // await ReadSummary();
-        }
-
         private async Task HandleCompanySelected(CompanyDto company)
         {
-            System.Console.WriteLine("company id: " + company.Id);
-             SelectedCompany = company;
+            SelectedCompany = company;
             await GetCartsByCompanyId(company.Id);
             await UpdateReport(company.Id);
             await GetStoreListByCompanyId();
             StateHasChanged();
         }
-
         private async Task HandleStoreSelected(StoreDto store)
         {
-            Console.WriteLine("HandleStoreSelected" + store.StoreName);
-
-            System.Console.WriteLine(store.Id);
             if (store.Id == Guid.Empty)
             {
                 await GetAllStoreCartsByCompanyId(SelectedCompany.Id);
@@ -86,7 +67,6 @@ namespace WiiTrakClient.Features.Companies
             await UpdateStoreReport(store.Id);
             StateHasChanged();
         }
-
         private async Task GetStoreListByCompanyId()
         {
             _stores = new List<StoreDto>();
@@ -113,7 +93,6 @@ namespace WiiTrakClient.Features.Companies
             _mapStores = new List<StoreDto>();
             _mapStores = await StoreRepository.GetStoresByCompanyId(id);
             _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
-
             //await UpdateStoreReport(id);
         }
         private async Task GetCartsByCompanyId(Guid id)
@@ -123,7 +102,6 @@ namespace WiiTrakClient.Features.Companies
             _mapStores = await StoreRepository.GetStoresByCompanyId(id);
             _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
         }
-
         private async Task GetCartsByStoreId(StoreDto store)
         {
             _carts = await CartRepository.GetCartsByStoreIdAsync(store.Id);
@@ -138,13 +116,11 @@ namespace WiiTrakClient.Features.Companies
                 _filteredCarts = new List<CartDto>();
             }
         }
-
         private async Task UpdateReport(Guid id)
         {
             _report = new CompanyReportDto();
             _report = await CompanyRepository.GetCompanyReportAsync(id);
         }
-
         private async Task UpdateStoreReport(Guid id)
         {
             if (id != Guid.Empty)
@@ -158,7 +134,6 @@ namespace WiiTrakClient.Features.Companies
                 _storeReport = await StoreRepository.GetAllStoreReportByCompanyAsync(SelectedCompany.Id);
             }
         }
-
         private void ShowMapView()
         {
             Console.WriteLine("map view");

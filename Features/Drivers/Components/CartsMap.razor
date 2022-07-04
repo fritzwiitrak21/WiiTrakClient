@@ -31,7 +31,7 @@
     [Parameter]
     public List<RepairIssueDto>? RepairIssues { get; set; } = null;
 
-    private IJSObjectReference? _jsModule = null;
+    private IJSObjectReference? _jsModule;
     private static Random _randomizer = new Random();
     private string[] _markerColors = new string[] {
 "Brown","Blue","Burgundy","DarkBlue","Orange","#31906E","#254117","#CD7F32","#7E3517","#3D0C02","#7D0552","#36013F","Purple","MidnightBlue","DarkGreen","DarkRed","DodgerBlue",
@@ -144,8 +144,6 @@
     [JSInvokable]
     public async Task ShowUpdateCartDialog(Guid cartId)
     {
-        System.Console.WriteLine($"show update cart dialog: {cartId}");
-
         await OpenUpdateCartDialog(cartId);
     }
 

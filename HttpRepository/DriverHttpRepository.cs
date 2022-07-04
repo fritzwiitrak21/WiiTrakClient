@@ -1,103 +1,69 @@
-﻿using WiiTrakClient.DTOs;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using WiiTrakClient.DTOs;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.Services;
 
 namespace WiiTrakClient.HttpRepository
 {
-    public class DriverHttpRepository: IDriverHttpRepository
+    public class DriverHttpRepository : IDriverHttpRepository
     {
         private readonly IHttpService _httpService;
         private const string ControllerName = "drivers";
         private readonly string _apiUrl;
-
         public DriverHttpRepository(IHttpService httpService)
         {
             _httpService = httpService;
             _apiUrl = $"{ httpService.BaseUrl }{ ControllerName }";
         }
-
         public async Task<List<DriverDto>> GetAllDriversAsync()
         {
-            System.Console.WriteLine(_apiUrl);
             var response = await _httpService.Get<List<DriverDto>>(_apiUrl);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
             return response.Response;
         }
         public async Task<List<DriverDto>> GetDriversByCompanyIdAsync(Guid Id)
         {
             var Url = $"{_apiUrl}/Company/{Id}";
             var response = await _httpService.Get<List<DriverDto>>(Url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
             return response.Response;
         }
-
         public async Task<List<DriverDto>> GetDriversBySystemOwnerIdAsync(Guid Id)
         {
             var Url = $"{_apiUrl}/SystemOwner/{Id}";
             var response = await _httpService.Get<List<DriverDto>>(Url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
             return response.Response;
         }
-
+        public async Task<List<DriverDto>> GetDriversByStoreIdAsync(Guid Id)
+        {
+            var Url = $"{_apiUrl}/Store/{Id}";
+            var response = await _httpService.Get<List<DriverDto>>(Url);
+            return response.Response;
+        }
         public async Task<DriverDto> GetDriverByIdAsync(Guid id)
         {
             string url = $"{_apiUrl}/{id}";
-
             var response = await _httpService.Get<DriverDto>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
             return response.Response;
         }
-
         public async Task<DriverReportDto> GetDriverReportAsync(Guid id)
         {
             string url = $"{_apiUrl}/report/{id}";
-
             var response = await _httpService.Get<DriverReportDto>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
             return response.Response;
         }
-
-        public async Task CreateDriverAsync(DriverCreationDto driver)
+        public async Task CreateDriverAsync(DriverDto driver)
         {
-            var response = await _httpService.Post(_apiUrl, driver);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await _httpService.Post(_apiUrl, driver);
         }
-
-        public async Task UpdateDriverAsync(Guid id, DriverUpdateDto driver)
+        public async Task UpdateDriverAsync(Guid id, DriverDto driver)
         {
-
-            var response = await _httpService.Put($"{ _apiUrl }/{ id }", driver);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await _httpService.Put($"{ _apiUrl }/{ id }", driver);
         }
-
         public async Task DeleteDriverAsync(Guid id)
         {
-            var response = await _httpService.Delete($"{ _apiUrl }/{ id }");
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await _httpService.Delete($"{ _apiUrl }/{ id }");
         }
     }
 }

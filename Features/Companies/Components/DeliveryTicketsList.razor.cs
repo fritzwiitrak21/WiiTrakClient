@@ -1,9 +1,12 @@
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor;
 using WiiTrakClient.DTOs;
 using WiiTrakClient.Enums;
-using WiiTrakClient.Features.Companies;
 using WiiTrakClient.Features.Components.Components;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.Cores;
@@ -16,7 +19,7 @@ namespace WiiTrakClient.Features.Companies.Components
         [Inject] IDriverHttpRepository DriverRepository { get; set; }
         [Inject] public IDeliveryTicketHttpRepository DeliveryTicketHttpRepository { get; set; }
         [Inject] public ICartHttpRepository CartHttpRepository { get; set; }
-
+        [Inject] public ICartHistoryHttpRepository CartHistoryHttpRepository { get; set; }
         [Inject] public IStoreHttpRepository StoreHttpRepository { get; set; }
         [Inject] ICartHttpRepository CartRepository { get; set; }
         [Inject] NavigationManager NavManager { get; set; }
@@ -24,19 +27,15 @@ namespace WiiTrakClient.Features.Companies.Components
         public List<DeliveryTicketDto>? DeliveryTickets { get; set; }
         [Parameter]
         public int RecordCount { get; set; }
-
         [Parameter]
         public EventCallback DeliveryTicketUpdatedEventCallback { get; set; }
-
-
-
         [Inject]
         IDialogService? DialogService { get; set; }
 
         DriverDto selectedDriver = new();
-        StoreDto selectedStoreDto = new();
+
         private bool _listIsLoading = true;
-        List<DriverDto> _drivers = new();
+
         List<DeliveryTicketDto> _deliveryTickets = new();
         List<CartDto> _carts = new();
         List<StoreDto> _stores = new();
@@ -47,7 +46,6 @@ namespace WiiTrakClient.Features.Companies.Components
         private string ErrorMessage { get; set; } = "";
         private string SuccessMessage { get; set; } = "";
 
-        private IJSObjectReference JsModule;
 
         protected override void OnParametersSet()
         {
@@ -91,99 +89,19 @@ namespace WiiTrakClient.Features.Companies.Components
                     ServiceProviderId = _editDeliveryTicket.ServiceProviderId,
                     DriverId = _editDeliveryTicket.DriverId,
                     DeliveryTicketNumber = _editDeliveryTicket.DeliveryTicketNumber,
+                    IsActive = true,
                     SignOffRequired = _stores.FirstOrDefault(x => x.Id == _editDeliveryTicket.StoreId).IsSignatureRequired
 
                 };
 
                 await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);
 
-                // update status of carts to delivered and update cart hitory
-                //dont remove the code
-                #region
-                //var carts = _carts.Where(x => x.StoreId == _editDeliveryTicket.StoreId).ToList();
-                //foreach (var cart in carts)
-                //{
-                //    var cartHistory = new CartHistoryUpdateDto
-                //    {
-                //        DeliveryTicketId = deliveryTicketId,
-                //        PickupLatitude = cart.TrackingDevice != null ? cart.TrackingDevice.Latitude : 0,
-                //        PickupLongitude = cart.TrackingDevice != null ? cart.TrackingDevice.Longitude : 0,
-                //        DroppedOffAt = DateTime.Now,
-                //        ServiceProviderId = cart.Store != null ? cart.Store.ServiceProviderId : null,
-                //        StoreId = cart.StoreId,
-                //        DriverId = selectedDriver.Id,
-                //        Condition = cart.Condition,
-                //        Status = CartStatus.InsideGeofence,
-                //        IsDelivered = true,
-                //        CartId = cart.Id
-                //    };
-
-                //    var cartUpdate = new CartUpdateDto
-                //    {
-                //        ManufacturerName = cart.ManufacturerName,
-                //        DateManufactured = cart.DateManufactured,
-                //        OrderedFrom = cart.OrderedFrom,
-                //        Condition = cart.Condition,
-                //        Status = CartStatus.InsideGeofence,
-                //        PicUrl = cart.PicUrl,
-                //        IsProvisioned = cart.IsProvisioned,
-                //        BarCode = cart.BarCode,
-                //        StoreId = cart.StoreId,
-                //        CartHistory = cartHistory
-                //    };
-
-                //    await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
-                //}
-                #endregion
+               
             }
-            _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId,RecordCount);
-            StateHasChanged();
-            //var cartPreUpdate = cart;
+            await RefreshDeliveryTicket();
 
-            //Console.WriteLine("cart id: " + cart.Id);
-
-            //var parameters = new DialogParameters();
-            //parameters.Add("Cart", cart);
-            //parameters.Add("RepairIssues", RepairIssues);
-
-            //DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
-
-            //if (DialogService is null) return;
-
-            //var dialog = DialogService.Show<UpdateCartDialog>("Update Cart", parameters);
-            //var result = await dialog.Result;
-
-            //if (!result.Cancelled)
-            //{
-            //    // save updated cart to backend
-            //    var cartUpdate = new CartUpdateDto
-            //    {
-            //        ManufacturerName = cart.ManufacturerName,
-            //        DateManufactured = cart.DateManufactured,
-            //        OrderedFrom = cart.OrderedFrom,
-            //        Condition = cart.Condition,
-            //        Status = cart.Status,
-            //        PicUrl = cart.PicUrl,
-            //        IsProvisioned = cart.IsProvisioned,
-            //        BarCode = cart.BarCode,
-            //        StoreId = cart.StoreId
-            //    };
-            //    if (CartHttpRepository is null) return;
-            //    await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
-
-            //    // pass update changes back to parent for driver summary
-            //    var cartChange = new CartChange
-            //    {
-            //        Id = cart.Id,
-            //        Status = cart.Status,
-            //        Condition = cart.Condition,
-            //        CreatedAt = DateTime.Now
-            //    };
-            //    await CartUpdatedEventCallback.InvokeAsync(cartChange);
-            //}
         }
         #endregion
-
         #region Details Dialog
         public async Task OpenDeliveryTicketDialog(DeliveryTicketDto deliveryTicket)
         {
@@ -191,6 +109,8 @@ namespace WiiTrakClient.Features.Companies.Components
             var store = await StoreHttpRepository.GetStoreByIdAsync(deliveryTicket.StoreId);
             var deliveryTicketSummary = await DeliveryTicketHttpRepository.GetDeliveryTicketSummaryAsync(deliveryTicket.Id);
             cartsTable = await CartRepository.GetCartsByDeliveryTicketIdAsync(deliveryTicket.Id);
+            var SelectedCartList = await CartHistoryHttpRepository.GetCartHistoryByDeliveryTicketIdAsync(deliveryTicket.Id);
+            parameters.Add("SelectedCartList", SelectedCartList);
             parameters.Add("deliveryTicketDto", deliveryTicket);
             parameters.Add("StoreName", store.StoreNumber + "-" + store.StoreName);
             parameters.Add("deliveryTicketSummary", deliveryTicketSummary);
@@ -200,7 +120,6 @@ namespace WiiTrakClient.Features.Companies.Components
             var dialog = DialogService.Show<DeliveryTicketDetailsDialog>("Delivery Ticket Summary", parameters);
         }
         #endregion
-
         #region Delete Dialog
         public async Task GetConfirmation(DeliveryTicketDto deliveryTicket)
         {
@@ -208,9 +127,9 @@ namespace WiiTrakClient.Features.Companies.Components
             var parameters = new DialogParameters();
             ErrorMessage = "";
             SuccessMessage = "Are you sure do you want to delete this ticket " + deliveryTicket.DeliveryTicketNumber + "?";
-            parameters.Add("DisplayMessage", deliveryTicket == null ? ErrorMessage : SuccessMessage);
+            parameters.Add("DisplayMessage", SuccessMessage);
             parameters.Add("FromWindow", "deliveryicketlist");
-            parameters.Add("IsSuccessNotification", deliveryTicket != null ? false : true);
+            parameters.Add("IsSuccessNotification", true);
 
             DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
@@ -245,10 +164,19 @@ namespace WiiTrakClient.Features.Companies.Components
                 DeliveryTickets = DeliveryTickets.OrderByDescending(y => y.DeliveryTicketNumber).ToList();
                 StateHasChanged();
             }
-            _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId,RecordCount);
-            StateHasChanged();
+            await RefreshDeliveryTicket();
             #endregion
         }
         #endregion
+        async Task RefreshDeliveryTicket()
+        {
+            _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, RecordCount);
+            if (_deliveryTickets is not null)
+            {
+                DeliveryTickets = _deliveryTickets;
+            }
+            StateHasChanged();
+        }
     }
+    
 }

@@ -1,17 +1,31 @@
 ﻿@using WiiTrakClient.Features.Stores.Components
-
 @namespace WiiTrakClient.Features.Stores.Components
 
-<MudTable Items="@Carts" Class="Pagingstyle" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@_listIsLoading"
+<MudTable Items="@Carts" Class="Pagingstyle" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@ListIsLoading"
     LoadingProgressColor="Color.Primary">
     <HeaderContent>
-        <MudTh>
+        @*<MudTh>
             Photo
-        </MudTh>
-        <MudTh>
+        </MudTh>*@
+        @*<MudTh>
             <MudTableSortLabel InitialDirection="@SortDirection.Ascending"
                 SortBy="new Func<CartDto, object>(x => x.Store.StoreName)">Store
             </MudTableSortLabel>
+        </MudTh>*@
+        <MudTh>
+            <MudTableSortLabel 
+                SortBy="new Func<CartDto, object>(x=>x.CartNumber)">Cart Number</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel 
+                SortBy="new Func<CartDto, object>(x=>x.ManufacturerName)">Manufacturer Name</MudTableSortLabel>
+        </MudTh>
+        @*<MudTh>
+            <MudTableSortLabel InitialDirection="@SortDirection.Descending"
+                SortBy="new Func<CartDto, object>(x=>x.DateManufactured)">Manufactured Date</MudTableSortLabel>
+        </MudTh>*@
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CartDto, object>(x=>x.OrderedFrom)">Ordered From</MudTableSortLabel>
         </MudTh>
         <MudTh>
             <MudTableSortLabel SortBy="new Func<CartDto, object>(x=>x.Status)">Status</MudTableSortLabel>
@@ -19,15 +33,32 @@
         <MudTh>
             <MudTableSortLabel SortBy="new Func<CartDto, object>(x=>x.Condition)">Condition</MudTableSortLabel>
         </MudTh>
-        <MudTh></MudTh>
+        @*<MudTh></MudTh>*@
         <MudTh></MudTh>
     </HeaderContent>
 
     <RowTemplate>
-        <MudTd DataLabel="Photo">
+        @*<MudTd DataLabel="Photo">
             <img src="@context.PicUrl" width="48" height="48" />
+        </MudTd>*@
+        @*<MudTd DataLabel="Store">@context.Store.StoreName - @context.Store.StoreNumber</MudTd>*@
+        <MudTd DataLabel="Cart Number">@context.CartNumber</MudTd>
+        <MudTd DataLabel="Manufacturer Name">@context.ManufacturerName</MudTd>
+        @*<MudTd DataLabel="Manufactured Date">@context.DateManufactured</MudTd>*@
+        <MudTd DataLabel="Ordered From">
+            @switch (context.OrderedFrom)
+            {
+                case CartOrderedFrom.Manufacture:
+                    <span>Manufacture</span>
+                    break;
+                case CartOrderedFrom.Seller:
+                    <span>Seller</span>
+                    break;
+                case CartOrderedFrom.Lessor:
+                    <span>Lessor</span>
+                    break;
+            }
         </MudTd>
-        <MudTd DataLabel="Store">@context.Store.StoreName #@context.Store.StoreNumber</MudTd>
         <MudTd DataLabel="Status">
             @switch (context.Status)
             {
@@ -44,7 +75,6 @@
                     <span style="background:#ff474c;padding:2px;">Lost</span>
                     break;
             }
-
         </MudTd>
         <MudTd DataLabel="Condition">
             @switch (context.Condition)
@@ -60,11 +90,17 @@
                     break;
             }
         </MudTd>
-        <MudTd DataLabel="">
+        @*<MudTd DataLabel="">
             <MudButton StartIcon="@Icons.Material.Filled.LocationOn" Variant="Variant.Filled" Color="Color.Secondary"
                 OnClick="((e) => OpenCartDetailsDialog(context))">View
             </MudButton>
-
+        </MudTd>*@
+        <MudTd DataLabel="Action">           
+            <MudButton 
+                Variant="Variant.Filled" 
+                Color="Color.Primary" 
+                OnClick="((e) => OpenDialog(context))">Update
+            </MudButton>
         </MudTd>
     </RowTemplate>
     <PagerContent>

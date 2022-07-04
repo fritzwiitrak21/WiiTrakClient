@@ -4,41 +4,132 @@
 @using WiiTrakClient.Shared.Chart
 @using WiiTrakClient.Shared.Components
 @inject INotificationHttpRepository NotifyHttpRepository
+@inject IMessageHttpRepository MessageHttpRepository
 
 <UserAuthentication />
 <PageTitle>WiiTrak</PageTitle>
 <h2>Welcome to WiiTrak</h2>
+<style>
+    .PanelStyle .HeaderStyle {
+        display: none;
+    }
 
+    .PanelStyle {
+        max-height: 34vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+        .PanelStyle .container.containerscroll {
+            overflow: visible;
+            height: auto;
+            max-height: max-content;
+        }
+</style>
 @code {
     [Inject] IJSRuntime JsRuntime { get; set; }
     private IJSObjectReference JsModule;
     protected override async Task OnInitializedAsync()
     {
-        JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-        if (CurrentUser.UserId == Guid.Empty)
+        try
         {
-            var Id = await JsModule.InvokeAsync<string>("getUserId");
-            CurrentUser.UserId = new Guid(Id);
-            var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
-            CurrentUser.UserRoleId = Convert.ToInt32(roleid);
-        }
-        Core.NotificationsList = await NotifyHttpRepository.GetNotificationIdAsync(CurrentUser.UserId);
-        Core.NotificationCount = Core.NotificationsList.Where(x => x.IsNotified == false).Count();
-        StateHasChanged();
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            if (CurrentUser.UserId == Guid.Empty)
+            {
+                var Id = await JsModule.InvokeAsync<string>("getUserId");
+                CurrentUser.UserId = new Guid(Id);
+                var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
+                CurrentUser.UserRoleId = Convert.ToInt32(roleid);
+            }
+            if (CurrentUser.UserRoleId == 5)
+            {
+                Core.NotificationsList = await NotifyHttpRepository.GetNotificationIdAsync(CurrentUser.UserId);
+                if (Core.NotificationsList != null && Core.NotificationsList.Count() > 0)
+                {
+                    Core.NotificationCount = Core.NotificationsList.Where(x => x.IsNotified == false).Count();
+                }
+                else
+                {
+                    Core.NotificationCount = 0;
+                }
+                StateHasChanged();
+                await JsModule.InvokeVoidAsync("getCoord", false);
+                var CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
+                await JsModule.InvokeVoidAsync("ClearCoord");
+            }
+            Core.MessagesList = await MessageHttpRepository.GetMessagesByIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+            if (Core.MessagesList != null && Core.MessagesList.Count() > 0)
+            {
+                Core.MessageCount = Core.MessagesList.Where(x => x.DeliveredAt == null).Count();
+            }
+            else
+            {
+                Core.MessageCount = 0;
+            }
 
-        if (CurrentUser.UserRoleId == 5)
+        }
+        catch (Exception ex)
         {
-            await JsModule.InvokeVoidAsync("getCoord", false);
-            var CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
-            await JsModule.InvokeVoidAsync("ClearCoord");
+
         }
     }
 }
-@if (Core.NotificationsList.Count > 0 && CurrentUser.UserRoleId == 5)
+
+
+@if (CurrentUser.UserRoleId == 5)
 {
-    <NotificationPanel />
+    if (Core.NotificationsList != null && Core.NotificationsList.Count() > 0 && Core.MessagesList != null && Core.MessagesList.Count() > 0)
+    {
+        @if (Core.NotificationCount > 0)
+        {
+            <MudBadge Content="@Core.NotificationCount" Overlap="true" Class="mx-6 my-4" Color="Color.Error">
+                <p style="font-size:22px">Notifications <MudIcon Icon="@Icons.Filled.Notifications" /></p>
+            </MudBadge>
+        }
+        else
+        {
+            <MudBadge Content="@Core.NotificationCount" Overlap="true" Class="mx-6 my-4 Count0" Color="Color.Error">
+                <p style="font-size:22px">Notifications <MudIcon Icon="@Icons.Filled.Notifications" /></p>
+            </MudBadge>
+        }
+        <div class="PanelStyle">
+            <NotificationPanel />
+        </div>
+
+        @if (Core.MessageCount > 0)
+        {
+            <MudBadge Content="@Core.MessageCount" Overlap="true" Class="mx-6 my-4" Color="Color.Error">
+                <p style="font-size:22px">Messages <MudIcon Icon="@Icons.Sharp.Message" /></p>
+            </MudBadge>
+        }
+        else
+        {
+            <MudBadge Content="@Core.MessageCount" Overlap="true" Class="mx-6 my-4 Count0" Color="Color.Error">
+                <p style="font-size:22px">Messages <MudIcon Icon="@Icons.Sharp.Message" /></p>
+            </MudBadge>
+        }
+        <div class="PanelStyle">
+            <MessagePanel />
+        </div>
+    }
+    else if (Core.NotificationsList != null && Core.NotificationsList.Count() > 0)
+    {
+        <div>
+            <NotificationPanel />
+        </div>
+    }
+    else if (Core.MessagesList != null && Core.MessagesList.Count() > 0)
+    {
+        <div>
+            <MessagePanel />
+        </div>
+    }
+
 }
-@if (CurrentUser.UserRoleId <= 4)
+@if (CurrentUser.UserRoleId <= 4 && Core.ServiceBoardCount > 0)
 {
     <ServiceBoardChart />
 }
+
+

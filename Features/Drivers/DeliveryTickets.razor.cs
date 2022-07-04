@@ -1,25 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using WiiTrakClient.Features.Drivers.Models;
-using WiiTrakClient.Features.Drivers.Components;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.DTOs;
 using WiiTrakClient.Cores;
-using MudBlazor;
 using WiiTrakClient.Enums;
-using WiiTrakClient.Helpers;
+using MudBlazor;
+using WiiTrakClient.Features.Drivers.Components;
 
 namespace WiiTrakClient.Features.Drivers
 {
     public partial class DeliveryTickets : ComponentBase
     {
-        
+
         [Inject] IJSRuntime JsRuntime { get; set; }
 
         [Inject] IDriverHttpRepository DriverRepository { get; set; }
@@ -46,8 +42,8 @@ namespace WiiTrakClient.Features.Drivers
         private double Latitude;
         private double Longitude;
 
-        public int SelectedOption = 30;
-        public int TempSelectedOption = 0;
+        int SelectedOption = 30;
+        int TempSelectedOption;
         protected override async Task OnInitializedAsync()
         {
 
@@ -75,15 +71,16 @@ namespace WiiTrakClient.Features.Drivers
                 }
                 TempStores = _stores = await StoreHttpRepository.GetStoresByDriverId(CurrentUser.UserId);
                 await GetDeliveryTicketsByDriverId(CurrentUser.UserId);
-            
+
                 SelectedDriver = await DriverRepository.GetDriverByIdAsync(CurrentUser.UserId);
+
             }
-            catch 
+            catch
             {
                 //Exsception
             }
             await HandleDriverSelected();
-           
+
         }
 
         private async Task HandleDriverSelected()
@@ -95,7 +92,7 @@ namespace WiiTrakClient.Features.Drivers
         #region GetDeliveryTicketsByDriverId
         private async Task GetDeliveryTicketsByDriverId(Guid id)
         {
-            deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(id,(Role)CurrentUser.UserRoleId, SelectedOption);
+            deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(id, (Role)CurrentUser.UserRoleId, SelectedOption);
 
             if (deliveryTickets is not null)
             {
@@ -106,7 +103,7 @@ namespace WiiTrakClient.Features.Drivers
                         item.DriverStoresIsActive = TempStores.FirstOrDefault(x => x.Id == item.StoreId).DriverStoresIsActive;
                         item.StoresIsActive = TempStores.FirstOrDefault(x => x.Id == item.StoreId).IsActive;
                     }
-                    catch 
+                    catch
                     {
                         //Exception
                     }
@@ -150,7 +147,7 @@ namespace WiiTrakClient.Features.Drivers
                 Longitude = Core.ToDouble(Lon);
                 await JsModule.InvokeVoidAsync("ClearCoord");
             }
-            catch 
+            catch
             {
                 await JsModule.InvokeVoidAsync("ClearCoord");
             }
@@ -158,14 +155,12 @@ namespace WiiTrakClient.Features.Drivers
             FindDistance();
             var parameters = new DialogParameters();
             _newDeliveryTicket = new DeliveryTicketCreationDto();
-
             parameters.Add("NewDeliveryTicket", _newDeliveryTicket);
             parameters.Add("Driver", SelectedDriver);
             parameters.Add("Carts", _carts);
             parameters.Add("Stores", _stores);
             parameters.Add("Latitude", Latitude);
             parameters.Add("Longitude", Longitude);
-
             DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
             var dialog = DialogService.Show<AddDeliveryTicketDialog>("New Delivery Ticket", parameters);
@@ -189,8 +184,8 @@ namespace WiiTrakClient.Features.Drivers
                 await GetDeliveryTicketsByDriverId(CurrentUser.UserId);//Refreshing the data in the grid once new ticket added
 
                 // update status of carts to delivered and update cart hitory
-                var carts = _carts.Where(x => x.StoreId == _newDeliveryTicket.StoreId).ToList();
-                foreach (var cart in carts)
+                //var carts = _carts.Where(x => x.StoreId == _newDeliveryTicket.StoreId && x.Status==(CartStatus)2).ToList();
+                foreach (var cart in _newDeliveryTicket.PickedUpCarts)
                 {
                     if (!deliveryTicketResponse.SignOffRequired)
                     {
@@ -198,8 +193,8 @@ namespace WiiTrakClient.Features.Drivers
                         {
                             var newWorkOrder = new WorkOrderCreationDto
                             {
-                                Issue = cart.DamageIssue,
-                                Notes = "",
+                                Issue = cart.IssueType,
+                                Notes = cart.IssueDescription,
                                 CartId = cart.Id,
                                 StoreId = cart.Store != null ? cart.Store.Id : null,
                                 DriverId = CurrentUser.UserId
@@ -219,9 +214,12 @@ namespace WiiTrakClient.Features.Drivers
                         StoreId = cart.StoreId,
                         DriverId = CurrentUser.UserId,
                         Condition = cart.Condition,
-                        Status = CartStatus.PickedUp,// CartStatus.InsideGeofence,
+                        Status = CartStatus.InsideGeofence,
                         IsDelivered = true,
-                        CartId = cart.Id
+                        CartId = cart.Id,
+                        IssueType = cart.IssueType,
+                        IssueDescription = cart.IssueDescription,
+                        DeviceId = cart.DeviceId
                     };
 
                     var cartUpdate = new CartUpdateDto
@@ -230,11 +228,14 @@ namespace WiiTrakClient.Features.Drivers
                         DateManufactured = cart.DateManufactured,
                         OrderedFrom = cart.OrderedFrom,
                         Condition = cart.Condition,
-                        Status = CartStatus.PickedUp,// CartStatus.InsideGeofence,
+                        Status = CartStatus.InsideGeofence,
                         PicUrl = cart.PicUrl,
                         IsProvisioned = cart.IsProvisioned,
                         BarCode = cart.BarCode,
                         StoreId = cart.StoreId,
+                        CartNumber = cart.CartNumber,
+                        IssueType = cart.IssueType,
+                        IssueDescription = cart.IssueDescription,
                         CartHistory = cartHistory
                     };
 
@@ -246,7 +247,7 @@ namespace WiiTrakClient.Features.Drivers
         #endregion
 
         #region Get Distance
-        private double Getdistance(double lat2, double lon2, char unit = 'K')
+        private double Getdistance(double lat2, double lon2)
         {
             double lat1 = Latitude;
             double lon1 = Longitude;
@@ -258,28 +259,22 @@ namespace WiiTrakClient.Features.Drivers
             else
             {
                 double theta = lon1 - lon2;
-                double dist = Math.Sin(deg2rad(lat1)) * Math.Sin(deg2rad(lat2)) + Math.Cos(deg2rad(lat1)) * Math.Cos(deg2rad(lat2)) * Math.Cos(deg2rad(theta));
+                double dist = Math.Sin(degtorad(lat1)) * Math.Sin(degtorad(lat2)) + Math.Cos(degtorad(lat1)) * Math.Cos(degtorad(lat2)) * Math.Cos(degtorad(theta));
                 dist = Math.Acos(dist);
-                dist = rad2deg(dist);
+                dist = radtodeg(dist);
                 dist = dist * 60 * 1.1515;
-                if (unit == 'K')
-                {
-                    dist = dist * 1.609344;
-                }
-                else if (unit == 'N')
-                {
-                    dist = dist * 0.8684;
-                }
+                dist = dist * 1.609344;
+
                 return (dist);
             }
         }
 
-        private double deg2rad(double deg)
+        private double degtorad(double deg)
         {
             return (deg * Math.PI / 180.0);
         }
 
-        private double rad2deg(double rad)
+        private double radtodeg(double rad)
         {
             return (rad / Math.PI * 180.0);
         }

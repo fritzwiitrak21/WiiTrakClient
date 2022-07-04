@@ -1,0 +1,154 @@
+﻿@page "/message"
+@using WiiTrakClient.DTOs
+@using WiiTrakClient.Cores
+@inject IMessageHttpRepository MessageHttpRepository
+
+<UserAuthentication />
+<head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .containerscroll {
+            max-height: Calc(100vh - 240px);
+            height: 100%;
+            overflow: auto;
+        }
+
+        .store-details {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-right: 4px;
+        }
+
+        .material-icons {
+            font-size: 1.5em;
+            position: relative;
+            top: 5px;
+            margin-right: 0.5em;
+        }
+
+        .message-text {
+            max-width: calc(100% - 30px);
+            padding-top: 5px;
+            font-size: 1.1em;
+        }
+
+        .okbutton {
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+        }
+
+        .cancelbutton {
+            background-color: #f44336;
+            color: white;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body style="height:auto">
+    @if (Core.MessageCount > 0)
+    {
+        <MudBadge Content="@Core.MessageCount" Overlap="true" Class="mx-6 my-4 HeaderStyle" Color="Color.Error">
+            <p style="font-size:22px">Messages <MudIcon Icon="@Icons.Sharp.Message" /></p>
+        </MudBadge>
+    }
+    else
+    {
+        <MudBadge Content="@Core.MessageCount" Overlap="true" Class="mx-6 my-4 Count0 HeaderStyle" Color="Color.Error">
+            <p style="font-size:22px">Messages <MudIcon Icon="@Icons.Sharp.Message" /></p>
+        </MudBadge>
+    }
+    <div class="container containerscroll">
+
+        <div>
+            @if (Core.MessagesList != null && Core.MessagesList.Count() > 0)
+            {
+                foreach (var message in Core.MessagesList)
+                {
+
+                    <div class="alert alert-success" style="display: inline-block;width: 100%">
+                        <div class="row">
+                            <div style="width:30px">
+                                <i class="material-icons">sms</i>
+                            </div>
+                            <div class="message-text">
+                                Hey,<br />
+                                @if (@message.Address.Trim().Length > 0)
+                                {
+                                    <p>
+                                        A cart belongs to the store <b>@message.Store</b>
+                                        is located in this address <span class="store-details">@message.Address</span>
+                                        Please pick that cart.
+                                    </p>
+                                }
+                                @if (message.Message.Trim().Length > 0)
+                                {
+                                    <div>
+                                        Additional Message:<br />
+                                        @message.Message
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div style="float:right">
+
+                            <button class="okbutton" onclick="@(() => ActionTaken(message,"Picked"))"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Picked</button>
+                            <button class="cancelbutton" onclick="@(() => ActionTaken(message,"Not Picked"))"><i class="fa fa-times" aria-hidden="true"></i>&nbsp;Not Picked</button>
+                        </div>
+                    </div>
+
+                }
+            }
+            else
+            {
+                <div class="alert card purple lighten-4 purple-text text-darken-3">
+                    <div class="row">
+                        <div style="width:30px">
+                            <i class="material-icons">sms</i>
+                        </div>
+                        <div class="message-text">
+                            You do not have any message(s). Have a great day.
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</body>
+
+@code {
+    [Inject] IJSRuntime JsRuntime { get; set; }
+    private IJSObjectReference JsModule;
+    protected override async Task OnInitializedAsync()
+    {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+            var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
+            CurrentUser.UserRoleId = Convert.ToInt32(roleid);
+            Core.MessagesList = await MessageHttpRepository.GetMessagesByIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+        }
+
+        Core.MessageCount = Core.MessagesList.Where(x => x.DeliveredAt == null).Count();
+        await MessageHttpRepository.UpdateMessageDeliveredTimeAsync();
+        StateHasChanged();
+    }
+    private async Task ActionTaken(MessagesDto messagedto, string Action)
+    {
+        messagedto.ActionTaken = Action;
+        await MessageHttpRepository.UpdateMessageActionAsync(messagedto);
+        Core.MessagesList = await MessageHttpRepository.GetMessagesByIdAsync(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
+        if (Core.MessagesList != null && Core.MessagesList.Count() > 0)
+        {
+            Core.MessageCount = Core.MessagesList.Where(x => x.DeliveredAt == null).Count();
+        }
+        else
+        {
+            Core.MessageCount = 0;
+        }
+        StateHasChanged();
+    }
+
+}

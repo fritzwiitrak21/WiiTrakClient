@@ -55,8 +55,8 @@
 
 @code {
     [Parameter]
-    public DriverCreationDto? NewDriver {get; set;}
-    
+    public DriverDto? NewDriver {get; set;}
+
     public List<CompanyDto> companies { get; set; } = new();
 
     public CompanyDto SelectedCompany = new();
@@ -79,7 +79,7 @@
         } 
     } 
     protected override void OnParametersSet() {
-            
+
     }
 
     void Submit() 
@@ -88,7 +88,7 @@
         if (success && errors.Length == 0)
         {
             MudDialog.Close(DialogResult.Ok(true));
-        } 
+        }
     }
     void Cancel() => MudDialog.Cancel();
 }

@@ -84,7 +84,7 @@
         if (!result.Cancelled) 
         {
             // save updated driver to backend
-            var driverUpdate = new DriverUpdateDto {
+            var driverUpdate = new DriverDto {
                 FirstName = driver.FirstName,
                 LastName = driver.LastName,
                 Email = driver.Email,
@@ -98,7 +98,9 @@
                 CompanyId = driver.CompanyId,
                 SystemOwnerId = CurrentUser.UserId,
                 IsSuspended=driver.IsSuspended,
-                IsActive=!driver.IsTerminated 
+                IsActive=!driver.IsTerminated,
+                Id=driver.Id,
+                CreatedAt=driver.CreatedAt,
             };
            await DriverHttpRepository.UpdateDriverAsync(driver.Id, driverUpdate);
            

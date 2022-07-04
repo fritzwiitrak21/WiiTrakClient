@@ -76,15 +76,15 @@
     //        SelectedCompany = Companys[0];
     //        Driver.CompanyId = SelectedCompany.Id;
     //    }
-        
-        
+
+
     //} 
     protected override void OnParametersSet() {
         //if (Companys != null && Companys.Count() >= 1) 
         //{
         //    SelectedCompany = Companys.Where(x => x.Id == Driver.CompanyId).FirstOrDefault();
         //}
-            
+
     }
 
     void Submit() 
@@ -93,7 +93,7 @@
         if (success && errors.Length == 0)
         {
             MudDialog.Close(DialogResult.Ok(true));
-        } 
+        }
     }
     void Cancel() => MudDialog.Cancel();
 }

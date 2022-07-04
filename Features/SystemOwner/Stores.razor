@@ -1,9 +1,6 @@
 ﻿@page "/system-owner-stores"
-
-
 @using WiiTrakClient.Features.SystemOwner.Components
 @using WiiTrakClient.Cores
-
 @inject IJSRuntime JsRuntime
 @inject IDialogService DialogService
 @inject IStoreHttpRepository StoreHttpRepository
@@ -29,8 +26,6 @@
     {
         if (stores.Count > 0)
         {
-
-            
             <StoreList Stores="@stores" />
         }
         else
@@ -38,14 +33,10 @@
             <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
         }
     }
-
 </div>
-
-
 
 @code {
     List<StoreDto> stores = new();
-
     StoreCreationDto AddStore = new();
     bool LoaderVisibility = false;
     private IJSObjectReference JsModule;
@@ -61,18 +52,14 @@
         stores = await StoreHttpRepository.GetStoresBySystemOwnerId(CurrentUser.UserId);
         LoaderVisibility = false;
     }
-
     private async Task OpenDialog()
     {
         var parameters = new DialogParameters();
         AddStore = new StoreCreationDto();
         parameters.Add("NewStore", AddStore);
-
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
-
         var dialog = DialogService.Show<AddStoreDialog>("Add Store", parameters);
         var result = await dialog.Result;
-
         if (!result.Cancelled)
         {
             // add new store to backend
@@ -95,7 +82,8 @@
                     IsActive = true,
                     CountyCode = AddStore.CountyCode,
                     ServiceFrequency = AddStore.ServiceFrequency,
-                    StartDate = AddStore.StartDate
+                    StartDate = AddStore.StartDate,
+                    IsConnectedStore=AddStore.IsConnectedStore,
                 };
             await StoreHttpRepository.CreateStoreAsync(storeCreation);
             stores = await StoreHttpRepository.GetStoresBySystemOwnerId(CurrentUser.UserId);

@@ -1,0 +1,144 @@
+﻿@namespace WiiTrakClient.Features.Technicians.Components
+@using System.ComponentModel.DataAnnotations
+@using System.Collections
+
+<MudDialog>
+    <DialogContent>
+        <div style="width: 400px; height:350px; overflow-y: auto; overflow-x: hidden;">
+            <MudForm @ref=form Model="@Cart" @bind-IsValid="@success" @bind-Errors="@errors">
+                <DataAnnotationsValidator />
+                <MudInputLabel>@Cart.ManufacturerName  #@Cart.CartNumber</MudInputLabel>
+                @if (SelectedStore == null)
+                {
+                    <MudItem>
+                        <MudSelect T=StoreDto ValueChanged="(value) => HandleStore(value)"
+                               Label="Select Store" AnchorOrigin="Origin.BottomCenter"
+                               Required=true RequiredError="">
+                            @if (Stores != null)
+                            {
+                                @foreach (var store in Stores)
+                                {
+                                     if (store.IsConnectedStore)
+                                    {
+                                        <MudSelectItem Value="@store">@store.StoreName - @store.StoreNumber</MudSelectItem>
+                                    }
+                                }
+                            }
+                        </MudSelect>
+                    </MudItem>
+                }
+                else
+                {
+                    <MudItem>
+                        <MudSelect T=StoreDto Value="@SelectedStore" ValueChanged="(value) => HandleStore(value)"
+                               Label="Select Store" AnchorOrigin="Origin.BottomCenter"
+                               Required=true RequiredError="">
+                            @if (Stores != null)
+                            {
+                                @foreach (var store in Stores)
+                                {
+                                    if (store.IsConnectedStore)
+                                    {
+                                        <MudSelectItem Value="@store">@store.StoreName - @store.StoreNumber</MudSelectItem>
+                                    }
+                                }
+                            }
+                        </MudSelect>
+                    </MudItem>
+                }
+                <MudItem>
+                    @if (SelectedDevice == null)
+                    {
+                        <MudSelect T=DevicesDto ValueChanged="(value) => HandleDevice(value)"
+                               Label="Select Device" AnchorOrigin="Origin.BottomCenter"
+                               Required=true RequiredError="">
+                            @if (DeviceList != null)
+                            {
+                                @foreach (var device in DeviceList)
+                                {
+                                    if (!device.IsMapped)
+                                    {
+                                        <MudSelectItem Value="@device">@device.DeviceName - @device.DeviceModel</MudSelectItem>
+                                    }
+                                }
+                            }
+                        </MudSelect>
+                    }
+                    else
+                    {
+                        <MudSelect T=DevicesDto Value=@SelectedDevice ValueChanged="(value) => HandleDevice(value)"
+                               Label="Select Device" AnchorOrigin="Origin.BottomCenter"
+                               Required=true RequiredError="">
+                            @if (DeviceList != null)
+                            {
+                                <MudSelectItem Value="@SelectedDevice">@SelectedDevice.DeviceName - @SelectedDevice.DeviceModel</MudSelectItem>
+
+                                @foreach (var device in DeviceList)
+                                {
+                                    if (!device.IsMapped)
+                                    {
+                                        <MudSelectItem Value="@device">@device.DeviceName - @device.DeviceModel</MudSelectItem>
+                                    }
+                                }
+                            }
+                        </MudSelect>
+                    }
+                </MudItem>
+                <br />
+                <div class="d-flex">
+                    <MudButton OnClick="Cancel">Cancel</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                </div>
+                <br />
+            </MudForm>
+        </div>
+    </DialogContent>
+</MudDialog>
+@code {
+    [Parameter]
+    public CartDto? Cart { get; set; }
+
+    [Parameter]
+    public List<StoreDto>? Stores { get; set; }
+    [Parameter]
+    public List<DevicesDto>? DeviceList { get; set; }
+    public StoreDto SelectedStore = new();
+    public DevicesDto SelectedDevice = new();
+    bool success;
+    string[] errors = { };
+    MudForm form;
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+    protected override void OnParametersSet()
+    {
+        try
+        {
+            SelectedStore = Stores.Where(x => x.Id == Cart.StoreId).FirstOrDefault();
+            SelectedDevice = DeviceList.Where(x => x.Id == Cart.DeviceId).FirstOrDefault();
+        }
+        catch
+        {
+            StoreDto SelectedStore = new();
+            DevicesDto SelectedDevice = new();
+        }
+    }
+    public async Task HandleStore(StoreDto value)
+    {
+        Cart.StoreId = value.Id;
+        SelectedStore = value;
+    }
+    public async Task HandleDevice(DevicesDto value)
+    {
+        Cart.DeviceId = value.Id;
+        SelectedDevice = value;
+    }
+    void Submit()
+    {
+        form.Validate();
+        if (success && errors.Length == 0)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+    }
+    void Cancel() => MudDialog.Cancel();
+}

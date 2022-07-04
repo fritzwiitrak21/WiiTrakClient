@@ -1,69 +1,57 @@
-﻿using WiiTrakClient.DTOs;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using WiiTrakClient.DTOs;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.Services;
 
 namespace WiiTrakClient.HttpRepository
 {
-    public class TechnicianHttpRepository: ITechnicianHttpRepository
+    public class TechnicianHttpRepository : ITechnicianHttpRepository
     {
-        private readonly IHttpService _httpService;
+        private readonly IHttpService Httpservice;
         private const string ControllerName = "technicians";
-        private readonly string _apiUrl;
-
-        public TechnicianHttpRepository(IHttpService httpService)
+        private readonly string ApiUrl;
+        public TechnicianHttpRepository(IHttpService HttpService)
         {
-            _httpService = httpService;
-            _apiUrl = $"{ httpService.BaseUrl }{ ControllerName }";
+            Httpservice = HttpService;
+            ApiUrl = $"{ HttpService.BaseUrl }{ ControllerName }";
         }
-
         public async Task<List<TechnicianDto>> GetAllTechniciansAsync()
         {
-            var response = await _httpService.Get<List<TechnicianDto>>(_apiUrl);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            var response = await Httpservice.Get<List<TechnicianDto>>(ApiUrl);
             return response.Response;
         }
-
         public async Task<TechnicianDto> GetTechnicianByIdAsync(Guid id)
         {
-            string url = $"{_apiUrl}/{id}";
-
-            var response = await _httpService.Get<TechnicianDto>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            string url = $"{ApiUrl}/{id}";
+            var response = await Httpservice.Get<TechnicianDto>(url);
             return response.Response;
         }
-
-        public async Task CreateTechnicianAsync(TechnicianCreationDto technician)
+        public async Task<List<TechnicianDto>> GetTechniciansBySystemOwnerIdAsync(Guid id)
         {
-            var response = await _httpService.Post(_apiUrl, technician);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            string url = $"{ApiUrl}/systemowner/{id}";
+            var response = await Httpservice.Get<List<TechnicianDto>>(url);
+            return response.Response;
         }
-
-        public async Task UpdateTechnicianAsync(Guid id, TechnicianUpdateDto client)
+        public async Task<List<TechnicianDto>> GetTechniciansByCompanyIdAsync(Guid id)
         {
-
-            var response = await _httpService.Put($"{ _apiUrl }/{ id }", client);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            string url = $"{ApiUrl}/company/{id}";
+            var response = await Httpservice.Get<List<TechnicianDto>>(url);
+            return response.Response;
         }
-
+        public async Task CreateTechnicianAsync(TechnicianDto technician, int RoleId)
+        {
+            await Httpservice.Post($"{ApiUrl}/{RoleId}", technician);
+        }
+        public async Task UpdateTechnicianAsync(Guid id, TechnicianDto client, int RoleId)
+        {
+            await Httpservice.Put($"{ ApiUrl }/{ id }/{RoleId}", client);
+        }
         public async Task DeleteTechnicianAsync(Guid id)
         {
-            var response = await _httpService.Delete($"{ _apiUrl }/{ id }");
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            await Httpservice.Delete($"{ ApiUrl }/{ id }");
         }
     }
 }

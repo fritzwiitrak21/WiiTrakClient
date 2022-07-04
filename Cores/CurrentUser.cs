@@ -1,4 +1,8 @@
-﻿using System.Data;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Data;
 using System.Reflection;
 using WiiTrakClient.DTOs;
 
@@ -12,25 +16,32 @@ namespace WiiTrakClient.Cores
         public static bool IsFirstLogin { get; set; }
         public static DateTime PasswordLastUpdatedAt { get; set; }
         public static int UserRoleId { get; set; }
-        public static string Password { get;set; } = string.Empty;
+        public static string Password { get; set; } = string.Empty;
     }
 
     public static class Core
     {
         public static Guid SelectedDriverId { get; set; }
-        public static int NotificationCount { get; set; } = 0;
-        public static List<NotificationDto> NotificationsList { get; set; } = new();
+        public static int NotificationCount { get; set; }
+        public static List<NotificationDto>? NotificationsList { get; set; }
+        public static int ServiceBoardCount { get; set; }
+        public static List<ServiceBoardDto>? ServiceBoardList { get; set; }
+
+        public static int MessageCount { get; set; }
+        public static List<MessagesDto>? MessagesList { get; set; }
 
         public static double ToDouble(string Value)
         {
             return double.Parse(Value, System.Globalization.CultureInfo.InvariantCulture);
         }
-
-
         public static string ToPascalCase(string Text)
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(Text))
+                {
+                    return Text;
+                }
                 return string.Join(" ", Text.Split(' ').Select(w => w.Trim()).Where(w => w.Length > 0)
                         .Select(w => w.Substring(0, 1).ToUpper() + w.Substring(1).ToLower()));
             }
@@ -84,7 +95,6 @@ namespace WiiTrakClient.Cores
             try
             {
                 DataTable dataTable = new DataTable(typeof(T).Name);
-
                 //Get all the properties
                 PropertyInfo[] Props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
                 foreach (PropertyInfo prop in Props)
@@ -107,14 +117,12 @@ namespace WiiTrakClient.Cores
                 //put a breakpoint here and check datatable
                 return dataTable;
             }
-            catch 
+            catch
             {
 
                 return null;
             }
         }
         #endregion
-
-
     }
 }

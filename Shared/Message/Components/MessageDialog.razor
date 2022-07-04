@@ -1,0 +1,168 @@
+﻿@namespace WiiTrakClient.Shared.Message.Components
+@using System.ComponentModel.DataAnnotations
+@using System.Collections
+@using WiiTrakClient.Cores
+@inject IJSRuntime JsRuntime
+@inject IDriverHttpRepository DriverHttpRepository
+<style>
+    .TextWidth {
+        width: 500px;
+    }
+</style>
+<MudDialog>
+    <DialogContent>
+        <div style="width: 1000px; height:600px; overflow-y: auto; overflow-x: hidden;">
+            <MudForm @ref=form Model="@Messages" @bind-IsValid="@success" @bind-Errors="@errors">
+                <MudItem Class="TextWidth">
+                    @if (CurrentUser.UserRoleId == 6)
+                    {
+                        <h4>Store Name: @Stores[0].StoreName - @Stores[0].StoreNumber</h4>
+                    }
+                    else
+                    {
+                        <MudSelect T=StoreDto ValueChanged="(value) => HandleStore(value)"
+                               Label="Select Store" AnchorOrigin="Origin.BottomCenter"
+                               Required=true RequiredError="">
+                            @if (Stores != null)
+                            {
+                                @foreach (var store in Stores)
+                                {
+                                    <MudSelectItem Value="@store">@store.StoreName - @store.StoreNumber</MudSelectItem>
+                                }
+                            }
+                        </MudSelect>
+                    }
+                </MudItem>
+                <MudItem Class="TextWidth">
+                    <MudSelect T=DriverDto ValueChanged="(value) => HandleDriver(value)"
+                               Label="Select Driver" AnchorOrigin="Origin.BottomCenter"
+                               Required=true RequiredError="">
+                        @if (Driver != null)
+                        {
+                            @foreach (var driver in Driver)
+                            {
+                                <MudSelectItem Value="@driver">@driver.FirstName  @driver.LastName</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudTextField class="my-3 TextWidth" @bind-Value="Address.StreetAddress" Label="Street Address" Required="true" RequiredError=" " For="@(() => @Address.StreetAddress)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-3 TextWidth" @bind-Value="Address.City" Label="City" Required="true" Pattern="" RequiredError=" " For="@(() => @Address.City)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-3 TextWidth" @bind-Value="Address.State" Label="State" Required="true" RequiredError=" " For="@(() => @Address.State)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-3 TextWidth" @bind-Value="Address.ZipCode" Label="Zip Code" For="@(() => @Address.ZipCode)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-3" @bind-Value="AddionalMessage" Lines="3" MaxLength=300 Label="Addtional Message" Placeholder="Optional" Variant="Variant.Text"></MudTextField>
+                <div class="HidePreview" id="divPreview">
+                    <b>Preview</b> <br />
+                    Hey,<br />
+                    @if (Messages.Address.Trim().Length > 0)
+                    {
+                        <p>
+                            A cart belongs to the store <b>@Messages.Store</b>
+                            is located in this address <b>@Messages.Address</b>
+                            Please pick that cart.
+                        </p>
+                    }
+                    @if (Messages.Message.Trim().Length > 0)
+                    {
+                        <div>
+                            Additional Message:<br />
+                            <p>@Messages.Message</p>
+                        </div>
+                    }
+                </div>
+
+            </MudForm>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <div class="d-flex SubmitGrp" style="float:right;">
+            <MudButton StartIcon="@Icons.Material.Filled.RemoveRedEye"
+                       Disabled=!(success)
+                       Variant="Variant.Filled"
+                       Style="background-color:blueviolet;color:white;"
+                       OnClick="Preview">Preview</MudButton> &nbsp;&nbsp;
+            <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.Send"
+                       IconColor="Color.Secondary"
+                       Size="Size.Large"
+                       OnClick="Submit">Send</MudButton>
+        </div>
+    </DialogActions>
+</MudDialog>
+@code {
+    [Parameter]
+    public List<StoreDto>? Stores { get; set; }
+
+    [Parameter]
+    public MessagesDto Messages { get; set; }
+    private IJSObjectReference JsModule;
+    public List<DriverDto>? Driver { get; set; }
+    public AddressDto Address { get; set; } = new();
+    public string AddionalMessage = "";
+    bool success;
+    string[] errors = { };
+    MudForm form;
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+    public class AddressDto
+    {
+        [StringLength(50, ErrorMessage = " ")]
+        public string StreetAddress { get; set; } = string.Empty;
+        [MaxLength(15, ErrorMessage = " ")]
+        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = " ")]
+        public string City { get; set; } = string.Empty;
+        [MaxLength(15, ErrorMessage = " ")]
+        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = " ")]
+        public string State { get; set; } = string.Empty;
+        [RegularExpression(@"^[1-9][0-9]*$", ErrorMessage = " ")]
+        public string ZipCode { get; set; } = string.Empty;
+    }
+    protected override void OnParametersSet()
+    {
+        if (CurrentUser.UserRoleId == 6)
+        {
+            HandleStore(Stores[0]);
+        }
+    }
+    public async Task HandleStore(StoreDto value)
+    {
+        Messages.StoreId = value.Id;
+        Messages.Store = value.StoreName + " - " + value.StoreNumber;
+        Driver = await DriverHttpRepository.GetDriversByStoreIdAsync(value.Id);
+    }
+    public async Task HandleDriver(DriverDto value)
+    {
+        Messages.ReciverId = value.Id;
+    }
+    public async Task Preview()
+    {
+        Messages.Address = Address.StreetAddress + "," + Address.City + "," + Address.State;
+        if (Address.ZipCode != "")
+        {
+            Messages.Address = Messages.Address + "," + Address.ZipCode;
+        }
+        Messages.Message = AddionalMessage;
+        if (JsModule is null)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
+
+        await JsModule.InvokeVoidAsync("ShowdivPreviewClass");
+        StateHasChanged();
+    }
+    void Submit()
+    {
+        form.Validate();
+        if (success && errors.Length == 0)
+        {
+            Messages.Address = Address.StreetAddress + "," + Address.City + "," + Address.State;
+            if (Address.ZipCode != "")
+            {
+                Messages.Address = Messages.Address + "," + Address.ZipCode;
+            }
+            Messages.Message = AddionalMessage;
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+    }
+
+}

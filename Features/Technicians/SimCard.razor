@@ -1,0 +1,99 @@
+﻿@page "/sim-card"
+@using WiiTrakClient.Cores
+@using WiiTrakClient.Features.Technicians.Components
+@inject ISimCardsHttpRepository SimCardRepository
+@inject IDialogService DialogService
+@inject IJSRuntime JsRuntime
+
+<UserAuthentication/>
+<h3>Sim Card</h3>
+
+<div class="d-flex justify-end">
+    <MudButton Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Add"
+               IconColor="Color.Secondary"
+               Size="Size.Large"
+               OnClick="OpenDialog">Add</MudButton>
+</div>
+<br />
+@if(SimCardsList == null)
+{
+    <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+
+}
+else if (simcards.Count > 0)
+{
+    <SimCardsList SimCards="simcards" />
+}
+else
+{
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7"/>
+}
+
+@code 
+{
+    private IJSObjectReference jsmodule;
+    List<SimCardsDto> SimCardsList = new();
+    List<SimCardsDto> simcards = new();
+    SimCardsDto AddSim = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            jsmodule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var id = await jsmodule.InvokeAsync<string>("getuserid");
+            CurrentUser.UserId = new Guid(id);
+        }
+        await RefreshSimcard();
+
+    }
+
+    private async Task OpenDialog()
+    {
+        var parameters = new DialogParameters();
+        AddSim = new SimCardsDto();
+        parameters.Add("NewSim", AddSim);
+
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+
+        var dialog = DialogService.Show<AddSimCardDialog>("Add Simcard", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            //add new simcard to backend
+            var SimCreation = new SimCardsDto
+            {
+                TelecomCompany = AddSim.TelecomCompany,
+                PhoneNumber = AddSim.PhoneNumber,
+                PlanName = AddSim.PlanName,
+                PlanActivationDate = AddSim.PlanActivationDate,
+                PlanEndDate = AddSim.PlanEndDate,
+                SIMNo = AddSim.SIMNo,
+                IMSI = AddSim.IMSI,
+                IsActive = true,
+                TechnicianId=CurrentUser.UserId,
+            };
+            try
+            {
+                await SimCardRepository.CreateSimCardAsync(SimCreation);
+            }
+            catch (Exception ex)
+            {
+                //Exception
+            }
+        }
+        await RefreshSimcard();
+    }
+    async Task RefreshSimcard()
+    {
+         SimCardsList = await SimCardRepository.GetSimCardByTechnicianIdAsync(CurrentUser.UserId);
+        if (SimCardsList is not null)
+        {
+            simcards = SimCardsList;
+        }
+        StateHasChanged();
+    }
+}
+

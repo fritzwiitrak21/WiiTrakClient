@@ -1,30 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using WiiTrakClient.DTOs;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.Services;
+
 namespace WiiTrakClient.HttpRepository
 {
     public class CountyCodeHttpRepository:ICountyCodeHttpRepository
     {
-        private readonly IHttpService _httpService;
+        private readonly IHttpService Httpservice;
         private const string ControllerName = "countycode";
-        private readonly string _apiUrl;
-        public CountyCodeHttpRepository(IHttpService httpService)
+        private readonly string ApiUrl;
+        public CountyCodeHttpRepository(IHttpService httpservice)
         {
-            _httpService = httpService;
-            _apiUrl = $"{ httpService.BaseUrl }{ ControllerName }";
+            Httpservice = httpservice;
+            ApiUrl = $"{ httpservice.BaseUrl }{ ControllerName }";
         }
         public async Task<List<CountyCodeDTO>> GetCountyListAsync()
         {
-            var response = await _httpService.Get<List<CountyCodeDTO>>(_apiUrl);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+            var response = await Httpservice.Get<List<CountyCodeDTO>>(ApiUrl);
             return response.Response;
+        }
+        public async Task<CountyCodeDTO> GetCountyCodeByIdAsync(Guid id)
+        {
+            string url = $"{ApiUrl}/{id}";
+            var response = await Httpservice.Get<CountyCodeDTO>(url);
+            return response.Response;
+        }
+        public async Task CreateCountyCodeAsync(CountyCodeDTO CountyCreation)
+        {
+            await Httpservice.Post(ApiUrl, CountyCreation);
+        }
+        public async Task UpdateCartAsync(Guid id, CountyCodeDTO CountyUpdation)
+        {
+            await Httpservice.Put($"{ ApiUrl }/{ id }", CountyUpdation);
         }
     }
 }

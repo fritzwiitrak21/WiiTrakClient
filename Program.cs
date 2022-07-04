@@ -1,3 +1,7 @@
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -51,7 +55,9 @@ builder.Services.AddScoped<IEmailHttpRepository, EmailHttpRepository>();
 builder.Services.AddScoped<IDriverStoresHttpRepository, DriverStoresHttpRepository>();
 builder.Services.AddScoped<ICountyCodeHttpRepository, CountyCodeHttpRepository>();
 builder.Services.AddScoped<INotificationHttpRepository, NotificationHttpRepository>();
-
+builder.Services.AddScoped<ISimCardsHttpRepository, SimCardsHttpRepository>();
+builder.Services.AddScoped<IDevicesHttpRepository, DevicesHttpRepository>();
+builder.Services.AddScoped<IMessageHttpRepository, MessageHttpRepository>();
 
 
 builder.Services.AddMudServices();

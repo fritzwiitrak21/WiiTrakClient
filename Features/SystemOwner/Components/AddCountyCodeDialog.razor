@@ -1,0 +1,59 @@
+﻿@namespace WiiTrakClient.Features.SystemOwner.Components
+@using System.ComponentModel.DataAnnotations
+
+<style>
+    .validation-message {
+    font-size:0;
+    display:none;
+    font-display:block;
+    color: red;
+}
+.mud-input-helper-text.mud-input-error {
+    font-size: 0;
+}
+.mud-input-helper-text {
+    color: var(--mud-palette-text-secondary);
+    margin: 0;
+    font-size: 0;
+}
+</style> 
+
+<MudDialog>
+    <DialogContent>              
+        <div style="width: 400px;height:450px;overflow: auto;">
+                <MudForm @ref=form Model="@NewCounty" @bind-IsValid="@success" @bind-Errors="@errors"> 
+                    <DataAnnotationsValidator />
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCounty.City" Label="City" Required="true" RequiredError=" " For="@(() => @NewCounty.City)" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCounty.State" Label="State" Required="true" RequiredError=" " For="@(() => @NewCounty.State)" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCounty.ZipCode" Label="Zip Code" Required="true" RequiredError=" " For="@(() => @NewCounty.ZipCode)" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCounty.CountyName" Label="County Name" Required="true" RequiredError=" " For="@(() => @NewCounty.CountyName)"  Variant="Variant.Text"></MudTextField> 
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCounty.CountyCode" Label="County Code" For="@(() => @NewCounty.CountyCode)"  Variant="Variant.Text"></MudTextField>  
+                    <div class="d-flex">
+                        <MudButton OnClick="Cancel">Cancel</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                    </div> 
+                </MudForm> 
+        </div>    
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [Parameter]
+    public CountyCodeDTO? NewCounty {get; set;}
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    bool success;
+    string[] errors = { };
+    MudForm form;
+    protected override void OnParametersSet() {
+
+    }
+    void Submit()
+    {
+        form.Validate();
+        if (success && errors.Length == 0)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+    }
+    void Cancel() => MudDialog.Cancel();
+}

@@ -1,28 +1,25 @@
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.DTOs;
 using WiiTrakClient.Cores;
-using MudBlazor;
-using WiiTrakClient.Enums;
+using WiiTrakClient.Enums; 
 
 namespace WiiTrakClient.Features.Companies
 {
     public partial class DeliveryTickets : ComponentBase
     {
-
         [Inject] IJSRuntime JsRuntime { get; set; }
-
         [Inject] public IDeliveryTicketHttpRepository DeliveryTicketHttpRepository { get; set; }
-
         private IJSObjectReference JsModule;
-      
-
         List<DeliveryTicketDto> deliveryTickets = new();
         List<DeliveryTicketDto> _deliveryTickets = new();
-
-        public int SelectedOption = 30;
-        public int TempSelectedOption = 0;
+        int SelectedOption = 30;
+        int TempSelectedOption;
         protected override async Task OnInitializedAsync()
         {
             if (CurrentUser.UserId == Guid.Empty)
@@ -33,7 +30,6 @@ namespace WiiTrakClient.Features.Companies
                 var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
                 CurrentUser.UserRoleId = Convert.ToInt32(roleid);
             }
-
             deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, SelectedOption);
             if (deliveryTickets is not null)
             {
@@ -52,7 +48,6 @@ namespace WiiTrakClient.Features.Companies
                     _deliveryTickets = deliveryTickets;
                 }
                 StateHasChanged();
-
             }
         }
     }

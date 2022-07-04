@@ -1,0 +1,156 @@
+﻿@namespace WiiTrakClient.Features.Drivers.Components
+@using System.ComponentModel.DataAnnotations
+@using WiiTrakClient.Shared.Components
+@using WiiTrakClient.Cores
+@using WiiTrakClient.Enums
+
+<style>
+    .validation-message {
+        font-size: 0;
+        display: none;
+        font-display: block;
+        color: red;
+    }
+
+    .mud-input-helper-text.mud-input-error {
+        font-size: 0;
+    }
+
+    .mud-input-helper-text {
+        color: var(--mud-palette-text-secondary);
+        margin: 0;
+        font-size: 0;
+    }
+</style>
+<MudDialog>
+    <DialogContent>
+        <div style="width: 400px;height:450px;overflow: auto;">
+            <MudForm Model="@Cart" @bind-IsValid="@success">
+                <MudText Typo="Typo.h6" Class="my-1">Store : @Cart.Store.StoreName - @Cart.Store.StoreNumber</MudText>
+                <MudText Typo="Typo.h6" Class="my-1">Cart : @Cart.ManufacturerName - Cart# @Cart.CartNumber</MudText>
+                <MudSelect Class="my-2" T="String" ValueChanged="(value) => SelectStatus(value)" Value="@SelectedStatus" Label="Select Status" Required=true RequiredError=" "
+                           AnchorOrigin="Origin.BottomCenter">
+
+                    <MudSelectItem T="String" Value=@("PickedUp")>Picked Up</MudSelectItem>
+                    <MudSelectItem T="String" Value=@("Lost")>Lost</MudSelectItem>
+
+                </MudSelect>
+                @if (SelectedStatus.Contains("PickedUp"))
+                {
+                    <MudSelect Class="my-2" T="String" ValueChanged="(value) => SelectCondition(value)" Value="@SelectedCondition" Label="Select Condition" Required=true RequiredError=" "
+                           AnchorOrigin="Origin.BottomCenter">
+
+                        <MudSelectItem T="String" Value=@("Good")>Good</MudSelectItem>
+                        <MudSelectItem T="String" Value=@("Damage")>Damage</MudSelectItem>
+                        <MudSelectItem T="String" Value=@("DamageBeyondRepair")>Damage Beyond Repair</MudSelectItem>
+
+                    </MudSelect>
+
+
+
+                    @if (SelectedCondition == "Damage")
+                    {
+                        <MudSelect Class="my-2" T="string" Label="Damage Issue" AnchorOrigin="Origin.BottomCenter"
+                           Required="true" AdornmentColor="Color.Error" Value="@SeletedIssue"
+                           ValueChanged="(value) => SelectIssueType(value)">
+
+                            @foreach (var issue in RepairIssues)
+                            {
+                                <MudSelectItem T="string" Value="@issue.Issue">@issue.Issue</MudSelectItem>
+                            }
+
+                        </MudSelect>
+
+                    }
+                    else { success = true; }
+                    @if (SeletedIssue.Contains("Other"))
+                    {
+                        <MudTextField Class="my-2" T="string" Label="Issue Title" Variant="Variant.Text" @bind-Value="@IssueNameText" Required=@(!IssueDescVisibility) OnKeyUp="EnableSaveButton" AutoFocus="true" />
+
+                    }
+                    @if (SelectedCondition == "Damage")
+                    {
+                        <MudTextField Class="my-2" T="string" Label="Issue Description" Variant="Variant.Text" @bind-Value="@IssueDescText" Lines="4" OnKeyUp="EnableSaveButton" />
+                    }
+                }
+            </MudForm>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" Disabled="@(!success)"
+                   OnClick="Submit">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [Parameter]
+    public CartDto? Cart { get; set; }
+    [Parameter]
+    public List<RepairIssueDto>? RepairIssues { get; set; }
+    bool success = false;
+    string SelectedStatus = string.Empty;
+    string SelectedCondition = string.Empty;
+    string IssueNameText = string.Empty;
+    string IssueDescText = string.Empty;
+    string SeletedIssue = string.Empty;
+    bool IssueDescVisibility = false;
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    protected override void OnParametersSet()
+    {
+        if (Cart is not null)
+        {
+            SelectedStatus = Cart.Status.ToString().Contains("OutsideGeofence") ? "Needs Pick Up" : Cart.Status.ToString();
+            SelectedCondition = Cart.Condition.ToString();
+            IssueDescText = Cart.IssueDescription;
+            IssueNameText = SeletedIssue = Cart.IssueType;
+        }
+
+        if (RepairIssues is not null)
+        {
+            if (!RepairIssues.Any(x => x.Issue.Equals("Other")))
+            {
+                RepairIssues.Add(new RepairIssueDto
+                    {
+                        Issue = "Other"
+                    });
+            }
+        }
+    }
+    private void SelectStatus(string value)
+    {
+        SelectedStatus = value;
+        Cart.Status = Enum.Parse<CartStatus>(value);
+    }
+    private void SelectCondition(string value)
+    {
+        SelectedCondition = value;
+        Cart.Condition = Enum.Parse<CartCondition>(value);
+    }
+    private void SelectIssueType(string value)
+    {
+        SeletedIssue = value;
+        if (!SeletedIssue.Equals("Other"))
+        {
+            IssueDescVisibility = true;
+            IssueDescText = "";
+        }
+        else
+        {
+            IssueDescVisibility = false;
+        }
+        StateHasChanged();
+    }
+    private void EnableSaveButton()
+    {
+        success = true;
+        StateHasChanged();
+    }
+    void Submit()
+    {
+        Cart.IssueType = SeletedIssue.Equals("Other") ? IssueNameText : SeletedIssue;
+        Cart.IssueDescription = IssueDescText;
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

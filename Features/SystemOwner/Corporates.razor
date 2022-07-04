@@ -41,7 +41,7 @@
     List<CorporateDto> corporate = new();
     List<CorporateDto> CorporatesList = new();
 
-    CorporateCreationDto AddCorporate = new();
+    CorporateDto AddCorporate = new();
     bool LoaderVisibility = false;
     private IJSObjectReference JsModule;
 
@@ -68,7 +68,7 @@
         try
         {
             var parameters = new DialogParameters();
-            AddCorporate = new CorporateCreationDto();
+            AddCorporate = new CorporateDto();
             parameters.Add("NewCorporate", AddCorporate);
 
             DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
@@ -79,7 +79,7 @@
             if (!result.Cancelled)
             {
                 // add new customer to backend
-                var customerCreation = new CorporateCreationDto
+                var customerCreation = new CorporateDto
                     {
                                 Name = AddCorporate.Name,
                                 StreetAddress1 = AddCorporate.StreetAddress1,

@@ -2,27 +2,177 @@
 
 @inject ICartHttpRepository CartHttpRepository
 @inject IStoreHttpRepository StoreRepository
+@inject IRepairIssueHttpRepository RepairIssueRepository
 @using WiiTrakClient.Cores
-
+@using WiiTrakClient.Features.Drivers
+@using WiiTrakClient.Features.Drivers.Components
+@using System.Linq.Expressions;
+@inject IDialogService DialogService
+@using WiiTrakClient.Shared.Map
+@using MudBlazor
 <UserAuthentication />
-<h3>Carts Location</h3>
-<div style="width:100%;height:100%;overflow: auto;">
-    <label id="distance" />
-    <div id="map" style="height:80vh;width:100%;"></div>
-
+<div class="pagetitle my-8" style="margin-bottom: 0px !important;">
+    <h3>Carts Location</h3>
 </div>
-@code { [Inject] IJSRuntime JsRuntime { get; set; }
-    private IJSObjectReference JsModuleCart, JsModuleStore, JsModule1;
+<MudChipSet @bind-SelectedChip="selected" Filter="true">
+    <MudChip Text="map" Default=@IsMapView Color="Color.Primary" OnClick="ShowMapView">Map</MudChip>
+    <MudChip Text="cartslist" Color="Color.Secondary" OnClick="ShowListView">Carts list</MudChip>
+    <MudChip Text="ontruck" Color="Color.Success" OnClick="ShowOnTruckListView">On Truck</MudChip>
+    <MudChip Text="damage" Color="Color.Tertiary" OnClick="ShowDamageListView">Damage</MudChip>
+    <MudChip Text="trash" Color="Color.Warning" OnClick="ShowTrashListView">Trash</MudChip>
+    <MudChip Text="lost" Color="Color.Error" OnClick="ShowLostListView">Lost</MudChip>
+</MudChipSet>
+
+@if (IsMapView)
+{
+    <div style="width:100%;height:100%;overflow: auto;">
+        <label id="distance" />
+        <div id="map" style="height:77vh;width:100%;"></div>
+    </div>
+}
+else
+{
+    <div>
+        <h5>No of carts @message</h5>
+        @if (cartlistcount > 0)
+        {
+            <div class="container">
+                <MudTable Items="@CartsList" Class="Pagingstyle" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false"
+                  LoadingProgressColor="Color.Primary">
+                    <HeaderContent>
+                        <MudTh>
+                            <MudTableSortLabel SortBy="new Func<CartDto, object>(x=>x.Store.StoreName)">
+                                Store Name
+                            </MudTableSortLabel>
+                        </MudTh>
+                        <MudTh>
+                            <MudTableSortLabel SortBy="new Func<CartDto, object>(x => x.CartNumber)">
+                                Cart Number
+                            </MudTableSortLabel>
+                        </MudTh>
+                        <MudTh>
+                            Cart Status
+                        </MudTh>
+                        <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Store Name">@context.Store.StoreName - @context.Store.StoreNumber</MudTd>
+                        <MudTd DataLabel="Cart Number">@context.CartNumber</MudTd>
+                        <MudTd DataLabel="Cart Status">
+                            @switch (context.Status)
+                            {
+                                case CartStatus.InsideGeofence:
+                            <span style="background:#90ee90;padding:2px;">Delivered</span>
+                                    break;
+                                case CartStatus.OutsideGeofence:
+                            <span style="background:#ffffe0;padding:2px;">Needs Pick Up</span>
+                                    break;
+                                case CartStatus.PickedUp:
+                                    if (selected.Text.Equals("damage"))
+                                    {
+                                <span style="background:#90ee90;padding:2px;">On Truck</span>
+
+                                <span>&nbsp-&nbsp</span>
+                                <span style="background:#ffdddd;padding:2px;">@context.IssueType</span>
+                                    }
+                                    else
+                                    {
+                                <span style="background:#90ee90;padding:2px;">On Truck</span>
+                                    }
+                                    break;
+                                case CartStatus.Lost:
+                            <span style="background:#ff474c;padding:2px;">Lost</span>
+                                    break;
+                            }
+                </MudTd>
+                <MudTd DataLabel="">
+                    <MudButton StartIcon="@Icons.Material.Filled.Details" Variant="Variant.Filled" Color="Color.Primary"
+                               OnClick="((e) => UpdateCartStatusDialog(context))">
+                        Edit Status
+                    </MudButton>
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager PageSizeOptions="new int[]{10,50, 100}" />
+            </PagerContent>
+        </MudTable>
+    </div>
+        }
+    </div>
+}
+@code {
+    [Inject] IJSRuntime JsRuntime { get; set; }
+    private IJSObjectReference JsModuleCart;
+    private IJSObjectReference JsModuleStore;
+    private IJSObjectReference JsModule1;
+    List<CartDto> CartsList = new();
+    List<StoreDto> storelist = new();
+    bool IsMapView = true;
+    bool IsListView;
+    MudChip selected;
+    string message = "";
+    public List<RepairIssueDto> RepairIssues { get; set; }
+    int cartlistcount = 0;
     protected override async Task OnInitializedAsync()
+    {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule1.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
+        CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
+        storelist = await StoreRepository.GetStoresByDriverId(CurrentUser.UserId);
+        storelist = storelist.Where(x => x.IsActive && x.DriverStoresIsActive).ToList();
+        storelist = storelist.OrderBy(x => x.StoreName).OrderBy(s => s.StoreNumber).ToList();
+        await ShowMapView();
+
+    }
+    private async Task ShowListView()
+    {
+        IsMapView = false;
+        await GetCartsList();
+    }
+    private async Task ShowOnTruckListView()
+    {
+        cartlistcount = await GetListOfCarts(x => x.Status == CartStatus.PickedUp);
+        message = "on truck " + cartlistcount;
+    }
+    private async Task ShowDamageListView()
+    {
+        cartlistcount = await GetListOfCarts(x => x.Condition == CartCondition.Damage);
+        message = "in damage condition " + cartlistcount;
+    }
+    private async Task ShowTrashListView()
+    {
+        cartlistcount = await GetListOfCarts(x => x.Condition == CartCondition.DamageBeyondRepair);
+        message = "in trash condition " + cartlistcount;
+    }
+    private async Task ShowLostListView()
+    {
+        cartlistcount = await GetListOfCarts(x => x.Status == CartStatus.Lost);
+        message = "lost " + cartlistcount;
+    }
+    private async Task<int> GetListOfCarts(Func<CartDto, bool> expression)
+    {
+        IsMapView = false;
+        CartsList = new();
+        CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
+        if (CartsList != null && CartsList.Count > 0)
+        {
+            CartsList = CartsList.Where(expression).ToList();
+            cartlistcount = CartsList.Count;
+        }
+        StateHasChanged();
+        RepairIssues = await RepairIssueRepository.GetAllRepairIssuesAsync();
+        return cartlistcount;
+    }
+    private async Task ShowMapView()
     {
         try
         {
-            if (CurrentUser.UserId == Guid.Empty)
-            {
-                JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-                var Id = await JsModule1.InvokeAsync<string>("getUserId");
-                CurrentUser.UserId = new Guid(Id);
-            }
+            IsMapView = true;
+
             if (JsModule1 is null)
             {
                 JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
@@ -30,18 +180,16 @@
             await JsModule1.InvokeVoidAsync("getCoord", true);
 
 
-            var CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
-            var storelist = await StoreRepository.GetStoresByDriverId(CurrentUser.UserId);
-            storelist = storelist.Where(x => x.IsActive && x.DriverStoresIsActive).ToList();
-            List<MapDetails> CartDetailsList = new();
+
+            List<MapMarkerDetails> CartDetailsList = new();
             if (CartsList is not null)
             {
 
-                MapDetails cartobj = new MapDetails();
+                MapMarkerDetails cartobj = new MapMarkerDetails();
                 foreach (var item in CartsList)
                 {
                     var cartinfo = "Store # " + item.Store.StoreName + " - " + item.Store.StoreNumber + Environment.NewLine + "Cart # " + item.CartNumber;
-                    cartobj = new MapDetails()
+                    cartobj = new MapMarkerDetails()
                         {
                             Title = cartinfo,
                             Latitude = item.TrackingDevice.Latitude,
@@ -50,15 +198,15 @@
                     CartDetailsList.Add(cartobj);
                 }
             }
-            List<MapDetails> StoretDetailsList = new();
+            List<MapMarkerDetails> StoretDetailsList = new();
             if (StoretDetailsList is not null)
             {
 
-                MapDetails storeobj = new MapDetails();
+                MapMarkerDetails storeobj = new MapMarkerDetails();
                 foreach (var item in storelist)
                 {
                     var storeinfo = "Store # " + item.StoreName + " - " + item.StoreNumber;
-                    storeobj = new MapDetails()
+                    storeobj = new MapMarkerDetails()
                         {
                             Title = storeinfo,
                             Latitude = item.Latitude,
@@ -85,7 +233,7 @@
                 Driverlatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
                 Driverlongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
             }
-            MapDetails driverobj = new MapDetails();
+            MapMarkerDetails driverobj = new MapMarkerDetails();
             driverobj.Title = CurrentUser.UserName;
             driverobj.Latitude = Driverlatitude;
             driverobj.Longitude = Driverlongitude;
@@ -100,11 +248,97 @@
 
         }
     }
-
-    public class MapDetails
+    public async Task UpdateCartStatusDialog(CartDto cart)
     {
-        public string Title { get; set; } = string.Empty;
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
+
+        var parameters = new DialogParameters();
+        parameters.Add("Cart", cart);
+        parameters.Add("RepairIssues", RepairIssues);
+
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+        try
+        {
+            var dialog = DialogService.Show<UpdateCartStatusDialog>("Cart Status", parameters);
+
+            var result = await dialog.Result;
+            if (!result.Cancelled)
+            {
+
+                var cartHistory = new CartHistoryUpdateDto
+                    {
+                        ServiceProviderId = cart.Store != null ? cart.Store.ServiceProviderId : null,
+                        StoreId = cart.StoreId,
+                        DriverId = CurrentUser.UserId,
+                        Condition = cart.Condition,
+                        Status = cart.Status,
+                        CartId = cart.Id,
+                        PickedUpAt = DateTime.UtcNow,
+                        PickupLatitude = cart.TrackingDevice != null ? cart.TrackingDevice.Latitude : 0,
+                        PickupLongitude = cart.TrackingDevice != null ? cart.TrackingDevice.Longitude : 0,
+                        IssueType = cart.IssueType,
+                        IssueDescription = cart.IssueDescription,
+                        DeviceId = cart.DeviceId
+                    };
+
+                var cartUpdate = new CartUpdateDto
+                    {
+                        ManufacturerName = cart.ManufacturerName,
+                        DateManufactured = cart.DateManufactured,
+                        OrderedFrom = cart.OrderedFrom,
+                        Condition = cart.Condition,
+                        Status = cart.Status,
+                        PicUrl = cart.PicUrl,
+                        IsProvisioned = cart.IsProvisioned,
+                        BarCode = cart.BarCode,
+                        StoreId = cart.StoreId,
+                        CartNumber = cart.CartNumber,
+                        IssueType = cart.IssueType,
+                        IssueDescription = cart.IssueDescription,
+                        CartHistory = cartHistory
+                    };
+                await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
+
+                switch (selected.Text)
+                {
+                    case "cartslist":
+                        await GetCartsList();
+                        break;
+                    case "ontruck":
+                        await ShowOnTruckListView();
+                        break;
+                    case "damage":
+                        await ShowDamageListView();
+                        break;
+                    case "trash":
+                        await ShowTrashListView();
+                        break;
+                    case "lost":
+                        await ShowLostListView();
+                        break;
+                    default:
+                        await GetCartsList();
+                        break;
+                }
+                StateHasChanged();
+            }
+        }
+        catch (Exception Ex)
+        {
+        }
+
+    }
+    private async Task GetCartsList()
+    {
+        CartsList = new();
+        CartsList = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
+        if (CartsList != null && CartsList.Count > 0)
+        {
+            var cartstopickup = CartsList.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
+            cartlistcount = CartsList.Count;
+
+        }
+        message = "have to pickup " + cartlistcount;
+        RepairIssues = await RepairIssueRepository.GetAllRepairIssuesAsync();
+        StateHasChanged();
     }
 }

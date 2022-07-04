@@ -1,7 +1,8 @@
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using WiiTrakClient.DTOs;
 
 namespace WiiTrakClient.HttpRepository.Contracts
@@ -10,11 +11,8 @@ namespace WiiTrakClient.HttpRepository.Contracts
     {
         Task<List<RepairIssueDto>> GetAllRepairIssuesAsync();
         Task<RepairIssueDto> GetRepairIssueByIdAsync(Guid Id);
-
         Task CreateRepairIssueAsync(RepairIssueDto cart);
-
         Task UpdateRepairIssueAsync(Guid id, RepairIssueDto cart);
-
         Task DeleteRepairIssueAsync(Guid id);
     }
 }

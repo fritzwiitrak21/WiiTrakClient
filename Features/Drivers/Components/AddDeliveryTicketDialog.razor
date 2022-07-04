@@ -4,6 +4,7 @@
 @using WiiTrakClient.Cores
 @using System.Net.Http.Headers
 @inject IPicUploadHttpRepository PicUploadHttpRepository
+@inject ICartHttpRepository CartHttpRepository
 
 <style>
     .validation-message {
@@ -25,7 +26,7 @@
 </style>
 <MudDialog>
     <DialogContent>
-        <div style="width: 400px;height:450px;overflow: auto;">
+        <div style="width: 400px;height:480px;overflow: auto;">
             <MudForm Model="@NewDeliveryTicket" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
                 <DataAnnotationsValidator />
                 <div Class="Mudsearchselect mt-6">
@@ -41,11 +42,31 @@
                 </div>
 
                 @{
-                    //UpdateNumberOfCarts();
+                    //UpdateNumberOfCarts(); @onchange="eventArgs => { OnSelect(eventArgs.Value); }"
                     UpdateStoreAndServiceProviderIds();
                 }
 
-                <MudTextField @bind-Value="@NewDeliveryTicket.NumberOfCarts" Label="No of Carts" Required="true" RequiredError=" " For="@(() => @NewDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
+                @*<MudTextField Value="@NewDeliveryTicket.NumberOfCarts" Label="No of Carts"  Required="true" ValueChanged="vaue=>{}"  RequiredError=" " For="@(() => @NewDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>*@
+                <div Class="mt-2">
+                    <label id="NoOfCartLabel">No of Carts*</label>
+                    <input type="text" Class="inputtext" placeholder="No of Carts*" value="@NewDeliveryTicket.NumberOfCarts" @onchange="eventArgs => { HandleNumberOfCarts(eventArgs.Value); }" />
+                </div>
+                @if (PickedupCartList != null && PickedupCartList.Count > 0)
+                {
+                    <div>
+                        <div>
+                            <label>Carts List</label>
+                        </div>
+                        <div class="form-check" style="max-height:75px;overflow-x:auto;min-height:30px">
+
+                            @foreach (var cart in PickedupCartList)
+                            {
+                                <input type="checkbox" id="@cart.Id" value="@cart.CartNumber - @cart.ManufacturerName" checked="checked" @onchange="@((e) => CheckboxChanged(e.Value, cart.Id))" />
+                                <span>&nbsp;@cart.ManufacturerName - #@cart.CartNumber </span> <br />
+                            }
+                        </div>
+                    </div>
+                }
                 <PicUpload OnPicUploadStart="@PicUploadStart" OnPicUploadComplete="@PicUploadComplete" IBrowserContent="@SaveIBrowserFile" />
 
                 @if (NewDeliveryTicket.NumberOfCarts >= 0)
@@ -55,10 +76,12 @@
                 @if (!string.IsNullOrWhiteSpace(_fileUrl))
                 {
                     <div class="d-flex justify-start mt-6 popupitemimage">
-                        <img src="@_fileUrl" width="300" height="300" />
+                        <img src="@_fileUrl" width="250" height="250" />
                     </div>
+
+                    <br />
                 }
-                @if (success && picupload && IsStoreSelected)
+                @if (success && picupload && IsStoreSelected && IsNoOfCarts)
                 {
                     formvalid = true;
                 }
@@ -66,20 +89,18 @@
                 {
                     formvalid = false;
                 }
-
-
             </MudForm>
         </div>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
         <MudButton Color="Color.Primary"
-                   OnClick="Submit"
-                   Disabled="@(!formvalid)">Save</MudButton>
+                   OnClick="Submit">Save</MudButton>
     </DialogActions>
 </MudDialog>
 
-@code {    [Parameter]
+@code {
+    [Parameter]
     public DeliveryTicketCreationDto? NewDeliveryTicket { get; set; }
 
     public int NoOfCarts;
@@ -96,14 +117,18 @@
     public double Latitude { get; set; }
     [Parameter]
     public double Longitude { get; set; }
+
     [Inject]
     IJSRuntime JsRuntime { get; set; }
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; }
 
     public IBrowserFile? UploadedBrowserFile { get; set; }
-
+    public List<CartDto> PickedUpCarts { get; set; }
+    public List<CartDto> PickedupCartList { get; set; }
+    public List<CartDto> TempPickedupCartList { get; set; }
     bool success;
+    bool IsNoOfCarts = true;
     bool picupload, Ispicuploadtoblob;
     bool formvalid;
     bool IsStoreSelected = false;
@@ -118,8 +143,6 @@
     private string StoreName = "";
     private string StoreTimeZoneDiff = "";
     private IJSObjectReference JsModule;
-
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -153,7 +176,6 @@
             FilterStore();
             Stores = Stores.OrderBy(o => o.StoreName).ThenBy(p => p.StoreNumber).ToList();
             SelectedStore = Stores[0];
-
         }
 
         NewDeliveryTicket.DriverId = Driver.Id;
@@ -179,10 +201,6 @@
             if (unit == 'K')
             {
                 dist = dist * 1.609344;
-            }
-            else if (unit == 'N')
-            {
-                dist = dist * 0.8684;
             }
             return (dist);
         }
@@ -248,14 +266,27 @@
         {
             IsStoreSelected = false;
             await JsModule.InvokeVoidAsync("addValidationClass");
-            StateHasChanged();
+
         }
         else
         {
-            IsStoreSelected = true;
-            await JsModule.InvokeVoidAsync("removeValidationClass");
-            StateHasChanged();
+            foreach (var item in Stores)
+            {
+                string storename = item.StoreName + " - " + item.StoreNumber;
+                if (storename == inputtext)
+                {
+                    IsStoreSelected = true;
+                    await JsModule.InvokeVoidAsync("removeValidationClass");
+                    break;
+                }
+                else
+                {
+                    IsStoreSelected = false;
+                    await JsModule.InvokeVoidAsync("addValidationClass");
+                }
+            }
         }
+        StateHasChanged();
     }
     private async Task OnSelect(object e)
     {
@@ -276,10 +307,27 @@
             NewDeliveryTicket.StoreId = new Guid(Id);
             SelectedStore = Stores.AsEnumerable().FirstOrDefault(x => x.Id == NewDeliveryTicket.StoreId);
             StoreName = SelectedStore.StoreName;
-            StoreTimeZoneDiff  =  SelectedStore.TimezoneDiff;
+            StoreTimeZoneDiff = SelectedStore.TimezoneDiff;
             IsStoreSelected = true;
+            #region get carts by storeid
+            PickedUpCarts = await CartHttpRepository.GetCartsByStoreIdAsync(NewDeliveryTicket.StoreId);
+            if (PickedUpCarts != null)
+            {
+                PickedupCartList = PickedUpCarts.Where(x => x.Status == (CartStatus)2).ToList();
+                NewDeliveryTicket.NumberOfCarts = PickedupCartList.Count();
+
+            }
+            else
+            {
+                PickedupCartList = new List<CartDto>();
+                NewDeliveryTicket.NumberOfCarts = 0;
+            }
+            TempPickedupCartList = PickedupCartList;
+            NewDeliveryTicket.PickedUpCarts = TempPickedupCartList;
+            StateHasChanged();
+            #endregion
         }
-        catch
+        catch (Exception ex)
         {
             IsStoreSelected = false;
         }
@@ -299,7 +347,7 @@
         var Lon = coords.Split("##")[1];
         Latitude = Core.ToDouble(lat);
         Longitude = Core.ToDouble(Lon);
-        var StoreCurrentTime= DateTime.UtcNow.AddSeconds(Convert.ToDouble(StoreTimeZoneDiff));
+        var StoreCurrentTime = DateTime.UtcNow.AddSeconds(Convert.ToDouble(StoreTimeZoneDiff));
 
         using (var ms = UploadedBrowserFile.OpenReadStream(UploadedBrowserFile.Size))
         {
@@ -317,18 +365,63 @@
         {
             Ispicuploadtoblob = true;
         }
-
     }
+    async Task CheckboxChanged(object IsChecked, Guid Id)
+    {
+        if ((bool)IsChecked)
+        {
+            NewDeliveryTicket.NumberOfCarts = NewDeliveryTicket.NumberOfCarts + 1;
+            TempPickedupCartList.AddRange(PickedupCartList.Where(x => x.Id == Id).ToList());
+        }
+        else
+        {
+            NewDeliveryTicket.NumberOfCarts = NewDeliveryTicket.NumberOfCarts - 1;
+            TempPickedupCartList.RemoveAll(x => x.Id == Id);
+        }
+        NewDeliveryTicket.PickedUpCarts = TempPickedupCartList;
+        PickedupCartList = PickedUpCarts.Where(x => x.Status == (CartStatus)2).ToList();
+    }
+    public async Task HandleNumberOfCarts(object NoOfCart)
+    {
+        if (JsModule is null)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
 
+        //  var inputtext = await JsModule.InvokeAsync<string> ("getTextBoxValue");
+        if (Convert.ToInt32(NoOfCart) < NewDeliveryTicket.PickedUpCarts.Count)
+        {
+            IsNoOfCarts = false;
+            await JsModule.InvokeVoidAsync("addTextValidationClass");
+            StateHasChanged();
+        }
+        else
+        {
+            IsNoOfCarts = true;
+            await JsModule.InvokeVoidAsync("removeTextValidationClass");
+            StateHasChanged();
+        }
+    }
     async Task Submit()
     {
+          if (!IsStoreSelected)
+        {
+            await JsModule.InvokeVoidAsync("addValidationClass");
+            StateHasChanged();
+        }
         await AddCoordAndTime();
         while (!Ispicuploadtoblob)
         {
             System.Threading.Thread.Sleep(600);
         }
-        MudDialog.Close(DialogResult.Ok(true));
+      
+        form.Validate();
+        if (success && errors.Length == 0 && IsStoreSelected)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+
     }
 
     void Cancel() => MudDialog.Cancel();
-}
+                            }

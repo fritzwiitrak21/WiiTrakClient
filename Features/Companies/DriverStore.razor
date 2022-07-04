@@ -15,7 +15,7 @@
             </MudSelect>
         </MudItem>
         <MudItem xs="12" sm="6" md="4">
-            <div style="padding-top:6px">
+            <div style="padding-top:6px" id="RadioList" class="HideRadioList">
                 <MudForm>
                     <MudRadioGroup @bind-SelectedOption="@SelectedOption">
                         <MudRadio Option="@("All")" Color="Color.Primary">All</MudRadio>
@@ -82,6 +82,12 @@ else
         StateHasChanged();
         Core.SelectedDriverId = Driver.Id;
         SelectedOption = "All";
+        if (JsModule is null)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
+
+        await JsModule.InvokeVoidAsync("ShowRadioListClass");
         GetStoreDetails();
         StateHasChanged();
 
@@ -107,7 +113,7 @@ else
             else if (value == "Unassigned")
             {
                 alldriverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId, Core.SelectedDriverId);
-                driverstore = alldriverstore.Where(x => x.DriverStoresIsActive == false).ToList();
+                driverstore = alldriverstore.Where(x => x.DriverStoresIsActive == false && x.AssignedDriver.Length==0).ToList();
                 StateHasChanged();
             }
         }

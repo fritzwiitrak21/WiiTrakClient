@@ -1,4 +1,8 @@
-﻿using WiiTrakClient.DTOs;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using WiiTrakClient.DTOs;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.Services;
 
@@ -9,7 +13,6 @@ namespace WiiTrakClient.HttpRepository
         private readonly IHttpService _httpService;
         private const string ControllerName = "driverstores";
         private readonly string _apiUrl;
-
         public DriverStoresHttpRepository(IHttpService httpService)
         {
             _httpService = httpService;
@@ -18,32 +21,18 @@ namespace WiiTrakClient.HttpRepository
         public async Task <List<DriverStoreDetailsDto>> GetDriverStoresByCompanyIdAsync(Guid CompanyId, Guid DriverId) 
         { 
             string url = $"{_apiUrl}/company/{CompanyId}/{DriverId}";
-
             var response = await _httpService.Get<List<DriverStoreDetailsDto>>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
             return response.Response;
         }
         public async Task<List<DriverStoreDetailsDto>> GetDriverStoresBySystemownerIdAsync(Guid SystemOwnerId, Guid DriverId)
         {
             string url = $"{_apiUrl}/systemowner/{SystemOwnerId}/{DriverId}";
-
             var response = await _httpService.Get<List<DriverStoreDetailsDto>>(url);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
             return response.Response;
         }
         public async Task UpdateDriverStoresAsync(DriverStoreDetailsDto DriverStoreDto)
         {
-            var response = await _httpService.Put($"{ _apiUrl }", DriverStoreDto);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+              await _httpService.Put($"{ _apiUrl }", DriverStoreDto);
         }
     }
 } 

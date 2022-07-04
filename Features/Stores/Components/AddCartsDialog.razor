@@ -1,0 +1,145 @@
+﻿@namespace WiiTrakClient.Features.Stores.Components
+@using System.ComponentModel.DataAnnotations
+@using System.Collections
+
+<style>
+    .validation-message {
+    font-size:0;
+    display:none;
+    font-display:block;
+    color: red;
+}
+.mud-input-helper-text.mud-input-error {
+    font-size: 0;
+}
+.mud-input-helper-text {
+    color: var(--mud-palette-text-secondary);
+    margin: 0;
+    font-size: 0;
+}
+</style> 
+
+<MudDialog>
+    <DialogContent>              
+        <div style="width: 400px; height:450px; overflow-y: auto; overflow-x: hidden;">
+                <MudForm @ref=form Model="@NewCart" @bind-IsValid="@success" @bind-Errors="@errors">  
+                    <DataAnnotationsValidator />
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCart.CartNumber" Label="Cart Number" Required="true" RequiredError=" " For="@(() => @NewCart.CartNumber)" Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCart.ManufacturerName" Label="Manufacturer Name" Required="true" RequiredError=" " For="@(() => @NewCart.ManufacturerName)" Variant="Variant.Text"></MudTextField>
+                    <MudDatePicker class="my-6" @bind-Date="NewCart.DateManufactured" Label="Manufactured Date" MaxDate="Enddate" Editable="true" Required=true RequiredError="" For="@(() => @NewCart.DateManufactured)" />
+                    <MudItem>
+                    <MudSelect T="string" @ref="mySwitch" Value=@SelectedOrderFrom ValueChanged="(value) => HandleCartOrder(value)"  
+                        Label="Select Cart Ordered From" AnchorOrigin="Origin.BottomCenter"
+                        Required=true RequiredError="">
+                        <ValidationMessage For="@(() => @NewCart.OrderedFrom)"></ValidationMessage>
+                        @foreach(var order in Enum.GetNames(typeof(CartOrderedFrom)))
+                        {
+                            <MudSelectItem Value="@order">@order</MudSelectItem>
+                        }
+                    </MudSelect> 
+                    </MudItem>
+                    <br />
+                    <MudItem>
+                    <MudSelect T="string" Value=@SelectedStatus ValueChanged="(value) => HandleStatus(value)"  
+                        Label="Select Cart Status" AnchorOrigin="Origin.BottomCenter"
+                        Required=true RequiredError="">
+                        <ValidationMessage For="@(() => @NewCart.Status)"></ValidationMessage>
+                        @foreach(var status in Enum.GetNames(typeof(CartStatus)))
+                        {
+                            switch(status)
+                            {
+                                case "InsideGeofence":
+                                   <MudSelectItem Value="@status">Inside Geofence</MudSelectItem>   
+                                   break;
+                                 case "OutsideGeofence":
+                                   <MudSelectItem Value="@status">Outside Geofence</MudSelectItem>   
+                                   break;
+                                 case "PickedUp":
+                                   <MudSelectItem Value="@status">Picked Up</MudSelectItem>   
+                                   break;
+                                 case "Lost":
+                                   <MudSelectItem Value="@status">Lost</MudSelectItem>   
+                                   break;
+                            }
+                        }
+                    </MudSelect> 
+                    </MudItem>
+                    <br />
+                    <MudItem>
+                    <MudSelect T="string" Value=@SelectedCondition ValueChanged="(value) => HandleCondition(value)"  
+                        Label="Select Cart Condition" AnchorOrigin="Origin.BottomCenter"
+                        Required=true RequiredError="">
+                        <ValidationMessage For="@(() => @NewCart.Condition)"></ValidationMessage>
+                        @foreach(var condition in Enum.GetNames(typeof(CartCondition)))
+                        {
+                            switch(condition)
+                            {
+                                case "Good":
+                                    <MudSelectItem Value="@condition">Good</MudSelectItem>
+                                    break;
+                                case "Damage":
+                                    <MudSelectItem Value="@condition">Damage</MudSelectItem>
+                                    break;
+                                case "DamageBeyondRepair":
+                                    <MudSelectItem Value="@condition">Trash</MudSelectItem>
+                                    break;
+                            }
+                        }
+                    </MudSelect> 
+                    </MudItem>
+                    <br />
+                    <div class="d-flex">
+                        <MudButton OnClick="Cancel">Cancel</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                    </div>
+                    <br />
+                </MudForm> 
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [Parameter]
+    public CartCreationDto? NewCart {get; set;}
+    DateTime? Enddate { get; set; } = DateTime.Today;
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    bool success;
+    string[] errors = { };
+    MudForm form;
+    MudSelect<string> mySwitch;
+    public string SelectedOrderFrom = "";
+    public string SelectedStatus = "Inside Geofence";
+    public string SelectedCondition = "Good";
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+    protected override void OnParametersSet()
+    {
+
+    }
+    public async Task HandleCartOrder(string value)
+    {
+        NewCart.OrderedFrom = (CartOrderedFrom) Enum.Parse(typeof(CartOrderedFrom), value);
+        SelectedOrderFrom = value;
+    }
+    public async Task HandleStatus(string value)
+    {
+        NewCart.Status = (CartStatus) Enum.Parse(typeof(CartStatus), value);
+        SelectedStatus = value;
+    }
+    public async Task HandleCondition(string value)
+    {
+        NewCart.Condition = (CartCondition) Enum.Parse(typeof(CartCondition), value);
+        SelectedCondition = value;
+    }
+    void Submit() 
+    {
+        form.Validate();
+        if (success && errors.Length == 0)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+    }
+    void Cancel() => MudDialog.Cancel();
+}

@@ -1,0 +1,49 @@
+﻿@page "/technician-carts"
+@using WiiTrakClient.Features.Technicians.Components
+@using WiiTrakClient.Cores
+@inject IJSRuntime JsRuntime
+@inject ICartHttpRepository CartRepository
+@inject IDialogService DialogService
+
+<UserAuthentication/>
+<h3>Carts List</h3>
+
+<br />
+@if(CartsList == null)
+{
+    <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+
+}
+else if (carts.Count > 0)
+{
+    <CartsList Carts="carts" />
+}
+else
+{
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7"/>
+}
+
+
+@code {
+    private IJSObjectReference JsModule;
+    List<CartDto> CartsList = new();
+    List<CartDto> carts = new();
+    CartCreationDto AddCart = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
+
+        CartsList = await CartRepository.GetCartsByTechnicianIdAsync(CurrentUser.UserId);
+        if (CartsList is not null)
+        {
+            carts = CartsList;
+        }
+        StateHasChanged();
+    }
+}

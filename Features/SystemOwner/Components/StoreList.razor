@@ -105,10 +105,8 @@
         parameters.Add("Companies", Companies);
         parameters.Add("CountyCodeList", CountyCode);
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
-
         var dialog = DialogService.Show<UpdateStoreDialog>("Update Store", parameters);
         var result = await dialog.Result;
-
         if (!result.Cancelled)
         {
             // save updated store to backend
@@ -131,7 +129,8 @@
                     IsActive = store.IsActive,
                     CountyCode = store.CountyCode,
                     ServiceFrequency = store.ServiceFrequency,
-                    StartDate = store.StartDate
+                    StartDate = store.StartDate,
+                    IsConnectedStore=store.IsConnectedStore,
 
                 };
             await StoreHttpRepository.UpdateStoreAsync(store.Id, storeUpdate);

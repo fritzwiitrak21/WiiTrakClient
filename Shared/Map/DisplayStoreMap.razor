@@ -2,17 +2,50 @@
 @namespace WiiTrakClient.Shared.Components
 @using WiiTrakClient.Shared.Components
 @using WiiTrakClient.Cores
+@using WiiTrakClient.Shared.Map
+<style>
+    .recenterbtn {
+        background-color: DodgerBlue;
+        border: none;
+        color: white;
+        padding: 10px 10px;
+        font-size: 12px;
+        cursor: pointer;
+        position: absolute;
+        left: 32px;
+        bottom: 32px;
+        border-radius: 10px;
+        opacity: 90%;
+    }
 
-<MudDialog>
+    .dialogstyle {
+        width: 1000px;
+        height: 570px;
+        
+    }
+    .dialogstyle .mud-dialog-content{height:100%;}
+    .dialogstyle div[tabindex="-1"]{ height:100%;}
+
+</style>
+<MudDialog >
     <DialogContent>
         <div style="width:1000px;height:490px;overflow: auto;">
             <h6>Address:</h6>
             @Address<br />
 
+
+            <label id="distance" />
             
-                <label id="distance"/>
-                <div id="map" style="height:400px;width:100%;"></div>
-          
+            <div id="map" style="height:400px;width:100%;">
+                
+            </div>
+            @*<button class="recenterbtn" onclick="@LoadMap"><i class="fa fa-location-arrow"></i>&nbsp Re-centre</button>*@
+            
+            @*<div id="map" style="float:left;width:70%;height:100%"></div>
+                <div id="directionsPanel" style="float:right;width:30%;height:460px;overflow: auto;"></div>*@
+
+
+            
         </div>
     </DialogContent>
     <DialogActions>
@@ -21,8 +54,11 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [Inject] IJSRuntime JsRuntime { get; set; }
-    private IJSObjectReference JsModule, JsModule1;
+    private IJSObjectReference JsModule;
+    private IJSObjectReference JsModule1;
 
+    [Parameter]
+    public string StoreName { get; set; } = string.Empty;
     [Parameter]
     public string Address { get; set; } = string.Empty;
     [Parameter]
@@ -33,42 +69,113 @@
     public double DriverLatitude { get; set; }
     [Parameter]
     public double DriverLongitude { get; set; }
+    string CurrentCoord = "";
 
 
     protected override async Task OnInitializedAsync()
     {
+        await GetCoordinates();
 
-        JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-        await JsModule.InvokeVoidAsync("getCoord", false);
-        var CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
+        MapMarkerDetails storedetails = new MapMarkerDetails();
+        storedetails = new MapMarkerDetails()
+            {
+                Title = StoreName,
+                Latitude = StoreLatitude,
+                Longitude = StoreLongitude
 
+            };
+        MapMarkerDetails driverdetails = new MapMarkerDetails();
+        driverdetails = new MapMarkerDetails()
+            {
+                Title = CurrentUser.UserName,
+                Latitude = DriverLatitude,
+                Longitude = DriverLongitude
 
-        if (!string.IsNullOrEmpty(CurrentCoord))
+            };
+
+        JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/StoreGoogleMaps.js");
+        await JsModule1.InvokeVoidAsync("initMap", storedetails, driverdetails);
+    }
+
+    private async Task LoadMap()
+    {
+        if (JsModule is null)
         {
-            DriverLatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
-            DriverLongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
+        await JsModule.InvokeVoidAsync("getCoord", false);
+        string RecenterCoord = "";
+        RecenterCoord = await JsModule.InvokeAsync<string>("getCoordinates");
+
+        double dlat;
+        double dlan;
+
+        if (!string.IsNullOrEmpty(RecenterCoord))
+        {
+            dlat = Core.ToDouble(RecenterCoord.Split("##")[0]);
+            dlan = Core.ToDouble(RecenterCoord.Split("##")[1]);
         }
         else
         {
             await JsModule.InvokeVoidAsync("getCoord", false);
-            CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
+            RecenterCoord = await JsModule.InvokeAsync<string>("getCoordinates");
 
-            DriverLatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
-            DriverLongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
+            dlat = Core.ToDouble(RecenterCoord.Split("##")[0]);
+            dlan = Core.ToDouble(RecenterCoord.Split("##")[1]);
         }
         await JsModule.InvokeVoidAsync("ClearCoord");
-    }
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
+        RecenterCoord = "";
+
+        MapMarkerDetails storedetails = new MapMarkerDetails();
+        storedetails = new MapMarkerDetails()
+            {
+                Title = StoreName,
+                Latitude = StoreLatitude,
+                Longitude = StoreLongitude
+
+            };
+        MapMarkerDetails driverdetails = new MapMarkerDetails();
+        driverdetails = new MapMarkerDetails()
+            {
+                Title = CurrentUser.UserName,
+                Latitude = dlat,
+                Longitude = dlan
+
+            };
+
+        if (JsModule1 is null)
         {
-            await LoadMap();
+            JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/StoreGoogleMaps.js");
+        }
+        await JsModule1.InvokeVoidAsync("initMap", storedetails, driverdetails);
+    }
+    private async Task GetCoordinates()
+    {
+        if (string.IsNullOrEmpty(DriverLatitude.ToString()) || string.IsNullOrEmpty(DriverLongitude.ToString()))
+        {
+            if (JsModule is null)
+            {
+                JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            }
+            await JsModule.InvokeVoidAsync("getCoord", false);
+            CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
+
+            if (!string.IsNullOrEmpty(CurrentCoord))
+            {
+                DriverLatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
+                DriverLongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
+            }
+            else
+            {
+                await JsModule.InvokeVoidAsync("getCoord", false);
+                CurrentCoord = await JsModule.InvokeAsync<string>("getCoordinates");
+
+                DriverLatitude = Core.ToDouble(CurrentCoord.Split("##")[0]);
+                DriverLongitude = Core.ToDouble(CurrentCoord.Split("##")[1]);
+            }
+            await JsModule.InvokeVoidAsync("ClearCoord");
+            CurrentCoord = "";
         }
     }
-    private async Task LoadMap()
-    {
 
-        JsModule1 = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/StoreGoogleMaps.js");
-        await JsModule1.InvokeVoidAsync("initMap", StoreLatitude, StoreLongitude, DriverLatitude, DriverLongitude);
-    }
 }

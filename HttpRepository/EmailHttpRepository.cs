@@ -1,4 +1,8 @@
-﻿using WiiTrakClient.DTOs;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using WiiTrakClient.DTOs;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.Services;
 
@@ -9,23 +13,14 @@ namespace WiiTrakClient.HttpRepository
         private readonly IHttpService _httpService;
         private const string ControllerName = "email";
         private readonly string _apiUrl;
-
         public EmailHttpRepository(IHttpService httpService)
         {
             _httpService = httpService;
             _apiUrl = $"{ httpService.BaseUrl }{ ControllerName }";
         }
-
-
         public async Task SendMailAsync(MailRequest request)
         {
-           
-            var response = await _httpService.Put(_apiUrl, request);
-            if (!response.Success)
-            {
-                // throw new ApplicationException(await response.GetBody());
-            }
+              await _httpService.Put(_apiUrl, request);
         }
-       
     }
 }

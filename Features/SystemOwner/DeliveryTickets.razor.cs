@@ -1,39 +1,27 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using WiiTrakClient.Features.SystemOwner;
-using WiiTrakClient.Features.SystemOwner.Components;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.DTOs;
 using WiiTrakClient.Cores;
-using MudBlazor;
 using WiiTrakClient.Enums;
-using WiiTrakClient.Helpers;
 
 namespace WiiTrakClient.Features.SystemOwner
 {
     public partial class DeliveryTickets : ComponentBase
     {
-        
         [Inject] IJSRuntime JsRuntime { get; set; }
-
         [Inject] public IDeliveryTicketHttpRepository DeliveryTicketHttpRepository { get; set; }
-
         List<DeliveryTicketDto> deliveryTickets = new();
-        
         List<DeliveryTicketDto> _deliveryTickets = new();
-        
         private IJSObjectReference JsModule;
-        public int SelectedOption=30;
-        public int TempSelectedOption = 0;
+        int SelectedOption = 30;
+        int TempSelectedOption;
         protected override async Task OnInitializedAsync()
         {
-           
             try
             {
                 if (CurrentUser.UserId == Guid.Empty)
@@ -44,15 +32,15 @@ namespace WiiTrakClient.Features.SystemOwner
                     var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
                     CurrentUser.UserRoleId = Convert.ToInt32(roleid);
                 }
-
                 deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId,(Role)CurrentUser.UserRoleId, SelectedOption);
                 if (deliveryTickets is not null)
                 {
                     _deliveryTickets = deliveryTickets;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
+                //exception
             }
         }
         public async Task GetDeliveryTicketDetails()
@@ -70,8 +58,5 @@ namespace WiiTrakClient.Features.SystemOwner
               
             }
         }
-
-
-
     }
 }

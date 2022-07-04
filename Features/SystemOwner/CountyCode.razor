@@ -1,0 +1,88 @@
+﻿@page "/county-code"
+@using WiiTrakClient.Features.SystemOwner.Components
+@using WiiTrakClient.Cores
+@inject IJSRuntime JsRuntime
+@inject ICountyCodeHttpRepository CountyCodeRepository
+@inject IDialogService DialogService
+
+<UserAuthentication />
+<h3>County Code</h3>
+
+<div class="d-flex justify-end">
+    <MudButton Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Add"
+               IconColor="Color.Secondary"
+               Size="Size.Large"
+               OnClick="OpenDialog">Add</MudButton>
+</div>
+
+<div class="my-8">
+    @if (CountycodeList == null)
+    {
+        <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+    }
+    else if (countycode.Count > 0)
+    {
+        <CountyCodeList CountyCode="@countycode" />
+    }
+    else
+    {
+        <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
+    }
+</div>
+
+@code {
+    List<CountyCodeDTO> countycode = new();
+    List<CountyCodeDTO> CountycodeList = new();
+    CountyCodeDTO AddCountyCode = new();
+    bool LoaderVisibility = false;
+    private IJSObjectReference JsModule;
+    protected override async Task OnInitializedAsync()
+    {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
+        await RefreshCountyGrid();
+    }
+    private async Task OpenDialog()
+    {
+        var parameters = new DialogParameters();
+        AddCountyCode = new CountyCodeDTO();
+        parameters.Add("NewCounty", AddCountyCode);
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+        var dialog = DialogService.Show<AddCountyCodeDialog>("Add County Code", parameters);
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            // add new countycode to backend
+            var CountyCodeCreation = new CountyCodeDTO
+                    {
+                        State=  AddCountyCode.State,
+                        City=Core.ToPascalCase(AddCountyCode.City),
+                        ZipCode=AddCountyCode.ZipCode,
+                        IsActive=true,
+                        CountyName=AddCountyCode.CountyName,
+                        CountyCode=AddCountyCode.CountyCode,
+                    };
+            try
+            {
+                await CountyCodeRepository.CreateCountyCodeAsync(CountyCodeCreation);
+            }
+            catch { }
+        }
+        await RefreshCountyGrid();
+    }
+    private async Task RefreshCountyGrid()
+    {
+        CountycodeList = await CountyCodeRepository.GetCountyListAsync();
+
+        if (CountycodeList is not null)
+        {
+            countycode = CountycodeList;
+        }
+        StateHasChanged();
+    }
+}

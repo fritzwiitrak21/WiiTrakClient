@@ -1,0 +1,67 @@
+﻿@namespace WiiTrakClient.Features.Technicians.Components
+@using System.ComponentModel.DataAnnotations
+
+<style>
+    .validation-message {
+    font-size:0;
+    display:none;
+    font-display:block;
+    color: red;
+}
+.mud-input-helper-text.mud-input-error {
+    font-size: 0;
+}
+.mud-input-helper-text {
+    color: var(--mud-palette-text-secondary);
+    margin: 0;
+    font-size: 0;
+}
+</style> 
+
+<MudDialog>
+    <DialogContent>              
+        <div style="width: 400px;height:450px;overflow-y: auto; overflow-x: hidden;">
+                <MudForm @ref=form Model="@SimCard" @bind-IsValid="@success" @bind-Errors="@errors">  
+                    <DataAnnotationsValidator />
+                        <MudTextField T="string" class="my-6" @bind-Value="SimCard.TelecomCompany" Label="Telecom Company" Required="true" RequiredError=" " For="@(() => @SimCard.TelecomCompany)" Variant="Variant.Text"></MudTextField>  
+                        <MudTextField T="string" class="my-6" @bind-Value="SimCard.PhoneNumber" Label="Phone Number" Required="true" RequiredError=" " For="@(() => @SimCard.PhoneNumber)" Variant="Variant.Text"></MudTextField>  
+                        <MudTextField T="string" class="my-6" @bind-Value="SimCard.PlanName" Label="Plan Name" Required="true" RequiredError=" " For="@(() => @SimCard.PlanName)" Variant="Variant.Text"></MudTextField> 
+                        <MudDatePicker class="my-6" Label="Plan Activation Date" Editable="true" @bind-Date="SimCard.PlanActivationDate" Required=true  For="@(() => @SimCard.PlanActivationDate)"/>
+                        <MudDatePicker class="my-6" Label="Plan End Date" Editable="true" @bind-Date="SimCard.PlanEndDate" Required=true  For="@(() => @SimCard.PlanEndDate)"/>
+                        <MudTextField T="string" class="my-6" @bind-Value="SimCard.SIMNo" Label="SIM Number" Required="true" RequiredError=" " For="@(() => @SimCard.SIMNo)" Variant="Variant.Text"></MudTextField>  
+                        <MudTextField T="string" class="my-6" @bind-Value="SimCard.IMSI" Label="IMSI" Required="true" RequiredError=" " For="@(() => @SimCard.IMSI)" Variant="Variant.Text"></MudTextField>  
+                        <div class="d-flex">
+                            <MudButton OnClick="Cancel">Cancel</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Update</MudButton>
+                        </div>
+                        <br />
+                </MudForm>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [Parameter]
+    public SimCardsDto? SimCard {get; set;}
+    [CascadingParameter] 
+    MudDialogInstance MudDialog { get; set; }
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    protected override void OnParametersSet()
+    {
+        
+    }
+
+    void Submit() 
+    {
+        form.Validate();
+        if (success && errors.Length == 0)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+    }
+    void Cancel() => MudDialog.Cancel();
+
+}

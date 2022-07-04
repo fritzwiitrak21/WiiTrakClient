@@ -3,56 +3,75 @@
 
 <MudDialog>
     <DialogContent>
-        <div style="width: 400px;height:450px;overflow: auto;">
-           <MudText Class="my-4" Typo="Typo.h5">Store: @StoreName</MudText>
-            <MudText Class="my-4" Typo="Typo.h5">Store Number: @deliveryTicketDto.StoreNumber</MudText>
-            <MudText Class="my-4" Typo="Typo.h5">Date Time: @deliveryTicketDto.TimezoneDateTime</MudText>
-            <MudText Class="my-4" Typo="Typo.h5">Driver Name: @deliveryTicketDto.DriverName</MudText>
-            <MudText Class="my-4" Typo="Typo.h5">Number of Carts: @deliveryTicketDto.NumberOfCarts</MudText>
+        <div style="width: 400px;height:500px;overflow: auto;">
+            <MudText Class="my-2" Typo="Typo.h5">Store: @StoreName</MudText>
+            <MudText Class="my-2" Typo="Typo.h5">Date Time: @deliveryTicketDto.TimezoneDateTime</MudText>
+            <MudText Class="my-2" Typo="Typo.h5">Driver Name: @deliveryTicketDto.DriverName</MudText>
+            <MudText Class="my-2" Typo="Typo.h5">Number of Carts: @deliveryTicketDto.NumberOfCarts</MudText>
+            <div class="my-2">
+                @if (SelectedCartList != null && SelectedCartList.Count > 0)
+                {
+                      <label>Carts List</label>
+                    <br />
+                    @foreach (var cart in SelectedCartList)
+                    {
+                        if (cart.Status == CartStatus.InsideGeofence)
+                        {
+                            <span>  • @cart.ManufacturerName - #@cart.CartNumber </span>
+                            <br />
+                        }
+                    }
+                }
+            </div>
+
             @*@if(deliveryTicketSummary != null)
-            {
-               
+                {
+
                 <MudText Class="" Typo="Typo.h6">Delivered: @deliveryTicketSummary.Delivered</MudText>
-                        
+
                 <MudText Class="" Typo="Typo.h6">Lost: @deliveryTicketSummary.Lost</MudText>
-                       
+
                 <MudText Class="" Typo="Typo.h6">Damaged: @deliveryTicketSummary.Damaged</MudText>
-                       
+
                 <MudText Class="" Typo="Typo.h6">Trashed: @deliveryTicketSummary.Trashed</MudText>
-                       
-            }
-            @if(cartsTable != null)
+
+                }
+                @if(cartsTable != null)
+                {
+                <CartsTable Carts="@cartsTable"></CartsTable>
+                }*@
+            @if (!string.IsNullOrWhiteSpace(deliveryTicketDto.PicUrl))
             {
-           <CartsTable Carts="@cartsTable"></CartsTable>
-            }*@
-            @if (!string.IsNullOrWhiteSpace(deliveryTicketDto.PicUrl)) {
-                <div class="d-flex justify-center mt-6 popupitemimage">
-                    <img src="@deliveryTicketDto.PicUrl" width="300" height="300" />
+                <div class="d-flex justify-center mt-4 popupitemimage">
+                    <img src="@deliveryTicketDto.PicUrl" width="200" height="200" />
                 </div>
             }
-             @if (!string.IsNullOrWhiteSpace(deliveryTicketDto.SignaturePicUrl)) {
-                
- <MudText Class="" Typo="Typo.h6">Signature: @deliveryTicketDto.Signee</MudText> 
-                  @*<MudText Class="" Typo="Typo.h6">Signature: </MudText> *@
-                <div class="d-flex justify-center mt-6 popupitemimage">
-                    <img src="@deliveryTicketDto.SignaturePicUrl" width="300" height="300" />
+            @if (!string.IsNullOrWhiteSpace(deliveryTicketDto.SignaturePicUrl))
+            {
+
+                <MudText Class="" Typo="Typo.h6">Signature: @deliveryTicketDto.Signee</MudText>
+                @*<MudText Class="" Typo="Typo.h6">Signature: </MudText> *@
+                <div class="d-flex justify-center mt-4 popupitemimage">
+                    <img src="@deliveryTicketDto.SignaturePicUrl" width="200" height="200" />
                 </div>
             }
-            
+
         </div>
     </DialogContent>
 </MudDialog>
 
 @code {
     [Parameter]
-    public DeliveryTicketDto? deliveryTicketDto{ get; set; }
+    public DeliveryTicketDto? deliveryTicketDto { get; set; }
 
     [Parameter]
     public string StoreName { get; set; }
 
     [Parameter]
-    public DeliveryTicketSummaryDto? deliveryTicketSummary{ get; set; }
+    public DeliveryTicketSummaryDto? deliveryTicketSummary { get; set; }
 
     [Parameter]
     public List<CartDto>? cartsTable { get; set; }
+    [Parameter]
+    public List<CartDto>? SelectedCartList { get; set; }
 }

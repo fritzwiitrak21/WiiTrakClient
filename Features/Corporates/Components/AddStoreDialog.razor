@@ -28,7 +28,7 @@
 
 <MudDialog Class="dialogstyle">
     <DialogContent>
-        <div style="width: 430px;height:550px;">
+        <div style="width: 400px;height:550px;overflow-y: auto; overflow-x: hidden;">
             <MudForm Model="@NewStore" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudItem>
                     <MudSelect T="CompanyDto" Label="Select Company" Required=true RequiredError=" "
@@ -47,15 +47,33 @@
                 <MudTextField class="my-6" @bind-Value="NewStore.PhoneSecondary" Label="Phone Secondary" For="@(() => @NewStore.PhoneSecondary)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="NewStore.StreetAddress1" Label="Street Address 1" Required="true" RequiredError=" " For="@(() => @NewStore.StreetAddress1)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="NewStore.StreetAddress2" Label="Street Address 2" For="@(() => @NewStore.StreetAddress2)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewStore.City" Label="City" Required="true" RequiredError=" " For="@(() => @NewStore.City)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewStore.State" Label="State" Required="true" RequiredError=" " For="@(() => @NewStore.State)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewStore.PostalCode" Label="Zip Code" Required="true" RequiredError=" " For="@(() => @NewStore.PostalCode)" Variant="Variant.Text"></MudTextField>
-                <div Class="Mudsearchselect my-6">
+                  <MudSelect T="String" Value="@SelectedCity" Class="my-0" ValueChanged="(value) => HandleCity(value)" Label="City" Required=true RequiredError=" "
+                               AnchorOrigin="Origin.BottomCenter">
+                        @if (City.Length != 0)
+                        {
+                            foreach (var item in City)
+                            {
+                                <MudSelectItem T="String" Value=@item>@item</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                    <MudSelect T="String" Value="@SelectedState" Class="my-6" ValueChanged="(value) => HandleState(value)" Label="State" Required=true RequiredError=" "
+                               AnchorOrigin="Origin.BottomCenter">
+                        @if (State.Length != 0)
+                        {
+                            foreach (var item in State)
+                            {
+                                <MudSelectItem T="String" Value=@item>@item</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                <MudTextField Class="my-0" T="String" Value="@PostalCodeValue" Label="Zip Code" Required="true" RequiredError=" " ValueChanged="(value)=>HandleZipcode(value)" For="@(() => @NewStore.PostalCode)" Variant="Variant.Text"></MudTextField>
+                <div Class="Mudsearchselect">
                     @if (SelectedCounty != "")
                     {
                         <label id="targetlabel">County Code*</label>
                     }
-                    <input type="text" list="textsearch" Class="inputselect" placeholder="County Code*" value="@SelectedCounty" @onkeyup="OnClick" @onchange="eventArgs => { OnSelect(eventArgs.Value); }" />
+                    <input type="text" list="textsearch" Class="inputselect my-10" placeholder="County Code*" value="@SelectedCounty" @onkeyup="OnClick" @onchange="eventArgs => { OnSelect(eventArgs.Value); }" />
 
                     <datalist id="textsearch">
                         @foreach (var county in County)
@@ -64,7 +82,7 @@
                         }
                     </datalist>
                 </div>
-                <MudItem Class="my-6">
+                <MudItem Class="my-3">
                     <MudSelect T="String" Value="@SelectedService" ValueChanged="(value) => HandleServiceFrequency(value)" Label="Select Service Frequency" Required=true RequiredError=" "
                                AnchorOrigin="Origin.BottomCenter">
 
@@ -79,12 +97,11 @@
 
                 </MudItem>
                 <MudDatePicker Class="my-6" Label="" Editable="false" MinDate="MinDate" @bind-Date="NewStore.StartDate" Placeholder="Select Start Date" Required=true RequiredError=" " For="@(() => @NewStore.StartDate)" />
-
+                <MudSwitch @bind-Checked="NewStore.IsConnectedStore" Label=@(NewStore.IsConnectedStore? "Connected":"Disconnected") Color="Color.Primary" />  
                 <MudCheckBox @bind-Checked="NewStore.IsSignatureRequired" Label="Signature Reqired For Deliveries" Color="Color.Primary"></MudCheckBox>
                 <div class="d-flex SubmitGrp">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
-                    @*                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
-                    *@                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
                 </div>
             </MudForm>
         </div>
@@ -96,6 +113,7 @@
     public StoreCreationDto? NewStore { get; set; }
     public List<CompanyDto> companies { get; set; } = new();
     public List<CountyCodeDTO> CountyCodeList { get; set; } = new();
+    public List<CountyCodeDTO> TempCountyCodeList { get; set; } = new();
     public CompanyDto SelectedCompany = new();
     public CountyCodeDTO SelectedCountyCode = new();
     [Inject]
@@ -106,10 +124,15 @@
     bool success;
     string[] errors = { };
     string[] County;
+    string[] City;
+    string[] State;
     MudForm form;
     [Inject] IJSRuntime JsRuntime { get; set; }
     private IJSObjectReference JsModule;
     public string SelectedService = "";
+    public string SelectedCity = "";
+    public string SelectedState = "";
+    public string PostalCodeValue = "";
     DateTime? MinDate { get; set; } = DateTime.Today;
     DateTime SelectedDate { get; set; } = DateTime.Today;
     public string SelectedCounty = "";
@@ -125,37 +148,148 @@
         CountyCodeList = await CountyCodeRepository.GetCountyListAsync();
         if (CountyCodeList.Count > 0)
         {
-            SelectedCountyCode = CountyCodeList[0];
-            NewStore.CountyCode = SelectedCountyCode.CountyCode;
             try
             {
+                string[] TempCity = new string[CountyCodeList.Count];
                 string[] C = new string[CountyCodeList.Count];
+                int j = 0;
                 for (int i = 0; i < CountyCodeList.Count; i++)
                 {
                     SelectedCountyCode = CountyCodeList[i];
-                    if (!(C.Contains(SelectedCountyCode.CountyCode)))
+                    if (!(TempCity.Contains(SelectedCountyCode.City)))
                     {
-                        C[i] = SelectedCountyCode.CountyCode;
+                        TempCity[j] = SelectedCountyCode.City;
+                        C[j] = SelectedCountyCode.CountyCode;
+                        j++;
                     }
                 }
+                Array.Resize(ref TempCity, j);
                 County = (string[])C.Clone();
-
+                City = (string[])TempCity.Clone();
             }
             catch (Exception ex)
             {
-
+                //Exception
             }
         }
     }
     protected override void OnParametersSet()
     {
         SelectedService = "1 time a week";
-        NewStore.ServiceFrequency = SelectedService;
+        NewStore.ServiceFrequency = "1 time a week";
     }
     public async Task HandleServiceFrequency(string value)
     {
         NewStore.ServiceFrequency = value;
         SelectedService = value;
+    }
+
+    public async Task HandleCity(string value)
+    {
+        SelectedCity = value;
+        NewStore.City = value;
+        SelectedState = "";
+        SelectedCounty = "";
+        IsValidCountyCode = false;
+        TempCountyCodeList = CountyCodeList.Where(x => x.City == value).ToList();
+        if (TempCountyCodeList.Count > 0)
+        {
+            try
+            {
+                int j = 0;
+                int k = 0;
+                string[] TempState = new string[TempCountyCodeList.Count];
+                string[] C = new string[TempCountyCodeList.Count];
+                for (int i = 0; i < TempCountyCodeList.Count; i++)
+                {
+                    SelectedCountyCode = TempCountyCodeList[i];
+                    if (!(TempState.Contains(SelectedCountyCode.State)))
+                    {
+                        TempState[j] = SelectedCountyCode.State;
+                        j++;
+                    }
+                    if (!(C.Contains(SelectedCountyCode.CountyCode)))
+                    {
+                        C[k] = SelectedCountyCode.CountyCode;
+                        k++;
+                    }
+                }
+                Array.Resize(ref TempState, j);
+                Array.Resize(ref C, k);
+                State = (string[])TempState.Clone();
+                County = (string[])C.Clone();
+            }
+            catch (Exception ex)
+            {
+                //Exception
+            }
+        }
+    }
+    public async Task HandleState(string value)
+    {
+        SelectedState = value;
+        NewStore.State = value;
+        SelectedCounty = "";
+        IsValidCountyCode = false;
+        TempCountyCodeList = CountyCodeList.Where(x => x.City == NewStore.City && x.State == NewStore.State).ToList();
+        if (TempCountyCodeList.Count > 0)
+        {
+            try
+            {
+                int j = 0;
+                string[] C = new string[TempCountyCodeList.Count];
+                for (int i = 0; i < TempCountyCodeList.Count; i++)
+                {
+                    SelectedCountyCode = TempCountyCodeList[i];
+                    if (!(C.Contains(SelectedCountyCode.CountyCode)))
+                    {
+                        C[j] = SelectedCountyCode.CountyCode;
+                        j++;
+                    }
+                }
+                Array.Resize(ref C, j);
+                County = (string[])C.Clone();
+            }
+            catch (Exception ex)
+            {
+                //Exception
+            }
+        }
+    }
+    public async Task HandleZipcode(string value)
+    {
+        PostalCodeValue = value;
+        NewStore.PostalCode = value;
+        SelectedCounty = "";
+        IsValidCountyCode = false;
+        TempCountyCodeList = CountyCodeList.Where(x => x.ZipCode == value).ToList();
+        if (TempCountyCodeList.Count == 0)
+        {
+            TempCountyCodeList = CountyCodeList.Where(x => x.City == NewStore.City && x.State == NewStore.State).ToList();
+        }
+        if (TempCountyCodeList.Count > 0)
+        {
+            try
+            {
+                int j = 0;
+                string[] C = new string[TempCountyCodeList.Count];
+                for (int i = 0; i < TempCountyCodeList.Count; i++)
+                {
+                    SelectedCountyCode = TempCountyCodeList[i];
+                    if (!(C.Contains(SelectedCountyCode.CountyCode)))
+                    {
+                        C[j] = SelectedCountyCode.CountyCode;
+                        j++;
+                    }
+                }
+                Array.Resize(ref C, j);
+                County = (string[])C.Clone();
+            }
+            catch (Exception ex)
+            {
+                //Exception
+            }
+        }
     }
     private async Task OnClick()
     {
@@ -198,13 +332,14 @@
                     success = false;// Disable the Save button when other fields are valid
                 }
                 IsValidCountyCode = true;
+                StateHasChanged();
             }
             else
             {
                 SelectedCounty = e.ToString();
                 success = false;
                 await JsModule.InvokeVoidAsync("addValidationCountycodeClass");
-                IsValidCountyCode = false;
+                IsValidCountyCode = true;
                 StateHasChanged();
             }
         }
@@ -212,7 +347,7 @@
         {
         }
     }
-    public async Task Submit()
+     public async Task Submit()
     {
         form.Validate();
         if (JsModule is null)
@@ -221,7 +356,7 @@
         }
         if (!IsValidCountyCode)
         {
-            await JsModule.InvokeVoidAsync("addValidationCountycodeClass");
+          await  JsModule.InvokeVoidAsync("addValidationCountycodeClass");
             StateHasChanged();
         }
         if (success && errors.Length == 0 && IsValidCountyCode)
@@ -229,7 +364,6 @@
             MudDialog.Close(DialogResult.Ok(true));
         }
     }
-
     void Cancel() => MudDialog.Cancel();
     private async Task HandleCompanySelected(CompanyDto Company)
     {

@@ -43,15 +43,12 @@ export function clearSession(){
     localStorage.clear();
 }
 
-
 export function getStoreId(value) {
-    var storeid = $('#textsearch [value="' + value + '"]').data('value');
-    return storeid;
+    return $('#textsearch [value="' + value + '"]').data('value');
 }
 
 export function getTextBoxValue() {
-    var inputtext = $('input[type="text"].inputselect').val();
-    return inputtext;
+    return $('input[type="text"].inputselect').val();
 }
 
 export function addValidationClass() {
@@ -61,6 +58,15 @@ export function addValidationClass() {
 export function removeValidationClass() {
     $('input[type="text"].inputselect').removeClass("mud-input-error");
     $('#targetlabel').removeClass("mud-input-error");
+}
+
+export function addTextValidationClass() {
+    $('input[type="text"].inputtext').addClass("mud-input-error");
+    $('#NoOfCartLabel').addClass("mud-input-error");
+}
+export function removeTextValidationClass() {
+    $('input[type="text"].inputtext').removeClass("mud-input-error");
+    $('#NoOfCartLabel').removeClass("mud-input-error");
 }
 
 export function updateCanvas() {
@@ -121,11 +127,15 @@ export function addValidationCountycodeClass() {
     $('input[type="text"].inputselect').addClass("mud-input-error");
     $('input[type="text"].inputselect').addClass("countycode");
     $('#targetlabel').addClass("mud-input-error");
+    $('input[type="text"].inputselect').addClass("my-10");
+    $('input[type="text"].inputselect').removeClass("my-6");
 }
 export function removeValidationCountycodeClass() {
     $('input[type="text"].inputselect').removeClass("mud-input-error");
     $('input[type="text"].inputselect').removeClass("countycode");
     $('#targetlabel').removeClass("mud-input-error");
+    $('input[type="text"].inputselect').removeClass("my-10");
+    $('input[type="text"].inputselect').addClass("my-6");
 }
 export function BlazorDownloadFile(filename, content) {
     const file = new File([content], filename, { type: "application/octet-stream" });
@@ -137,4 +147,16 @@ export function BlazorDownloadFile(filename, content) {
     a.target = "_self";
     a.click();
     URL.revokeObjectURL(exportUrl);
+}
+export function ShowRadioListClass() {
+    $('#RadioList').addClass("ShowRadioList");
+    $('#RadioList').removeClass("HideRadioList");
+}
+export function ShowdivPreviewClass() {
+    $('#divPreview').addClass("ShowPreview");
+    $('#divPreview').removeClass("HidePreview");
+}
+export function HidedivPreviewClass() {
+    $('#divPreview').removeClass("ShowPreview");
+    $('#divPreview').addClass("HidePreview");
 }

@@ -1,0 +1,41 @@
+﻿@page "/display-device-gmap"
+@namespace WiiTrakClient.Shared.Components
+@using WiiTrakClient.Shared.Components
+@using WiiTrakClient.Cores
+@using WiiTrakClient.Shared.Map
+
+<MudDialog>
+    <DialogContent>
+        <div style="width:1000px;height:490px;overflow: auto;">
+
+        <div id="map" style="height:100%;width:100%;overflow: auto;"></div>
+
+         </div>
+    </DialogContent>
+    <DialogActions>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Inject] IJSRuntime JsRuntime { get; set; }
+    private IJSObjectReference JsModule;
+
+
+    [Parameter]
+    public TrackingDeviceDetailsDto device { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/DeviceGoogleMaps.js");
+            MapMarkerDetails devicedetails = new();
+            devicedetails.Title ="Store : " +device.StoreName + " - " + device.StoreNumber + ",\n" +"Cart : "+
+                                    device.ManufacturerName + " - Cart#" + device.CartNumber + ",\nDevice : " +
+                                    device.DeviceName;
+            devicedetails.Latitude = device.Latitude;
+            devicedetails.Longitude = device.Longitude;
+            await JsModule.InvokeVoidAsync("initMap", devicedetails);
+        }
+    }
+}
