@@ -24,7 +24,7 @@
 </style>
 <MudDialog>
     <DialogContent>
-        <div style="width: 400px;height:450px;overflow: auto;">
+        <div style="width: 400px;height:480px;overflow: auto;">
             <MudForm Model="@editDeliveryTicket" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudSelect Class="my-6" T="StoreDto" Label="Store" AnchorOrigin="Origin.BottomCenter"
                            HelperText="Select a Store" Value="@SelectedStore" ValueChanged="(value) => HandleStore(value)" Required="true"

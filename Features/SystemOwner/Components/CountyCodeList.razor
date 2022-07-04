@@ -14,7 +14,7 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="City">
-            @context.City
+            @Core.ToPascalCase(context.City)
         </MudTd>
         <MudTd DataLabel="State">
              @context.State
@@ -58,7 +58,7 @@
             // save updated countycode to backend
             var CountyUpdate = new CountyCodeDTO 
             {
-                City = Countycode.City,
+                City =Core.ToPascalCase(Countycode.City),
                 State = Countycode.State,
                 ZipCode = Countycode.ZipCode,
                 IsActive=true,

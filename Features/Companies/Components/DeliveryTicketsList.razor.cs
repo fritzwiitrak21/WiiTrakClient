@@ -98,9 +98,8 @@ namespace WiiTrakClient.Features.Companies.Components
 
                
             }
-            _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, RecordCount);
-            StateHasChanged();
-          
+            await RefreshDeliveryTicket();
+
         }
         #endregion
         #region Details Dialog
@@ -165,10 +164,19 @@ namespace WiiTrakClient.Features.Companies.Components
                 DeliveryTickets = DeliveryTickets.OrderByDescending(y => y.DeliveryTicketNumber).ToList();
                 StateHasChanged();
             }
-            _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, RecordCount);
-            StateHasChanged();
+            await RefreshDeliveryTicket();
             #endregion
         }
         #endregion
+        async Task RefreshDeliveryTicket()
+        {
+            _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, RecordCount);
+            if (_deliveryTickets is not null)
+            {
+                DeliveryTickets = _deliveryTickets;
+            }
+            StateHasChanged();
+        }
     }
+    
 }

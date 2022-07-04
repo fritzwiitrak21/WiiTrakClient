@@ -4,13 +4,13 @@
 @using WiiTrakClient.Cores
 
 <MudTable Items="@SimCards" Class="Pagingstyle" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@ListIsLoading"
-    LoadingProgressColor="Color.Primary">
+          LoadingProgressColor="Color.Primary">
     <HeaderContent>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<SimCardsDto, object>(x=>x.TelecomCompany)">Telecom Company</MudTableSortLabel></MudTh>
         <MudTh>Phone Number</MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<SimCardsDto, object>(x=>x.PlanName)">Plan Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<SimCardsDto, object>(x=>x.PlanActivationDate)">Plan Activation Date</MudTableSortLabel></MudTh>       
-        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<SimCardsDto, object>(x=>x.PlanEndDate)">Plan End Date</MudTableSortLabel></MudTh>  
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<SimCardsDto, object>(x=>x.PlanActivationDate)">Plan Activation Date</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<SimCardsDto, object>(x=>x.PlanEndDate)">Plan End Date</MudTableSortLabel></MudTh>
         <MudTh>SIM Number</MudTh>
         <MudTh>IMSI</MudTh>
         <MudTh></MudTh>
@@ -37,11 +37,11 @@
         <MudTd DataLabel="IMSI">
             @context.IMSI
         </MudTd>
-        <MudTd DataLabel="Action">           
-            <MudButton 
-                Variant="Variant.Filled" 
-                Color="Color.Primary" 
-                OnClick="((e) => OpenDialog(context))">Update
+        <MudTd DataLabel="Action">
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       OnClick="((e) => OpenDialog(context))">
+                Update
             </MudButton>
         </MudTd>
     </RowTemplate>
@@ -55,38 +55,48 @@
     public List<SimCardsDto>? SimCards { get; set; } = null;
     private bool ListIsLoading = true;
 
+    List<SimCardsDto> SimCardslist = new();
+    
     protected override void OnParametersSet()
     {
         ListIsLoading = false;
     }
 
-    public async Task OpenDialog(SimCardsDto simcard) 
+    public async Task OpenDialog(SimCardsDto simcard)
     {
         var parameters = new DialogParameters();
-        parameters.Add("SimCard", simcard);   
-        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
-        var dialog  = DialogService.Show<UpdateSimCardDialog>("Update Simcard", parameters);
-        var result = await dialog.Result; 
-        if (!result.Cancelled) 
+        parameters.Add("SimCard", simcard);
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+        var dialog = DialogService.Show<UpdateSimCardDialog>("Update Simcard", parameters);
+        var result = await dialog.Result;
+        if (!result.Cancelled)
         {
             // save updated SimCard to backend
-            var SimCardUpdate = new SimCardsDto 
-            {
-                TelecomCompany=simcard.TelecomCompany,
-                    PhoneNumber=simcard.PhoneNumber,
-                    PlanName=simcard.PlanName,
-                    PlanActivationDate=simcard.PlanActivationDate,
-                    PlanEndDate=simcard.PlanEndDate,
-                    SIMNo=simcard.SIMNo,
-                    IMSI=simcard.IMSI,
-                    IsActive=true,
-                    TechnicianId=CurrentUser.UserId,
-                    CreatedAt=simcard.CreatedAt,
-                    Id=simcard.Id
-            };
+            var SimCardUpdate = new SimCardsDto
+                {
+                    TelecomCompany = simcard.TelecomCompany,
+                    PhoneNumber = simcard.PhoneNumber,
+                    PlanName = simcard.PlanName,
+                    PlanActivationDate = simcard.PlanActivationDate,
+                    PlanEndDate = simcard.PlanEndDate,
+                    SIMNo = simcard.SIMNo,
+                    IMSI = simcard.IMSI,
+                    IsActive = true,
+                    TechnicianId = CurrentUser.UserId,
+                    CreatedAt = simcard.CreatedAt,
+                    Id = simcard.Id
+                };
             await SimCardRepository.UpdateSimCardAsync(simcard.Id, SimCardUpdate);
         }
-        SimCards = await SimCardRepository.GetSimCardByTechnicianIdAsync(CurrentUser.UserId);
+        await RefreshSimcard();
+    }
+    async Task RefreshSimcard()
+    {
+        SimCardslist = await SimCardRepository.GetSimCardByTechnicianIdAsync(CurrentUser.UserId);
+        if (SimCardslist is not null)
+        {
+            SimCards = SimCardslist;
+        }
         StateHasChanged();
     }
 }

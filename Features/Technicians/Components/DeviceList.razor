@@ -96,8 +96,7 @@
                 };
             await DevicesRepository.UpdateDeviceAsync(device.Id, DeviceUpdate);
         }
-        Devices = await DevicesRepository.GetAllDeviceDetailsAsync();
-        StateHasChanged();
+        await RefreshDeviceGrid();
     }
     public async Task GetConfirmation(DevicesDto device)
     {
@@ -133,8 +132,13 @@
                 };
             await DevicesRepository.UpdateDeviceAsync(device.Id, DeviceUpdate);
         }
+        await RefreshDeviceGrid();
+    }
+    private async Task RefreshDeviceGrid()
+    {
         Devices = await DevicesRepository.GetDeviceByTechnicianIdAsync(CurrentUser.UserId);
         StateHasChanged();
     }
+
 
 }

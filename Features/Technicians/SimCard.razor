@@ -45,13 +45,8 @@ else
             var id = await jsmodule.InvokeAsync<string>("getuserid");
             CurrentUser.UserId = new Guid(id);
         }
+        await RefreshSimcard();
 
-        SimCardsList = await SimCardRepository.GetSimCardByTechnicianIdAsync(CurrentUser.UserId);
-        if (SimCardsList is not null)
-        {
-            simcards = SimCardsList;
-        }
-        StateHasChanged();
     }
 
     private async Task OpenDialog()
@@ -89,7 +84,15 @@ else
                 //Exception
             }
         }
-        simcards = await SimCardRepository.GetSimCardByTechnicianIdAsync(CurrentUser.UserId);
+        await RefreshSimcard();
+    }
+    async Task RefreshSimcard()
+    {
+         SimCardsList = await SimCardRepository.GetSimCardByTechnicianIdAsync(CurrentUser.UserId);
+        if (SimCardsList is not null)
+        {
+            simcards = SimCardsList;
+        }
         StateHasChanged();
     }
 }

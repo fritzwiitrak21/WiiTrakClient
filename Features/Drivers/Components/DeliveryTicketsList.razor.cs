@@ -141,7 +141,14 @@ namespace WiiTrakClient.Features.Drivers.Components
                         cartUpdate.CartHistory.Status = CartStatus.PickedUp;
                         cartUpdate.Status = CartStatus.PickedUp;
                     }
-                    await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
+                    try
+                    {
+                        await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
+                    }
+                    catch(Exception ex)
+                    {
+                        //Exception
+                    }
                 }
             }
             //var cartPreUpdate = cart;

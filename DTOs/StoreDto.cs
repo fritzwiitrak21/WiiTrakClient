@@ -20,7 +20,7 @@ namespace WiiTrakClient.DTOs
         [RegularExpression(@"^[A-Za-z0-9]*$")]
         public string StoreNumber { get; set; } = string.Empty;
         [Required]
-        [RegularExpression(@"^[a-zA-Z0-9_]+@[a-z]+\.[a-z]{2,3}$")]
+        [RegularExpression(@"^[a-zA-Z0-9_.]+@[a-zA-Z]+\.[a-z]{2,3}$")]
         public string Email { get; set; } = string.Empty;
         [Required]
         [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$")]

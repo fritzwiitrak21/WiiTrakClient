@@ -79,79 +79,10 @@ namespace WiiTrakClient.Features.SystemOwner.Components
                      SignOffRequired = _stores.FirstOrDefault(x => x.Id == _editDeliveryTicket.StoreId).IsSignatureRequired
                 };
                 await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId,deliveryTicketUpdate);
-                // update status of carts to delivered and update cart hitory
-                //var carts = _carts.Where(x => x.StoreId == _editDeliveryTicket.StoreId).ToList();
-                //foreach (var cart in carts)
-                //{
-                //    var cartHistory = new CartHistoryUpdateDto
-                //    {
-                //        DeliveryTicketId = deliveryTicketId,
-                //        PickupLatitude = cart.TrackingDevice != null ? cart.TrackingDevice.Latitude : 0,
-                //        PickupLongitude = cart.TrackingDevice != null ? cart.TrackingDevice.Longitude : 0,
-                //        DroppedOffAt = DateTime.Now,
-                //        ServiceProviderId = cart.Store != null ? cart.Store.ServiceProviderId : null,
-                //        StoreId = cart.StoreId,
-                //        DriverId = selectedDriver.Id,
-                //        Condition = cart.Condition,
-                //        Status = CartStatus.InsideGeofence,
-                //        IsDelivered = true,
-                //        CartId = cart.Id
-                //    };
-
-                //    var cartUpdate = new CartUpdateDto
-                //    {
-                //        ManufacturerName = cart.ManufacturerName,
-                //        DateManufactured = cart.DateManufactured,
-                //        OrderedFrom = cart.OrderedFrom,
-                //        Condition = cart.Condition,
-                //        Status = CartStatus.InsideGeofence,
-                //        PicUrl = cart.PicUrl,
-                //        IsProvisioned = cart.IsProvisioned,
-                //        BarCode = cart.BarCode,
-                //        StoreId = cart.StoreId,
-                //        CartHistory = cartHistory
-                //    };
-                //    await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
-                //}
+                
             }
-            _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId,RecordCount);
-            StateHasChanged();
-            //var cartPreUpdate = cart;
-            //Console.WriteLine("cart id: " + cart.Id);
-            //var parameters = new DialogParameters();
-            //parameters.Add("Cart", cart);
-            //parameters.Add("RepairIssues", RepairIssues);
-            //DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
-            //if (DialogService is null) return;
-            //var dialog = DialogService.Show<UpdateCartDialog>("Update Cart", parameters);
-            //var result = await dialog.Result;
-            //if (!result.Cancelled)
-            //{
-            //    // save updated cart to backend
-            //    var cartUpdate = new CartUpdateDto
-            //    {
-            //        ManufacturerName = cart.ManufacturerName,
-            //        DateManufactured = cart.DateManufactured,
-            //        OrderedFrom = cart.OrderedFrom,
-            //        Condition = cart.Condition,
-            //        Status = cart.Status,
-            //        PicUrl = cart.PicUrl,
-            //        IsProvisioned = cart.IsProvisioned,
-            //        BarCode = cart.BarCode,
-            //        StoreId = cart.StoreId
-            //    };
-            //    if (CartHttpRepository is null) return;
-            //    await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
-            //    // pass update changes back to parent for driver summary
-            //    var cartChange = new CartChange
-            //    {
-            //        Id = cart.Id,
-            //        Status = cart.Status,
-            //        Condition = cart.Condition,
-            //        CreatedAt = DateTime.Now
-            //    };
-            //    await CartUpdatedEventCallback.InvokeAsync(cartChange);
-            //}
+            await RefreshDeliveryTicket();
+
         }
         public async Task OpenDeliveryTicketDialog(DeliveryTicketDto deliveryTicket)
         {
@@ -219,9 +150,17 @@ namespace WiiTrakClient.Features.SystemOwner.Components
                 }
 
             }
-            _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId,RecordCount);
-            StateHasChanged();
+            await RefreshDeliveryTicket();
             #endregion
+        }
+        async Task RefreshDeliveryTicket()
+        {
+            _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, RecordCount);
+            if (_deliveryTickets is not null)
+            {
+                DeliveryTickets = _deliveryTickets;
+            }
+            StateHasChanged();
         }
     }    
 }

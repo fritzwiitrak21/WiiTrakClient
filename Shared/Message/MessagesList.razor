@@ -9,7 +9,7 @@
         <MudTh><MudTableSortLabel SortBy="new Func<MessagesDto, object>(x=>x.Address)">Address</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<MessagesDto, object>(x=>x.ReciverName)">Driver Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<MessagesDto, object>(x=>x.Message)">Addtional Message</MudTableSortLabel></MudTh>
-        <MudTh>Action Taken</MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<MessagesDto, object>(x=>x.ActionTaken)">Action Taken</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
         @if (CurrentUser.UserRoleId != 6)

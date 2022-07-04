@@ -68,7 +68,7 @@
             var CountyCodeCreation = new CountyCodeDTO
                     {
                         State=  AddCountyCode.State,
-                        City=AddCountyCode.City,
+                        City=Core.ToPascalCase(AddCountyCode.City),
                         ZipCode=AddCountyCode.ZipCode,
                         IsActive=true,
                         CountyName=AddCountyCode.CountyName,

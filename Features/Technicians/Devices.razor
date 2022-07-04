@@ -45,13 +45,8 @@ else
             var id = await jsmodule.InvokeAsync<string>("getuserid");
             CurrentUser.UserId = new Guid(id);
         }
+        await RefreshDevice();
 
-        DeviceList = await DevicesRepository.GetDeviceByTechnicianIdAsync(CurrentUser.UserId);
-        if (DeviceList is not null)
-        {
-            devices = DeviceList;
-        }
-        StateHasChanged();
     }
 
     private async Task OpenDialog()
@@ -92,8 +87,14 @@ else
                 //Exception
             }
         }
-        devices = await DevicesRepository.GetDeviceByTechnicianIdAsync(CurrentUser.UserId);
+        await RefreshDevice();
+    }
+    async Task RefreshDevice(){
+          DeviceList = await DevicesRepository.GetDeviceByTechnicianIdAsync(CurrentUser.UserId);
+        if (DeviceList is not null)
+        {
+            devices = DeviceList;
+        }
         StateHasChanged();
     }
-
 }

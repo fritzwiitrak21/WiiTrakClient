@@ -114,7 +114,6 @@
         [MaxLength(15, ErrorMessage = " ")]
         [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = " ")]
         public string State { get; set; } = string.Empty;
-        [MinLength(4, ErrorMessage = " ")]
         [RegularExpression(@"^[1-9][0-9]*$", ErrorMessage = " ")]
         public string ZipCode { get; set; } = string.Empty;
     }

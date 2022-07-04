@@ -36,6 +36,7 @@ namespace WiiTrakClient.Features.Stores.Components
         List<CartDto> _carts = new();
         List<StoreDto> _stores = new();
         private bool _listIsLoading = true;
+        List<DeliveryTicketDto> _deliveryTickets = new();
         DeliveryTicketUpdateDto _editDeliveryTicket = new();
         Guid deliveryTicketId = Guid.Empty;
         List<CartDto>? cartsTable { get; set; } = new List<CartDto>();
@@ -132,8 +133,7 @@ namespace WiiTrakClient.Features.Stores.Components
                 };
                 await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);
             }
-            DeliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId,(Role)CurrentUser.UserRoleId,RecordCount);
-            StateHasChanged();
+            await RefreshDeliveryTicket();
         }
         public async Task OpenUpdateDeliveryTicketDialog(DeliveryTicketDto deliveryTicket)
         {
@@ -174,8 +174,7 @@ namespace WiiTrakClient.Features.Stores.Components
                     };
                     await DeliveryTicketHttpRepository.UpdateDeliveryTicketAsync(deliveryTicketId, deliveryTicketUpdate);
                 }
-                DeliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId,(Role)CurrentUser.UserRoleId,RecordCount);
-                StateHasChanged();
+                await RefreshDeliveryTicket();
             }
             catch(Exception ex)
             {
@@ -231,5 +230,14 @@ namespace WiiTrakClient.Features.Stores.Components
                 }
                 StateHasChanged();
             }
+        async Task RefreshDeliveryTicket()
+        {
+            _deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, RecordCount);
+            if (_deliveryTickets is not null)
+            {
+                DeliveryTickets = _deliveryTickets;
+            }
+            StateHasChanged();
+        }
     }
 }

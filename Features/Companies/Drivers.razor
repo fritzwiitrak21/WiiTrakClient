@@ -68,13 +68,7 @@
             var Id = await JsModule.InvokeAsync<string>("getUserId");
             CurrentUser.UserId = new Guid(Id);
         }
-
-        DriversList = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
-        if (DriversList is not null)
-        {
-            drivers = DriversList;
-        }
-        StateHasChanged();
+        await RefreshDriverGrid();
     }
 
     private async Task OpenDialog()
@@ -111,18 +105,33 @@
             {
                 await DriverHttpRepository.CreateDriverAsync(driverCreation);
             }
-             catch (Exception ex)
+            catch (Exception ex)
             {
                 //Exception
             }
-        drivers = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
+            await RefreshDriverGrid();
+            try
+            {
+                #region Send Login details to User
+                MailRequest request = new MailRequest();
+                request.MailTo = driverCreation.Email;
+                request.Name = string.Concat(driverCreation.FirstName, " ", driverCreation.LastName);
+                await EmailHttpRepository.SendMailAsync(request);
+            }
+            catch (Exception ex)
+            {
 
-            #region Send Login details to User
-            MailRequest request = new MailRequest();
-            request.MailTo = driverCreation.Email;
-            request.Name = string.Concat(driverCreation.FirstName, " ", driverCreation.LastName);
-            await EmailHttpRepository.SendMailAsync(request);
+            }
             #endregion
         }
+    }
+    private async Task RefreshDriverGrid()
+    {
+        DriversList = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
+        if (DriversList is not null)
+        {
+            drivers = DriversList;
+        }
+        StateHasChanged();
     }
 }
