@@ -162,18 +162,13 @@
     public string PostalCodeValue = "";
     [Inject] IJSRuntime JsRuntime { get; set; }
     private IJSObjectReference JsModule;
-    //public CompanyDto Company { get; set; }
-    //public CorporateDto Corporate { get; set; }
     DateTime? MinDate { get; set; } = DateTime.Today;
     DateTime SelectedDate { get; set; } = DateTime.Today;
     public string SelectedCounty = "";
     bool IsValidCountyCode = false;
     protected override async Task OnInitializedAsync()
     {
-
-
         NewStore.StartDate = SelectedDate;
-
         Corporate = await CorporateRepository.GetAllCorporatesAsync();
         Company = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
        CountyCodeList = await CountyCodeRepository.GetCountyListAsync();

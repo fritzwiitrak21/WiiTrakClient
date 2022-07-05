@@ -238,8 +238,14 @@ namespace WiiTrakClient.Features.Drivers
                         IssueDescription = cart.IssueDescription,
                         CartHistory = cartHistory
                     };
-
-                    await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
+                    try
+                    {
+                        await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
+                    }
+                    catch (Exception ex)
+                    {
+                        //Exception
+                    }
                     await GetDeliveryTicketsByDriverId(CurrentUser.UserId);
                 }
             }

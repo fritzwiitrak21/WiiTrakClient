@@ -10,8 +10,8 @@
     <HeaderContent>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<DevicesDto, object>(x=>x.DeviceName)">Device Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<DevicesDto, object>(x=>x.DeviceModel)">Device Model</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<DevicesDto, object>(x=>x.ActivatedTime)">Activated Time</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<DevicesDto, object>(x=>x.SubscriptionExpiration)">Subscription Expiration</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<DevicesDto, object>(x=>x.ActivatedTime)">Activated Date</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<DevicesDto, object>(x=>x.SubscriptionExpiration)">Subscription Expiration Date</MudTableSortLabel></MudTh>
         <MudTh>Type</MudTh>
         <MudTh></MudTh>
     </HeaderContent>
@@ -23,10 +23,10 @@
             @context.DeviceModel
         </MudTd>
         <MudTd DataLabel="Activated Time">
-            @context.ActivatedTime
+            @context.ActivatedTime.Value.ToShortDateString()
         </MudTd>
         <MudTd DataLabel="Subscription Expiry">
-            @context.SubscriptionExpiration
+            @context.SubscriptionExpiration.Value.ToShortDateString()
         </MudTd>
         <MudTd DataLabel="Type">
             @context.Type

@@ -297,34 +297,34 @@ else
                         CartHistory = cartHistory
                     };
                 await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
-
-                switch (selected.Text)
-                {
-                    case "cartslist":
-                        await GetCartsList();
-                        break;
-                    case "ontruck":
-                        await ShowOnTruckListView();
-                        break;
-                    case "damage":
-                        await ShowDamageListView();
-                        break;
-                    case "trash":
-                        await ShowTrashListView();
-                        break;
-                    case "lost":
-                        await ShowLostListView();
-                        break;
-                    default:
-                        await GetCartsList();
-                        break;
-                }
-                StateHasChanged();
             }
         }
         catch (Exception Ex)
         {
         }
+        switch (selected.Text)
+        {
+            case "cartslist":
+                await GetCartsList();
+                break;
+            case "ontruck":
+                await ShowOnTruckListView();
+                break;
+            case "damage":
+                await ShowDamageListView();
+                break;
+            case "trash":
+                await ShowTrashListView();
+                break;
+            case "lost":
+                await ShowLostListView();
+                break;
+            default:
+                await GetCartsList();
+                break;
+        }
+        StateHasChanged();
+
 
     }
     private async Task GetCartsList()
@@ -334,7 +334,7 @@ else
         if (CartsList != null && CartsList.Count > 0)
         {
             var cartstopickup = CartsList.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
-            cartlistcount = CartsList.Count;
+            cartlistcount = cartstopickup.Count;
 
         }
         message = "have to pickup " + cartlistcount;

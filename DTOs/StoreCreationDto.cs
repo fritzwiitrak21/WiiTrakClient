@@ -10,7 +10,7 @@ namespace WiiTrakClient.DTOs
     {
         [Required]
         [StringLength(25)]
-        [RegularExpression(@"^[a-zA-Z ]*$")]
+        [RegularExpression(@"^[a-zA-Z!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/? ]*$")]
         public string StoreName { get; set; } = string.Empty;
         [Required]
         [StringLength(10)]

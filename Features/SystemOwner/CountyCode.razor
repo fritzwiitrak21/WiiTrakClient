@@ -64,8 +64,8 @@
                         City=Core.ToPascalCase(AddCountyCode.City),
                         ZipCode=AddCountyCode.ZipCode,
                         IsActive=true,
-                        CountyName=AddCountyCode.CountyName,
-                        CountyCode=AddCountyCode.CountyCode,
+                        CountyName=Core.ToPascalCase(AddCountyCode.CountyName),
+                        CountyCode=AddCountyCode.CountyCode.ToUpper(),
                     };
             try
             {

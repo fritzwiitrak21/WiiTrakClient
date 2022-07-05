@@ -7,7 +7,7 @@
 
 <UserAuthentication />
 <h1>Tracking Devices</h1>
-@if (@TrackingDevices != null)
+@if (@TrackingDevices != null && @TrackingDevices.Count>0)
 {
     <MudTable Items="@TrackingDevices" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
         <HeaderContent>

@@ -12,12 +12,12 @@ namespace WiiTrakClient.DTOs
         public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
         [Required]
-        [StringLength(10)]
-        [RegularExpression(@"^[a-zA-Z ]*$")]
+        [StringLength(20)]
+        [RegularExpression(@"^[a-zA-Z!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/? ]*$")]
         public string FirstName { get; set; } = string.Empty;
         [Required]
-        [StringLength(10)]
-        [RegularExpression(@"^[a-zA-Z ]*$")]
+        [StringLength(20)]
+        [RegularExpression(@"^[a-zA-Z!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/? ]*$")]
         public string LastName { get; set; } = string.Empty;
         [Required]
         [RegularExpression(@"^[a-zA-Z0-9_.]+@[a-zA-Z]+\.[a-z]{2,3}$")]

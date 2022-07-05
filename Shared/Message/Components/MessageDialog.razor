@@ -53,7 +53,7 @@
                 <MudTextField class="my-3" @bind-Value="AddionalMessage" Lines="3" MaxLength=300 Label="Addtional Message" Placeholder="Optional" Variant="Variant.Text"></MudTextField>
                 <div class="HidePreview" id="divPreview">
                     <b>Preview</b> <br />
-                    Hey,<br />
+                    Hello,<br />
                     @if (Messages.Address.Trim().Length > 0)
                     {
                         <p>
@@ -129,6 +129,7 @@
         Messages.StoreId = value.Id;
         Messages.Store = value.StoreName + " - " + value.StoreNumber;
         Driver = await DriverHttpRepository.GetDriversByStoreIdAsync(value.Id);
+        Driver = Driver.OrderBy(x => x.FirstName).ToList();
     }
     public async Task HandleDriver(DriverDto value)
     {

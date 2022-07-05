@@ -13,7 +13,7 @@ namespace WiiTrakClient.DTOs
         public DateTime CreatedAt { get; set; }
         [Required]
         [StringLength(25)]
-        [RegularExpression(@"^[a-zA-Z ]*$")]
+        [RegularExpression(@"^[a-zA-Z!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/? ]*$")]
         public string Name { get; set; } = string.Empty;
         [Required]
         [StringLength(50)]

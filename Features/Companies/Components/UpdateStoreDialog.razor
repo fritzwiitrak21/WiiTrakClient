@@ -27,13 +27,14 @@
     <DialogContent>
         <div style="width: 400px;height:550px;overflow-y: auto; overflow-x: hidden;">
             <MudForm Model="@Store" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudSelect T="CorporateDto" Label="Select Corporate" @bind-Value="@SelectedCorporate" Required=true RequiredError=" "
-                           AnchorOrigin="Origin.BottomCenter">
-                    @foreach (var corporate in Corporate)
-                    {
-                        <MudSelectItem T="CorporateDto" Value="@corporate">@corporate.Name</MudSelectItem>
-                    }
-                </MudSelect>
+                <MudSelect T="CorporateDto" Label="Select Corporate" Required=true RequiredError=" " 
+                    Value="@SelectedCorporate" ValueChanged="(value) => HandleCorporate(value)"
+                               AnchorOrigin="Origin.BottomCenter">
+                            @foreach (var corporate in Corporate)
+                            {
+                                <MudSelectItem T="CorporateDto" Value="@corporate">@corporate.Name</MudSelectItem>
+                            }
+                        </MudSelect>
                 <MudTextField class="my-6" @bind-Value="Store.StoreName" Label="Store Name" Required="true" RequiredError="" For="@(() => @Store.StoreName)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Store.StoreNumber" Label="Store Number" Required="true" RequiredError="" For="@(() => @Store.StoreNumber)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="Store.Email" Label="Email" Required="true" RequiredError="" For="@(() => @Store.Email)" Variant="Variant.Text"></MudTextField>
@@ -360,7 +361,11 @@
             //exception
         }
     }
-
+    public async Task HandleCorporate(CorporateDto corporate)
+    {
+        Store.CorporateId = corporate.Id;
+        SelectedCorporate = corporate;
+    }
     public async Task Submit()
     {
         form.Validate();

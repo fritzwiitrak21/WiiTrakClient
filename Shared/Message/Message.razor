@@ -74,6 +74,7 @@ else
                 Store.Add(storedetail);
                 break;
         }
+        Store = Store.OrderBy(x => x.StoreName).ToList();
         var parameters = new DialogParameters();
         parameters.Add("Stores", Store);
         parameters.Add("Messages", NewMessage);
