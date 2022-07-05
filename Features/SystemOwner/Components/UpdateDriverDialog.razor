@@ -25,15 +25,15 @@
     <DialogContent>              
         <div style="width: 400px;height:450px;overflow: auto;">
             <MudForm Model="@Driver" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">  
-                @*<MudItem>
-        <MudSelect T="CompanyDto" Label="Select Company" 
-            AnchorOrigin="Origin.BottomCenter">
-            @foreach (var company in Companys)
-            {
-                <MudSelectItem T="CompanyDto" Value="@company">@company.Name</MudSelectItem>
-            }
-        </MudSelect>
-    </MudItem>*@
+                <MudItem>
+                    <MudSelect T="CompanyDto" Label="Select Company" Required=true RequiredError=" " Value="@SelectedCompany" ValueChanged="(value) => HandleCompany(value)"
+                               AnchorOrigin="Origin.BottomCenter">
+                        @foreach (var company in Companies)
+                        {
+                            <MudSelectItem T="CompanyDto" Value="@company">@company.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
                 <MudTextField class="my-6" @bind-Value="Driver.FirstName" Label="First Name" Required="true" RequiredError="" For="@(() => @Driver.FirstName)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField class="my-6" @bind-Value="Driver.LastName" Label="Last Name" Required="true" RequiredError="" For="@(() => @Driver.LastName)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField class="my-6" @bind-Value="Driver.Email" Label="Email" Required="true" RequiredError="" For="@(() => @Driver.Email)" Variant="Variant.Text"></MudTextField>  
@@ -58,9 +58,9 @@
 @code {
     [Parameter]
     public DriverDto? Driver {get; set;}
-    //public List<CompanyDto>? Companys { get; set; } = new();
-
-    //public CompanyDto SelectedCompany = new();
+    [Parameter]
+    public List<CompanyDto>? Companies { get; set; } = new();
+    CompanyDto SelectedCompany = new();
     //[Inject]
     //public ICompanyHttpRepository CompanyRepository { get; set; }
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
@@ -76,17 +76,23 @@
     //        SelectedCompany = Companys[0];
     //        Driver.CompanyId = SelectedCompany.Id;
     //    }
-
-
     //} 
-    protected override void OnParametersSet() {
+    protected override void OnParametersSet() 
+    {
         //if (Companys != null && Companys.Count() >= 1) 
         //{
         //    SelectedCompany = Companys.Where(x => x.Id == Driver.CompanyId).FirstOrDefault();
         //}
-
+        if (Companies != null && Companies.Count > 0)
+        {
+            SelectedCompany = Companies.Where(x => x.Id == Driver.CompanyId).FirstOrDefault();
+        }
     }
-
+    public async Task HandleCompany(CompanyDto company)
+    {
+        Driver.CompanyId = company.Id;
+        SelectedCompany = company;
+    }
     void Submit() 
     { 
         form.Validate();

@@ -27,7 +27,8 @@
             <MudForm Model="@NewDriver" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">   
                <MudItem>
                     <MudSelect T="CompanyDto" Label="Select Company" Required=true RequiredError=" "
-                        AnchorOrigin="Origin.BottomCenter">
+                               ValueChanged="(value) => HandleCompanySelected(value)"
+                               AnchorOrigin="Origin.BottomCenter">
                         @foreach (var company in companies)
                         {
                             <MudSelectItem T="CompanyDto" Value="@company">@company.Name</MudSelectItem>
@@ -81,7 +82,10 @@
     protected override void OnParametersSet() {
 
     }
-
+    private async Task HandleCompanySelected(CompanyDto Company)
+    {
+        NewDriver.CompanyId = Company.Id;
+    }
     void Submit() 
     { 
         form.Validate();

@@ -26,10 +26,10 @@
             @context.PlanName
         </MudTd>
         <MudTd DataLabel="Plan Activation Date">
-            @context.PlanActivationDate
+            @context.PlanActivationDate.Value.ToShortDateString()
         </MudTd>
         <MudTd DataLabel="Plan End Date">
-            @context.PlanEndDate
+            @context.PlanEndDate.Value.ToShortDateString()
         </MudTd>
         <MudTd DataLabel="SIM Number">
             @context.SIMNo

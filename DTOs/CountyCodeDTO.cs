@@ -12,13 +12,13 @@ namespace WiiTrakClient.DTOs
         public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
         [Required]
-        [MaxLength(10)]
+        [MaxLength(20)]
         [RegularExpression(@"^[a-zA-Z ]*$")]
         public string CountyName { get; set; } = string.Empty;
         [Required]
         [MinLength(3)]
         [MaxLength(4)]
-        [RegularExpression(@"^[A-Z]*$")]
+        [RegularExpression(@"^[a-zA-Z]*$")]
         public string CountyCode { get; set; } = string.Empty;
         public bool IsActive { get; set; }
         [Required]

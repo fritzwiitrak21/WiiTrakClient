@@ -2,9 +2,8 @@
 @using WiiTrakClient.Cores
 
 @namespace WiiTrakClient.Features.SystemOwner.Components
-
 @inject IDialogService DialogService 
-
+@inject ICompanyHttpRepository CompanyRepository
 @inject ISystemOwnerHttpRepository SystemOwnerHttpRepository
 @inject IDriverHttpRepository DriverHttpRepository
 
@@ -66,15 +65,19 @@
 @code {
     [Parameter]
     public List<DriverDto>? Driver {get; set;} = null;
+    public List<CompanyDto> Companies { get; set; } = new();
     private bool _enabled = true;
-    public async Task OpenDialog(DriverDto driver) {
+    public async Task OpenDialog(DriverDto driver) 
+    {
+        Companies = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
         driver.IsTerminated = !driver.IsActive;
         // TODO Update for technicians 
  
         Console.WriteLine("driver id: " + driver.Id);
 
         var parameters = new DialogParameters();
-                parameters.Add("Driver", driver);   
+                parameters.Add("Driver", driver); 
+                parameters.Add("Companies", Companies);
 
          DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
 

@@ -31,13 +31,14 @@
         <div style="width: 400px;height:550px;overflow-y: auto; overflow-x: hidden;">
             <MudForm Model="@NewStore" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudItem>
-                    <MudSelect T="CorporateDto" Label="Select Corporate" Required=true RequiredError=" "
+                    <MudSelect T="CorporateDto" Label="Select Corporate" Required=true RequiredError=" "  
+                        ValueChanged="(value) => HandleCorporate(value)"
                                AnchorOrigin="Origin.BottomCenter">
-                        @foreach (var corporate in Corporate)
-                        {
-                            <MudSelectItem T="CorporateDto" Value="@corporate">@corporate.Name</MudSelectItem>
-                        }
-                    </MudSelect>
+                            @foreach (var corporate in Corporate)
+                            {
+                                <MudSelectItem T="CorporateDto" Value="@corporate">@corporate.Name</MudSelectItem>
+                            }
+                        </MudSelect>
                 </MudItem>
                 <MudTextField class="my-6" @bind-Value="NewStore.StoreName" Label="Store Name" Required="true" RequiredError=" " For="@(() => @NewStore.StoreName)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="NewStore.StoreNumber" Label="Store Number" Required="true" RequiredError=" " For="@(() => @NewStore.StoreNumber)" Variant="Variant.Text"></MudTextField>
@@ -387,6 +388,9 @@
             return County;
         return County.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
-
+    public async Task HandleCorporate(CorporateDto corporate)
+    {
+        NewStore.CorporateId = corporate.Id;
+    }
 
 }

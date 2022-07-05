@@ -27,7 +27,7 @@
                     <MudTextField T="string" class="my-6" @bind-Value="NewCounty.State" Label="State" Required="true" RequiredError=" " For="@(() => @NewCounty.State)" Variant="Variant.Text"></MudTextField>  
                     <MudTextField T="string" class="my-6" @bind-Value="NewCounty.ZipCode" Label="Zip Code" Required="true" RequiredError=" " For="@(() => @NewCounty.ZipCode)" Variant="Variant.Text"></MudTextField>  
                     <MudTextField T="string" class="my-6" @bind-Value="NewCounty.CountyName" Label="County Name" Required="true" RequiredError=" " For="@(() => @NewCounty.CountyName)"  Variant="Variant.Text"></MudTextField> 
-                    <MudTextField T="string" class="my-6" @bind-Value="NewCounty.CountyCode" Label="County Code" For="@(() => @NewCounty.CountyCode)"  Variant="Variant.Text"></MudTextField>  
+                    <MudTextField T="string" class="my-6" @bind-Value="NewCounty.CountyCode" Label="County Code" Required="true" RequiredError=" " For="@(() => @NewCounty.CountyCode)"  Variant="Variant.Text"></MudTextField>  
                     <div class="d-flex">
                         <MudButton OnClick="Cancel">Cancel</MudButton>
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>

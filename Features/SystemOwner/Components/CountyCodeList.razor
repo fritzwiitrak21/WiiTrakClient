@@ -62,8 +62,8 @@
                 State = Countycode.State,
                 ZipCode = Countycode.ZipCode,
                 IsActive=true,
-                CountyName=Countycode.CountyName,
-                CountyCode=Countycode.CountyCode,
+                CountyName=Core.ToPascalCase(Countycode.CountyName),
+                CountyCode=Countycode.CountyCode.ToUpper(),
                 Id=Countycode.Id,
                 CreatedAt=Countycode.CreatedAt,
             };

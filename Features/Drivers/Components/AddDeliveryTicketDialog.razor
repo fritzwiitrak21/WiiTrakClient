@@ -401,6 +401,7 @@
             await JsModule.InvokeVoidAsync("removeTextValidationClass");
             StateHasChanged();
         }
+        NewDeliveryTicket.NumberOfCarts = Convert.ToInt32(NoOfCart);
     }
     async Task Submit()
     {

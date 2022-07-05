@@ -5,7 +5,7 @@
 @inject ICartHttpRepository CartRepository
 @inject IDialogService DialogService
 
-<UserAuthentication/>
+<UserAuthentication />
 <h3>Store Carts</h3>
 
 <div class="d-flex justify-end">
@@ -16,7 +16,7 @@
                OnClick="OpenDialog">Add</MudButton>
 </div>
 <br />
-@if(CartsList == null)
+@if (CartsList == null)
 {
     <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
 
@@ -27,7 +27,7 @@ else if (carts.Count > 0)
 }
 else
 {
-    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7"/>
+    <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
 }
 
 
@@ -71,16 +71,21 @@ else
             var CartCreation = new CartCreationDto
                 {
                     CartNumber = AddCart.CartNumber,
-                    ManufacturerName=AddCart.ManufacturerName,
-                    DateManufactured=AddCart.DateManufactured,
-                    OrderedFrom=AddCart.OrderedFrom,
-                    Condition=AddCart.Condition,
-                    Status=AddCart.Status,
-                    StoreId=CurrentUser.UserId,
-                    IsActive=true,
+                    ManufacturerName = AddCart.ManufacturerName,
+                    DateManufactured = AddCart.DateManufactured,
+                    OrderedFrom = AddCart.OrderedFrom,
+                    Condition = AddCart.Condition,
+                    Status = AddCart.Status,
+                    StoreId = CurrentUser.UserId,
+                    IsActive = true,
                 };
-            await CartRepository.CreateCartAsync(CartCreation);
+            try
+            {
+                await CartRepository.CreateCartAsync(CartCreation);
+            }
+            catch { }
         }
+
         carts = await CartRepository.GetCartsByStoreIdAsync(CurrentUser.UserId);
         StateHasChanged();
     }
