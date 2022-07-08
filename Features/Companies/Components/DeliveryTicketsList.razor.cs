@@ -55,7 +55,6 @@ namespace WiiTrakClient.Features.Companies.Components
         #region Update Dialog
         public async Task OpenUpdateDeliveryTicketDialog(DeliveryTicketDto deliveryTicket)
         {
-            Console.WriteLine("OpenUpdateDeliveryTickerDialog()");
             selectedDriver = await DriverRepository.GetDriverByIdAsync(deliveryTicket.DriverId);
             _stores = await StoreHttpRepository.GetStoresByDriverId(deliveryTicket.DriverId);
             _carts = await CartHttpRepository.GetCartsByDriverIdAsync(deliveryTicket.DriverId);

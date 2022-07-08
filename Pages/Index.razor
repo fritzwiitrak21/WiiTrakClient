@@ -127,7 +127,7 @@
     }
 
 }
-@if (CurrentUser.UserRoleId <= 4 && Core.ServiceBoardCount > 0)
+@if ((CurrentUser.UserRoleId <= 4 || CurrentUser.UserRoleId==6) && Core.ServiceBoardCount > 0)
 {
     <ServiceBoardChart />
 }

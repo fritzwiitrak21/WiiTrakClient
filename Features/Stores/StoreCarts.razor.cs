@@ -4,7 +4,6 @@
 */
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using MudBlazor;
 using WiiTrakClient.DTOs;
 using WiiTrakClient.Enums;
 using WiiTrakClient.HttpRepository.Contracts;
@@ -67,12 +66,10 @@ namespace WiiTrakClient.Features.Stores
         }
         private void ShowMapView()
         {
-            Console.WriteLine("map view");
             _view = ViewOption.Map;
         }
         private void ShowListView()
         {
-            Console.WriteLine("list view");
             _view = ViewOption.List;
         }
     }

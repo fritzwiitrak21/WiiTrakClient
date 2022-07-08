@@ -2,12 +2,10 @@
 * 06.06.2022
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
-using System;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.DTOs;
-using MudBlazor;
 using WiiTrakClient.Enums;
 
 namespace WiiTrakClient.Features.Companies
@@ -136,13 +134,11 @@ namespace WiiTrakClient.Features.Companies
         }
         private void ShowMapView()
         {
-            Console.WriteLine("map view");
             _view = ViewOption.Map;
         }
 
         private void ShowListView()
         {
-            Console.WriteLine("list view");
             _view = ViewOption.List;
         }
     }

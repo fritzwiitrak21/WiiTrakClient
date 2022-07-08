@@ -152,7 +152,6 @@ namespace WiiTrakClient.Features.Drivers.Components
                 }
             }
             //var cartPreUpdate = cart;
-            //Console.WriteLine("cart id: " + cart.Id);
             //var parameters = new DialogParameters();
             //parameters.Add("Cart", cart);
             //parameters.Add("RepairIssues", RepairIssues);

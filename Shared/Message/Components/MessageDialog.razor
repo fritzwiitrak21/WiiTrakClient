@@ -20,17 +20,20 @@
                     }
                     else
                     {
-                        <MudSelect T=StoreDto ValueChanged="(value) => HandleStore(value)"
-                               Label="Select Store" AnchorOrigin="Origin.BottomCenter"
-                               Required=true RequiredError="">
-                            @if (Stores != null)
-                            {
+                        <div Class="Mudsearchselect mt-6">
+                            <label id="targetlabel">Store*</label>
+                            <input type="text" list="textsearch" Class="inputselect" @onkeyup="OnClick" @onchange="eventArgs => { OnSelect(eventArgs.Value); }" />
+
+                            <datalist id="textsearch">
                                 @foreach (var store in Stores)
                                 {
-                                    <MudSelectItem Value="@store">@store.StoreName - @store.StoreNumber</MudSelectItem>
+                                    if (store.IsActive)
+                                    {
+                                        <option id="@store.Id" data-value="@store.Id" value="@store.StoreName - @store.StoreNumber" />
+                                    }
                                 }
-                            }
-                        </MudSelect>
+                            </datalist>
+                        </div>
                     }
                 </MudItem>
                 <MudItem Class="TextWidth">
@@ -100,6 +103,7 @@
     public AddressDto Address { get; set; } = new();
     public string AddionalMessage = "";
     bool success;
+    bool IsStoreSelected;
     string[] errors = { };
     MudForm form;
     [CascadingParameter]
@@ -130,6 +134,7 @@
         Messages.Store = value.StoreName + " - " + value.StoreNumber;
         Driver = await DriverHttpRepository.GetDriversByStoreIdAsync(value.Id);
         Driver = Driver.OrderBy(x => x.FirstName).ToList();
+        Messages.ReciverId = Driver[0].Id;
     }
     public async Task HandleDriver(DriverDto value)
     {
@@ -151,10 +156,82 @@
         await JsModule.InvokeVoidAsync("ShowdivPreviewClass");
         StateHasChanged();
     }
-    void Submit()
+    private async Task OnClick()
     {
+        if (JsModule is null)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
+
+        var inputtext = await JsModule.InvokeAsync<string>("getTextBoxValue");
+        if (inputtext == "")
+        {
+            IsStoreSelected = false;
+            await JsModule.InvokeVoidAsync("addValidationClass");
+
+        }
+        else
+        {
+            IsStoreSelected = true;
+            await JsModule.InvokeVoidAsync("removeValidationClass");
+        }
+        StateHasChanged();
+    }
+    private async Task OnSelect(object e)
+    {
+        try
+        {
+            if (e.ToString() == "")
+            {
+                IsStoreSelected = false;
+                return;
+            }
+            else
+            {
+                if (JsModule is null)
+                {
+                    JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+                }
+
+                foreach (var item in Stores)
+                {
+                    string storename = item.StoreName + " - " + item.StoreNumber;
+                    if (storename == e.ToString())
+                    {
+                        IsStoreSelected = true;
+                        await JsModule.InvokeVoidAsync("removeValidationClass");
+                        var Id = await JsModule.InvokeAsync<string>("getStoreId", e.ToString());
+                        Messages.StoreId = new Guid(Id);
+                        Messages.Store = e.ToString();
+                        Driver = await DriverHttpRepository.GetDriversByStoreIdAsync(Messages.StoreId);
+                        Driver = Driver.OrderBy(x => x.FirstName).ToList();
+                        Messages.ReciverId = Driver[0].Id;
+                        break;
+                    }
+                    else
+                    {
+                        IsStoreSelected = false;
+                        await JsModule.InvokeVoidAsync("addValidationClass");
+                    }
+                }
+            }
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            IsStoreSelected = false;
+        }
+    }
+
+    async Task Submit()
+    {
+        if (!IsStoreSelected)
+        {
+            await JsModule.InvokeVoidAsync("addValidationClass");
+            StateHasChanged();
+        }
         form.Validate();
-        if (success && errors.Length == 0)
+        if (success && errors.Length == 0 && IsStoreSelected)
         {
             Messages.Address = Address.StreetAddress + "," + Address.City + "," + Address.State;
             if (Address.ZipCode != "")

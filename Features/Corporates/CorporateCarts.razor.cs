@@ -6,7 +6,6 @@ using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.DTOs;
-using MudBlazor;
 using WiiTrakClient.Enums;
 
 namespace WiiTrakClient.Features.Corporates
@@ -60,7 +59,6 @@ namespace WiiTrakClient.Features.Corporates
         }
         private async Task HandleStoreSelected(StoreDto store)
         {
-            Console.WriteLine("HandleStoreSelected" + store.StoreName);
             mapCoporateBind = false;
             if (store.Id == Guid.Empty)
             {
@@ -143,12 +141,10 @@ namespace WiiTrakClient.Features.Corporates
         }
         private void ShowMapView()
         {
-            Console.WriteLine("map view");
             _view = ViewOption.Map;
         }
         private void ShowListView()
         {
-            Console.WriteLine("list view");
             _view = ViewOption.List;
         }
     }
