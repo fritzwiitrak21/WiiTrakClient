@@ -56,7 +56,6 @@ namespace WiiTrakClient.HttpRepository
         public async Task<CompanyReportDto> GetCompanyReportAsync(Guid id)
         {
             string url = $"{_apiUrl}/report/{id}";
-            Console.WriteLine("company report url: " + url);
             var response = await _httpService.Get<CompanyReportDto>(url);
             return response.Response;
         }

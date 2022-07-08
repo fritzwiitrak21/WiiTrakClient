@@ -30,7 +30,6 @@ namespace WiiTrakClient.Features.Drivers.Components
         public async Task OpenUpdateCartDialog(CartDto cart)        
         {
             var cartPreUpdate = cart;
-            Console.WriteLine("cart id: " + cart.Id);
             var parameters = new DialogParameters();
             parameters.Add("Cart", cart);
             parameters.Add("RepairIssues", RepairIssues);
@@ -56,7 +55,10 @@ namespace WiiTrakClient.Features.Drivers.Components
                     BarCode = cart.BarCode,
                     StoreId = cart.StoreId
                 };
-                if (CartHttpRepository is null) return;
+                if (CartHttpRepository is null)
+                {
+                    return;
+                }
                 await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
                 // pass update changes back to parent for driver summary
                 var cartChange = new CartChange

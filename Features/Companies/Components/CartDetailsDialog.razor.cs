@@ -2,7 +2,6 @@
 * 06.06.2022
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
-using System;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor;
@@ -25,7 +24,6 @@ namespace WiiTrakClient.Features.Companies.Components
             {
                 return;
             }
-            System.Console.WriteLine($"long: {Cart.TrackingDevice.Longitude}");
             if (_jsModule is null)
             {
                 _jsModule = await JSRuntime

@@ -2,7 +2,6 @@
 * 06.06.2022
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
-using System;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using WiiTrakClient.DTOs;
@@ -24,9 +23,7 @@ namespace WiiTrakClient.Features.Drivers.Components
         }
         public async Task OpenUpdateDeliveryTicketDialog(DeliveryTicketDto deliveryTicket) 
         {
-            Console.WriteLine("OpenUpdateDeliveryTickerDialog()");
             // var cartPreUpdate = cart;
-            // Console.WriteLine("cart id: " + cart.Id);
             // var parameters = new DialogParameters();
             // parameters.Add("Cart", cart);
             // parameters.Add("RepairIssues", RepairIssues);

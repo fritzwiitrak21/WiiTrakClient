@@ -118,7 +118,7 @@
             await Notification();
             await Message();
         }
-        if (CurrentUser.UserRoleId < 5)
+        if (CurrentUser.UserRoleId < 5 || CurrentUser.UserRoleId==6)
         {
             await ServiceBoard();
         }
@@ -178,7 +178,7 @@
             CurrentUser.UserRoleId = Convert.ToInt32(roleid);
         }
 
-        if (CurrentUser.UserRoleId > 4) return;
+        if (CurrentUser.UserRoleId > 6 || CurrentUser.UserRoleId==5) return;
         Core.ServiceBoardList = await DeliveryTicketRepository.GetServiceBoardDetailsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId);
         Core.ServiceBoardCount = Core.ServiceBoardList.Count();
         StateHasChanged();

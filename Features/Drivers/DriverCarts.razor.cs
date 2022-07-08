@@ -2,7 +2,6 @@
 * 06.06.2022
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
-using System;
 using WiiTrakClient.Features.Drivers.Models;
 using System.Text.Json;
 using Microsoft.JSInterop;
@@ -64,7 +63,6 @@ namespace WiiTrakClient.Features.Drivers
         }
         //private async Task HandleDriverSelected(DriverDto driver)
         //{
-        //    System.Console.WriteLine(driver.Id);
         //    await GetCartsByDriverId(driver.Id);
         //    SelectedDriver = driver;
         //}
@@ -74,7 +72,6 @@ namespace WiiTrakClient.Features.Drivers
             _mapStores = new List<StoreDto>();
             _mapStores = await StoreRepository.GetStoresByDriverId(id);
             _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
-            Console.WriteLine(_carts.Count());
             await UpdateDriverSummaryReport(id);
         }
         private async Task UpdateDriverSummaryReport(Guid id)
@@ -94,18 +91,14 @@ namespace WiiTrakClient.Features.Drivers
         }
         private void ShowMapView()
         {
-            Console.WriteLine("map view");
             _view = ViewOption.Map;
         }
         private void ShowListView()
         {
-            Console.WriteLine("list view");
             _view = ViewOption.List;
         }
         public async Task CartUpdatedHandler(CartChange cartChange)
         {
-            Console.WriteLine("CartUpdatedHandler");
-            Console.WriteLine(cartChange.Id);
             if (listFilterChip is not null)
             {
                 if (listFilterChip.Text.Equals(listFilterOption1))
@@ -208,7 +201,6 @@ namespace WiiTrakClient.Features.Drivers
             if (cartChange is not null && _cartChanges.Any(x => x.Id == cartChange.Id))
             {
                 DateTime maxDateTime = _cartChanges.Max(x => x.CreatedAt);
-                Console.WriteLine($"max date time: {maxDateTime}");
                 lastCartChange = _cartChanges.FirstOrDefault(x => x.CreatedAt == maxDateTime);
             }           
             _cartChanges.Add(cartChange);
@@ -272,17 +264,26 @@ namespace WiiTrakClient.Features.Drivers
         }
         private async Task SaveSummary()
         {
-            if (_driverSummary is null) return;
+            if (_driverSummary is null)
+            {
+                return;
+            }
             string jsonString = JsonSerializer.Serialize(_driverSummary);
             await JsRuntime.SetInLocalStorage(_driverSummaryKey, jsonString);
-            if (_cartChanges is null) return;
+            if (_cartChanges is null)
+            {
+                return;
+            }
             jsonString = JsonSerializer.Serialize(_cartChanges);
             await JsRuntime.SetInLocalStorage(_cartChangesKey, jsonString);
         }
         private async Task ReadSummary()
         {
             string jsonString = await JsRuntime.GetFromLocalStorage(_driverSummaryKey);
-            if (string.IsNullOrEmpty(jsonString)) return;
+            if (string.IsNullOrEmpty(jsonString))
+            {
+                return;
+            }
             _driverSummary = JsonSerializer.Deserialize<DriverSummary>(jsonString);
             //
             // TODO 
@@ -293,7 +294,6 @@ namespace WiiTrakClient.Features.Drivers
             if (_driverSummary is not null)
             {
                 var timeSpan = _driverSummary.UpdatedAt - _driverSummary.CreatedAt;
-                Console.WriteLine($"minutes: {timeSpan.Minutes}");
                 if (timeSpan.Minutes >= 5)
                 {
                     _driverSummary = null;
@@ -305,7 +305,6 @@ namespace WiiTrakClient.Features.Drivers
         }
         private void SummaryIsExpandedChangedHandler(bool isExpanded)
         {
-            Console.WriteLine($"is expanded: {isExpanded}");
             _isSummaryExpanded = !isExpanded;
         }
     }

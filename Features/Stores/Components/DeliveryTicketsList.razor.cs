@@ -139,7 +139,6 @@ namespace WiiTrakClient.Features.Stores.Components
         {
             try
             {
-                Console.WriteLine("OpenUpdateDeliveryTickerDialog()");
                 selectedDriver = await DriverRepository.GetDriverByIdAsync(deliveryTicket.DriverId);
                 _stores = await StoreHttpRepository.GetStoresByDriverId(deliveryTicket.DriverId);
                 _carts = await CartHttpRepository.GetCartsByDriverIdAsync(deliveryTicket.DriverId);
@@ -181,7 +180,6 @@ namespace WiiTrakClient.Features.Stores.Components
                 //exception
             }
                 // var cartPreUpdate = cart;
-                // Console.WriteLine("cart id: " + cart.Id);
                 // var parameters = new DialogParameters();
                 // parameters.Add("Cart", cart);
                 // parameters.Add("RepairIssues", RepairIssues);
