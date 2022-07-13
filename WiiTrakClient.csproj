@@ -39,7 +39,6 @@
   <ItemGroup>
     <Folder Include="Features\ServiceProviders\Components\" />
     <Folder Include="Features\ShoppingCarts\Components\" />
-    <Folder Include="Features\TrackingDevices\Components\" />
     <Folder Include="Shared\Chart\" />
   </ItemGroup>
 

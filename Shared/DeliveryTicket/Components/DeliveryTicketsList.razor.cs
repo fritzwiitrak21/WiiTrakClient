@@ -9,8 +9,9 @@ using WiiTrakClient.Enums;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.Cores;
 using WiiTrakClient.Shared.Components;
+using WiiTrakClient.Shared.DeliveryTicket.Components;
 
-namespace WiiTrakClient.Features.SystemOwner.Components
+namespace WiiTrakClient.Shared.DeliveryTicket.Components
 {
     public partial class DeliveryTicketsList : ComponentBase
     {

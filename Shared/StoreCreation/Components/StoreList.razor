@@ -1,15 +1,18 @@
-@using WiiTrakClient.Features.SystemOwner.Components
+﻿@using WiiTrakClient.Shared.StoreCreation.Components
 @inject IDialogService DialogService
-@inject ICompanyHttpRepository CompanyRepository
+
 @inject IStoreHttpRepository StoreHttpRepository
+@inject ICorporateHttpRepository CorporateRepository
+@inject ICompanyHttpRepository CompanyRepository
 @inject ICountyCodeHttpRepository CountyCodeRepository
 @using WiiTrakClient.Cores
 
 
-<MudTable Items="@Stores" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
+
+<MudTable Items="@Stores" Hover="true" Class="Pagingstyle" SortLabel="Sort By">
     <HeaderContent>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<StoreDto, object>(x=>x.StoreName)">Store Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.StoreNumber)">Store Number</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<StoreDto, object>(x=>x.StoreNumber)">Store Number</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.StreetAddress1)">Street Address</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.City)">City</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.State)">State</MudTableSortLabel></MudTh>
@@ -20,7 +23,9 @@
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.PhonePrimary)">Phone</MudTableSortLabel></MudTh>
         <MudTh></MudTh>
     </HeaderContent>
+
     <RowTemplate>
+
         <MudTd DataLabel="Store Name">
             @context.StoreName
         </MudTd>
@@ -40,10 +45,10 @@
         <MudTd DataLabel="Postal Code">
             @context.PostalCode
         </MudTd>
-          <MudTd DataLabel="County Code">
+        <MudTd DataLabel="County Code">
             @context.CountyCode
         </MudTd>
-         <MudTd DataLabel="ServiceFrequency">
+        <MudTd DataLabel="Service Frequency">
             @context.ServiceFrequency
         </MudTd>
         <MudTd DataLabel="Email">
@@ -70,33 +75,62 @@
     [Parameter]
     public List<StoreDto>? Stores { get; set; } = null;
     private bool _enabled = true;
-    public List<CompanyDto> companies { get; set; } = new();
+    public CompanyDto Company { get; set; }
+    public List<CorporateDto> Corporate { get; set; } = new();
+    public List<CompanyDto> Companies { get; set; } = new();
     public List<CountyCodeDTO> CountyCode { get; set; } = new();
     public async Task OpenDialog(StoreDto store)
     {
 
         // TODO Update for store
 
+        //if (CurrentUser.UserRole == "PrimeCompany")
+        //{
+        //    Corporate = await CorporateRepository.GetCorporatesByCompanyId(CurrentUser.UserId);
+
+        //}
+        //else if (CurrentUser.UserRole == "SubContractor")
+        //{
+        //    Company = await CompanyRepository.GetParentCompanyAsync(CurrentUser.UserId);
+        //    Corporate = await CorporateRepository.GetCorporatesByCompanyId((Guid)Company.ParentId);
+        //}
+        if (CurrentUser.UserRoleId == 1)
+        {
+            Companies = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
+            Corporate = await CorporateRepository.GetCorporatesByCompanyId(store.CompanyId);
+        }
+        else if (CurrentUser.UserRoleId == 2)
+        {
+            Companies = await CompanyRepository.GetCompaniesByCorporateIdAsync(CurrentUser.UserId);
+        }
+        else if (CurrentUser.UserRoleId == 3)
+        {
+            Corporate = await CorporateRepository.GetCorporatesByCompanyId(CurrentUser.UserId);
+        }
+        else if (CurrentUser.UserRoleId == 4)
+        {
+            var ParentCompany = await CompanyRepository.GetParentCompanyAsync(CurrentUser.UserId);
+            Corporate = await CorporateRepository.GetCorporatesByCompanyId((Guid)ParentCompany.ParentId);
+        }
+        // Companies = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
+        //Corporate = await CorporateRepository.GetCorporatesByCompanyId(store.CompanyId);
         Console.WriteLine("store id: " + store.Id);
-        companies = await CompanyRepository.GetCompaniesByCorporateIdAsync(CurrentUser.UserId);
-        CountyCode=await CountyCodeRepository.GetCountyListAsync();
+        CountyCode = await CountyCodeRepository.GetCountyListAsync();
+
         var parameters = new DialogParameters();
         parameters.Add("Store", store);
-        parameters.Add("companies", companies);
+        parameters.Add("Corporate", Corporate);
+        parameters.Add("Companies", Companies);
         parameters.Add("CountyCodeList", CountyCode);
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
-
         var dialog = DialogService.Show<UpdateStoreDialog>("Update Store", parameters);
         var result = await dialog.Result;
-
         if (!result.Cancelled)
         {
             // save updated store to backend
-            var storeUpdate = new StoreUpdateDto
+            var StoreUpdate = new StoreDto
                 {
-                    CompanyId = store.CompanyId,
                     StoreName = store.StoreName,
-                    StoreNumber = store.StoreNumber,
                     StreetAddress1 = store.StreetAddress1,
                     StreetAddress2 = store.StreetAddress2,
                     City = store.City,
@@ -106,17 +140,38 @@
                     Email = store.Email,
                     PhonePrimary = store.PhonePrimary,
                     PhoneSecondary = store.PhoneSecondary,
-                    CountryCode = store.CountryCode,
-                    CorporateId = CurrentUser.UserId,
                     ServiceProviderId = Guid.Empty,
+                    CorporateId = store.CorporateId,
+                    CompanyId = store.CompanyId,
+                    StoreNumber = store.StoreNumber,
                     IsActive = store.IsActive,
                     CountyCode = store.CountyCode,
                     ServiceFrequency = store.ServiceFrequency,
-                    StartDate = store.StartDate, 
-                    IsConnectedStore=store.IsConnectedStore,
+                    StartDate = store.StartDate,
+                    IsConnectedStore = store.IsConnectedStore,
+                    Id=store.Id,
+                    CreatedAt=store.CreatedAt,
+
                 };
-            await StoreHttpRepository.UpdateStoreAsync(store.Id, storeUpdate);
+            await StoreHttpRepository.UpdateStoreAsync(store.Id, StoreUpdate);
         }
-        Stores = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);
+        await RefreshGrid();
+    }
+    async Task RefreshGrid()
+    {
+        switch (CurrentUser.UserRoleId)
+        {
+            case 1:
+                Stores = await StoreHttpRepository.GetStoresBySystemOwnerId(CurrentUser.UserId);
+                break;
+            case 2:
+                Stores = await StoreHttpRepository.GetStoresByCorporateId(CurrentUser.UserId);
+                break;
+            case 3:
+            case 4:
+                Stores = await StoreHttpRepository.GetStoresByCompanyId(CurrentUser.UserId);
+                break;
+        }
+        StateHasChanged();
     }
 }

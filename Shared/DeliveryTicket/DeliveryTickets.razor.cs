@@ -8,16 +8,13 @@ using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.DTOs;
 using WiiTrakClient.Cores;
 using WiiTrakClient.Enums;
-using MudBlazor;
 
-namespace WiiTrakClient.Features.Corporates
+namespace WiiTrakClient.Shared.DeliveryTicket
 {
     public partial class DeliveryTickets : ComponentBase
     {
         [Inject] IJSRuntime JsRuntime { get; set; }
-        [Inject] IDriverHttpRepository DriverRepository { get; set; }
         [Inject] public IDeliveryTicketHttpRepository DeliveryTicketHttpRepository { get; set; }
-        [Inject] IDialogService DialogService { get; set; }
         List<DeliveryTicketDto> deliveryTickets = new();
         List<DeliveryTicketDto> _deliveryTickets = new();
         private IJSObjectReference JsModule;
@@ -35,14 +32,13 @@ namespace WiiTrakClient.Features.Corporates
                     var roleid = await JsModule.InvokeAsync<string>("getUserRoleId");
                     CurrentUser.UserRoleId = Convert.ToInt32(roleid);
                 }
-                deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, SelectedOption);
+                deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId,(Role)CurrentUser.UserRoleId, SelectedOption);
                 if (deliveryTickets is not null)
                 {
                     _deliveryTickets = deliveryTickets;
                 }
-                StateHasChanged();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //exception
             }
@@ -53,12 +49,13 @@ namespace WiiTrakClient.Features.Corporates
             {
                 var value = SelectedOption;
                 TempSelectedOption = SelectedOption;
-                deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, value);
-                if (deliveryTickets is not null)
-                {
-                    _deliveryTickets = deliveryTickets;
-                }
-                StateHasChanged();
+                    deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, value);
+                    if (deliveryTickets is not null)
+                    {
+                        _deliveryTickets = deliveryTickets;
+                    }
+                    StateHasChanged();
+              
             }
         }
     }

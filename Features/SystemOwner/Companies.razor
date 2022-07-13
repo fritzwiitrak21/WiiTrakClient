@@ -20,21 +20,6 @@
 </div>
 
 <div class="my-8">
-    @*@if (LoaderVisibility)
-        {
-        <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
-        }
-        else
-        {
-                if (_companies.Count > 0)
-                {
-            <CompanyList Companies="@_companies" />
-                }
-                else
-                {
-            <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
-                }
-        }*@
     @if (CompaniesList == null)
     {
         <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
@@ -57,7 +42,6 @@
     List<CompanyDto> CompaniesList = new();
 
     CompanyDto AddCompany = new();
-    bool LoaderVisibility = false;
     private IJSObjectReference JsModule;
 
     protected override async Task OnInitializedAsync()

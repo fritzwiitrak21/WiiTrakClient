@@ -1,0 +1,76 @@
+@using WiiTrakClient.Shared.DeliveryTicket.Components
+@using WiiTrakClient.Cores
+@namespace WiiTrakClient.Shared.DeliveryTicket.Components
+
+<MudTable Items="@DeliveryTickets" Class="Pagingstyle" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@_listIsLoading"
+          LoadingProgressColor="Color.Primary">
+    <HeaderContent>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<DeliveryTicketDto, object>(x=>x.DriverName)">
+                Driver Name
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel InitialDirection="@SortDirection.Descending"
+                               SortBy="new Func<DeliveryTicketDto, object>(x => x.DeliveryTicketNumber)">
+                Ticket Number
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<DeliveryTicketDto, object>(x=>x.DeliveredAt)">
+                Delivery Date
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<DeliveryTicketDto, object>(x=>x.StoreName)">
+                Store
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<DeliveryTicketDto, object>(x=>x.NumberOfCarts)">
+                Number of Carts
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            Photo
+        </MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="Driver Name">@context.DriverName</MudTd>
+        <MudTd DataLabel="Ticket Number">@context.DeliveryTicketNumber</MudTd>
+        <MudTd DataLabel="Delivery Date">@($"{context.DeliveredAt.ToShortDateString()}")</MudTd>
+        <MudTd DataLabel="Store">@($"{context.StoreNumber} - {context.StoreName}")</MudTd>
+        <MudTd DataLabel="Number Of Carts">@context.NumberOfCarts</MudTd>
+        <MudTd DataLabel="Photo">
+            <img src="@context.PicUrl" width="48" height="48" />
+        </MudTd>
+        <MudTd DataLabel="">
+            @if (CurrentUser.UserRoleId != 2)
+            {
+                <MudButton StartIcon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary"
+                       OnClick="((e) => OpenUpdateDeliveryTicketDialog(context))">
+                    Edit
+                </MudButton>
+            }
+            <MudButton StartIcon="@Icons.Material.Filled.Details" Variant="Variant.Filled" Color="Color.Primary"
+                       OnClick="((e) => OpenDeliveryTicketDialog(context))">
+                Details
+            </MudButton>
+            @if (CurrentUser.UserRoleId != 2)
+            {
+                <MudButton StartIcon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Style="background-color:blueviolet;color:white;"
+                       OnClick="((e) => GetConfirmation(context))">
+                    Delete
+                </MudButton>
+            }
+
+
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{10, 50, 100}" />
+    </PagerContent>
+</MudTable>
+

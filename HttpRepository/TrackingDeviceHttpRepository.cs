@@ -10,42 +10,48 @@ namespace WiiTrakClient.HttpRepository
 {
     public class TrackingDeviceHttpRepository : ITrackingDeviceHttpRepository
     {
-        private readonly IHttpService _httpService;
+        private readonly IHttpService Httpservice;
         private const string ControllerName = "trackingdevice";
-        private readonly string _apiUrl;
-        public TrackingDeviceHttpRepository(IHttpService httpService)
+        private readonly string ApiUrl;
+        public TrackingDeviceHttpRepository(IHttpService HttpService)
         {
-            _httpService = httpService;
-            _apiUrl = $"{ httpService.BaseUrl }{ ControllerName }";
+            Httpservice = HttpService;
+            ApiUrl = $"{ HttpService.BaseUrl }{ ControllerName }";
         }
         public async Task<List<TrackingDeviceDto>> GetAllTrackingDevicesAsync()
         {
-            var response = await _httpService.Get<List<TrackingDeviceDto>>(_apiUrl);
+            var response = await Httpservice.Get<List<TrackingDeviceDto>>(ApiUrl);
             return response.Response;
         }
         public async Task<TrackingDeviceDto> GetTrackingDeviceByIdAsync(Guid id)
         {
-            string url = $"{_apiUrl}/{id}";
-            var response = await _httpService.Get<TrackingDeviceDto>(url);
+            string url = $"{ApiUrl}/{id}";
+            var response = await Httpservice.Get<TrackingDeviceDto>(url);
+            return response.Response;
+        }
+        public async Task<List<TrackingDeviceDetailsDto>> GetTrackingDeviceDetailsByIdDriverAsync(Guid Id)
+        {
+            string url = $"{ApiUrl}/CartDetails/{Id}";
+            var response = await Httpservice.Get<List<TrackingDeviceDetailsDto>>(url);
             return response.Response;
         }
         public async Task<List<TrackingDeviceDetailsDto>> GetTrackingDeviceDetailsByIdAsync(Guid id,int RoleId)
         {
-            string url = $"{_apiUrl}/TrackingDevice/{id}/{RoleId}";
-            var response = await _httpService.Get<List<TrackingDeviceDetailsDto>>(url);
+            string url = $"{ApiUrl}/TrackingDevice/{id}/{RoleId}";
+            var response = await Httpservice.Get<List<TrackingDeviceDetailsDto>>(url);
             return response.Response;
         }
         public async Task CreateTrackingDeviceAsync(TrackingDeviceCreationDto trackingDevice)
         {
-            await _httpService.Post(_apiUrl, trackingDevice);
+            await Httpservice.Post(ApiUrl, trackingDevice);
         }
         public async Task UpdateTrackingDeviceAsync(Guid id, TrackingDeviceUpdateDto trackingDevice)
         {
-            await _httpService.Put($"{ _apiUrl }/{ id }", trackingDevice);
+            await Httpservice.Put($"{ ApiUrl }/{ id }", trackingDevice);
         }
         public async Task DeleteTrackingDeviceAsync(Guid id)
         {
-            await _httpService.Delete($"{ _apiUrl }/{ id }");
+            await Httpservice.Delete($"{ ApiUrl }/{ id }");
         }
     }
 }

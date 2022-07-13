@@ -1,13 +1,13 @@
-@page "/corporate-delivery-tickets"
+@page "/delivery-tickets"
 
-@using WiiTrakClient.Features.Corporates.Components
+@using WiiTrakClient.Shared.DeliveryTicket.Components
 
 <UserAuthentication/>
 
 <div class="pagetitle my-8">
 <h3>Delivery Tickets</h3>
 </div>
-<div>
+ <div>
                 <MudForm>
                     <MudRadioGroup @bind-SelectedOption="@SelectedOption">
                         <MudRadio Option="@(30)" Color="Color.Primary">Last 30 Days</MudRadio>
@@ -27,7 +27,7 @@
 }
 else if (_deliveryTickets.Count > 0)
 {
-    <DeliveryTicketsList DeliveryTickets="_deliveryTickets" />
+    <DeliveryTicketsList DeliveryTickets="_deliveryTickets" RecordCount="@SelectedOption" />
 }
 else
 {

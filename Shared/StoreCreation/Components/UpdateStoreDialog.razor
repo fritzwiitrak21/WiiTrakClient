@@ -1,8 +1,8 @@
-﻿@namespace WiiTrakClient.Features.Companies.Components
+﻿@namespace WiiTrakClient.Shared.StoreCreation.Components
 @using System.ComponentModel.DataAnnotations
 @using WiiTrakClient.Cores
-
 <style>
+
     .validation-message {
         font-size: 0;
         display: none;
@@ -18,6 +18,10 @@
         color: var(--mud-palette-text-secondary);
         margin: 0;
         font-size: 0;
+        text-align: start;
+        font-weight: 400;
+        line-height: 1.66;
+        letter-spacing: .03333em;
     }
 
     .countycode::placeholder {
@@ -25,51 +29,78 @@
         opacity: 1;
     }
 </style>
-
 <MudDialog Class="dialogstyle">
     <DialogContent>
         <div style="width: 400px;height:550px;overflow-y: auto; overflow-x: hidden;">
-            <MudForm Model="@NewStore" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudItem>
-                    <MudSelect T="CorporateDto" Label="Select Corporate" Required=true RequiredError=" "  
-                        ValueChanged="(value) => HandleCorporate(value)"
+            <MudForm Model="@Store" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
+                @if (CurrentUser.UserRoleId == 1 || CurrentUser.UserRoleId == 2)
+                {
+                    <MudItem Class="my-6">
+                        <MudSelect T="CompanyDto" Label="Select Company" Required=true RequiredError=" " Value="@SelectedCompany" ValueChanged="(value) => HandleCompany(value)"
                                AnchorOrigin="Origin.BottomCenter">
-                            @foreach (var corporate in Corporate)
+                            @foreach (var company in Companies)
                             {
-                                <MudSelectItem T="CorporateDto" Value="@corporate">@corporate.Name</MudSelectItem>
+                                <MudSelectItem T="CompanyDto" Value="@company">@company.Name</MudSelectItem>
                             }
                         </MudSelect>
-                </MudItem>
-                <MudTextField class="my-6" @bind-Value="NewStore.StoreName" Label="Store Name" Required="true" RequiredError=" " For="@(() => @NewStore.StoreName)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewStore.StoreNumber" Label="Store Number" Required="true" RequiredError=" " For="@(() => @NewStore.StoreNumber)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewStore.Email" Label="Email" Required="true" RequiredError=" " For="@(() => @NewStore.Email)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewStore.PhonePrimary" Label="Phone Primary" Required="true" RequiredError=" " For="@(() => @NewStore.PhonePrimary)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewStore.PhoneSecondary" Label="Phone Secondary" For="@(() => @NewStore.PhoneSecondary)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewStore.StreetAddress1" Label="Street Address 1" Required="true" RequiredError=" " For="@(() => @NewStore.StreetAddress1)" Variant="Variant.Text"></MudTextField>
-                <MudTextField class="my-6" @bind-Value="NewStore.StreetAddress2" Label="Street Address 2" For="@(() => @NewStore.StreetAddress2)" Variant="Variant.Text"></MudTextField>
-                @*<MudTextField class="my-6" @bind-Value="NewStore.City" Label="City" Required="true" RequiredError=" " For="@(() => @NewStore.City)" Variant="Variant.Text"></MudTextField>
-                    <MudTextField class="my-6" @bind-Value="NewStore.State" Label="State" Required="true" RequiredError=" " For="@(() => @NewStore.State)" Variant="Variant.Text"></MudTextField>*@
-                    <MudSelect T="String" Value="@SelectedCity" Class="my-0" ValueChanged="(value) => HandleCity(value)" Label="City" Required=true RequiredError=" "
-                               AnchorOrigin="Origin.BottomCenter">
-                        @if (City.Length != 0)
+                    </MudItem>
+                }
+                @if (CurrentUser.UserRoleId == 1 || CurrentUser.UserRoleId == 3 || CurrentUser.UserRoleId == 4)
+                {
+                    <MudItem Class="my-6">
+                        @if (IshasCorporateDetails)
                         {
-                            foreach (var item in City)
-                            {
-                                <MudSelectItem T="String" Value=@item>@item</MudSelectItem>
-                            }
-                        }
-                    </MudSelect>
-                    <MudSelect T="String" Value="@SelectedState" Class="my-6" ValueChanged="(value) => HandleState(value)" Label="State" Required=true RequiredError=" "
+                            <MudSelect T="CorporateDto" Label="Select Corporate" Required=true RequiredError=" " Value="@SelectedCorporate" ValueChanged="(value) => HandleCorporate(value)"
                                AnchorOrigin="Origin.BottomCenter">
-                        @if (State.Length != 0)
-                        {
-                            foreach (var item in State)
-                            {
-                                <MudSelectItem T="String" Value=@item>@item</MudSelectItem>
-                            }
+                                @foreach (var corporate in Corporate)
+                                {
+                                    <MudSelectItem T="CorporateDto" Value="@corporate">@corporate.Name</MudSelectItem>
+                                }
+                            </MudSelect>
                         }
-                    </MudSelect>
-                <MudTextField Class="my-0" T="String" Value="@PostalCodeValue" Label="Zip Code" Required="true" RequiredError=" " ValueChanged="(value)=>HandleZipcode(value)" For="@(() => @NewStore.PostalCode)" Variant="Variant.Text"></MudTextField>
+                        else
+                        {
+                            <MudSelect T="CorporateDto" Label="Select Corporate" Required=true RequiredError=" " ValueChanged="(value) => HandleCorporate(value)"
+                               AnchorOrigin="Origin.BottomCenter">
+                                @foreach (var corporate in Corporate)
+                                {
+                                    <MudSelectItem T="CorporateDto" Value="@corporate">@corporate.Name</MudSelectItem>
+                                }
+                            </MudSelect>
+                        }
+                    </MudItem>
+                }
+                <MudTextField class="my-6" @bind-Value="Store.StoreName" Label="Store Name" Required="true" RequiredError="" For="@(() => @Store.StoreName)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.StoreNumber" Label="Store Number" Required="true" RequiredError="" For="@(() => @Store.StoreNumber)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.Email" Label="Email" Required="true" RequiredError="" For="@(() => @Store.Email)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.PhonePrimary" Label="Phone Primary" Required="true" RequiredError="" For="@(() => @Store.PhonePrimary)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.PhoneSecondary" Label="Phone Secondary" For="@(() => @Store.PhoneSecondary)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.StreetAddress1" Label="Street Address 1" Required="true" RequiredError="" For="@(() => @Store.StreetAddress1)" Variant="Variant.Text"></MudTextField>
+                <MudTextField class="my-6" @bind-Value="Store.StreetAddress2" Label="Street Address 2" For="@(() => @Store.StreetAddress2)" Variant="Variant.Text"></MudTextField>
+                <MudSelect T="String" Class="my-0" Value="@SelectedCity" ValueChanged="(value) => HandleCity(value)" Label="City" Required=true RequiredError=" "
+                           AnchorOrigin="Origin.BottomCenter">
+                    @if (City.Length != 0)
+                    {
+                        foreach (var item in City)
+                        {
+                            <MudSelectItem T="String" Value=@item>@item</MudSelectItem>
+                        }
+                    }
+                </MudSelect>
+
+                <MudSelect T="String" Class="my-6" Value="@SelectedState" ValueChanged="(value) => HandleState(value)" Label="State" Required=true RequiredError=" "
+                           AnchorOrigin="Origin.BottomCenter">
+                    @if (State.Length != 0)
+                    {
+                        foreach (var item in State)
+                        {
+                            <MudSelectItem T="String" Value=@item>@item</MudSelectItem>
+                        }
+                    }
+                </MudSelect>
+
+                <MudTextField Class="my-0" T="String" Value="@PostalCodeValue" Label="Zip Code" Required="true" RequiredError=" " ValueChanged="(value)=>HandleZipcode(value)" For="@(() => @Store.PostalCode)" Variant="Variant.Text"></MudTextField>
+
                 <div Class="Mudsearchselect">
                     @if (SelectedCounty != "")
                     {
@@ -85,7 +116,7 @@
                     </datalist>
                 </div>
                 <MudItem Class="my-3">
-                    <MudSelect T="String" Value="@SelectedService" ValueChanged="(value) => HandleServiceFrequency(value)" Label="Select Service Frequency" Required=true RequiredError=" "
+                    <MudSelect T="String" ValueChanged="(value) => HandleServiceFrequency(value)" Value="@SelectedService" Label="Select Service Frequency" Required=true RequiredError=" "
                                AnchorOrigin="Origin.BottomCenter">
 
                         <MudSelectItem T="String" Value=@("1 time a week")>1 time a week</MudSelectItem>
@@ -97,74 +128,95 @@
                         <MudSelectItem T="String" Value=@("7 times a week")>7 times a week</MudSelectItem>
                     </MudSelect>
                 </MudItem>
-                <MudDatePicker Class="my-6" Label="" Editable="false" MinDate="MinDate" @bind-Date="NewStore.StartDate" Placeholder="Select Start Date" Required=true RequiredError=" " For="@(() => @NewStore.StartDate)" />
-                <MudSwitch @bind-Checked="NewStore.IsConnectedStore" Label=@(NewStore.IsConnectedStore? "Connected":"Disconnected") Color="Color.Primary" />
-                <MudCheckBox @bind-Checked="NewStore.IsSignatureRequired" Label="Signature Reqired For Deliveries" Color="Color.Primary"></MudCheckBox>
+                <MudDatePicker Label="" Editable="true" Class="my-6" MinDate="MinDate" @bind-Date="Store.StartDate" Placeholder="Select Start Date" Required=true RequiredError=" " For="@(() => @Store.StartDate)" />
+                @*<MudDatePicker Label="Start Date" Editable="true" MaxDate="MinDate" @bind-Date="SelectedDate" Placeholder="Select Start Date" />*@
+                <MudSwitch @bind-Checked="Store.IsActive" Label=@(Store.IsActive? "Activate":"Deactivate") Color="Color.Primary" For="@(() => @Store.IsActive)" />
+                <MudSwitch @bind-Checked="Store.IsConnectedStore" Label=@(Store.IsConnectedStore? "Connected":"Disconnected") Color="Color.Primary" />
                 <div class="d-flex SubmitGrp">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Update</MudButton>
                 </div>
             </MudForm>
         </div>
     </DialogContent>
 </MudDialog>
 
+
 @code {
     [Parameter]
-    public StoreCreationDto? NewStore { get; set; }
-    public List<CorporateDto> Corporate { get; set; } = new();
-    public List<CountyCodeDTO> CountyCodeList { get; set; } = new();
+    public StoreDto? Store { get; set; }
+
+    [Parameter]
+    public List<CorporateDto>? Corporate { get; set; } = new();
+
+
+    [Parameter]
+    public List<CompanyDto>? Companies { get; set; } = new();
+
+    [Parameter]
+    public List<CountyCodeDTO>? CountyCodeList { get; set; } = new();
     public List<CountyCodeDTO> TempCountyCodeList { get; set; } = new();
-    public CorporateDto SelectedCorporate = new();
+    CorporateDto SelectedCorporate = new();
+    CompanyDto SelectedCompany = new();
     public CountyCodeDTO SelectedCountyCode = new();
+    bool StoreStatus = false;
     [Inject]
     public ICorporateHttpRepository CorporateRepository { get; set; }
-    [Inject]
-    public ICompanyHttpRepository CompanyRepository { get; set; }
-    public List<ServiceProviderDto> ServiceProviders { get; set; } = new();
-    public ServiceProviderDto _selectedServiceProvider = new();
-    [Inject]
-    public IServiceProviderHttpRepository ServiceProviderRepository { get; set; }
-    [Inject]
-    public ICountyCodeHttpRepository CountyCodeRepository { get; set; }
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     bool success;
+    bool IshasCorporateDetails;
     string[] errors = { };
     string[] County;
     string[] City;
     string[] State;
-    MudForm form;
-    public string SelectedService = "";
+    string SelectedCounty = "";
+    string SelectedService = "";
     public string SelectedCity = "";
     public string SelectedState = "";
     public string PostalCodeValue = "";
+    DateTime? MinDate { get; set; } = Convert.ToDateTime("12/01/2021");
+    MudForm form;
     [Inject] IJSRuntime JsRuntime { get; set; }
     private IJSObjectReference JsModule;
-    public CompanyDto Company { get; set; }
-    DateTime? MinDate { get; set; } = DateTime.Today;
-    DateTime SelectedDate { get; set; } = DateTime.Today;
-    public string SelectedCounty = "";
-    bool IsValidCountyCode = false;
-    protected override async Task OnInitializedAsync()
+    bool IsValidCountyCode = true;
+    protected override void OnParametersSet()
     {
-        NewStore.StartDate = SelectedDate;
-        if (CurrentUser.UserRole == "PrimeCompany")
+        if (CurrentUser.UserRoleId == 2)
         {
-            Corporate = await CorporateRepository.GetCorporatesByCompanyId(CurrentUser.UserId);
+            Store.CorporateId = CurrentUser.UserId;
         }
-        else if (CurrentUser.UserRole == "SubContractor")
+        else if (CurrentUser.UserRoleId == 3 || CurrentUser.UserRoleId == 4)
         {
-            Company = await CompanyRepository.GetParentCompanyAsync(CurrentUser.UserId);
-            Corporate = await CorporateRepository.GetCorporatesByCompanyId((Guid)Company.ParentId);
+            Store.CompanyId = CurrentUser.UserId;
         }
-        if (Corporate.Count > 0)
+        if (Corporate != null && Corporate.Count > 0)
         {
-            SelectedCorporate = Corporate[0];
-            NewStore.CorporateId = SelectedCorporate.Id;
+            SelectedCorporate = Corporate.Where(x => x.Id == Store.CorporateId).FirstOrDefault();
+            IshasCorporateDetails = true;
         }
-        CountyCodeList = await CountyCodeRepository.GetCountyListAsync();
+        if (Companies != null && Companies.Count > 0)
+        {
+            SelectedCompany = Companies.Where(x => x.Id == Store.CompanyId).FirstOrDefault();
+        }
+        if (Store.ServiceFrequency != null && Store.ServiceFrequency != "")
+        {
+            SelectedService = Store.ServiceFrequency;
+        }
+        else
+        {
+            SelectedService = "1 time a week";
+        }
+
+        if (Store.StartDate == null)
+        {
+            Store.StartDate = MinDate;
+        }
         if (CountyCodeList.Count > 0)
         {
+            SelectedCounty = Store.CountyCode;
+            SelectedCity = Store.City;
+            SelectedState = Store.State;
+            PostalCodeValue = Store.PostalCode;
             try
             {
                 string[] TempCity = new string[CountyCodeList.Count];
@@ -183,27 +235,25 @@
                 Array.Resize(ref TempCity, j);
                 County = (string[])C.Clone();
                 City = (string[])TempCity.Clone();
+
             }
             catch (Exception ex)
             {
-                //Exception
+
             }
         }
-    }
-    protected override void OnParametersSet()
-    {
-        SelectedService = "1 time a week";
-        NewStore.ServiceFrequency = "1 time a week";
+        StoreStatus = Store.IsActive;
     }
     public async Task HandleServiceFrequency(string value)
     {
-        NewStore.ServiceFrequency = value;
+
         SelectedService = value;
+        Store.ServiceFrequency = value;
     }
     public async Task HandleCity(string value)
     {
         SelectedCity = value;
-        NewStore.City = value;
+        Store.City = value;
         SelectedState = "";
         SelectedCounty = "";
         IsValidCountyCode = false;
@@ -244,10 +294,10 @@
     public async Task HandleState(string value)
     {
         SelectedState = value;
-        NewStore.State = value;
+        Store.State = value;
         SelectedCounty = "";
         IsValidCountyCode = false;
-        TempCountyCodeList = CountyCodeList.Where(x => x.City == NewStore.City && x.State == NewStore.State).ToList();
+        TempCountyCodeList = CountyCodeList.Where(x => x.City == Store.City && x.State == Store.State).ToList();
         if (TempCountyCodeList.Count > 0)
         {
             try
@@ -275,13 +325,13 @@
     public async Task HandleZipcode(string value)
     {
         PostalCodeValue = value;
-        NewStore.PostalCode = value;
+        Store.PostalCode = value;
         SelectedCounty = "";
         IsValidCountyCode = false;
         TempCountyCodeList = CountyCodeList.Where(x => x.ZipCode == value).ToList();
         if (TempCountyCodeList.Count == 0)
         {
-            TempCountyCodeList = CountyCodeList.Where(x => x.City == NewStore.City && x.State == NewStore.State).ToList();
+            TempCountyCodeList = CountyCodeList.Where(x => x.City == Store.City && x.State == Store.State).ToList();
         }
         if (TempCountyCodeList.Count > 0)
         {
@@ -337,7 +387,7 @@
             if (County.Contains(e))
             {
 
-                NewStore.CountyCode = e.ToString();
+                Store.CountyCode = e.ToString();
                 SelectedCounty = e.ToString();
                 if (success)
                 {
@@ -348,22 +398,57 @@
                     success = false;// Disable the Save button when other fields are valid
                 }
                 IsValidCountyCode = true;
-                StateHasChanged();
             }
             else
             {
                 SelectedCounty = e.ToString();
-                success = false;
-                IsValidCountyCode = false;
                 await JsModule.InvokeVoidAsync("addValidationCountycodeClass");
+                IsValidCountyCode = false;
                 StateHasChanged();
             }
         }
         catch (Exception ex)
         {
-            //Exception
         }
     }
+    public async Task HandleCompany(CompanyDto company)
+    {
+        Store.CompanyId = company.Id;
+        SelectedCompany = company;
+        try
+        {
+
+            if (company.ParentId == null)
+            {
+                Corporate = await CorporateRepository.GetCorporatesByCompanyId(company.Id);
+            }
+            else if (company.ParentId != null)
+            {
+                Corporate = await CorporateRepository.GetCorporatesByCompanyId((Guid)company.ParentId);
+            }
+            if (Corporate != null)
+            {
+                SelectedCorporate = Corporate[0];
+                IshasCorporateDetails = true;
+                Store.CorporateId = SelectedCorporate.Id;
+            }
+            else
+            {
+                IshasCorporateDetails = false;
+                success = false;
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+    public async Task HandleCorporate(CorporateDto corporate)
+    {
+        Store.CorporateId = corporate.Id;
+        SelectedCorporate = corporate;
+    }
+
     public async Task Submit()
     {
         form.Validate();
@@ -381,16 +466,6 @@
             MudDialog.Close(DialogResult.Ok(true));
         }
     }
-    void Cancel() => MudDialog.Cancel();
-    private async Task<IEnumerable<string>> Search1(string value)
-    {
-        if (string.IsNullOrEmpty(value))
-            return County;
-        return County.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-    }
-    public async Task HandleCorporate(CorporateDto corporate)
-    {
-        NewStore.CorporateId = corporate.Id;
-    }
 
+    void Cancel() => MudDialog.Cancel();
 }

@@ -1,0 +1,56 @@
+﻿@page "/prime-carts"
+@using WiiTrakClient.Cores
+@using WiiTrakClient.Features.Companies.Components
+@inject ITrackingDeviceHttpRepository TrackingDeviceRepository
+@inject IDriverHttpRepository DriverRepository
+@inject IJSRuntime JsRuntime
+
+<UserAuthentication />
+<h3>Carts</h3>
+<br />
+<div>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect T="DriverDto" Label="Select Driver"
+                   ValueChanged="(value) => HandleDriverSelected(value)"
+                   AnchorOrigin="Origin.BottomCenter">
+            @foreach (var driver in Drivers)
+            {
+                <MudSelectItem T="DriverDto" Value="@driver">@driver.FirstName @driver.LastName</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+</div>
+<br />
+<div class="my-8">
+    @if (drivercarts.Count > 0)
+    {
+        <DriverCartsList driverscart="drivercarts" />
+    }
+    else
+    {
+        <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+    }
+
+</div>
+
+@code {
+    public List<DriverDto> Drivers { get; set; } = new();
+    bool LoaderVisibility = false;
+    public List<TrackingDeviceDetailsDto> drivercarts { get; set; } = new();
+    private IJSObjectReference JsModule;
+    protected override async Task OnInitializedAsync()
+    {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
+        Drivers = await DriverRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
+    }
+    private async Task HandleDriverSelected(DriverDto Driver)
+    {
+        drivercarts = await TrackingDeviceRepository.GetTrackingDeviceDetailsByIdDriverAsync(Driver.Id);
+        StateHasChanged();
+    }
+}

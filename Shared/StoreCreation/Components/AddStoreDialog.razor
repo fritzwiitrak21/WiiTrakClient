@@ -1,4 +1,4 @@
-@namespace WiiTrakClient.Features.Corporates.Components
+﻿@namespace WiiTrakClient.Shared.StoreCreation.Components
 @using System.ComponentModel.DataAnnotations
 @using WiiTrakClient.Cores
 
@@ -30,15 +30,36 @@
     <DialogContent>
         <div style="width: 400px;height:550px;overflow-y: auto; overflow-x: hidden;">
             <MudForm Model="@NewStore" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudItem>
-                    <MudSelect T="CompanyDto" Label="Select Company" Required=true RequiredError=" "
-                               ValueChanged="(value) => HandleCompanySelected(value)"
+                <MudItem Class="my-6">
+                    <MudSelect T="CompanyDto" Label="Select Company" Required=true RequiredError=" " ValueChanged="(value) => HandleCompany(value)"
                                AnchorOrigin="Origin.BottomCenter">
-                        @foreach (var company in companies)
+                        @foreach (var company in Company)
                         {
                             <MudSelectItem T="CompanyDto" Value="@company">@company.Name</MudSelectItem>
                         }
                     </MudSelect>
+                </MudItem>
+                <MudItem Class="my-6">
+                    @if (IshasCorporateDetails)
+                    {
+                        <MudSelect T="CorporateDto" Label="Select Corporate" Required=true RequiredError=" " Value="@SelectedCorporate" ValueChanged="(value) => HandleCorporate(value)"
+                               AnchorOrigin="Origin.BottomCenter">
+                            @foreach (var corporate in Corporate)
+                            {
+                                <MudSelectItem T="CorporateDto" Value="@corporate">@corporate.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
+                    else
+                    {
+                         <MudSelect T="CorporateDto" Label="Select Corporate" Required=true RequiredError=" "  ValueChanged="(value) => HandleCorporate(value)"
+                               AnchorOrigin="Origin.BottomCenter">
+                            @foreach (var corporate in Corporate)
+                            {
+                                <MudSelectItem T="CorporateDto" Value="@corporate">@corporate.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
                 </MudItem>
                 <MudTextField class="my-6" @bind-Value="NewStore.StoreName" Label="Store Name" Required="true" RequiredError=" " For="@(() => @NewStore.StoreName)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="NewStore.StoreNumber" Label="Store Number" Required="true" RequiredError=" " For="@(() => @NewStore.StoreNumber)" Variant="Variant.Text"></MudTextField>
@@ -47,7 +68,7 @@
                 <MudTextField class="my-6" @bind-Value="NewStore.PhoneSecondary" Label="Phone Secondary" For="@(() => @NewStore.PhoneSecondary)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="NewStore.StreetAddress1" Label="Street Address 1" Required="true" RequiredError=" " For="@(() => @NewStore.StreetAddress1)" Variant="Variant.Text"></MudTextField>
                 <MudTextField class="my-6" @bind-Value="NewStore.StreetAddress2" Label="Street Address 2" For="@(() => @NewStore.StreetAddress2)" Variant="Variant.Text"></MudTextField>
-                  <MudSelect T="String" Value="@SelectedCity" Class="my-0" ValueChanged="(value) => HandleCity(value)" Label="City" Required=true RequiredError=" "
+                <MudSelect T="String" Value="@SelectedCity" Class="my-0" ValueChanged="(value) => HandleCity(value)" Label="City" Required=true RequiredError=" "
                                AnchorOrigin="Origin.BottomCenter">
                         @if (City.Length != 0)
                         {
@@ -110,29 +131,37 @@
 
 @code {
     [Parameter]
-    public StoreCreationDto? NewStore { get; set; }
-    public List<CompanyDto> companies { get; set; } = new();
+    public StoreDto? NewStore { get; set; }
+    public List<CorporateDto> Corporate { get; set; } = new();
+    public List<CompanyDto> Company { get; set; } = new();
     public List<CountyCodeDTO> CountyCodeList { get; set; } = new();
     public List<CountyCodeDTO> TempCountyCodeList { get; set; } = new();
-    public CompanyDto SelectedCompany = new();
+    public CorporateDto SelectedCorporate = new();
     public CountyCodeDTO SelectedCountyCode = new();
     [Inject]
+    public ICorporateHttpRepository CorporateRepository { get; set; }
+    [Inject]
     public ICompanyHttpRepository CompanyRepository { get; set; }
+    public List<ServiceProviderDto> ServiceProviders { get; set; } = new();
+    public ServiceProviderDto _selectedServiceProvider = new();
+    [Inject]
+    public IServiceProviderHttpRepository ServiceProviderRepository { get; set; }
     [Inject]
     public ICountyCodeHttpRepository CountyCodeRepository { get; set; }
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     bool success;
+    bool IshasCorporateDetails;
     string[] errors = { };
     string[] County;
-    string[] City;
+     string[] City;
     string[] State;
     MudForm form;
-    [Inject] IJSRuntime JsRuntime { get; set; }
-    private IJSObjectReference JsModule;
     public string SelectedService = "";
-    public string SelectedCity = "";
+     public string SelectedCity = "";
     public string SelectedState = "";
     public string PostalCodeValue = "";
+    [Inject] IJSRuntime JsRuntime { get; set; }
+    private IJSObjectReference JsModule;
     DateTime? MinDate { get; set; } = DateTime.Today;
     DateTime SelectedDate { get; set; } = DateTime.Today;
     public string SelectedCounty = "";
@@ -140,12 +169,9 @@
     protected override async Task OnInitializedAsync()
     {
         NewStore.StartDate = SelectedDate;
-        companies = await CompanyRepository.GetCompaniesByCorporateIdAsync(CurrentUser.UserId);
-        if (companies.Count > 0)
-        {
-            SelectedCompany = companies[0];
-        }
-        CountyCodeList = await CountyCodeRepository.GetCountyListAsync();
+        Corporate = await CorporateRepository.GetAllCorporatesAsync();
+        Company = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
+       CountyCodeList = await CountyCodeRepository.GetCountyListAsync();
         if (CountyCodeList.Count > 0)
         {
             try
@@ -180,10 +206,10 @@
     }
     public async Task HandleServiceFrequency(string value)
     {
-        NewStore.ServiceFrequency = value;
-        SelectedService = value;
+        NewStore.ServiceFrequency = value; 
+        SelectedService = value; 
     }
-
+    
     public async Task HandleCity(string value)
     {
         SelectedCity = value;
@@ -315,9 +341,9 @@
         try
         {
             if (JsModule is null)
-            {
-                JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
-            }
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+        }
             if (County.Contains(e))
             {
 
@@ -339,7 +365,7 @@
                 SelectedCounty = e.ToString();
                 success = false;
                 await JsModule.InvokeVoidAsync("addValidationCountycodeClass");
-                IsValidCountyCode = true;
+                IsValidCountyCode = false;
                 StateHasChanged();
             }
         }
@@ -347,7 +373,43 @@
         {
         }
     }
-     public async Task Submit()
+
+    public async Task HandleCompany(CompanyDto company)
+    {
+        NewStore.CompanyId = company.Id;
+        try
+        {
+
+            if (company.ParentId == null)
+            {
+                Corporate = await CorporateRepository.GetCorporatesByCompanyId(company.Id);
+            }
+            else if (company.ParentId != null)
+            {
+                Corporate = await CorporateRepository.GetCorporatesByCompanyId((Guid)company.ParentId);
+            }
+            if (Corporate != null)
+            {
+                SelectedCorporate = Corporate[0];
+                NewStore.CorporateId = SelectedCorporate.Id;
+                IshasCorporateDetails = true;
+            }
+            else
+            {
+                IshasCorporateDetails = false;
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+    public async Task HandleCorporate(CorporateDto corporate)
+    {
+        NewStore.CorporateId = corporate.Id;
+    }
+
+    public async Task Submit()
     {
         form.Validate();
         if (JsModule is null)
@@ -365,8 +427,12 @@
         }
     }
     void Cancel() => MudDialog.Cancel();
-    private async Task HandleCompanySelected(CompanyDto Company)
+    private async Task<IEnumerable<string>> Search1(string value)
     {
-        NewStore.CompanyId = Company.Id;
+        if (string.IsNullOrEmpty(value))
+            return County;
+        return County.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
+
+
 }

@@ -17,21 +17,13 @@ namespace WiiTrakClient.Features.Drivers
     {
 
         [Inject] IJSRuntime JsRuntime { get; set; }
-
         [Inject] IDriverHttpRepository DriverRepository { get; set; }
-
         [Inject] public IDeliveryTicketHttpRepository DeliveryTicketHttpRepository { get; set; }
-
         [Inject] public ICartHttpRepository CartHttpRepository { get; set; }
-
         [Inject] public IStoreHttpRepository StoreHttpRepository { get; set; }
-
         [Inject] IDialogService DialogService { get; set; }
-
         [Inject] IWorkOrderHttpRepository WorkOrderHttpRepository { get; set; }
-
         DriverDto SelectedDriver = new();
-
         List<DeliveryTicketDto> _deliveryTickets = new();
         List<DeliveryTicketDto> deliveryTickets = new();
         List<CartDto> _carts = new();

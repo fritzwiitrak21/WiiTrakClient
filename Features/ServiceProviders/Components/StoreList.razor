@@ -86,7 +86,7 @@
         if (!result.Cancelled) 
         {
             // save updated store to backend
-            var storeUpdate = new StoreUpdateDto {
+            var StoreUpdate = new StoreDto {
                 StoreName = store.StoreName,
                 StreetAddress1 = store.StreetAddress1,
                 StreetAddress2 = store.StreetAddress2,
@@ -99,7 +99,7 @@
                 PhoneSecondary = store.PhoneSecondary,
                 ServiceProviderId = store.ServiceProviderId
             };
-           await StoreHttpRepository.UpdateStoreAsync(store.Id, storeUpdate);
+           await StoreHttpRepository.UpdateStoreAsync(store.Id, StoreUpdate);
         }  
     }
 }

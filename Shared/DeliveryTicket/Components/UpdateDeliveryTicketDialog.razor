@@ -1,4 +1,4 @@
-﻿@namespace WiiTrakClient.Features.Components.Components
+﻿@namespace WiiTrakClient.Shared.DeliveryTicket.Components
 @using System.ComponentModel.DataAnnotations
 @using WiiTrakClient.Shared.Components
 
@@ -18,10 +18,6 @@
         color: var(--mud-palette-text-secondary);
         margin: 0;
         font-size: 0;
-        text-align: start;
-        font-weight: 400;
-        line-height: 1.66;
-        letter-spacing: .03333em;
     }
 </style>
 
@@ -42,7 +38,6 @@
                     //UpdateNumberOfCarts();
                     UpdateStoreAndServiceProviderIds();
                 }
-
 
                 <MudTextField @bind-Value="@editDeliveryTicket.NumberOfCarts" Label="No of carts" Required="true" For="@(() => @editDeliveryTicket.NumberOfCarts)" Variant="Variant.Text"></MudTextField>
 
@@ -78,14 +73,13 @@
     public List<StoreDto>? Stores { get; set; } = new();
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-    bool success;
-    string[] errors = { };
-    MudForm form;
 
     StoreDto SelectedStore = new();
     private string _fileUrl = "";
 
-
+    bool success;
+    string[] errors = { };
+    MudForm form;
     protected override void OnParametersSet()
     {
         if (editDeliveryTicket != null)
@@ -113,7 +107,7 @@
 
     void Submit()
     {
-        form.Validate();
+         form.Validate();
         if (success && errors.Length == 0)
         {
             MudDialog.Close(DialogResult.Ok(true));
