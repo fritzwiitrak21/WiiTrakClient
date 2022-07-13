@@ -7,15 +7,15 @@
 @inject ITechnicianHttpRepository TechnicianRepository
 @inject IDialogService DialogService
 
-<UserAuthentication/>
+<UserAuthentication />
 <h1>Technicians</h1>
 
 <div class="d-flex justify-end">
-    <MudButton Variant="Variant.Filled" 
-        StartIcon="@Icons.Material.Filled.Add" 
-        IconColor="Color.Secondary" 
-        Size="Size.Large"
-        OnClick="OpenDialog">Add</MudButton>
+    <MudButton Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Add"
+               IconColor="Color.Secondary"
+               Size="Size.Large"
+               OnClick="OpenDialog">Add</MudButton>
 </div>
 
 <div class="my-8">
@@ -35,7 +35,7 @@
 
 @code {
     private IJSObjectReference JsModule;
-    List<TechnicianDto> Technician = new ();
+    List<TechnicianDto> Technician = new();
     List<TechnicianDto> TechniciansList = new();
     TechnicianDto AddTechnician = new();
 
@@ -47,15 +47,9 @@
             var Id = await JsModule.InvokeAsync<string>("getUserId");
             CurrentUser.UserId = new Guid(Id);
         }
-
-        TechniciansList = await TechnicianRepository.GetTechniciansBySystemOwnerIdAsync(CurrentUser.UserId);
-        if (TechniciansList is not null)
-        {
-            Technician = TechniciansList;
-        }
-        StateHasChanged();
+        await RefreshTechnicianGrid();
     }
-    private async Task OpenDialog() 
+    private async Task OpenDialog()
     {
         var parameters = new DialogParameters();
         AddTechnician = new TechnicianDto();
@@ -64,23 +58,32 @@
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
 
         var dialog = DialogService.Show<AddTechnicianDialog>("Add Technician", parameters);
-        var result = await dialog.Result; 
+        var result = await dialog.Result;
 
-        if (!result.Cancelled) 
+        if (!result.Cancelled)
         {
             // add new technician to backend
-            var TechnicianCreation = new TechnicianDto {
-                FirstName = AddTechnician.FirstName,
-                LastName = AddTechnician.LastName,
-                Email = AddTechnician.Email,
-                Phone = AddTechnician.Phone,
-                ProfilePic = AddTechnician.ProfilePic,
-                SystemOwnerId=CurrentUser.UserId,
-                CompanyId=AddTechnician.CompanyId,
-            };
-            await TechnicianRepository.CreateTechnicianAsync(TechnicianCreation,CurrentUser.UserRoleId);
-        }  
-        Technician = await TechnicianRepository.GetTechniciansBySystemOwnerIdAsync(CurrentUser.UserId);
+            var TechnicianCreation = new TechnicianDto
+                {
+                    FirstName = AddTechnician.FirstName,
+                    LastName = AddTechnician.LastName,
+                    Email = AddTechnician.Email,
+                    Phone = AddTechnician.Phone,
+                    ProfilePic = AddTechnician.ProfilePic,
+                    SystemOwnerId = CurrentUser.UserId,
+                    CompanyId = AddTechnician.CompanyId,
+                };
+            await TechnicianRepository.CreateTechnicianAsync(TechnicianCreation, CurrentUser.UserRoleId);
+        }
+        await RefreshTechnicianGrid();
+    }
+    private async Task RefreshTechnicianGrid()
+    {
+        TechniciansList = await TechnicianRepository.GetTechniciansBySystemOwnerIdAsync(CurrentUser.UserId);
+        if (TechniciansList is not null)
+        {
+            Technician = TechniciansList;
+        }
         StateHasChanged();
-    } 
+    }
 }

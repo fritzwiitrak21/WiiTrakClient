@@ -56,7 +56,7 @@
     List<StoreDto> _stores = new();
     List<StoreDto> StoreList = new();
 
-    StoreCreationDto _newStore = new();
+    StoreDto _newStore = new();
 
     private IJSObjectReference JsModule;
 
@@ -80,7 +80,7 @@
     private async Task OpenDialog()
     {
         var parameters = new DialogParameters();
-        _newStore = new StoreCreationDto();
+        _newStore = new StoreDto();
         parameters.Add("NewStore", _newStore);
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
@@ -91,7 +91,7 @@
         if (!result.Cancelled)
         {
             // add new store to backend
-            var storeCreation = new StoreCreationDto {
+            var storeCreation = new StoreDto {
                 StoreName = _newStore.StoreName,
                 StreetAddress1 = _newStore.StreetAddress1,
                 StreetAddress2 = _newStore.StreetAddress2,

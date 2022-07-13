@@ -4,48 +4,50 @@
 
 <MudDialog>
     <DialogContent>
-        <div style="width: 400px; height:350px; overflow-y: auto; overflow-x: hidden;">
+        <div style="width: 400px; height:300px; overflow-y: auto; overflow-x: hidden;">
             <MudForm @ref=form Model="@Cart" @bind-IsValid="@success" @bind-Errors="@errors">
                 <DataAnnotationsValidator />
-                <MudInputLabel>@Cart.ManufacturerName  #@Cart.CartNumber</MudInputLabel>
-                @if (SelectedStore == null)
-                {
+                <h5>Cart: @Cart.ManufacturerName  #@Cart.CartNumber</h5>
+                <br />
+                <h5>Store: @SelectedStore.StoreName - @SelectedStore.StoreNumber</h5>
+                @*@if (SelectedStore == null)
+                    {
                     <MudItem>
-                        <MudSelect T=StoreDto ValueChanged="(value) => HandleStore(value)"
-                               Label="Select Store" AnchorOrigin="Origin.BottomCenter"
-                               Required=true RequiredError="">
-                            @if (Stores != null)
-                            {
-                                @foreach (var store in Stores)
-                                {
-                                     if (store.IsConnectedStore)
-                                    {
-                                        <MudSelectItem Value="@store">@store.StoreName - @store.StoreNumber</MudSelectItem>
-                                    }
-                                }
-                            }
-                        </MudSelect>
+                    <MudSelect T=StoreDto ValueChanged="(value) => HandleStore(value)"
+                    Label="Select Store" AnchorOrigin="Origin.BottomCenter"
+                    Required=true RequiredError="">
+                    @if (Stores != null)
+                    {
+                    @foreach (var store in Stores)
+                    {
+                    if (store.IsConnectedStore)
+                    {
+                    <MudSelectItem Value="@store">@store.StoreName - @store.StoreNumber</MudSelectItem>
+                    }
+                    }
+                    }
+                    </MudSelect>
                     </MudItem>
-                }
-                else
-                {
+                    }
+                    else
+                    {
                     <MudItem>
-                        <MudSelect T=StoreDto Value="@SelectedStore" ValueChanged="(value) => HandleStore(value)"
-                               Label="Select Store" AnchorOrigin="Origin.BottomCenter"
-                               Required=true RequiredError="">
-                            @if (Stores != null)
-                            {
-                                @foreach (var store in Stores)
-                                {
-                                    if (store.IsConnectedStore)
-                                    {
-                                        <MudSelectItem Value="@store">@store.StoreName - @store.StoreNumber</MudSelectItem>
-                                    }
-                                }
-                            }
-                        </MudSelect>
+                    <MudSelect T=StoreDto Value="@SelectedStore" ValueChanged="(value) => HandleStore(value)"
+                    Label="Select Store" AnchorOrigin="Origin.BottomCenter"
+                    Required=true RequiredError="">
+                    @if (Stores != null)
+                    {
+                    @foreach (var store in Stores)
+                    {
+                    if (store.IsConnectedStore)
+                    {
+                    <MudSelectItem Value="@store">@store.StoreName - @store.StoreNumber</MudSelectItem>
+                    }
+                    }
+                    }
+                    </MudSelect>
                     </MudItem>
-                }
+                    }*@
                 <MudItem>
                     @if (SelectedDevice == null)
                     {
@@ -84,15 +86,15 @@
                         </MudSelect>
                     }
                 </MudItem>
-                <br />
-                <div class="d-flex">
-                    <MudButton OnClick="Cancel">Cancel</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
-                </div>
-                <br />
             </MudForm>
         </div>
     </DialogContent>
+    <DialogActions>
+        <div class="d-flex">
+            <MudButton OnClick="Cancel">Cancel</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
+        </div>
+    </DialogActions>
 </MudDialog>
 @code {
     [Parameter]

@@ -2,11 +2,10 @@
 @using WiiTrakClient.Features.Companies.Components
 @using System.Linq
 @using System.Collections.Generic;
-@using WiiTrakClient.Cores;
-
+@inject IDriverStoresHttpRepository DriverStoreRepository
 @namespace WiiTrakClient.Features.Companies.Components
 
-<MudTable Items=@driverstore Class="Pagingstyle" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@_listIsLoading"
+<MudTable Items=@driverstore Class="Pagingstyle" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="false"
           LoadingProgressColor="Color.Primary">
     <HeaderContent>
 
@@ -96,14 +95,7 @@
 @code {
     [Parameter]
     public List<DriverStoreDetailsDto>? driverstore { get; set; } = null;
-
-    public bool _listIsLoading = false;
-
-
     public DriverDto SelectedDriver = new();
-
-    [Inject]
-    public IDriverStoresHttpRepository DriverStoreRepository { get; set; }
 
     private async Task Assign(DriverStoreDetailsDto DriverStore)
     {

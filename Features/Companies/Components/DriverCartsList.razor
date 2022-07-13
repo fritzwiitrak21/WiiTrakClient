@@ -1,0 +1,86 @@
+﻿@using WiiTrakClient.Features.Companies.Components
+@namespace WiiTrakClient.Features.Companies.Components
+@inject ITrackingDeviceHttpRepository TrackingDeviceRepository
+@inject IDialogService DialogService
+@using WiiTrakClient.Shared.Components;
+
+<MudTable Items=@driverscart Class="Pagingstyle" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="false"
+          LoadingProgressColor="Color.Primary">
+    <HeaderContent>
+        <MudTh>
+            <MudTableSortLabel InitialDirection="SortDirection.Ascending"
+                               SortBy="new Func<DriverStoreDetailsDto, object>(x=>x.StoreName)">
+                Store Name
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            Cart Detail
+        </MudTh>
+        <MudTh>
+            Condition
+        </MudTh>
+        <MudTh>
+            Status
+        </MudTh>
+        <MudTh>
+        </MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Store Name">@context.StoreName - @context.StoreNumber</MudTd>
+        <MudTd DataLabel="Cart Detail">@context.ManufacturerName - @context.CartNumber</MudTd>
+        <MudTd DataLabel="Condition">
+            @switch (context.Condition)
+            {
+                case CartCondition.Good:
+                    <span style="background:#90ee90;padding:2px;">Good</span>
+                    break;
+                case CartCondition.Damage:
+                    <span style="background:#ff474c;padding:2px;">Damage</span>
+                    break;
+                case CartCondition.DamageBeyondRepair:
+                    <span style="background:#ff474c;padding:2px;">Trash</span>
+                    break;
+            }
+        </MudTd>
+        <MudTd DataLabel="Status">
+            @switch (context.Status)
+            {
+                case CartStatus.InsideGeofence:
+                    <span style="background:#90ee90;padding:2px;">Delivered</span>
+                    break;
+                case CartStatus.OutsideGeofence:
+                    <span style="background:#ffffe0;padding:2px;">Needs Pick Up</span>
+                    break;
+                case CartStatus.PickedUp:
+                    <span style="background:#90ee90;padding:2px;">On Truck</span>
+                    break;
+                case CartStatus.Lost:
+                    <span style="background:#ff474c;padding:2px;">Lost</span>
+                    break;
+            }
+        </MudTd>
+        <MudTd DataLabel="Action">
+            <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" Icon="@Icons.Material.Filled.Map" OnClick="() => DisplayMaps(context)">
+            </MudIconButton>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{10, 50, 100}" />
+    </PagerContent>
+</MudTable>
+
+@code {
+    [Parameter]
+    public List<TrackingDeviceDetailsDto>? driverscart { get; set; } = null;
+
+    private async Task DisplayMaps(TrackingDeviceDetailsDto Device)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("device", Device);
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+        var dialog = DialogService.Show<DisplayDevicesMap>("Position of " + Device.ManufacturerName + " Cart - " + Device.CartNumber.ToString(), parameters);
+        await dialog.Result;
+        
+        StateHasChanged();
+    }
+}

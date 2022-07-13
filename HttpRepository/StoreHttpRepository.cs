@@ -10,96 +10,96 @@ namespace WiiTrakClient.HttpRepository
 {
     public class StoreHttpRepository : IStoreHttpRepository
     {
-        private readonly IHttpService _httpService;
+        private readonly IHttpService Httpservice;
         private const string ControllerName = "stores";
-        private readonly string _apiUrl;
-        public StoreHttpRepository(IHttpService httpService)
+        private readonly string ApiUrl;
+        public StoreHttpRepository(IHttpService httpservice)
         {
-            _httpService = httpService;
-            _apiUrl = $"{ httpService.BaseUrl }{ ControllerName }";
+            Httpservice = httpservice;
+            ApiUrl = $"{ httpservice.BaseUrl }{ ControllerName }";
         }
         public async Task<List<StoreDto>> GetAllStoresAsync()
         {
-            var response = await _httpService.Get<List<StoreDto>>(_apiUrl);
+            var response = await Httpservice.Get<List<StoreDto>>(ApiUrl);
             return response.Response;
         }
         public async Task<StoreDto> GetStoreByIdAsync(Guid id)
         {
-            string url = $"{_apiUrl}/{id}";
-            var response = await _httpService.Get<StoreDto>(url);
+            string url = $"{ApiUrl}/{id}";
+            var response = await Httpservice.Get<StoreDto>(url);
             return response.Response;
         }
-        public async Task<List<StoreDto>> GetStoresByServiceProviderId(Guid serviceProviderId)
+        public async Task<List<StoreDto>> GetStoresByServiceProviderId(Guid ServiceProviderId)
         {
-            string url = $"{_apiUrl}/ServiceProvider/{serviceProviderId}";
-            var response = await _httpService.Get<List<StoreDto>>(url);
+            string url = $"{ApiUrl}/ServiceProvider/{ServiceProviderId}";
+            var response = await Httpservice.Get<List<StoreDto>>(url);
             return response.Response;
         }
-        public async Task<List<StoreDto>> GetStoresByCorporateId(Guid corporateId)
+        public async Task<List<StoreDto>> GetStoresByCorporateId(Guid CorporateId)
         {
-            string url = $"{_apiUrl}/Corporate/{corporateId}";
-            var response = await _httpService.Get<List<StoreDto>>(url);
+            string url = $"{ApiUrl}/Corporate/{CorporateId}";
+            var response = await Httpservice.Get<List<StoreDto>>(url);
             return response.Response;
         }
-        public async Task<List<StoreDto>> GetStoresByCompanyId(Guid companyId)
+        public async Task<List<StoreDto>> GetStoresByCompanyId(Guid CompanyId)
         {
-            string url = $"{_apiUrl}/Company/{companyId}";
-            var response = await _httpService.Get<List<StoreDto>>(url);
+            string url = $"{ApiUrl}/Company/{CompanyId}";
+            var response = await Httpservice.Get<List<StoreDto>>(url);
             return response.Response;
         }
-        public async Task<List<StoreDto>> GetStoresByTechnicianId(Guid technicianId)
+        public async Task<List<StoreDto>> GetStoresByTechnicianId(Guid TechnicianId)
         {
-            string url = $"{_apiUrl}/Technician/{technicianId}";
-            var response = await _httpService.Get<List<StoreDto>>(url);
+            string url = $"{ApiUrl}/Technician/{TechnicianId}";
+            var response = await Httpservice.Get<List<StoreDto>>(url);
             return response.Response;
         }
         public async Task<List<StoreDto>> GetStoresBySystemOwnerId(Guid SystemownerId)
         {
-            string url = $"{_apiUrl}/Systemowner/{SystemownerId}";
-            var response = await _httpService.Get<List<StoreDto>>(url);
+            string url = $"{ApiUrl}/Systemowner/{SystemownerId}";
+            var response = await Httpservice.Get<List<StoreDto>>(url);
             return response.Response;
         }
-        public async Task<List<StoreDto>> GetStoresByDriverId(Guid driverId)
+        public async Task<List<StoreDto>> GetStoresByDriverId(Guid DriverId)
         {
-            string url = $"{_apiUrl}/Driver/{driverId}";
-            var response = await _httpService.Get<List<StoreDto>>(url);
+            string url = $"{ApiUrl}/Driver/{DriverId}";
+            var response = await Httpservice.Get<List<StoreDto>>(url);
             return response.Response;
         }
         public async Task<StoreReportDto> GetStoreReportAsync(Guid id)
         {
-            string url = $"{_apiUrl}/report/{id}";
-            var response = await _httpService.Get<StoreReportDto>(url);
+            string url = $"{ApiUrl}/report/{id}";
+            var response = await Httpservice.Get<StoreReportDto>(url);
             return response.Response;
         }
-        public async Task<StoreReportDto> GetAllStoreReportByDriverAsync(Guid driverId)
+        public async Task<StoreReportDto> GetAllStoreReportByDriverAsync(Guid DriverId)
         {
-            string url = $"{_apiUrl}/report/driver/{driverId}";
-            var response = await _httpService.Get<StoreReportDto>(url);
+            string url = $"{ApiUrl}/report/driver/{DriverId}";
+            var response = await Httpservice.Get<StoreReportDto>(url);
             return response.Response;
         }
-        public async Task<StoreReportDto> GetAllStoreReportByCoprporateAsync(Guid corporateId)
+        public async Task<StoreReportDto> GetAllStoreReportByCoprporateAsync(Guid CorporateId)
         {
-            string url = $"{_apiUrl}/report/corporate/{corporateId}";
-            var response = await _httpService.Get<StoreReportDto>(url);
+            string url = $"{ApiUrl}/report/corporate/{CorporateId}";
+            var response = await Httpservice.Get<StoreReportDto>(url);
             return response.Response;
         }
-        public async Task<StoreReportDto> GetAllStoreReportByCompanyAsync(Guid companyId)
+        public async Task<StoreReportDto> GetAllStoreReportByCompanyAsync(Guid CompanyId)
         {
-            string url = $"{_apiUrl}/report/company/{companyId}";
-            var response = await _httpService.Get<StoreReportDto>(url);
+            string url = $"{ApiUrl}/report/company/{CompanyId}";
+            var response = await Httpservice.Get<StoreReportDto>(url);
             return response.Response;
         }
-        public async Task CreateStoreAsync(StoreCreationDto store)
+        public async Task CreateStoreAsync(StoreDto store)
         {
-            await _httpService.Post(_apiUrl, store);
+            await Httpservice.Post(ApiUrl, store);
         }
-        public async Task UpdateStoreAsync(Guid id, StoreUpdateDto store)
+        public async Task UpdateStoreAsync(Guid id, StoreDto store)
         {
-            await _httpService.Put($"{ _apiUrl }/{ id }", store);
+            await Httpservice.Put($"{ ApiUrl }/{ id }", store);
         }
         public async Task DeleteStoreAsync(Guid id)
         {
-            await _httpService.Delete($"{ _apiUrl }/{ id }");
+            await Httpservice.Delete($"{ ApiUrl }/{ id }");
         }
     }
 }

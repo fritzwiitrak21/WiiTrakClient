@@ -48,7 +48,6 @@
             .InvokeAsync<IJSObjectReference>("import", "./js/StoresCartsMap.js");
         }
 
-        Console.WriteLine("Carts: " + Carts.Count());
 
         if (Stores is not null && Stores.Count() > 0)
         {
