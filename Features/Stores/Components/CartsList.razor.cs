@@ -57,7 +57,14 @@ namespace WiiTrakClient.Features.Stores.Components
                     CartHistory = new(),
                     IsActive=true,
                 };
-                await CartHttpRepository.UpdateCartAsync(cart.Id, CartUpdate);
+                try
+                {
+                    await CartHttpRepository.UpdateCartAsync(cart.Id, CartUpdate);
+                }
+                catch(Exception ex)
+                {
+                    //Exception
+                }
             }
             Carts = await CartHttpRepository.GetCartsByStoreIdAsync(CurrentUser.UserId);
             StateHasChanged();
