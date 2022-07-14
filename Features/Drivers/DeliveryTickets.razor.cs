@@ -223,6 +223,7 @@ namespace WiiTrakClient.Features.Drivers
                         Status = CartStatus.InsideGeofence,
                         PicUrl = cart.PicUrl,
                         IsProvisioned = cart.IsProvisioned,
+                        DeviceId = cart.DeviceId,
                         BarCode = cart.BarCode,
                         StoreId = cart.StoreId,
                         CartNumber = cart.CartNumber,
