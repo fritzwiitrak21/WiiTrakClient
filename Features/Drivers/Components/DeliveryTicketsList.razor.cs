@@ -98,7 +98,7 @@ namespace WiiTrakClient.Features.Drivers.Components
                 foreach (var cart in carts)
                 {
                     var cartHistory = new CartHistoryUpdateDto
-                    {
+                    { 
                         DeliveryTicketId = deliveryTicketId,
                         PickupLatitude = cart.TrackingDevice != null ? cart.TrackingDevice.Latitude : 0,
                         PickupLongitude = cart.TrackingDevice != null ? cart.TrackingDevice.Longitude : 0,
