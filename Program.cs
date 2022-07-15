@@ -1,7 +1,7 @@
 /*
 * 06.06.2022
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
-*/ 
+*/  
 using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
