@@ -94,7 +94,7 @@
                         }
                     }
                 </MudSelect>
-                <MudTextField Class="my-0" T="String" Value="@PostalCodeValue" Label="Zip Code" Required="true" RequiredError=" " ValueChanged="(value)=>HandleZipcode(value)" For="@(() => @NewStore.PostalCode)" Variant="Variant.Text"></MudTextField>
+                <MudTextField Class="ZipClass" T="String" Value="@PostalCodeValue" Label="Zip Code" Required="true" RequiredError=" " ValueChanged="(value)=>HandleZipcode(value)" For="@(() => @NewStore.PostalCode)" Variant="Variant.Text"></MudTextField>
                 <div Class="Mudsearchselect">
                     @if (SelectedCounty != "")
                     {
@@ -109,8 +109,8 @@
                         }
                     </datalist>
                 </div>
-                <MudItem Class="my-3">
-                    <MudSelect T="String" Value="@SelectedService" ValueChanged="(value) => HandleServiceFrequency(value)" Label="Select Service Frequency" Required=true RequiredError=" "
+                <MudItem>
+                    <MudSelect T="String" Value="@SelectedService" ValueChanged="(value) => HandleServiceFrequency(value)"  Placeholder="Select Service Frequency" Label="Select Service Frequency" Required=true RequiredError=" "
                                AnchorOrigin="Origin.BottomCenter">
 
                         <MudSelectItem T="String" Value=@("1 time a week")>1 time a week</MudSelectItem>
@@ -123,7 +123,7 @@
                     </MudSelect>
 
                 </MudItem>
-                <MudDatePicker Class="my-6" Label="" Editable="false" MinDate="MinDate" @bind-Date="NewStore.StartDate" Placeholder="Select Start Date" Required=true RequiredError=" " For="@(() => @NewStore.StartDate)" />
+                <MudDatePicker Class="my-4" Label="" Editable="false" MinDate="MinDate" @bind-Date="NewStore.StartDate" Placeholder="Select Start Date" Required=true RequiredError=" " For="@(() => @NewStore.StartDate)" />
                 <MudSwitch @bind-Checked="NewStore.IsConnectedStore" Label=@(NewStore.IsConnectedStore? "Connected":"Disconnected") Color="Color.Primary" />
                 <MudCheckBox @bind-Checked="NewStore.IsSignatureRequired" Label="Signature Reqired For Deliveries" Color="Color.Primary"></MudCheckBox>
                 <div class="d-flex SubmitGrp">

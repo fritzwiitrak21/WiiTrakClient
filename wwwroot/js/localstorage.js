@@ -127,8 +127,8 @@ export function addValidationCountycodeClass() {
     $('input[type="text"].inputselect').addClass("mud-input-error");
     $('input[type="text"].inputselect').addClass("countycode");
     $('#targetlabel').addClass("mud-input-error");
-    $('input[type="text"].inputselect').addClass("my-10");
-    $('input[type="text"].inputselect').removeClass("my-6");
+    $('input[type="text"].inputselect').addClass("my-6");
+    $('input[type="text"].inputselect').removeClass("my-10");
 }
 export function removeValidationCountycodeClass() {
     $('input[type="text"].inputselect').removeClass("mud-input-error");

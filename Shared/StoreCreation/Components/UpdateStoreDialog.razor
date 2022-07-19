@@ -99,14 +99,14 @@
                     }
                 </MudSelect>
 
-                <MudTextField Class="my-0" T="String" Value="@PostalCodeValue" Label="Zip Code" Required="true" RequiredError=" " ValueChanged="(value)=>HandleZipcode(value)" For="@(() => @Store.PostalCode)" Variant="Variant.Text"></MudTextField>
+                <MudTextField Class="ZipClass" T="String" Value="@PostalCodeValue" Label="Zip Code" Required="true" RequiredError=" " ValueChanged="(value)=>HandleZipcode(value)" For="@(() => @Store.PostalCode)" Variant="Variant.Text"></MudTextField>
 
                 <div Class="Mudsearchselect">
                     @if (SelectedCounty != "")
                     {
                         <label id="targetlabel">County Code*</label>
                     }
-                    <input type="text" list="textsearch" Class="inputselect my-10" placeholder="County Code*" value="@SelectedCounty" @onkeyup="OnClick" @onchange="eventArgs => { OnSelect(eventArgs.Value); }" />
+                    <input type="text" list="textsearch" Class="inputselect my-6" placeholder="County Code*" value="@SelectedCounty" @onkeyup="OnClick" @onchange="eventArgs => { OnSelect(eventArgs.Value); }" />
 
                     <datalist id="textsearch">
                         @foreach (var county in County)
@@ -115,7 +115,7 @@
                         }
                     </datalist>
                 </div>
-                <MudItem Class="my-3">
+                <MudItem>
                     <MudSelect T="String" ValueChanged="(value) => HandleServiceFrequency(value)" Value="@SelectedService" Label="Select Service Frequency" Required=true RequiredError=" "
                                AnchorOrigin="Origin.BottomCenter">
 
@@ -128,7 +128,7 @@
                         <MudSelectItem T="String" Value=@("7 times a week")>7 times a week</MudSelectItem>
                     </MudSelect>
                 </MudItem>
-                <MudDatePicker Label="" Editable="true" Class="my-6" MinDate="MinDate" @bind-Date="Store.StartDate" Placeholder="Select Start Date" Required=true RequiredError=" " For="@(() => @Store.StartDate)" />
+                <MudDatePicker Label="" Editable="true" Class="my-4" MinDate="MinDate" @bind-Date="Store.StartDate" Placeholder="Select Start Date" Required=true RequiredError=" " For="@(() => @Store.StartDate)" />
                 @*<MudDatePicker Label="Start Date" Editable="true" MaxDate="MinDate" @bind-Date="SelectedDate" Placeholder="Select Start Date" />*@
                 <MudSwitch @bind-Checked="Store.IsActive" Label=@(Store.IsActive? "Activate":"Deactivate") Color="Color.Primary" For="@(() => @Store.IsActive)" />
                 <MudSwitch @bind-Checked="Store.IsConnectedStore" Label=@(Store.IsConnectedStore? "Connected":"Disconnected") Color="Color.Primary" />

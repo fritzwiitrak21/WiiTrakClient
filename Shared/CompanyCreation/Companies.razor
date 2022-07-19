@@ -55,25 +55,8 @@
             var Id = await JsModule.InvokeAsync<string>("getUserId");
             CurrentUser.UserId = new Guid(Id);
         }
-        switch (CurrentUser.UserRoleId)
-        {
-            case 1:
-                CompaniesList = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
-                break;
-            case 2:
-                CompaniesList = await CompanyRepository.GetCompaniesByCorporateIdAsync(CurrentUser.UserId);
-                break;
-            case 3:
-                CompaniesList = await CompanyRepository.GetChildCompaniesAsync(CurrentUser.UserId);
-                break;
-        }
+        await RefreshGrid();
 
-
-        if (CompaniesList is not null)
-        {
-            companies = CompaniesList;
-        }
-        StateHasChanged();
     }
 
     private async Task OpenDialog()
@@ -120,11 +103,33 @@
                 }
                 await CompanyRepository.CreateCompanyAsync(CompanyCreation);
             }
-            companies = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
+            await RefreshGrid();
         }
         catch (Exception ex)
         {
 
         }
+    }
+    async Task RefreshGrid()
+    {
+        switch (CurrentUser.UserRoleId)
+        {
+            case 1:
+                CompaniesList = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
+                break;
+            case 2:
+                CompaniesList = await CompanyRepository.GetCompaniesByCorporateIdAsync(CurrentUser.UserId);
+                break;
+            case 3:
+                CompaniesList = await CompanyRepository.GetChildCompaniesAsync(CurrentUser.UserId);
+                break;
+        }
+
+
+        if (CompaniesList is not null)
+        {
+            companies = CompaniesList;
+        }
+        StateHasChanged();
     }
 }
