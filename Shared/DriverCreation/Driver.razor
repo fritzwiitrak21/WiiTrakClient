@@ -82,7 +82,7 @@
                     IsSuspended = false
                 };
             }
-            else 
+            else if(CurrentUser.UserRoleId==3||CurrentUser.UserRoleId==4)
             {
                 DriverCreation = new DriverDto
                 {
@@ -131,7 +131,7 @@
         {
             DriverList = await DriverHttpRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
         }
-        else
+        else if(CurrentUser.UserRoleId==3||CurrentUser.UserRoleId==4)
         {
             DriverList = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
         }

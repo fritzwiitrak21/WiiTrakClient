@@ -31,7 +31,7 @@ namespace WiiTrakClient.DTOs
         public string City { get; set; } = string.Empty;
         [Required]
         [MinLength(4)]
-        [RegularExpression(@"^[1-9][0-9]*$")]
+        [RegularExpression(@"^[0-9-]*$")]
         public string ZipCode { get; set; } = string.Empty;
     }
 }

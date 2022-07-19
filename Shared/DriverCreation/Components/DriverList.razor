@@ -106,7 +106,7 @@
                     CreatedAt=driver.CreatedAt,
                 };
             }
-            else
+            else if(CurrentUser.UserRoleId==3||CurrentUser.UserRoleId==4)
             {
                 DriverUpdate = new DriverDto 
                 {
@@ -133,7 +133,7 @@
         {
             Driver = await DriverHttpRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
         }
-        else
+        else if(CurrentUser.UserRoleId==3||CurrentUser.UserRoleId==4)
         {
             Driver = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
         }

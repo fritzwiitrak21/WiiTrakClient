@@ -31,12 +31,12 @@ namespace WiiTrakClient.DTOs
         public string CountryCode { get; set; } = string.Empty;
         [Required]
         [MinLength(4)]
-        [RegularExpression(@"^[1-9][0-9]*$")]
+        [RegularExpression(@"^[0-9-]*$")]
         public string PostalCode { get; set; } = string.Empty;
         public string ProfilePicUrl { get; set; } = string.Empty;
         public string LogoUrl { get; set; } = string.Empty;
         [Required]
-        [RegularExpression(@"^[a-zA-Z0-9_.]+@[a-zA-Z]+\.[a-z]{2,3}$")]
+        [RegularExpression(@"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$")]
         public string Email { get; set; } = string.Empty;
         [Required]
         [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$")]

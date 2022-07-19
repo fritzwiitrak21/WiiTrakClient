@@ -1,6 +1,6 @@
-﻿@page "/company-driver-store"
+﻿@page "/assign-driver-store"
 @using WiiTrakClient.Cores
-@using WiiTrakClient.Features.Companies.Components
+@using WiiTrakClient.Shared.AssignDriver.Components
 
 <UserAuthentication />
 <div class="my-8">
@@ -57,6 +57,7 @@ else
     [Inject] IJSRuntime JsRuntime { get; set; }
     private IJSObjectReference JsModule;
 
+
     protected override async Task OnInitializedAsync()
     {
         if (CurrentUser.UserId == Guid.Empty)
@@ -64,21 +65,29 @@ else
             JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
             var Id = await JsModule.InvokeAsync<string>("getUserId");
             CurrentUser.UserId = new Guid(Id);
-
         }
-        Drivers = await DriverRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
-
+        if (CurrentUser.UserRoleId == 1)
+        {
+            Drivers = await DriverRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
+        }
+        else if (CurrentUser.UserRoleId == 3 || CurrentUser.UserRoleId == 4)
+        {
+            Drivers = await DriverRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
+        }
     }
+
     private async Task HandleDriverSelected(DriverDto Driver)
     {
-        alldriverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId, Driver.Id);
-         
-        driverstore = alldriverstore;
-        foreach (var item in driverstore)
+        if (CurrentUser.UserRoleId == 1)
         {
-            var county = item.CountyCode;
-            var a = 1;
+            alldriverstore = await DriverStoreRepository.GetDriverStoresBySystemownerIdAsync(CurrentUser.UserId, Driver.Id);
         }
+        else if (CurrentUser.UserRoleId == 3 || CurrentUser.UserRoleId == 4)
+        {
+            alldriverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId, Driver.Id);
+        }
+        //alldriverstore = await DriverStoreRepository.GetDriverStoresBySystemownerIdAsync(CurrentUser.UserId, Driver.Id);
+        driverstore = alldriverstore;
         StateHasChanged();
         Core.SelectedDriverId = Driver.Id;
         SelectedOption = "All";
@@ -90,8 +99,8 @@ else
         await JsModule.InvokeVoidAsync("ShowRadioListClass");
         GetStoreDetails();
         StateHasChanged();
-
     }
+
     public async Task GetStoreDetails()
     {
         if (TempSelectedOption != SelectedOption)
@@ -100,20 +109,41 @@ else
             TempSelectedOption = SelectedOption;
             if (value == "All")
             {
-                alldriverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId, Core.SelectedDriverId);
+                if (CurrentUser.UserRoleId == 1)
+                {
+                    alldriverstore = await DriverStoreRepository.GetDriverStoresBySystemownerIdAsync(CurrentUser.UserId, Core.SelectedDriverId);
+                }
+                else if (CurrentUser.UserRoleId == 3 || CurrentUser.UserRoleId == 4)
+                {
+                    alldriverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId, Core.SelectedDriverId);
+                }
                 driverstore = alldriverstore;
                 StateHasChanged();
             }
             else if (value == "Assigned")
             {
-                alldriverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId, Core.SelectedDriverId);
+                if (CurrentUser.UserRoleId == 1)
+                {
+                    alldriverstore = await DriverStoreRepository.GetDriverStoresBySystemownerIdAsync(CurrentUser.UserId, Core.SelectedDriverId);
+                }
+                else if (CurrentUser.UserRoleId == 3 || CurrentUser.UserRoleId == 4)
+                {
+                    alldriverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId, Core.SelectedDriverId);
+                }
                 driverstore = alldriverstore.Where(x => x.DriverStoresIsActive).ToList();
                 StateHasChanged();
             }
             else if (value == "Unassigned")
             {
-                alldriverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId, Core.SelectedDriverId);
-                driverstore = alldriverstore.Where(x => x.DriverStoresIsActive == false && x.AssignedDriver.Length==0).ToList();
+                if (CurrentUser.UserRoleId == 1)
+                {
+                    alldriverstore = await DriverStoreRepository.GetDriverStoresBySystemownerIdAsync(CurrentUser.UserId, Core.SelectedDriverId);
+                }
+                else if (CurrentUser.UserRoleId == 3 || CurrentUser.UserRoleId == 4)
+                {
+                    alldriverstore = await DriverStoreRepository.GetDriverStoresByCompanyIdAsync(CurrentUser.UserId, Core.SelectedDriverId);
+                }
+                driverstore = alldriverstore.Where(x => x.DriverStoresIsActive == false && x.AssignedDriver.Length == 0).ToList();
                 StateHasChanged();
             }
         }

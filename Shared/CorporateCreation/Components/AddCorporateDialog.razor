@@ -1,4 +1,4 @@
-﻿@namespace WiiTrakClient.Features.SystemOwner.Components
+﻿@namespace WiiTrakClient.Shared.CorporateCreation.Components
 @using System.ComponentModel.DataAnnotations
 
 <style>
@@ -45,16 +45,13 @@
 
     [Parameter]
     public CorporateDto? NewCorporate {get; set;}
-
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     bool success;
     string[] errors = { };
     MudForm form;
-
-    protected override void OnParametersSet() {
-
+    protected override void OnParametersSet() 
+    {
     }
-
     void Submit()
     {
         form.Validate();
@@ -63,7 +60,5 @@
             MudDialog.Close(DialogResult.Ok(true));
         }
     }
-   
     void Cancel() => MudDialog.Cancel();
-
 }
