@@ -11,8 +11,8 @@ namespace WiiTrakClient.HttpRepository.Contracts
         Task<TrackingDeviceDto> GetTrackingDeviceByIdAsync(Guid id);
         Task<List<TrackingDeviceDetailsDto>> GetTrackingDeviceDetailsByIdDriverAsync(Guid Id);
         Task<List<TrackingDeviceDetailsDto>> GetTrackingDeviceDetailsByIdAsync(Guid id, int RoleId);
-        Task CreateTrackingDeviceAsync(TrackingDeviceCreationDto trackingDevice);
-        Task UpdateTrackingDeviceAsync(Guid id, TrackingDeviceUpdateDto trackingDevice);
+        Task CreateTrackingDeviceAsync(TrackingDeviceDto TrackingDevice);
+        Task UpdateTrackingDeviceAsync(Guid id, TrackingDeviceDto TrackingDevice);
         Task DeleteTrackingDeviceAsync(Guid id);
     }
 }

@@ -124,6 +124,7 @@ namespace WiiTrakClient.Features.Drivers.Components
                         Status = CartStatus.InsideGeofence,
                         PicUrl = cart.PicUrl,
                         IsProvisioned = cart.IsProvisioned,
+                        DeviceId = cart.DeviceId,
                         BarCode = cart.BarCode,
                         StoreId = cart.StoreId,
                         IssueType = cart.IssueType,

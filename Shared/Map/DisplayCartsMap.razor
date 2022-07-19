@@ -294,6 +294,7 @@ else
                         CartNumber = cart.CartNumber,
                         IssueType = cart.IssueType,
                         IssueDescription = cart.IssueDescription,
+                        DeviceId = cart.DeviceId,
                         CartHistory = cartHistory
                     };
                 await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
@@ -334,10 +335,11 @@ else
         if (CartsList != null && CartsList.Count > 0)
         {
             var cartstopickup = CartsList.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
-            cartlistcount = cartstopickup.Count;
+            cartlistcount = CartsList.Count;
 
+
+            message = "have to pickup " + cartstopickup.Count;
         }
-        message = "have to pickup " + cartlistcount;
         RepairIssues = await RepairIssueRepository.GetAllRepairIssuesAsync();
         StateHasChanged();
     }

@@ -1,12 +1,10 @@
-﻿@page "/system-owner-driver"
-
-@using WiiTrakClient.Features.SystemOwner.Components
+﻿@page "/driver-creation"
+@using WiiTrakClient.Shared.DriverCreation.Components
 @using WiiTrakClient.Cores
-
 @inject IJSRuntime JsRuntime
 @inject ISystemOwnerHttpRepository SystemOwnerHttpRepository
+@inject ICompanyHttpRepository CompanyHttpRepository
 @inject IDialogService DialogService
-
 @inject IDriverHttpRepository DriverHttpRepository
 @inject IEmailHttpRepository EmailHttpRepository
 
@@ -22,23 +20,6 @@
 </div>
 
 <div class="my-8">
-    @*    @if (LoaderVisibility)
-        {
-        <MudProgressLinear Color="Color.Info" Indeterminate="true" Class="my-7" />
-        }
-        else
-        {
-
-        if (_driver.Count > 0)
-        {
-        <DriverList Driver="@_driver" />
-        }
-        else
-        {
-        <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
-        }
-        }*@
-
     @if (DriverList == null)
     {
         <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
@@ -54,15 +35,11 @@
     }
 </div>
 
-
-
 @code {
     List<DriverDto> driver = new();
     List<DriverDto> DriverList = new();
     DriverDto AddDriver = new();
-
     private IJSObjectReference JsModule;
-
     protected override async Task OnInitializedAsync()
     {
         if (CurrentUser.UserId == Guid.Empty)
@@ -73,23 +50,22 @@
         }
         await RefreshDriverGrid();
     }
-
     private async Task OpenDialog()
     {
         var parameters = new DialogParameters();
         AddDriver = new DriverDto();
         parameters.Add("NewDriver", AddDriver);
-
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
-
         var dialog = DialogService.Show<AddDriverDialog>("Add Driver", parameters);
         var result = await dialog.Result;
-
         if (!result.Cancelled)
         {
             // add new driver to backend
-            var driverCreation = new DriverDto
-                {
+            var DriverCreation = new DriverDto();
+            if(CurrentUser.UserRoleId==1)
+            {
+                DriverCreation = new DriverDto
+                { 
                     CompanyId = AddDriver.CompanyId,
                     FirstName = AddDriver.FirstName,
                     LastName = AddDriver.LastName,
@@ -105,9 +81,29 @@
                     IsActive = true,
                     IsSuspended = false
                 };
+            }
+            else if(CurrentUser.UserRoleId==3||CurrentUser.UserRoleId==4)
+            {
+                DriverCreation = new DriverDto
+                {
+                    FirstName = AddDriver.FirstName,
+                    LastName = AddDriver.LastName,
+                    Email = AddDriver.Email,
+                    Phone = AddDriver.Phone,
+                    StreetAddress1 = AddDriver.StreetAddress1,
+                    StreetAddress2 = AddDriver.StreetAddress2,
+                    City = AddDriver.City,
+                    State = AddDriver.State,
+                    CountryCode = AddDriver.CountryCode,
+                    PostalCode = AddDriver.PostalCode,
+                    CompanyId = CurrentUser.UserId,
+                    IsActive = true,
+                    IsSuspended = false
+                };
+            }
             try
             {
-                await DriverHttpRepository.CreateDriverAsync(driverCreation);
+                await DriverHttpRepository.CreateDriverAsync(DriverCreation);
             }
             catch (Exception ex)
             {
@@ -117,22 +113,28 @@
             try
             {
                 MailRequest request = new MailRequest();
-                request.MailTo = driverCreation.Email;
-                request.Name = string.Concat(driverCreation.FirstName, " ", driverCreation.LastName);
+                request.MailTo = DriverCreation.Email;
+                request.Name = string.Concat(DriverCreation.FirstName, " ", DriverCreation.LastName);
                 await EmailHttpRepository.SendMailAsync(request);
             }
             catch (Exception ex)
             {
-                
+                //Exception
             }
-
             #endregion
         }
         await RefreshDriverGrid();
     }
     private async Task RefreshDriverGrid()
     {
-        DriverList = await DriverHttpRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
+        if (CurrentUser.UserRoleId == 1)
+        {
+            DriverList = await DriverHttpRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
+        }
+        else if(CurrentUser.UserRoleId==3||CurrentUser.UserRoleId==4)
+        {
+            DriverList = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
+        }
         if (DriverList is not null)
         {
             driver = DriverList;

@@ -1,4 +1,4 @@
-﻿@namespace WiiTrakClient.Features.SystemOwner.Components
+﻿@namespace WiiTrakClient.Shared.DriverCreation.Components 
 @using System.ComponentModel.DataAnnotations
 @using WiiTrakClient.Cores
 
@@ -19,22 +19,25 @@
     font-size: 0;
     
 }
-        </style>
+</style>
  
 <MudDialog> 
     <DialogContent>              
         <div style="width: 400px;height:450px;overflow: auto;">
             <MudForm Model="@NewDriver" @ref=form @bind-IsValid="@success" @bind-Errors="@errors">   
-               <MudItem>
-                    <MudSelect T="CompanyDto" Label="Select Company" Required=true RequiredError=" "
+                @if(CurrentUser.UserRoleId==1)
+                {
+                    <MudItem>
+                        <MudSelect T="CompanyDto" Label="Select Company" Required=true RequiredError=" "
                                ValueChanged="(value) => HandleCompanySelected(value)"
                                AnchorOrigin="Origin.BottomCenter">
-                        @foreach (var company in companies)
-                        {
-                            <MudSelectItem T="CompanyDto" Value="@company">@company.Name</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
+                            @foreach (var company in companies)
+                            {
+                                <MudSelectItem T="CompanyDto" Value="@company">@company.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                }
                 <MudTextField class="my-6" @bind-Value="NewDriver.FirstName" Label="First Name" Required="true" RequiredError="" For="@(() => @NewDriver.FirstName)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField class="my-6" @bind-Value="NewDriver.LastName" Label="Last Name" Required="true" RequiredError="" For="@(() => @NewDriver.LastName)" Variant="Variant.Text"></MudTextField>  
                 <MudTextField class="my-6" @bind-Value="NewDriver.Email" Label="Email" Required="true" RequiredError="" For="@(() => @NewDriver.Email)" Variant="Variant.Text"></MudTextField>  
@@ -47,40 +50,38 @@
                 <div class="d-flex">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Save</MudButton>
-                    </div>
+                </div>
             </MudForm> 
         </div>
     </DialogContent>
-    
 </MudDialog>
 
 @code {
     [Parameter]
     public DriverDto? NewDriver {get; set;}
-
     public List<CompanyDto> companies { get; set; } = new();
-
     public CompanyDto SelectedCompany = new();
     [Inject]
     public ICompanyHttpRepository CompanyRepository { get; set; }
-
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     bool success;
     string[] errors = { };
     MudForm form;
-
     protected override async Task OnInitializedAsync()
     { 
-        companies = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
-
-        if (companies.Count > 0)
+        if(CurrentUser.UserRoleId==1)
         {
-            SelectedCompany = companies[0];
-            NewDriver.CompanyId = SelectedCompany.Id;
-        } 
-    } 
-    protected override void OnParametersSet() {
+            companies = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
 
+            if (companies.Count > 0)
+            {
+                SelectedCompany = companies[0];
+                NewDriver.CompanyId = SelectedCompany.Id;
+            } 
+        }
+    } 
+    protected override void OnParametersSet() 
+    {
     }
     private async Task HandleCompanySelected(CompanyDto Company)
     {

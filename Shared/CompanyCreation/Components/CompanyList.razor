@@ -1,0 +1,121 @@
+@using WiiTrakClient.Shared.CompanyCreation.Components
+@inject IDialogService DialogService
+
+@inject ICompanyHttpRepository CompanyHttpRepository
+@using WiiTrakClient.Cores
+
+<MudTable Items="@Companies" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<CompanyDto, object>(x=>x.Name)">Company Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<CompanyDto, object>(x=>x.StreetAddress1)">Address</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<CompanyDto, object>(x=>x.Email)">Email</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<CompanyDto, object>(x=>x.PhonePrimary)">Phone</MudTableSortLabel></MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Company Name">
+            @context.Name
+        </MudTd>
+        <MudTd DataLabel="Street Address 1">
+            <p>@context.StreetAddress1</p>
+            <p>@context.City, @context.State @context.PostalCode</p>
+        </MudTd>
+        <MudTd DataLabel="Email">
+            @context.Email
+        </MudTd>
+        <MudTd DataLabel="Phone">
+            @context.PhonePrimary
+        </MudTd>
+        @if (CurrentUser.UserRoleId != 2)
+        {
+            <MudTd DataLabel="Action">
+                <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       OnClick="((e) => OpenDialog(context))">
+                    Update
+                </MudButton>
+            </MudTd>
+        }
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{10, 50, 100}" />
+    </PagerContent>
+</MudTable>
+
+
+@code {
+    [Parameter]
+    public List<CompanyDto>? Companies { get; set; } = null;
+    List<CompanyDto> CompaniesList = new();
+    private bool _enabled = true;
+    public async Task OpenDialog(CompanyDto company)
+    {
+
+        Console.WriteLine("company id: " + company.Id);
+        var parameters = new DialogParameters();
+        parameters.Add("Company", company);
+
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+
+        var dialog = DialogService.Show<UpdateCompanyDialog>("Update Company", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            // save updated company to backend
+            var companyUpdate = new CompanyDto
+                {
+                    Name = company.Name,
+                    StreetAddress1 = company.StreetAddress1,
+                    StreetAddress2 = company.StreetAddress2,
+                    City = company.City,
+                    State = company.State,
+                    PostalCode = company.PostalCode,
+                    ProfilePicUrl = company.ProfilePicUrl,
+                    Email = company.Email,
+                    PhonePrimary = company.PhonePrimary,
+                    PhoneSecondary = company.PhoneSecondary,
+                    //SystemOwnerId = CurrentUser.UserId,
+                    Id = company.Id,
+                    CreatedAt = company.CreatedAt,
+                };
+            switch (CurrentUser.UserRoleId)
+            {
+                case 1:
+                    companyUpdate.SystemOwnerId = CurrentUser.UserId;
+                    break;
+                case 2:
+                    companyUpdate.CorporateId = CurrentUser.UserId;
+                    break;
+                case 3:
+                    companyUpdate.ParentId = CurrentUser.UserId;
+                    break;
+            }
+            await CompanyHttpRepository.UpdateCompanyAsync(company.Id, companyUpdate);
+        }
+
+        await RefreshGrid();
+    }
+    async Task RefreshGrid()
+    {
+        switch (CurrentUser.UserRoleId)
+        {
+            case 1:
+                CompaniesList = await CompanyHttpRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
+                break;
+            case 2:
+                CompaniesList = await CompanyHttpRepository.GetCompaniesByCorporateIdAsync(CurrentUser.UserId);
+                break;
+            case 3:
+                CompaniesList = await CompanyHttpRepository.GetChildCompaniesAsync(CurrentUser.UserId);
+                break;
+        }
+
+
+        if (CompaniesList is not null)
+        {
+            Companies = CompaniesList;
+        }
+        StateHasChanged();
+    }
+}

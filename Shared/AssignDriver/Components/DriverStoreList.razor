@@ -1,14 +1,13 @@
 ﻿@using WiiTrakClient.Cores
-@using WiiTrakClient.Features.Companies.Components
+@using WiiTrakClient.Shared.AssignDriver.Components
 @using System.Linq
 @using System.Collections.Generic;
-@inject IDriverStoresHttpRepository DriverStoreRepository
-@namespace WiiTrakClient.Features.Companies.Components
 
-<MudTable Items=@driverstore Class="Pagingstyle" Hover="true" SortLabel="Sort By" Striped="true" Bordered="false" Loading="false"
+@namespace WiiTrakClient.Shared.AssignDriver.Components
+
+<MudTable Items=@driverstore Hover="true" Class="Pagingstyle" SortLabel="Sort By" Striped="true" Bordered="false" Loading="@_listIsLoading"
           LoadingProgressColor="Color.Primary">
     <HeaderContent>
-
         <MudTh>
             <MudTableSortLabel InitialDirection="SortDirection.Ascending"
                                SortBy="new Func<DriverStoreDetailsDto, object>(x=>x.StoreName)">
@@ -42,17 +41,18 @@
                 Postal Code
             </MudTableSortLabel>
         </MudTh>
-         <MudTh>
+          <MudTh>
             <MudTableSortLabel SortBy="new Func<DriverStoreDetailsDto, object>(x=>x.CountyCode)">
                 County Code
             </MudTableSortLabel>
         </MudTh>
+
         <MudTh></MudTh>
     </HeaderContent>
 
     <RowTemplate>
-        <MudTd DataLabel="Store Name">@context.StoreName</MudTd> 
-        <MudTd DataLabel="Store Number">@context.StoreNumber</MudTd> 
+        <MudTd DataLabel="Store Name">@context.StoreName</MudTd>
+        <MudTd DataLabel="Store Number">@context.StoreNumber</MudTd>
         <MudTd DataLabel="Street Address 1">@context.StreetAddress1</MudTd>
         <MudTd DataLabel="Street Address 2">@context.StreetAddress2</MudTd>
         <MudTd DataLabel="City">@context.City</MudTd>
@@ -85,6 +85,7 @@
                     UnAssign
                 </MudButton>
             }
+
         </MudTd>
     </RowTemplate>
     <PagerContent>
@@ -94,9 +95,18 @@
 
 @code {
     [Parameter]
-    public List<DriverStoreDetailsDto>? driverstore { get; set; } = null;
+    public List<DriverStoreDetailsDto>? driverstore { get; set; }
+
+    public bool _listIsLoading = true;
     public DriverDto SelectedDriver = new();
 
+    [Inject]
+    public IDriverStoresHttpRepository DriverStoreRepository { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        _listIsLoading = false;
+    }
     private async Task Assign(DriverStoreDetailsDto DriverStore)
     {
         await AssignUnAssign(DriverStore);

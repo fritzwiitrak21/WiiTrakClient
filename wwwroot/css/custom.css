@@ -593,3 +593,6 @@ h5 {
 .HidePreview {
     display: none;
 }
+.ZipClass{
+    margin-top:0px !important;
+}

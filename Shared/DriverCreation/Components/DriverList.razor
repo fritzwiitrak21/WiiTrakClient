@@ -1,13 +1,12 @@
-﻿@using WiiTrakClient.Features.SystemOwner.Components
+﻿@using WiiTrakClient.Shared.DriverCreation.Components
 @using WiiTrakClient.Cores
-
-@namespace WiiTrakClient.Features.SystemOwner.Components
+@namespace WiiTrakClient.Shared.DriverCreation.Components
 @inject IDialogService DialogService 
 @inject ICompanyHttpRepository CompanyRepository
 @inject ISystemOwnerHttpRepository SystemOwnerHttpRepository
 @inject IDriverHttpRepository DriverHttpRepository
 
-   <MudTable Items="@Driver" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
+<MudTable Items="@Driver" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
     <HeaderContent>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<DriverDto, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel  SortBy="new Func<DriverDto, object>(x=>x.LastName)">Last Name</MudTableSortLabel></MudTh>
@@ -61,7 +60,6 @@
     </PagerContent>
 </MudTable> 
 
-
 @code {
     [Parameter]
     public List<DriverDto>? Driver {get; set;} = null;
@@ -69,45 +67,76 @@
     private bool _enabled = true;
     public async Task OpenDialog(DriverDto driver) 
     {
-        Companies = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
+        if(CurrentUser.UserRoleId==1)
+        {
+            Companies = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
+        }
         driver.IsTerminated = !driver.IsActive;
         // TODO Update for technicians 
- 
         Console.WriteLine("driver id: " + driver.Id);
-
         var parameters = new DialogParameters();
-                parameters.Add("Driver", driver); 
-                parameters.Add("Companies", Companies);
-
-         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
-
-         var dialog  = DialogService.Show<UpdateDriverDialog>("Update Driver", parameters);
+        parameters.Add("Driver", driver); 
+        parameters.Add("Companies", Companies);
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+        var dialog  = DialogService.Show<UpdateDriverDialog>("Update Driver", parameters);
         var result = await dialog.Result; 
-
         if (!result.Cancelled) 
         {
             // save updated driver to backend
-            var driverUpdate = new DriverDto {
-                FirstName = driver.FirstName,
-                LastName = driver.LastName,
-                Email = driver.Email,
-                Phone = driver.Phone,
-                StreetAddress1=driver.StreetAddress1,
-                StreetAddress2=driver.StreetAddress2,
-                City=driver.City,
-                State=driver.State,
-                CountryCode=driver.CountryCode,
-                PostalCode=driver.PostalCode,
-                CompanyId = driver.CompanyId,
-                SystemOwnerId = CurrentUser.UserId,
-                IsSuspended=driver.IsSuspended,
-                IsActive=!driver.IsTerminated,
-                Id=driver.Id,
-                CreatedAt=driver.CreatedAt,
-            };
-           await DriverHttpRepository.UpdateDriverAsync(driver.Id, driverUpdate);
-           
+            var DriverUpdate = new DriverDto();
+            if(CurrentUser.UserRoleId==1)
+            {
+                DriverUpdate = new DriverDto 
+                {
+                    FirstName = driver.FirstName,
+                    LastName = driver.LastName,
+                    Email = driver.Email,
+                    Phone = driver.Phone,
+                    StreetAddress1=driver.StreetAddress1,
+                    StreetAddress2=driver.StreetAddress2,
+                    City=driver.City,
+                    State=driver.State,
+                    CountryCode=driver.CountryCode,
+                    PostalCode=driver.PostalCode,
+                    CompanyId = driver.CompanyId,
+                    SystemOwnerId = CurrentUser.UserId,
+                    IsSuspended=driver.IsSuspended,
+                    IsActive=!driver.IsTerminated,
+                    Id=driver.Id,
+                    CreatedAt=driver.CreatedAt,
+                };
+            }
+            else if(CurrentUser.UserRoleId==3||CurrentUser.UserRoleId==4)
+            {
+                DriverUpdate = new DriverDto 
+                {
+                    FirstName = driver.FirstName,
+                    LastName = driver.LastName,
+                    Email = driver.Email,
+                    Phone = driver.Phone,
+                    StreetAddress1=driver.StreetAddress1,
+                    StreetAddress2=driver.StreetAddress2,
+                    City=driver.City,
+                    State=driver.State,
+                    CountryCode=driver.CountryCode,
+                    PostalCode=driver.PostalCode,
+                    CompanyId = CurrentUser.UserId,
+                    IsSuspended=driver.IsSuspended,
+                    IsActive=!driver.IsTerminated,
+                    Id=driver.Id,
+                    CreatedAt=driver.CreatedAt,
+                };
+            }
+            await DriverHttpRepository.UpdateDriverAsync(driver.Id, DriverUpdate);
         }
-        Driver = await DriverHttpRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
+        if(CurrentUser.UserRoleId==1)
+        {
+            Driver = await DriverHttpRepository.GetDriversBySystemOwnerIdAsync(CurrentUser.UserId);
+        }
+        else if(CurrentUser.UserRoleId==3||CurrentUser.UserRoleId==4)
+        {
+            Driver = await DriverHttpRepository.GetDriversByCompanyIdAsync(CurrentUser.UserId);
+        }
+        StateHasChanged();
     }
 }

@@ -1,0 +1,108 @@
+﻿@using WiiTrakClient.Shared.CorporateCreation.Components
+@inject IDialogService DialogService
+@inject ICorporateHttpRepository CorporateHttpRepository
+@using WiiTrakClient.Cores
+
+<MudTable Items="@corporates" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<CorporateDto, object>(x=>x.Name)">Corporate Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel  SortBy="new Func<CorporateDto, object>(x=>x.StreetAddress1)">Address</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<CorporateDto, object>(x=>x.Email)">Email</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<CorporateDto, object>(x=>x.PhonePrimary)">Phone</MudTableSortLabel></MudTh>        
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Corporate Name">
+            @context.Name
+        </MudTd>
+        <MudTd DataLabel="Street Address 1">
+            <p>@context.StreetAddress1</p>
+             <p>@context.City, @context.State @context.PostalCode</p>
+        </MudTd>
+        <MudTd DataLabel="Email">
+            @context.Email
+        </MudTd>
+         <MudTd DataLabel="Phone">
+            @context.PhonePrimary
+        </MudTd>
+        <MudTd DataLabel="Action">           
+            <MudButton 
+                Variant="Variant.Filled" 
+                Color="Color.Primary" 
+                OnClick="((e) => OpenDialog(context))">Update
+            </MudButton>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{10, 50, 100}" />
+    </PagerContent>
+</MudTable> 
+
+@code {
+
+    [Parameter]
+    public List<CorporateDto>? corporates {get; set;} = null;
+    private bool _enabled = true;
+    public async Task OpenDialog(CorporateDto corporate) 
+    {
+        Console.WriteLine("corporate id: " + corporate.Id);
+        var parameters = new DialogParameters();
+        parameters.Add("Corporate", corporate);   
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+        var dialog  = DialogService.Show<UpdateCorporateDialog>("Update Corporate", parameters);
+        var result = await dialog.Result; 
+        if (!result.Cancelled) 
+        {
+            // save updated company to backend
+            var CorporateUpdate = new CorporateDto();
+            if(CurrentUser.UserRoleId==1)
+            {
+                CorporateUpdate=new CorporateDto  
+                {
+                    Name = corporate.Name,
+                    StreetAddress1 = corporate.StreetAddress1,
+                    StreetAddress2 = corporate.StreetAddress2,
+                    City = corporate.City,
+                    State = corporate.State,
+                    PostalCode = corporate.PostalCode,
+                    ProfilePicUrl = corporate.ProfilePicUrl,
+                    Email = corporate.Email,
+                    PhonePrimary = corporate.PhonePrimary,
+                    PhoneSecondary = corporate.PhoneSecondary,
+                    SystemOwnerId = CurrentUser.UserId,
+                    Id=corporate.Id,
+                    CreatedAt=corporate.CreatedAt,
+                };
+            }
+            else if(CurrentUser.UserRoleId==3||CurrentUser.UserRoleId==4)
+            {
+                CorporateUpdate = new CorporateDto 
+                {
+                    Name = corporate.Name,
+                    StreetAddress1 = corporate.StreetAddress1,
+                    StreetAddress2 = corporate.StreetAddress2,
+                    City = corporate.City,
+                    State = corporate.State,
+                    PostalCode = corporate.PostalCode,
+                    ProfilePicUrl = corporate.ProfilePicUrl,
+                    Email = corporate.Email,
+                    PhonePrimary = corporate.PhonePrimary,
+                    PhoneSecondary=corporate.PhoneSecondary,
+                    CompanyId = CurrentUser.UserId,
+                    Id=corporate.Id,
+                    CreatedAt=corporate.CreatedAt,
+                };
+            }
+            await CorporateHttpRepository.UpdateCorporateAsync(corporate.Id, CorporateUpdate);
+        }
+        if(CurrentUser.UserRoleId==1)
+        {
+            corporates = await CorporateHttpRepository.GetAllCorporatesAsync(); 
+        }
+        else if(CurrentUser.UserRoleId==3||CurrentUser.UserRoleId==4)
+        {
+            corporates = await CorporateHttpRepository.GetCorporatesByCompanyId(CurrentUser.UserId);
+        }
+        StateHasChanged();
+    }
+}

@@ -1,4 +1,4 @@
-﻿@namespace WiiTrakClient.Features.SystemOwner.Components
+﻿@namespace WiiTrakClient.Shared.CorporateCreation.Components
 @using System.ComponentModel.DataAnnotations
 
  <style>
@@ -35,7 +35,7 @@
                 <div class="d-flex">
                     <MudButton OnClick="Cancel">Cancel</MudButton>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="ml-auto">Update</MudButton>
-                    </div>
+                </div>
             </MudForm>
         </div> 
     </DialogContent>
@@ -50,10 +50,9 @@
     bool success;
     string[] errors = { };
     MudForm form;
-    protected override void OnParametersSet() {
-            
+    protected override void OnParametersSet() 
+    {
     }
-
     void Submit() 
     { 
         form.Validate();

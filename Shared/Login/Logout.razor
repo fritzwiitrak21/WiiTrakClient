@@ -59,6 +59,10 @@
         CurrentUser.UserRole = "";
         CurrentUser.UserRoleId = 0;
         Core.SelectedDriverId = Guid.Empty;
+        Core.MessagesList = null;
+        Core.NotificationsList = null;
+        Core.ServiceBoardList = null;
+        Core.MessageCount  =  Core.NotificationCount  =  Core.ServiceBoardCount  =  0;
         NavManager.NavigateTo("/");
     }
 }

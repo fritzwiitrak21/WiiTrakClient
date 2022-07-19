@@ -41,13 +41,13 @@ namespace WiiTrakClient.HttpRepository
             var response = await Httpservice.Get<List<TrackingDeviceDetailsDto>>(url);
             return response.Response;
         }
-        public async Task CreateTrackingDeviceAsync(TrackingDeviceCreationDto trackingDevice)
+        public async Task CreateTrackingDeviceAsync(TrackingDeviceDto TrackingDevice)
         {
-            await Httpservice.Post(ApiUrl, trackingDevice);
+            await Httpservice.Post(ApiUrl, TrackingDevice);
         }
-        public async Task UpdateTrackingDeviceAsync(Guid id, TrackingDeviceUpdateDto trackingDevice)
+        public async Task UpdateTrackingDeviceAsync(Guid id, TrackingDeviceDto TrackingDevice)
         {
-            await Httpservice.Put($"{ ApiUrl }/{ id }", trackingDevice);
+            await Httpservice.Put($"{ ApiUrl }/{ id }", TrackingDevice);
         }
         public async Task DeleteTrackingDeviceAsync(Guid id)
         {
