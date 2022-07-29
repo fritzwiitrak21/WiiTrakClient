@@ -1,10 +1,13 @@
-﻿@using WiiTrakClient.Shared.StoreCreation.Components
+﻿@using WiiTrakClient.Shared.Components
+@using WiiTrakClient.Shared.StoreCreation.Components
+@using WiiTrakClient.Shared.Map
 @inject IDialogService DialogService
 
 @inject IStoreHttpRepository StoreHttpRepository
 @inject ICorporateHttpRepository CorporateRepository
 @inject ICompanyHttpRepository CompanyRepository
 @inject ICountyCodeHttpRepository CountyCodeRepository
+
 @using WiiTrakClient.Cores
 
 
@@ -22,10 +25,10 @@
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.Email)">Email</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<StoreDto, object>(x=>x.PhonePrimary)">Phone</MudTableSortLabel></MudTh>
         <MudTh></MudTh>
+        <MudTh></MudTh>
     </HeaderContent>
 
     <RowTemplate>
-
         <MudTd DataLabel="Store Name">
             @context.StoreName
         </MudTd>
@@ -41,7 +44,6 @@
         <MudTd DataLabel="State">
             @context.State
         </MudTd>
-
         <MudTd DataLabel="Postal Code">
             @context.PostalCode
         </MudTd>
@@ -64,12 +66,22 @@
                 Update
             </MudButton>
         </MudTd>
+        <MudTd>
+            @if (context.IsConnectedStore)
+            {
+                <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.Brush"
+                       Style="background-color:blueviolet;color:white;"
+                       OnClick="((e) => DrawGeoFence(context))">
+                    Fencing
+                </MudButton>
+            }
+        </MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager PageSizeOptions="new int[]{10, 50, 100}" />
     </PagerContent>
 </MudTable>
-
 
 @code {
     [Parameter]
@@ -79,6 +91,29 @@
     public List<CorporateDto> Corporate { get; set; } = new();
     public List<CompanyDto> Companies { get; set; } = new();
     public List<CountyCodeDTO> CountyCode { get; set; } = new();
+    public async Task DrawGeoFence(StoreDto store)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("Store", store);
+
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
+        var dialog = DialogService.Show<DisplayStoreFencingMap>("Fencing for the store " + store.StoreName + " - " + store.StoreNumber, parameters);
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            var StoreUpdate = new StoreDto
+                {
+                    Id = store.Id,
+                    FenceCoords = store.FenceCoords,
+                };
+            try
+            {
+                await StoreHttpRepository.UpdateStoreFenceAsync(StoreUpdate);
+            }
+            catch { }
+            await RefreshGrid();
+        }
+    }
     public async Task OpenDialog(StoreDto store)
     {
 
@@ -114,7 +149,7 @@
         }
         // Companies = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
         //Corporate = await CorporateRepository.GetCorporatesByCompanyId(store.CompanyId);
-        Console.WriteLine("store id: " + store.Id);
+
         CountyCode = await CountyCodeRepository.GetCountyListAsync();
 
         var parameters = new DialogParameters();
@@ -149,11 +184,18 @@
                     ServiceFrequency = store.ServiceFrequency,
                     StartDate = store.StartDate,
                     IsConnectedStore = store.IsConnectedStore,
-                    Id=store.Id,
-                    CreatedAt=store.CreatedAt,
-
+                    Id = store.Id,
+                    CreatedAt = store.CreatedAt,
+                    CreatedBy=CurrentUser.UserId
                 };
-            await StoreHttpRepository.UpdateStoreAsync(store.Id, StoreUpdate);
+            try
+            {
+                await StoreHttpRepository.UpdateStoreAsync(store.Id, StoreUpdate);
+            }
+            catch(Exception ex)
+            {
+                //Exception
+            }
         }
         await RefreshGrid();
     }

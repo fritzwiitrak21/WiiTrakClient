@@ -4,13 +4,14 @@
 */
 using System.ComponentModel.DataAnnotations;
 using WiiTrakClient.Enums;
+using WiiTrakClient.Cores;
 
 namespace WiiTrakClient.DTOs
 {
     public class CartUpdateDto
     {
         [Required]
-        [StringLength(25)]
+        [StringLength(Numbers.TwentyFive)]
         [RegularExpression(@"^[a-zA-Z ]*$")]
         public string ManufacturerName { get; set; } = string.Empty;
         [Required]

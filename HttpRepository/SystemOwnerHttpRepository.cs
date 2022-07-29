@@ -10,37 +10,37 @@ namespace WiiTrakClient.HttpRepository
 {
     public class SystemOwnerHttpRepository: ISystemOwnerHttpRepository
     {
-        private readonly IHttpService _httpService;
+        private readonly IHttpService HttpService;
         private const string ControllerName = "systemowner";
-        private readonly string _apiUrl;
-        public SystemOwnerHttpRepository(IHttpService httpService)
+        private readonly string ApiUrl;
+        public SystemOwnerHttpRepository(IHttpService Httpservice)
         {
-            _httpService = httpService;
-            _apiUrl = $"{ httpService.BaseUrl }{ ControllerName }";
+            HttpService = Httpservice;
+            ApiUrl = $"{ Httpservice.BaseUrl }{ ControllerName }";
         }
         public async Task<List<SystemOwnerDto>> GetAllSystemOwnersAsync()
         {
-            var response = await _httpService.Get<List<SystemOwnerDto>>(_apiUrl);
+            var response = await HttpService.Get<List<SystemOwnerDto>>(ApiUrl);
             return response.Response;
         }
         public async Task<SystemOwnerDto> GetSystemOwnerByIdAsync(Guid id)
         {
-            string url = $"{_apiUrl}/{id}";
-            var response = await _httpService.Get<SystemOwnerDto>(url);
+            string url = $"{ApiUrl}/{id}";
+            var response = await HttpService.Get<SystemOwnerDto>(url);
             return response.Response;
         }
         public async Task<bool> CheckEmailIdAsync(string EmailId)
         {
-            var response = await _httpService.Get<bool>(EmailId);
+            var response = await HttpService.Get<bool>(EmailId);
             return response.Response;
         }
-        public async Task UpdateSystemOwnerAsync(Guid id, SystemOwnerUpdateDto client)
+        public async Task UpdateSystemOwnerAsync(Guid id, SystemOwnerUpdateDto SystemOwner)
         {
-              await _httpService.Put($"{ _apiUrl }/{ id }", client);
+              await HttpService.Put($"{ ApiUrl }/{ id }", SystemOwner);
         }
         public async Task DeleteSystemOwnerAsync(Guid id)
         {
-             await _httpService.Delete($"{ _apiUrl }/{ id }");
+             await HttpService.Delete($"{ ApiUrl }/{ id }");
         }
     }
 }

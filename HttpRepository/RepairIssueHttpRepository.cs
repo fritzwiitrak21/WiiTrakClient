@@ -2,7 +2,6 @@
 * 06.06.2022
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
-using System;
 using WiiTrakClient.DTOs;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.Services;
@@ -11,38 +10,36 @@ namespace WiiTrakClient.HttpRepository
 {
     public class RepairIssueHttpRepository : IRepairIssueHttpRepository
     {
-        private readonly IHttpService _httpService;
+        private readonly IHttpService HttpService;
         private const string ControllerName = "repairissues";
-        private readonly string _apiUrl;
-        public RepairIssueHttpRepository(IHttpService httpService)
+        private readonly string ApiUrl;
+        public RepairIssueHttpRepository(IHttpService Httpservice)
         {
-            _httpService = httpService;
-            _apiUrl = $"{ httpService.BaseUrl }{ ControllerName }";
+            HttpService = Httpservice;
+            ApiUrl = $"{ Httpservice.BaseUrl }{ ControllerName }";
         }
         public async Task<List<RepairIssueDto>> GetAllRepairIssuesAsync()
         {
-            var response = await _httpService.Get<List<RepairIssueDto>>(_apiUrl);
+            var response = await HttpService.Get<List<RepairIssueDto>>(ApiUrl);
             return response.Response;
         }
         public async Task<RepairIssueDto> GetRepairIssueByIdAsync(Guid Id)
         {
-            var Url = $"{_apiUrl}/{Id}";
-            var response = await _httpService.Get<RepairIssueDto>(Url);
+            var Url = $"{ApiUrl}/{Id}";
+            var response = await HttpService.Get<RepairIssueDto>(Url);
             return response.Response;
         }
-        public async Task CreateRepairIssueAsync(RepairIssueDto repairIssue)
+        public async Task CreateRepairIssueAsync(RepairIssueDto RepairIssue)
         {
-            await _httpService.Post(_apiUrl, repairIssue);
+            await HttpService.Post(ApiUrl, RepairIssue);
         }
-        public async Task UpdateRepairIssueAsync(Guid id, RepairIssueDto repairIssue)
+        public async Task UpdateRepairIssueAsync(Guid id, RepairIssueDto RepairIssue)
         {
-            await _httpService.Put($"{ _apiUrl }/{ id }", repairIssue);
-
+            await HttpService.Put($"{ ApiUrl }/{ id }", RepairIssue);
         }
-
         public async Task DeleteRepairIssueAsync(Guid id)
         {
-            await _httpService.Delete($"{ _apiUrl }/{ id }");
+            await HttpService.Delete($"{ ApiUrl }/{ id }");
         }
     }
 }

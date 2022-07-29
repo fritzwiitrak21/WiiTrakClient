@@ -1,7 +1,7 @@
-@page "/technicians"
+@page "/technicians-creation"
 
 @using WiiTrakClient.Cores
-@using WiiTrakClient.Features.SystemOwner.Components
+@using WiiTrakClient.Shared.TechnicianCreation.Components
 
 @inject IJSRuntime JsRuntime
 @inject ITechnicianHttpRepository TechnicianRepository
@@ -70,16 +70,30 @@
                     Email = AddTechnician.Email,
                     Phone = AddTechnician.Phone,
                     ProfilePic = AddTechnician.ProfilePic,
-                    SystemOwnerId = CurrentUser.UserId,
+                    SystemOwnerId = AddTechnician.SystemOwnerId,
                     CompanyId = AddTechnician.CompanyId,
                 };
-            await TechnicianRepository.CreateTechnicianAsync(TechnicianCreation, CurrentUser.UserRoleId);
+            try
+            {
+                await TechnicianRepository.CreateTechnicianAsync(TechnicianCreation, CurrentUser.UserRoleId);
+            }
+            catch(Exception ex)
+            {
+                //Exception
+            }
         }
         await RefreshTechnicianGrid();
     }
     private async Task RefreshTechnicianGrid()
     {
-        TechniciansList = await TechnicianRepository.GetTechniciansBySystemOwnerIdAsync(CurrentUser.UserId);
+        if (CurrentUser.UserRoleId == 1)
+        {
+            TechniciansList = await TechnicianRepository.GetTechniciansBySystemOwnerIdAsync(CurrentUser.UserId);
+        }
+        else if (CurrentUser.UserRoleId == 3)
+        {
+            TechniciansList = await TechnicianRepository.GetTechniciansByCompanyIdAsync(CurrentUser.UserId);
+        }
         if (TechniciansList is not null)
         {
             Technician = TechniciansList;

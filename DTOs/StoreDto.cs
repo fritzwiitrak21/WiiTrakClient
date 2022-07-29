@@ -3,7 +3,7 @@
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
 using System.ComponentModel.DataAnnotations;
-
+using WiiTrakClient.Cores;
 namespace WiiTrakClient.DTOs
 {
     public class StoreDto
@@ -11,12 +11,13 @@ namespace WiiTrakClient.DTOs
         public Guid Id { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
+        public Guid? CreatedBy { get;set; } 
         [Required]
-        [StringLength(25)]
+        [StringLength(Numbers.TwentyFive)]
         [RegularExpression(@"^[a-zA-Z!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/? ]*$")]
         public string StoreName { get; set; } = string.Empty;
         [Required]
-        [StringLength(10)]
+        [StringLength(Numbers.Ten)]
         [RegularExpression(@"^[A-Za-z0-9]*$")]
         public string StoreNumber { get; set; } = string.Empty;
         [Required]
@@ -28,21 +29,21 @@ namespace WiiTrakClient.DTOs
         [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$")]
         public string PhoneSecondary { get; set; } = string.Empty;
         [Required]
-        [StringLength(50)]
+        [StringLength(Numbers.Fifty)]
         public string StreetAddress1 { get; set; } = string.Empty;
-        [StringLength(25)]
+        [StringLength(Numbers.TwentyFive)]
         public string StreetAddress2 { get; set; } = string.Empty;
         [Required]
-        [MaxLength(15)]
+        [MaxLength(Numbers.Fifteen)]
         [RegularExpression(@"^[a-zA-Z ]*$")]
         public string City { get; set; } = string.Empty;
         [Required]
-        [MaxLength(15)]
+        [MaxLength(Numbers.Fifteen)]
         [RegularExpression(@"^[a-zA-Z ]*$")]
         public string State { get; set; } = string.Empty;
         public string CountryCode { get; set; } = string.Empty;
         [Required]
-        [MinLength(4)]
+        [MinLength(Numbers.Four)]
         [RegularExpression(@"^[0-9-]*$")]
         public string PostalCode { get; set; } = string.Empty;
         public string ProfilePicUrl { get; set; } = string.Empty;
@@ -69,5 +70,6 @@ namespace WiiTrakClient.DTOs
         public string? TimezoneDiff { get; set; } = string.Empty;
         public string? TimezoneName { get; set; } = string.Empty;
         public bool IsConnectedStore { get; set; }
+        public string FenceCoords { get; set; } = string.Empty;
     }
 }

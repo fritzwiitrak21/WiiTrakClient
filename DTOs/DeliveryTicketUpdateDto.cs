@@ -3,7 +3,7 @@
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
 using System.ComponentModel.DataAnnotations;
-
+using WiiTrakClient.Cores;
 namespace WiiTrakClient.DTOs
 {
     public class DeliveryTicketUpdateDto
@@ -23,7 +23,7 @@ namespace WiiTrakClient.DTOs
         public Guid StoreId { get; set; } = Guid.Empty;
         public Guid DriverId { get; set; } = Guid.Empty;
         [Required]
-        [StringLength(25, ErrorMessage =" ")]
+        [StringLength(Numbers.TwentyFive, ErrorMessage =" ")]
         [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage =" ")]
         public string Signee { get; set; } = string.Empty;
         public bool IsActive { get; set; }

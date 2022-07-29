@@ -5,7 +5,7 @@
 using WiiTrakClient.DTOs;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.Services;
-
+using WiiTrakClient.Enums;
 namespace WiiTrakClient.HttpRepository
 {
     public class StoreHttpRepository : IStoreHttpRepository
@@ -89,6 +89,19 @@ namespace WiiTrakClient.HttpRepository
             var response = await Httpservice.Get<StoreReportDto>(url);
             return response.Response;
         }
+        public async Task<List<StoreUpdateHistoryDto>> GetStoreUpdateHistoryByIdAsync(Guid UserId, Role Role)
+        {
+            string url = $"{ApiUrl}/StoreUpdateHistory/{UserId}/{(int)Role} ";
+            try
+            {
+                var response = await Httpservice.Get<List<StoreUpdateHistoryDto>>(url);
+                return response.Response;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
         public async Task CreateStoreAsync(StoreDto store)
         {
             await Httpservice.Post(ApiUrl, store);
@@ -96,6 +109,10 @@ namespace WiiTrakClient.HttpRepository
         public async Task UpdateStoreAsync(Guid id, StoreDto store)
         {
             await Httpservice.Put($"{ ApiUrl }/{ id }", store);
+        }
+        public async Task UpdateStoreFenceAsync(StoreDto store)
+        {
+            await Httpservice.Put($"{ ApiUrl }", store);
         }
         public async Task DeleteStoreAsync(Guid id)
         {

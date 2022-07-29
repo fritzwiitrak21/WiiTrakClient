@@ -3,7 +3,7 @@
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
 using System.ComponentModel.DataAnnotations;
-
+using WiiTrakClient.Cores;
 namespace WiiTrakClient.DTOs
 {
     public class DeliveryTicketDto
@@ -28,7 +28,7 @@ namespace WiiTrakClient.DTOs
         public Guid StoreId { get; set; } = Guid.Empty;
         public Guid DriverId { get; set; } = Guid.Empty;
         [Required]
-        [StringLength(25)]
+        [StringLength(Numbers.TwentyFive)]
         [RegularExpression(@"^[a-zA-Z ]*$")]
         public string Signee { get;set; } = string.Empty;
         public int DriverNumber { get; set; }

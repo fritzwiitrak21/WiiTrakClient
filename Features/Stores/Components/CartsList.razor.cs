@@ -7,7 +7,6 @@ using MudBlazor;
 using WiiTrakClient.Cores;
 using WiiTrakClient.DTOs;
 using WiiTrakClient.HttpRepository.Contracts;
-
 namespace WiiTrakClient.Features.Stores.Components
 {
     public partial class CartsList: ComponentBase
@@ -27,19 +26,17 @@ namespace WiiTrakClient.Features.Stores.Components
         {
             var parameters = new DialogParameters();
             parameters.Add("Cart", cart);
-            DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
             if (DialogService is null)
             {
                 return;
             }
             var dialog = DialogService.Show<CartDetailsDialog>("Cart Details", parameters);
-            var result = await dialog.Result;
+            await dialog.Result;
         }
         public async Task OpenDialog(CartDto cart)
         {
             var parameters = new DialogParameters();
             parameters.Add("Cart", cart);
-            DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
             var dialog = DialogService.Show<UpdateCartsDialog>("Update Cart", parameters);
             var result = await dialog.Result;
             if (!result.Cancelled)
@@ -61,7 +58,7 @@ namespace WiiTrakClient.Features.Stores.Components
                 {
                     await CartHttpRepository.UpdateCartAsync(cart.Id, CartUpdate);
                 }
-                catch(Exception ex)
+                catch
                 {
                     //Exception
                 }

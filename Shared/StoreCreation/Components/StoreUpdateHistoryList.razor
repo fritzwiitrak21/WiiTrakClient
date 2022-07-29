@@ -1,0 +1,64 @@
+﻿@using WiiTrakClient.Cores
+@using WiiTrakClient.Shared.StoreCreation.Components
+@using System.Linq
+@using System.Collections.Generic;
+@namespace WiiTrakClient.Shared.StoreCreation.Components
+<MudTable Items=@StoreUpdateHistory Hover="true" Class="Pagingstyle" SortLabel="Sort By" Striped="true" Bordered="false"
+          LoadingProgressColor="Color.Primary">
+    <HeaderContent>
+
+        <MudTh>
+            <MudTableSortLabel InitialDirection="SortDirection.Ascending"
+                               SortBy="new Func<StoreUpdateHistoryDto, object>(x=>x.StoreName)">
+                Store Name
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel InitialDirection="SortDirection.Ascending"
+                               SortBy="new Func<StoreUpdateHistoryDto, object>(x=>x.ModifiedBy)">
+                Created / Updated By
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel InitialDirection="SortDirection.Ascending"
+                               SortBy="new Func<StoreUpdateHistoryDto, object>(x=>x.CreatedAt)">
+                Created / Updated ON
+            </MudTableSortLabel>
+        </MudTh>
+
+        <MudTh>
+            <MudTableSortLabel InitialDirection="SortDirection.Ascending"
+                               SortBy="new Func<StoreUpdateHistoryDto, object>(x=>x.Action)">
+                Action
+            </MudTableSortLabel>
+        </MudTh>
+
+
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="StoreName">@context.StoreName</MudTd>
+        <MudTd DataLabel=" Created / Updated By">@context.ModifiedBy</MudTd>
+        <MudTd DataLabel="Created / Updated ON">@context.CreatedAt.ToShortDateString()</MudTd>
+        <MudTd DataLabel="Action">
+            @switch (context.Action)
+            {
+                case "Created":
+                    <span style="background:#bbdefb;padding:2px;">Created</span>
+                    break;
+                case "Updated":
+                    <span style="background:#ffecb3;padding:2px;">Updated</span>
+                    break;
+            }
+        </MudTd>
+
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{10, 50, 100}" />
+    </PagerContent>
+</MudTable>
+@code {
+    [Parameter]
+    public List<StoreUpdateHistoryDto>? StoreUpdateHistory { get; set; }
+
+    public bool _listIsLoading = true;
+}

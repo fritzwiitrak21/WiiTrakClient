@@ -94,7 +94,14 @@
                     Id = device.Id,
                     TechnicianId = CurrentUser.UserId
                 };
-            await DevicesRepository.UpdateDeviceAsync(device.Id, DeviceUpdate);
+            try
+            {
+                await DevicesRepository.UpdateDeviceAsync(device.Id, DeviceUpdate);
+            }
+            catch(Exception ex)
+            {
+                //Exception
+            }
         }
         await RefreshDeviceGrid();
     }

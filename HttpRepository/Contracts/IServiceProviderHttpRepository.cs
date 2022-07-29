@@ -10,8 +10,8 @@ namespace WiiTrakClient.HttpRepository.Contracts
     {
         Task<List<ServiceProviderDto>> GetAllServiceProvidersAsync();
         Task<ServiceProviderDto> GetServiceProviderByIdAsync(Guid id);
-        Task CreateServiceProviderAsync(ServiceProviderCreationDto serviceProvider);
-        Task UpdateServiceProviderAsync(Guid id, ServiceProviderUpdateDto serviceProvider);
+        Task CreateServiceProviderAsync(ServiceProviderCreationDto ServiceProvider);
+        Task UpdateServiceProviderAsync(Guid id, ServiceProviderUpdateDto ServiceProvider);
         Task DeleteServiceProviderAsync(Guid id);
     }
 }

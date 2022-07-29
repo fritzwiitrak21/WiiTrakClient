@@ -1,9 +1,10 @@
-@namespace WiiTrakClient.Features.Companies.Components
 @using WiiTrakClient.Cores
+@using WiiTrakClient.Shared.TechnicianCreation.Components
 @inject IDialogService DialogService
+@inject ICompanyHttpRepository CompanyRepository
 @inject ITechnicianHttpRepository TechnicianRepository
 
-<MudTable Items="@Technicians" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
+   <MudTable Items="@Technicians" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
     <HeaderContent>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<TechnicianDto, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel  SortBy="new Func<TechnicianDto, object>(x=>x.LastName)">LastName</MudTableSortLabel></MudTh>
@@ -38,19 +39,27 @@
     </PagerContent>
 </MudTable> 
 
+
 @code {
     [Parameter]
     public List<TechnicianDto>? Technicians {get; set;} = null;
-    private bool _enabled = true;
+    List<TechnicianDto> TechniciansList = new();
+    public List<CompanyDto> Companies { get; set; } = new();
     public async Task OpenDialog(TechnicianDto technician) 
     {
+
         // TODO Update for technicians 
+        Companies = await CompanyRepository.GetCompaniesBySystemOwnerIdAsync(CurrentUser.UserId);
         Console.WriteLine("technician id: " + technician.Id);
+
         var parameters = new DialogParameters();
         parameters.Add("Technician", technician);   
+        parameters.Add("Companies", Companies);
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large }; 
+
         var dialog  = DialogService.Show<UpdateTechnicianDialog>("Update Technician", parameters);
         var result = await dialog.Result; 
+
         if (!result.Cancelled) 
         {
             // save updated technician to backend
@@ -60,13 +69,36 @@
                 Email = technician.Email,
                 Phone = technician.Phone,
                 ProfilePic = technician.ProfilePic,
-                CompanyId=CurrentUser.UserId,
+                SystemOwnerId=technician.SystemOwnerId,
+                CompanyId=technician.CompanyId,
                 Id=technician.Id,
                 CreatedAt=technician.CreatedAt,
             };
-            await TechnicianRepository.UpdateTechnicianAsync(technician.Id, TechnicianUpdate, CurrentUser.UserRoleId);
+            try
+            {
+                await TechnicianRepository.UpdateTechnicianAsync(technician.Id, TechnicianUpdate, CurrentUser.UserRoleId);
+            }
+            catch(Exception ex)
+            {
+                //Exception
+            }
         }
-        Technicians = await TechnicianRepository.GetTechniciansByCompanyIdAsync(CurrentUser.UserId);
+        await RefreshTechnicianGrid();
+    }
+      private async Task RefreshTechnicianGrid()
+    {
+        if (CurrentUser.UserRoleId == 1)
+        {
+            TechniciansList = await TechnicianRepository.GetTechniciansBySystemOwnerIdAsync(CurrentUser.UserId);
+        }
+        else if (CurrentUser.UserRoleId == 3)
+        {
+            TechniciansList = await TechnicianRepository.GetTechniciansByCompanyIdAsync(CurrentUser.UserId);
+        }
+        if (TechniciansList is not null)
+        {
+            Technicians = TechniciansList;
+        }
         StateHasChanged();
     }
 }

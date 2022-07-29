@@ -45,9 +45,9 @@ namespace WiiTrakClient.HttpRepository
         {
             await Httpservice.Post($"{ApiUrl}/{RoleId}", technician);
         }
-        public async Task UpdateTechnicianAsync(Guid id, TechnicianDto client, int RoleId)
+        public async Task UpdateTechnicianAsync(Guid id, TechnicianDto technician, int RoleId)
         {
-            await Httpservice.Put($"{ ApiUrl }/{ id }/{RoleId}", client);
+            await Httpservice.Put($"{ ApiUrl }/{ id }/{RoleId}", technician);
         }
         public async Task DeleteTechnicianAsync(Guid id)
         {

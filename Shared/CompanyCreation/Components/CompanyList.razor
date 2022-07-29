@@ -91,9 +91,15 @@
                     companyUpdate.ParentId = CurrentUser.UserId;
                     break;
             }
-            await CompanyHttpRepository.UpdateCompanyAsync(company.Id, companyUpdate);
+            try
+            {
+                await CompanyHttpRepository.UpdateCompanyAsync(company.Id, companyUpdate);
+            }
+            catch(Exception ex)
+            {
+                //Exception
+            }
         }
-
         await RefreshGrid();
     }
     async Task RefreshGrid()

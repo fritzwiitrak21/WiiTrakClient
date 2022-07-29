@@ -3,7 +3,7 @@
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
 using System.ComponentModel.DataAnnotations;
-
+using WiiTrakClient.Cores;
 namespace WiiTrakClient.DTOs
 {
     public class TechnicianDto
@@ -12,11 +12,11 @@ namespace WiiTrakClient.DTOs
         public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
         [Required]
-        [StringLength(10)]
+        [StringLength(Numbers.Ten)]
         [RegularExpression(@"^[a-zA-Z ]*$")]
         public string FirstName { get; set; } = string.Empty;
         [Required]
-        [StringLength(10)]
+        [StringLength(Numbers.Ten)]
         [RegularExpression(@"^[a-zA-Z ]*$")]
         public string LastName { get; set; } = string.Empty;
         [Required]

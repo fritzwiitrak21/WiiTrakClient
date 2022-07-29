@@ -93,7 +93,14 @@
                     CreatedAt=corporate.CreatedAt,
                 };
             }
-            await CorporateHttpRepository.UpdateCorporateAsync(corporate.Id, CorporateUpdate);
+            try
+            {
+                await CorporateHttpRepository.UpdateCorporateAsync(corporate.Id, CorporateUpdate);
+            }
+            catch(Exception ex)
+            {
+                //Exception
+            }
         }
         if(CurrentUser.UserRoleId==1)
         {

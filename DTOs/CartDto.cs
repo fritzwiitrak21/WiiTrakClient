@@ -4,6 +4,7 @@
 */
 using System.ComponentModel.DataAnnotations;
 using WiiTrakClient.Enums;
+using WiiTrakClient.Cores;
 
 namespace WiiTrakClient.DTOs
 {
@@ -13,7 +14,7 @@ namespace WiiTrakClient.DTOs
         public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
         [Required]
-        [StringLength(25)]
+        [StringLength(Numbers.TwentyFive)]
         [RegularExpression(@"^[a-zA-Z ]*$")]
         public string ManufacturerName { get; set; } = string.Empty;
         [Required]

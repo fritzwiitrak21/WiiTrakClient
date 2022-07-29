@@ -56,7 +56,7 @@
     private bool ListIsLoading = true;
 
     List<SimCardsDto> SimCardslist = new();
-    
+
     protected override void OnParametersSet()
     {
         ListIsLoading = false;
@@ -86,7 +86,14 @@
                     CreatedAt = simcard.CreatedAt,
                     Id = simcard.Id
                 };
-            await SimCardRepository.UpdateSimCardAsync(simcard.Id, SimCardUpdate);
+            try
+            {
+                await SimCardRepository.UpdateSimCardAsync(simcard.Id, SimCardUpdate);
+            }
+            catch(Exception ex)
+            {
+                
+            }
         }
         await RefreshSimcard();
     }

@@ -38,8 +38,6 @@ namespace WiiTrakClient.Features.Drivers
         }
         private async Task GetWorkOrdersByDriverId(Guid id)
         {
-            // TODO for now we are just getting all work orders
-            // but this should be by driver
             var workOrders = await WorkOrderHttpRepository.GetAllWorkOrdersAsync();
             if (workOrders is not null)
             {

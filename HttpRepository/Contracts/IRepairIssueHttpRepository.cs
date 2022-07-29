@@ -11,8 +11,8 @@ namespace WiiTrakClient.HttpRepository.Contracts
     {
         Task<List<RepairIssueDto>> GetAllRepairIssuesAsync();
         Task<RepairIssueDto> GetRepairIssueByIdAsync(Guid Id);
-        Task CreateRepairIssueAsync(RepairIssueDto cart);
-        Task UpdateRepairIssueAsync(Guid id, RepairIssueDto cart);
+        Task CreateRepairIssueAsync(RepairIssueDto RepairIssue);
+        Task UpdateRepairIssueAsync(Guid id, RepairIssueDto RepairIssue);
         Task DeleteRepairIssueAsync(Guid id);
     }
 }
