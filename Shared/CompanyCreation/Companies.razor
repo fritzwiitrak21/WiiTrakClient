@@ -101,13 +101,20 @@
                         CompanyCreation.ParentId = CurrentUser.UserId;
                         break;
                 }
-                await CompanyRepository.CreateCompanyAsync(CompanyCreation);
+                try
+                {
+                    await CompanyRepository.CreateCompanyAsync(CompanyCreation);
+                }
+                catch(Exception ex)
+                {
+                    //Exception
+                }
             }
             await RefreshGrid();
         }
         catch (Exception ex)
         {
-
+            //Exception
         }
     }
     async Task RefreshGrid()

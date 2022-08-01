@@ -1,7 +1,7 @@
 ﻿@using WiiTrakClient.Features.Technicians.Components
 @namespace WiiTrakClient.Features.Technicians.Components
 
-<MudTable Items="@Carts" Class="Pagingstyle" Hover="true" SortLabel="Sort By">
+<MudTable Items="@Carts" Class="Pagingstyle" Hover="true" SortLabel="Sort By" Loading="@ListIsLoading">
     <HeaderContent>
         
         <MudTh><MudTableSortLabel SortBy="new Func<CartDto, object>(x=>x.Store.StoreName)">Store Name</MudTableSortLabel></MudTh>
@@ -21,7 +21,7 @@
          @if (context.Device != null)
         {
             <MudTd DataLabel="Device Name">
-                @context.Device.DeviceModel - @context.Device.DeviceName
+                @context.Device.DeviceName
             </MudTd>;
         }
         else

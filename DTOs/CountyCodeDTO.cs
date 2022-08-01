@@ -3,6 +3,7 @@
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
 using System.ComponentModel.DataAnnotations;
+using WiiTrakClient.Cores;
 
 namespace WiiTrakClient.DTOs
 {
@@ -12,25 +13,25 @@ namespace WiiTrakClient.DTOs
         public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
         [Required]
-        [MaxLength(20)]
+        [MaxLength(Numbers.Twenty)]
         [RegularExpression(@"^[a-zA-Z ]*$")]
         public string CountyName { get; set; } = string.Empty;
         [Required]
-        [MinLength(3)]
-        [MaxLength(4)]
+        [MinLength(Numbers.Three)]
+        [MaxLength(Numbers.Four)]
         [RegularExpression(@"^[a-zA-Z]*$")]
         public string CountyCode { get; set; } = string.Empty;
         public bool IsActive { get; set; }
         [Required]
-        [MaxLength(15)]
+        [MaxLength(Numbers.Fifteen)]
         [RegularExpression(@"^[a-zA-Z ]*$")]
         public string State { get; set; } = string.Empty;
         [Required]
-        [MaxLength(15)]
+        [MaxLength(Numbers.Fifteen)]
         [RegularExpression(@"^[a-zA-Z ]*$")]
         public string City { get; set; } = string.Empty;
         [Required]
-        [MinLength(4)]
+        [MinLength(Numbers.Four)]
         [RegularExpression(@"^[0-9-]*$")]
         public string ZipCode { get; set; } = string.Empty;
     }

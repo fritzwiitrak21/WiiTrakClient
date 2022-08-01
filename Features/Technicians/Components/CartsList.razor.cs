@@ -19,7 +19,7 @@ namespace WiiTrakClient.Features.Technicians.Components
         [Inject]
         ICartHttpRepository? CartHttpRepository { get; set; }
         [Inject]
-        IStoreHttpRepository storeHttpRepository { get; set; }
+        IStoreHttpRepository StoreHttpRepository { get; set; }
         [Inject]
         IDevicesHttpRepository DevicesHttpRepository { get; set; }
         private bool ListIsLoading = true;
@@ -34,12 +34,12 @@ namespace WiiTrakClient.Features.Technicians.Components
         {
             try
             {
-                Store = await storeHttpRepository.GetStoresByTechnicianId(CurrentUser.UserId);
+                Store = await StoreHttpRepository.GetStoresByTechnicianId(CurrentUser.UserId);
                 DeviceList = await DevicesHttpRepository.GetDeviceByTechnicianIdAsync(CurrentUser.UserId);
             }
-            catch (Exception ex)
+            catch
             {
-                //ex
+                //Exception
             }
             var parameters = new DialogParameters();
             parameters.Add("Stores", Store);
@@ -69,8 +69,6 @@ namespace WiiTrakClient.Features.Technicians.Components
             Carts = await CartHttpRepository.GetCartsByTechnicianIdAsync(CurrentUser.UserId);
             StateHasChanged();
         }
-
-
         public async Task GetConfirmation(CartDto cart)
         {
             var parameters = new DialogParameters();
@@ -78,9 +76,6 @@ namespace WiiTrakClient.Features.Technicians.Components
             parameters.Add("DisplayMessage", SuccessMessage);
             parameters.Add("FromWindow", "carts");
             parameters.Add("IsSuccessNotification", true);
-
-            DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
-
             var dialog = DialogService.Show<ShowMessageDialog>("Confirmation Message", parameters);
             var result = await dialog.Result;
             try {
@@ -106,10 +101,10 @@ namespace WiiTrakClient.Features.Technicians.Components
                 Carts = await CartHttpRepository.GetCartsByTechnicianIdAsync(CurrentUser.UserId);
                 StateHasChanged();
             }
-            catch(Exception ex)
+            catch
             {
-
+                //Exception
             }
-            }
+        }
     }
 }

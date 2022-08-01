@@ -103,7 +103,14 @@
                         CompanyId = CurrentUser.UserId,
                     };
                 }
-                await CorporateRepository.CreateCorporateAsync(CurrentUser.UserId,CurrentUser.UserRoleId, CustomerCreation);
+                try
+                {
+                    await CorporateRepository.CreateCorporateAsync(CurrentUser.UserId,CurrentUser.UserRoleId, CustomerCreation);
+                }
+                catch(Exception ex)
+                {
+                    //Exception
+                }
             }
             await RefreshCorporateGrid();
         }

@@ -15,7 +15,6 @@
                Size="Size.Large"
                OnClick="OpenDialog">Add</MudButton>
 </div>
-@*Need to fix in future phase*@
 
 <div class="my-8">
     @if (LoaderVisibility)
@@ -85,9 +84,17 @@
                     ServiceFrequency = AddStore.ServiceFrequency,
                     StartDate = AddStore.StartDate,
                     IsConnectedStore=AddStore.IsConnectedStore,
+                    CreatedBy=CurrentUser.UserId
                 };
-            await StoreHttpRepository.CreateStoreAsync(StoreCreation);
-           await RefreshGrid();
+            try
+            {
+                await StoreHttpRepository.CreateStoreAsync(StoreCreation);
+            }
+            catch(Exception ex)
+            {
+                //Exception
+            }
+            await RefreshGrid();
         }
     }
      async Task RefreshGrid()

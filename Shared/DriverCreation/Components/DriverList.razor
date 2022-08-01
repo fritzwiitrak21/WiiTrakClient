@@ -127,7 +127,14 @@
                     CreatedAt=driver.CreatedAt,
                 };
             }
-            await DriverHttpRepository.UpdateDriverAsync(driver.Id, DriverUpdate);
+            try
+            {
+                await DriverHttpRepository.UpdateDriverAsync(driver.Id, DriverUpdate);
+            }
+            catch(Exception ex)
+            {
+                //Exception
+            }
         }
         if(CurrentUser.UserRoleId==1)
         {

@@ -10,7 +10,6 @@ using WiiTrakClient.Cores;
 using WiiTrakClient.Enums;
 using MudBlazor;
 using WiiTrakClient.Features.Drivers.Components;
-
 namespace WiiTrakClient.Features.Drivers
 {
     public partial class DeliveryTickets : ComponentBase
@@ -24,21 +23,19 @@ namespace WiiTrakClient.Features.Drivers
         [Inject] IDialogService DialogService { get; set; }
         [Inject] IWorkOrderHttpRepository WorkOrderHttpRepository { get; set; }
         DriverDto SelectedDriver = new();
-        List<DeliveryTicketDto> _deliveryTickets = new();
-        List<DeliveryTicketDto> deliveryTickets = new();
-        List<CartDto> _carts = new();
-        List<StoreDto> _stores = new();
+        List<DeliveryTicketDto> deliverytickets = new();
+        List<DeliveryTicketDto> Deliverytickets = new();
+        List<CartDto> Carts = new();
+        List<StoreDto> Stores = new();
         List<StoreDto> TempStores = new();
-        DeliveryTicketCreationDto _newDeliveryTicket = new();
+        DeliveryTicketCreationDto NewDeliveryTicket = new();
         private IJSObjectReference JsModule;
         private double Latitude;
         private double Longitude;
-
         int SelectedOption = 30;
         int TempSelectedOption;
         protected override async Task OnInitializedAsync()
         {
-
             try
             {
                 JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
@@ -61,34 +58,29 @@ namespace WiiTrakClient.Features.Drivers
                 {
                     await JsModule.InvokeVoidAsync("ClearCoord");
                 }
-                TempStores = _stores = await StoreHttpRepository.GetStoresByDriverId(CurrentUser.UserId);
+                TempStores = Stores = await StoreHttpRepository.GetStoresByDriverId(CurrentUser.UserId);
                 await GetDeliveryTicketsByDriverId(CurrentUser.UserId);
-
                 SelectedDriver = await DriverRepository.GetDriverByIdAsync(CurrentUser.UserId);
-
             }
             catch
             {
-                //Exsception
+                //Exception
             }
             await HandleDriverSelected();
-
         }
-
         private async Task HandleDriverSelected()
         {
-            _carts = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
+            Carts = await CartHttpRepository.GetCartsByDriverIdAsync(CurrentUser.UserId);
             FindDistance();
         }
-
         #region GetDeliveryTicketsByDriverId
         private async Task GetDeliveryTicketsByDriverId(Guid id)
         {
-            deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(id, (Role)CurrentUser.UserRoleId, SelectedOption);
+            Deliverytickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(id, (Role)CurrentUser.UserRoleId, SelectedOption);
 
-            if (deliveryTickets is not null)
+            if (Deliverytickets is not null)
             {
-                foreach (var item in deliveryTickets)
+                foreach (var item in Deliverytickets)
                 {
                     try
                     {
@@ -100,7 +92,7 @@ namespace WiiTrakClient.Features.Drivers
                         //Exception
                     }
                 }
-                _deliveryTickets = deliveryTickets;
+                deliverytickets = Deliverytickets;
             }
             StateHasChanged();
         }
@@ -111,18 +103,15 @@ namespace WiiTrakClient.Features.Drivers
             {
                 var value = SelectedOption;
                 TempSelectedOption = SelectedOption;
-                deliveryTickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, value);
-                if (deliveryTickets is not null)
+                Deliverytickets = await DeliveryTicketHttpRepository.GetDeliveryTicketsById(CurrentUser.UserId, (Role)CurrentUser.UserRoleId, value);
+                if (Deliverytickets is not null)
                 {
-                    _deliveryTickets = deliveryTickets;
+                    deliverytickets = Deliverytickets;
                 }
                 StateHasChanged();
-
             }
         }
-
         #region AddNewDeliveryDialog
-
         private async Task AddNewDeliveryDialog()
         {
             try
@@ -143,47 +132,41 @@ namespace WiiTrakClient.Features.Drivers
             {
                 await JsModule.InvokeVoidAsync("ClearCoord");
             }
-
             FindDistance();
             var parameters = new DialogParameters();
-            _newDeliveryTicket = new DeliveryTicketCreationDto();
-            parameters.Add("NewDeliveryTicket", _newDeliveryTicket);
+            NewDeliveryTicket = new DeliveryTicketCreationDto();
+            parameters.Add("NewDeliveryTicket", NewDeliveryTicket);
             parameters.Add("Driver", SelectedDriver);
-            parameters.Add("Carts", _carts);
-            parameters.Add("Stores", _stores);
+            parameters.Add("Carts", Carts);
+            parameters.Add("Stores", Stores);
             parameters.Add("Latitude", Latitude);
             parameters.Add("Longitude", Longitude);
-            DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
-
             var dialog = DialogService.Show<AddDeliveryTicketDialog>("New Delivery Ticket", parameters);
             var result = await dialog.Result;
-
             if (!result.Cancelled)
             {
                 // add new delivery ticket to backend
-                var deliveryTicketCreation = new DeliveryTicketCreationDto
+                var DeliveryTicketCreation = new DeliveryTicketCreationDto
                 {
-                    NumberOfCarts = _newDeliveryTicket.NumberOfCarts,
-                    PicUrl = _newDeliveryTicket.PicUrl,
+                    NumberOfCarts = NewDeliveryTicket.NumberOfCarts,
+                    PicUrl = NewDeliveryTicket.PicUrl,
                     DeliveredAt = DateTime.UtcNow,
-                    StoreId = _newDeliveryTicket.StoreId,
-                    ServiceProviderId = _newDeliveryTicket.ServiceProviderId,
+                    StoreId = NewDeliveryTicket.StoreId,
+                    ServiceProviderId = NewDeliveryTicket.ServiceProviderId,
                     DriverId = CurrentUser.UserId,
-                    SignOffRequired = _stores.FirstOrDefault(x => x.Id == _newDeliveryTicket.StoreId).IsSignatureRequired
+                    SignOffRequired = Stores.FirstOrDefault(x => x.Id == NewDeliveryTicket.StoreId).IsSignatureRequired
                 };
-
-                var deliveryTicketResponse = await DeliveryTicketHttpRepository.CreateDeliveryTicketAsync(deliveryTicketCreation);
+                var DeliveryTicketResponse = await DeliveryTicketHttpRepository.CreateDeliveryTicketAsync(DeliveryTicketCreation);
                 await GetDeliveryTicketsByDriverId(CurrentUser.UserId);//Refreshing the data in the grid once new ticket added
-
                 // update status of carts to delivered and update cart hitory
                 //var carts = _carts.Where(x => x.StoreId == _newDeliveryTicket.StoreId && x.Status==(CartStatus)2).ToList();
-                foreach (var cart in _newDeliveryTicket.PickedUpCarts)
+                foreach (var cart in NewDeliveryTicket.PickedUpCarts)
                 {
-                    if (!deliveryTicketResponse.SignOffRequired)
+                    if (!DeliveryTicketResponse.SignOffRequired)
                     {
                         if (cart.Condition == CartCondition.Damage)
                         {
-                            var newWorkOrder = new WorkOrderCreationDto
+                            var NewWorkOrder = new WorkOrderCreationDto
                             {
                                 Issue = cart.IssueType,
                                 Notes = cart.IssueDescription,
@@ -192,16 +175,15 @@ namespace WiiTrakClient.Features.Drivers
                                 DriverId = CurrentUser.UserId
 
                             };
-
-                            await WorkOrderHttpRepository.CreateWorkOrderAsync(newWorkOrder);
+                            await WorkOrderHttpRepository.CreateWorkOrderAsync(NewWorkOrder);
                         }
                     }
-                    var cartHistory = new CartHistoryUpdateDto
+                    var CartHistory = new CartHistoryUpdateDto
                     {
-                        DeliveryTicketId = deliveryTicketResponse.Id,
+                        DeliveryTicketId = DeliveryTicketResponse.Id,
                         PickupLatitude = cart.TrackingDevice != null ? cart.TrackingDevice.Latitude : 0,
                         PickupLongitude = cart.TrackingDevice != null ? cart.TrackingDevice.Longitude : 0,
-                        DroppedOffAt = DateTime.Now,
+                        DroppedOffAt = DateTime.UtcNow,
                         ServiceProviderId = cart.Store != null ? cart.Store.ServiceProviderId : null,
                         StoreId = cart.StoreId,
                         DriverId = CurrentUser.UserId,
@@ -213,8 +195,7 @@ namespace WiiTrakClient.Features.Drivers
                         IssueDescription = cart.IssueDescription,
                         DeviceId = cart.DeviceId
                     };
-
-                    var cartUpdate = new CartUpdateDto
+                    var CartUpdate = new CartUpdateDto
                     {
                         ManufacturerName = cart.ManufacturerName,
                         DateManufactured = cart.DateManufactured,
@@ -229,13 +210,13 @@ namespace WiiTrakClient.Features.Drivers
                         CartNumber = cart.CartNumber,
                         IssueType = cart.IssueType,
                         IssueDescription = cart.IssueDescription,
-                        CartHistory = cartHistory
+                        CartHistory = CartHistory
                     };
                     try
                     {
-                        await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
+                        await CartHttpRepository.UpdateCartAsync(cart.Id, CartUpdate);
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         //Exception
                     }
@@ -261,29 +242,27 @@ namespace WiiTrakClient.Features.Drivers
                 double dist = Math.Sin(degtorad(lat1)) * Math.Sin(degtorad(lat2)) + Math.Cos(degtorad(lat1)) * Math.Cos(degtorad(lat2)) * Math.Cos(degtorad(theta));
                 dist = Math.Acos(dist);
                 dist = radtodeg(dist);
-                dist = dist * 60 * 1.1515;
-                dist = dist * 1.609344;
+                dist = dist * Numbers.Sixty * Numbers.OneOneFive;
+                dist = dist * Numbers.OneSixZero;
 
                 return (dist);
             }
         }
-
         private double degtorad(double deg)
         {
-            return (deg * Math.PI / 180.0);
+            return (deg * Math.PI / Numbers.OneEighty);
         }
-
         private double radtodeg(double rad)
         {
-            return (rad / Math.PI * 180.0);
+            return (rad / Math.PI * Numbers.OneEighty);
         }
         #endregion
 
         #region Find Region
         private void FindDistance()
         {
-            _stores = _stores.Where(x => x.DriverStoresIsActive && x.IsActive).ToList();
-            foreach (var item in _stores)
+            Stores = Stores.Where(x => x.DriverStoresIsActive && x.IsActive).ToList();
+            foreach (var item in Stores)
             {
                 var distance = Getdistance(item.Latitude, item.Longitude);
                 item.Distance = Convert.ToInt32(Math.Ceiling(distance));

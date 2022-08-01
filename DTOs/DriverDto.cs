@@ -3,7 +3,7 @@
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
 using System.ComponentModel.DataAnnotations;
-
+using WiiTrakClient.Cores;
 namespace WiiTrakClient.DTOs
 {
     public class DriverDto
@@ -12,11 +12,11 @@ namespace WiiTrakClient.DTOs
         public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
         [Required]
-        [StringLength(20)]
+        [StringLength(Numbers.Twenty)]
         [RegularExpression(@"^[a-zA-Z!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/? ]*$")]
         public string FirstName { get; set; } = string.Empty;
         [Required]
-        [StringLength(20)]
+        [StringLength(Numbers.Twenty)]
         [RegularExpression(@"^[a-zA-Z!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/? ]*$")]
         public string LastName { get; set; } = string.Empty;
         [Required]
@@ -26,21 +26,21 @@ namespace WiiTrakClient.DTOs
         [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$")]
         public string Phone { get; set; } = string.Empty;
         [Required]
-        [StringLength(50)]
+        [StringLength(Numbers.Fifty)]
         public string StreetAddress1 { get; set; } = string.Empty;
-        [StringLength(50)]
+        [StringLength(Numbers.Fifty)]
         public string StreetAddress2 { get; set; } = string.Empty;
         [Required]
         [StringLength(15)]
         [RegularExpression(@"^[a-zA-Z ]*$")]
         public string City { get; set; } = string.Empty;
         [Required]
-        [StringLength(15)]
+        [StringLength(Numbers.Fifteen)]
         [RegularExpression(@"^[a-zA-Z ]*$")]
         public string State { get; set; } = string.Empty;
         public string CountryCode { get; set; } = string.Empty;
         [Required]
-        [MinLength(4)]
+        [MinLength(Numbers.Four)]
         [RegularExpression(@"^[0-9-]*$")]
         public string PostalCode { get; set; } = string.Empty;
         public string ProfilePic { get; set; } = string.Empty;

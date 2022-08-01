@@ -3,7 +3,7 @@
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
 using WiiTrakClient.DTOs;
-
+using WiiTrakClient.Enums;
 namespace WiiTrakClient.HttpRepository.Contracts
 {
     public interface IStoreHttpRepository
@@ -20,8 +20,10 @@ namespace WiiTrakClient.HttpRepository.Contracts
         Task<StoreReportDto> GetAllStoreReportByCoprporateAsync(Guid CorporateId);
         Task<StoreReportDto> GetAllStoreReportByCompanyAsync(Guid CompanyId);
         Task<List<StoreDto>> GetStoresByTechnicianId(Guid TechnicianId);
+        Task<List<StoreUpdateHistoryDto>> GetStoreUpdateHistoryByIdAsync(Guid UserId, Role Role);
         Task CreateStoreAsync(StoreDto store);
         Task UpdateStoreAsync(Guid id, StoreDto store);
+        Task UpdateStoreFenceAsync(StoreDto store);
         Task DeleteStoreAsync(Guid id);
     }
 }

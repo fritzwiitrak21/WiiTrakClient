@@ -22,18 +22,16 @@ namespace WiiTrakClient.Features.Drivers.Components
         IDialogService? DialogService { get; set; }
         [Inject]
         ICartHttpRepository? CartHttpRepository { get; set; }       
-        private bool _listIsLoading = true;
+        private bool ListIsLoading = true;
         protected override void OnParametersSet()
         {
-            _listIsLoading = false;
+            ListIsLoading = false;
         }
         public async Task OpenUpdateCartDialog(CartDto cart)        
         {
-            var cartPreUpdate = cart;
             var parameters = new DialogParameters();
             parameters.Add("Cart", cart);
             parameters.Add("RepairIssues", RepairIssues);
-            DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
             if (DialogService is null)
             {
                 return;
@@ -76,13 +74,12 @@ namespace WiiTrakClient.Features.Drivers.Components
         {
             var parameters = new DialogParameters();
             parameters.Add("Cart", cart);
-            DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Large };
             if (DialogService is null)
             {
                 return;
             }
             var dialog = DialogService.Show<CartDetailsDialog>("Cart Details", parameters);
-            var result = await dialog.Result;
+            await dialog.Result;
         }
     }
 }

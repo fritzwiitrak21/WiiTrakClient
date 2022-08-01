@@ -2,7 +2,6 @@
 * 06.06.2022
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
-using System;
 using WiiTrakClient.DTOs;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.Services;
@@ -11,48 +10,48 @@ namespace WiiTrakClient.HttpRepository
 {
     public class CartHistoryHttpRepository : ICartHistoryHttpRepository
     {
-        private readonly IHttpService _httpService;
+        private readonly IHttpService HttpService;
         private const string ControllerName = "carthistory";
-        private readonly string _apiUrl;
-        public CartHistoryHttpRepository(IHttpService httpService)
+        private readonly string ApiUrl;
+        public CartHistoryHttpRepository(IHttpService Httpservice)
         {
-            _httpService = httpService;
-            _apiUrl = $"{ httpService.BaseUrl }{ ControllerName }";
+            HttpService = Httpservice;
+            ApiUrl = $"{ Httpservice.BaseUrl }{ ControllerName }";
         }
         public async Task<CartHistoryDto> GetCartHistoryByIdAsync(Guid id)
         {
-            string url = $"{_apiUrl}/{id}";
-            var response = await _httpService.Get<CartHistoryDto>(url);
+            string url = $"{ApiUrl}/{id}";
+            var response = await HttpService.Get<CartHistoryDto>(url);
             return response.Response;
         }
         public async Task<List<CartHistoryDto>> GetAllCartHistoryAsync()
         {
-            var response = await _httpService.Get<List<CartHistoryDto>>(_apiUrl);
+            var response = await HttpService.Get<List<CartHistoryDto>>(ApiUrl);
             return response.Response;
         }
-        public async Task<List<CartHistoryDto>> GetCartHistoryByCartIdAsync(Guid cartId)
+        public async Task<List<CartHistoryDto>> GetCartHistoryByCartIdAsync(Guid CartId)
         {
-            string url = $"{_apiUrl}/cart/{cartId}";
-            var response = await _httpService.Get<List<CartHistoryDto>>(url);
+            string url = $"{ApiUrl}/cart/{CartId}";
+            var response = await HttpService.Get<List<CartHistoryDto>>(url);
             return response.Response;
         }
-        public async Task<List<CartDto>> GetCartHistoryByDeliveryTicketIdAsync(Guid deliveryTicketId)
+        public async Task<List<CartDto>> GetCartHistoryByDeliveryTicketIdAsync(Guid DeliveryTicketId)
         {
-            string url = $"{_apiUrl}/CartHistory/{deliveryTicketId}";
-            var response = await _httpService.Get<List<CartDto>>(url);
+            string url = $"{ApiUrl}/CartHistory/{DeliveryTicketId}";
+            var response = await HttpService.Get<List<CartDto>>(url);
             return response.Response;
         }
-        public async Task CreateCartHistoryAsync(CartHistoryCreationDto cartHistory)
+        public async Task CreateCartHistoryAsync(CartHistoryCreationDto cart)
         {
-              await _httpService.Post(_apiUrl, cartHistory);
+              await HttpService.Post(ApiUrl, cart);
         }
-        public async Task UpdateCartHistoryAsync(Guid id, CartHistoryUpdateDto cartHistory)
+        public async Task UpdateCartHistoryAsync(Guid id, CartHistoryUpdateDto cart)
         {
-             await _httpService.Put($"{ _apiUrl }/{ id }", cartHistory);
+             await HttpService.Put($"{ ApiUrl }/{ id }", cart);
         }
         public async Task DeleteCartHistoryAsync(Guid id)
         {
-             await _httpService.Delete($"{ _apiUrl }/{ id }");
+             await HttpService.Delete($"{ ApiUrl }/{ id }");
         }
     }
 }

@@ -115,7 +115,7 @@ namespace WiiTrakClient.Features.Drivers
                 _filteredCarts = _carts.Where(x => x.Status == CartStatus.OutsideGeofence).ToList();
             }
             await UpdateDriverSummary(cartChange);
-            // TODO driver summary should come from backend  using cart history
+            
             var cart = _carts.First(x => x.Id == cartChange.Id);
              var cartHistory = new CartHistoryUpdateDto 
              {
@@ -140,14 +140,7 @@ namespace WiiTrakClient.Features.Drivers
                 CartHistory = cartHistory                  
             };
             await CartHttpRepository.UpdateCartAsync(cart.Id, cartUpdate);
-            //
-            // TODO
-            //
-            // This shouldn't be here. It should be in the delivery ticket submit handler.
-            // So we don't create work order until a delivery ticket is submitted and approved.
-            // If ticket doesn't require sign off from store, then we iterate through carts and
-            // check each one like below. If the store requires tickets be signed off, then
-            // we don't create work orders until the delivery ticket is approved by store.
+            
             // if (cartUpdate.Condition == CartCondition.Damage) 
             // {
             //     var newWorkOrder = new WorkOrderCreationDto {
@@ -285,16 +278,11 @@ namespace WiiTrakClient.Features.Drivers
                 return;
             }
             _driverSummary = JsonSerializer.Deserialize<DriverSummary>(jsonString);
-            //
-            // TODO 
-            // change back to hours
-            // replace hardcode int with _idleHours
-            //
-            // reset driver summary if idle for n hours
+            
             if (_driverSummary is not null)
             {
                 var timeSpan = _driverSummary.UpdatedAt - _driverSummary.CreatedAt;
-                if (timeSpan.Minutes >= 5)
+                if (timeSpan.Minutes >= Numbers.Five)
                 {
                     _driverSummary = null;
                     _cartChanges = null;

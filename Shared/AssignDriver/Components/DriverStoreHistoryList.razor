@@ -1,0 +1,70 @@
+﻿@using WiiTrakClient.Cores
+@using WiiTrakClient.Shared.AssignDriver.Components
+@using System.Linq
+@using System.Collections.Generic;
+@namespace WiiTrakClient.Shared.AssignDriver.Components
+<MudTable Items=@StoreHistory Hover="true" Class="Pagingstyle" SortLabel="Sort By" Striped="true" Bordered="false"
+          LoadingProgressColor="Color.Primary">
+    <HeaderContent>
+
+        <MudTh>
+            <MudTableSortLabel InitialDirection="SortDirection.Ascending"
+                               SortBy="new Func<DriverStoreHistoryDto, object>(x=>x.AssignedBy)">
+                Assigned By
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel InitialDirection="SortDirection.Ascending"
+                               SortBy="new Func<DriverStoreHistoryDto, object>(x=>x.DriverName)">
+                Assigned To
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel InitialDirection="SortDirection.Ascending"
+                               SortBy="new Func<DriverStoreHistoryDto, object>(x=>x.StoreName)">
+                Store Name
+            </MudTableSortLabel>
+        </MudTh>
+
+        <MudTh>
+            <MudTableSortLabel InitialDirection="SortDirection.Ascending"
+                               SortBy="new Func<DriverStoreHistoryDto, object>(x=>x.CreatedAt)">
+                Assigned / UnAssigned ON
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel InitialDirection="SortDirection.Ascending"
+                               SortBy="new Func<DriverStoreHistoryDto, object>(x=>x.Action)">
+                Action
+            </MudTableSortLabel>
+        </MudTh>
+
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="AssignedBy">@context.AssignedBy</MudTd>
+        <MudTd DataLabel="AssignedTo">@context.DriverName</MudTd>
+        <MudTd DataLabel="Store Number">@context.StoreName</MudTd>
+        <MudTd DataLabel="CreatedAt">@context.CreatedAt.ToShortDateString()</MudTd>
+        <MudTd DataLabel="Action">
+            @switch (context.Action)
+            {
+                case "ASSIGNED":
+                    <span style="background:#bbdefb;padding:2px;">Assigned</span>
+                    break;
+                case "UNASSIGNED":
+                    <span style="background:#ffecb3;padding:2px;">UnAssigned</span>
+                    break;
+            }
+        </MudTd>
+
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{10, 50, 100}" />
+    </PagerContent>
+</MudTable>
+@code {
+    [Parameter]
+    public List<DriverStoreHistoryDto>? StoreHistory { get; set; }
+
+    public bool _listIsLoading = true;
+}

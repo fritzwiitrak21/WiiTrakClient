@@ -3,20 +3,21 @@
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
 using System.ComponentModel.DataAnnotations;
+using WiiTrakClient.Cores;
 namespace WiiTrakClient.DTOs
 {
     public class SimCardsDto
     {
         public Guid Id { get; set; }
         [Required]
-        [StringLength(25)]
+        [StringLength(Numbers.TwentyFive)]
         [RegularExpression(@"^[a-zA-Z ]*$")]
         public string TelecomCompany { get; set; } = string.Empty;
         [Required]
         [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$")]
         public string PhoneNumber { get; set; } = string.Empty;
         [Required]
-        [StringLength(25)]
+        [StringLength(Numbers.TwentyFive)]
         [RegularExpression(@"^[a-zA-Z ]*$")]
         public string PlanName { get; set; } = string.Empty;
         [Required]
@@ -24,11 +25,11 @@ namespace WiiTrakClient.DTOs
         [Required]
         public DateTime? PlanEndDate { get; set; }
         [Required]
-        [MinLength(4)]
+        [MinLength(Numbers.Four)]
         [RegularExpression(@"^[0-9 ]*$")]
         public string SIMNo { get; set; } = string.Empty;
         [Required]
-        [MinLength(4)]
+        [MinLength(Numbers.Four)]
         [RegularExpression(@"^[0-9 ]*$")]
         public string IMSI { get; set; } = string.Empty;
         public bool IsActive { get; set; }

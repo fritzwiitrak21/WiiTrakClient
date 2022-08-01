@@ -10,36 +10,36 @@ namespace WiiTrakClient.HttpRepository
 {
     public class ServiceProviderHttpRepository : IServiceProviderHttpRepository
     {
-        private readonly IHttpService _httpService;
+        private readonly IHttpService HttpService;
         private const string ControllerName = "serviceproviders";
-        private readonly string _apiUrl;
-        public ServiceProviderHttpRepository(IHttpService httpService)
+        private readonly string ApiUrl;
+        public ServiceProviderHttpRepository(IHttpService Httpservice)
         {
-            _httpService = httpService;
-            _apiUrl = $"{ httpService.BaseUrl }{ ControllerName }";
+            HttpService = Httpservice;
+            ApiUrl = $"{ Httpservice.BaseUrl }{ ControllerName }";
         }
         public async Task<List<ServiceProviderDto>> GetAllServiceProvidersAsync()
         {
-            var response = await _httpService.Get<List<ServiceProviderDto>>(_apiUrl);
+            var response = await HttpService.Get<List<ServiceProviderDto>>(ApiUrl);
             return response.Response;
         }
         public async Task<ServiceProviderDto> GetServiceProviderByIdAsync(Guid id)
         {
-            string url = $"{_apiUrl}/{id}";
-            var response = await _httpService.Get<ServiceProviderDto>(url);
+            string url = $"{ApiUrl}/{id}";
+            var response = await HttpService.Get<ServiceProviderDto>(url);
             return response.Response;
         }
-        public async Task CreateServiceProviderAsync(ServiceProviderCreationDto serviceProvider)
+        public async Task CreateServiceProviderAsync(ServiceProviderCreationDto ServiceProvider)
         {
-            await _httpService.Post(_apiUrl, serviceProvider);
+            await HttpService.Post(ApiUrl, ServiceProvider);
         }
-        public async Task UpdateServiceProviderAsync(Guid id, ServiceProviderUpdateDto client)
+        public async Task UpdateServiceProviderAsync(Guid id, ServiceProviderUpdateDto ServiceProvider)
         {
-            await _httpService.Put($"{ _apiUrl }/{ id }", client);
+            await HttpService.Put($"{ ApiUrl }/{ id }", ServiceProvider);
         }
         public async Task DeleteServiceProviderAsync(Guid id)
         {
-            await _httpService.Delete($"{ _apiUrl }/{ id }");
+            await HttpService.Delete($"{ ApiUrl }/{ id }");
         }
     }
 }

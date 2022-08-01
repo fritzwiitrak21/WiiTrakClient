@@ -5,6 +5,7 @@
 using WiiTrakClient.DTOs;
 using WiiTrakClient.HttpRepository.Contracts;
 using WiiTrakClient.Services;
+using WiiTrakClient.Enums;
 
 namespace WiiTrakClient.HttpRepository
 {
@@ -29,6 +30,19 @@ namespace WiiTrakClient.HttpRepository
             string url = $"{_apiUrl}/systemowner/{SystemOwnerId}/{DriverId}";
             var response = await _httpService.Get<List<DriverStoreDetailsDto>>(url);
             return response.Response;
+        }
+        public async Task<List<DriverStoreHistoryDto>> GetDriverAssignHistoryByIdAsync(Guid UserId, Role Role)
+        {
+            string url = $"{_apiUrl}/DriverAssignHistory/{UserId}/{(int)Role} ";
+            try
+            {
+                var response = await _httpService.Get<List<DriverStoreHistoryDto>>(url);
+                return response.Response;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
         public async Task UpdateDriverStoresAsync(DriverStoreDetailsDto DriverStoreDto)
         {

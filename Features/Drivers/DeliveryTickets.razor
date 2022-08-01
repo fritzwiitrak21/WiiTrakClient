@@ -45,14 +45,15 @@
     }
 
 </div>
-@if (deliveryTickets == null)
+<br />
+@if (Deliverytickets == null)
 {
     <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
 
 }
-else if (_deliveryTickets.Count > 0)
+else if (deliverytickets.Count > 0)
 {
-    <DeliveryTicketsList DeliveryTickets="_deliveryTickets" RecordCount="@SelectedOption" />
+    <DeliveryTicketsList DeliveryTickets="deliverytickets" RecordCount="@SelectedOption" />
 }
 else
 {

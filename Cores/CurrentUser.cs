@@ -125,4 +125,22 @@ namespace WiiTrakClient.Cores
         }
         #endregion
     }
+    public static class Numbers
+    {
+        public const int TwentyFive  = 25;
+        public const int Four= 4;
+        public const int Five = 5;
+        public const int Fifteen = 15;
+        public const int Fifty = 50;
+        public const int Twenty = 20;
+        public const int Three = 3;
+        public const int Ten = 10;
+        public const int Sixty = 60;
+        public const int FourHundred = 400;
+        public const int FiveHundred = 500;
+        public const double OneOneFive= 1.1515;
+        public const double OneSixZero = 1.609344;
+        public const double OneEighty = 180.0;
+    }
+
 }

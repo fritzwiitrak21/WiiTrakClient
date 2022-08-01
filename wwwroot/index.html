@@ -32,8 +32,9 @@
     <!-- Add a reference to the Azure Maps Services Module JavaScript file. -->
     <script src="https://atlas.microsoft.com/sdk/javascript/service/2/atlas-service.min.js"></script>
     <!-- Add a reference to the Google Maps Services Module JavaScript file. -->
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAUc0IKnyHlqoltF0zEzVAIAz6NUCQdeDE&callback=initMap"></script>
-
+    <!--<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAUc0IKnyHlqoltF0zEzVAIAz6NUCQdeDE&callback=initMap"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=drawing"></script>-->
+    <script type="text/javascript" async src="https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyAUc0IKnyHlqoltF0zEzVAIAz6NUCQdeDE&callback=initMap"></script>
     <script>
         function reloadPage() {
             location.reload();

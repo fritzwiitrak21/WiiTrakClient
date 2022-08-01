@@ -11,8 +11,8 @@ namespace WiiTrakClient.HttpRepository.Contracts
     {
         Task<CartHistoryDto> GetCartHistoryByIdAsync(Guid id);
         Task<List<CartHistoryDto>> GetAllCartHistoryAsync();
-        Task<List<CartHistoryDto>> GetCartHistoryByCartIdAsync(Guid cartId);
-        Task<List<CartDto>> GetCartHistoryByDeliveryTicketIdAsync(Guid deliveryTicketId);
+        Task<List<CartHistoryDto>> GetCartHistoryByCartIdAsync(Guid CartId);
+        Task<List<CartDto>> GetCartHistoryByDeliveryTicketIdAsync(Guid DeliveryTicketId);
 
         Task CreateCartHistoryAsync(CartHistoryCreationDto cart);
         Task UpdateCartHistoryAsync(Guid id, CartHistoryUpdateDto cart);

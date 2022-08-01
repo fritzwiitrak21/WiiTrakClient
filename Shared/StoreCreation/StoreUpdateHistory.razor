@@ -1,0 +1,34 @@
+﻿@page "/storeupdate-history"
+@using WiiTrakClient.Cores
+@using WiiTrakClient.Shared.StoreCreation.Components
+@using WiiTrakClient.Enums;
+<UserAuthentication />
+<h4>Store Audit</h4>
+<br />
+@if (StoreHistory.Count > 0)
+{
+    <StoreUpdateHistoryList StoreUpdateHistory="StoreHistory" />
+}
+else
+{
+      <MudText Class="my-4" Typo="Typo.h6">No data found.</MudText>
+}
+
+@code {
+
+    [Inject]
+    public IStoreHttpRepository StoreRepository { get; set; }
+    [Inject] IJSRuntime JsRuntime { get; set; }
+    private IJSObjectReference JsModule;
+    public List<StoreUpdateHistoryDto> StoreHistory { get; set; } = new();
+    protected override async Task OnInitializedAsync()
+    {
+        if (CurrentUser.UserId == Guid.Empty)
+        {
+            JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/localstorage.js");
+            var Id = await JsModule.InvokeAsync<string>("getUserId");
+            CurrentUser.UserId = new Guid(Id);
+        }
+          StoreHistory = await StoreRepository.GetStoreUpdateHistoryByIdAsync(CurrentUser.UserId,(Role)CurrentUser.UserRoleId);
+    }
+}

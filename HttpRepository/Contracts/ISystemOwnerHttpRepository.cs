@@ -12,7 +12,7 @@ namespace WiiTrakClient.HttpRepository.Contracts
         Task<SystemOwnerDto> GetSystemOwnerByIdAsync(Guid id);
         Task<bool> CheckEmailIdAsync(string EmailId);
         // Task CreateSystemOwnerAsync(SystemOwnerCreationDto systemOwner);
-        Task UpdateSystemOwnerAsync(Guid id, SystemOwnerUpdateDto systemOwner);
+        Task UpdateSystemOwnerAsync(Guid id, SystemOwnerUpdateDto SystemOwner);
         Task DeleteSystemOwnerAsync(Guid id);
     }
 }

@@ -1,0 +1,113 @@
+﻿@page "/FencingMap"
+@namespace WiiTrakClient.Shared.Components
+@using WiiTrakClient.Shared.Components
+@using WiiTrakClient.Cores
+@using WiiTrakClient.Shared.Map
+@inject IJSRuntime JsRuntime
+@using System.Text.Json;
+@using System.Text;
+<MudDialog>
+    <DialogContent>
+        <div style="width:1000px;height:570px;overflow: auto;">
+
+            <div id="map" style="height:100%;width:100%;overflow: auto;"></div>
+
+        </div>
+    </DialogContent>
+    <DialogActions>
+        @if (EnableSave)
+        {
+            <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   OnClick="Submit">
+                Save
+            </MudButton>
+        }
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   OnClick="((e) => ResetFencingMap())">
+            Reset
+        </MudButton>
+
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public StoreDto store { get; set; }
+    bool IsFenced = false;
+    bool EnableSave = false;
+    bool DisableReset = true;
+    IJSObjectReference JsModule;
+    string FenceCoords = string.Empty;
+    protected override async Task OnInitializedAsync()
+    {
+        if (store != null)
+        {
+            IsFenced = string.IsNullOrEmpty(store.FenceCoords.Trim()) ? false : true;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadFencingMap();
+        }
+    }
+    private async Task ResetFencingMap()
+    {
+        IsFenced = false;
+        FenceCoords = string.Empty;
+        await LoadFencingMap();
+    }
+    private async Task LoadFencingMap()
+    {
+        EnableSave = false;
+        StateHasChanged();
+        try
+        {
+            if (JsModule is null)
+            {
+                JsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/StoreFencingGoogleMap.js");
+            }
+            var dotNetObjectRef = DotNetObjectReference.Create(this);
+            MapMarkerDetails StoreDetails = new MapMarkerDetails();
+            StoreDetails.Title = store.StoreName + " - " + store.StoreNumber;
+            StoreDetails.Latitude = store.Latitude;
+            StoreDetails.Longitude = store.Longitude;
+            await JsModule.InvokeVoidAsync("initMap", dotNetObjectRef, IsFenced, StoreDetails, store.FenceCoords);
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+    [JSInvokable]
+    public async Task SavePolyCoords(string Coords)
+    {
+        var dotNetObjectRef = DotNetObjectReference.Create(this);
+
+        try
+        {
+            MapMarkerDetails StoreDetails = new MapMarkerDetails();
+            StoreDetails.Title = store.StoreName + " - " + store.StoreNumber;
+            StoreDetails.Latitude = store.Latitude;
+            StoreDetails.Longitude = store.Longitude;
+            await JsModule.InvokeVoidAsync("initMap", dotNetObjectRef, true, StoreDetails, Coords);
+            FenceCoords = Coords;
+            EnableSave = true;
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+    void Submit()
+    {
+        store.FenceCoords = FenceCoords;
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+}
